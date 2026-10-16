@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Çökertme Dünyası | Muğla'nın Efsanesi, Adana'dan Dünyaya</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    /* Hero Bölümü */
+    .hero {
+      position: relative;
+      background:
+        radial-gradient(circle at 85% 20%, rgba(27, 107, 147, 0.25), transparent 45%),
+        radial-gradient(circle at 15% 80%, rgba(212, 155, 53, 0.18), transparent 45%),
+        linear-gradient(135deg, var(--olive-dark) 0%, var(--olive-primary) 55%, var(--sea-dark) 100%);
+      color: #fff;
+      padding: 84px 0 96px;
+      overflow: hidden;
+      border-bottom: 5px solid var(--gold-primary);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(212, 155, 53, 0.55);
+      color: var(--gold-light);
+      font-size: 0.84rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: 3.35rem;
+      line-height: 1.12;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .hero h1 span {
+      color: var(--gold-light);
+      font-style: italic;
+    }
+
+    .hero p {
+      font-size: 1.12rem;
+      color: rgba(250, 247, 242, 0.9);
+      margin-bottom: 32px;
+      max-width: 580px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 36px;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: var(--gold-light);
+    }
+
+    .stat-label {
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .hero-showcase {
+      position: relative;
+      background: rgba(255, 255, 255, 0.08);
+      border: 2px solid rgba(212, 155, 53, 0.45);
+      border-radius: var(--radius-xl);
+      padding: 18px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    .hero-showcase img {
+      width: 100%;
+      height: 390px;
+      object-fit: cover;
+      border-radius: var(--radius-lg);
+      display: block;
+    }
+
+    .floating-promo-card {
+      position: absolute;
+      bottom: -20px;
+      left: -20px;
+      background: var(--cream-card);
+      color: var(--text-dark);
+      padding: 16px 20px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      border: 2px solid var(--gold-primary);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      max-width: 320px;
+    }
+
+    /* 4 Modül Tanıtım Kartları */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      margin-top: -42px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .pillar-card {
+      background: var(--cream-card);
+      border-radius: var(--radius-md);
+      padding: 26px;
+      border: 1.5px solid var(--stone-border);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s ease;
+    }
+
+    .pillar-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--sea-primary);
+    }
+
+    .pillar-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: 16px;
+    }
+
+    /* Mobil Uygulama & Sadakat Tanıtım Bölümü */
+    .app-promo-banner {
+      background: linear-gradient(135deg, var(--sea-dark) 0%, var(--sea-primary) 55%, var(--olive-primary) 100%);
+      color: #fff;
+      border-radius: var(--radius-xl);
+      padding: 52px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 40px;
+      align-items: center;
+      box-shadow: var(--shadow-lg);
+      border: 2px solid var(--gold-primary);
+    }
+
+    .benefit-list {
+      list-style: none;
+      display: grid;
+      gap: 14px;
+      margin: 24px 0 32px;
+    }
+
+    .benefit-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Franchise / Bayilik Bölümü */
+    .franchise-box {
+      background: var(--cream-card);
+      border-radius: var(--radius-xl);
+      border: 2px solid var(--stone-border);
+      padding: 48px;
+      box-shadow: var(--shadow-md);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 44px;
+    }
+
+    .branch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .branch-card {
+      background: var(--cream-card);
+      border: 1.5px solid var(--stone-border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid,
+      .app-promo-banner,
+      .franchise-box {
+        grid-template-columns: 1fr;
+      }
+      .hero h1 {
+        font-size: 2.4rem;
+      }
+      .floating-promo-card {
+        position: static;
+        margin-top: 14px;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Üst Ekosistem Geçiş Barı (4 Ekran Arası Hızlı Geçiş) -->
+  <div class="ecosystem-bar">
+    <div>
+      🫒 <strong>ÇÖKERTME DÜNYASI DİJİTAL EKOSİSTEMİ</strong> — Adana Merkez & Global Franchise Altyapısı
+    </div>
+    <div class="ecosystem-links">
+      <a href="index.html" class="active">🏛️ Kurumsal Web & Bayilik</a>
+      <a href="menu.html">📱 Masadaki QR Menü (Sadece Görüntüleme)</a>
+      <a href="uygulama.html">🛍️ Mobil Uygulama (%10 İndirim & Sadakat)</a>
+      <a href="yonetim.html">⚙️ Yönetim & Masa QR Üretici</a>
+    </div>
+  </div>
+
+  <!-- Ana Navigasyon -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-emblem">ÇD</div>
+        <div class="brand-text">
+          <span class="brand-name">ÇÖKERTME DÜNYASI</span>
+          <span class="brand-sub">Bodrum'dan Adana'ya • Global Lezzet</span>
+        </div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#hikayemiz">Marka Konsepti</a>
+        <a href="#imza-lezzetler">İmza Menümüz</a>
+        <a href="#mobil-uygulama">%10 İndirimli Uygulama</a>
+        <a href="#subeler">Şubelerimiz</a>
+        <a href="#franchise">Yurt İçi & Yurt Dışı Bayilik</a>
+      </nav>
+
+      <div style="display:flex; gap:10px; align-items:center;">
+        <a href="menu.html" class="btn btn-outline" style="padding:10px 16px;">📖 QR Menüyü Gör</a>
+        <a href="uygulama.html" class="btn btn-gold" style="padding:10px 18px;">📲 Uygulamadan Sipariş (%10 İndirim)</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Bölümü -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="hero-tag">
+          <span>🫒 Zeytin Yeşili & Ege Mavisi Konsepti</span>
+          <span>•</span>
+          <span>📍 Adana Merkez Şube</span>
+        </div>
+        <h1>
+          Muğla’nın Efsane Lezzeti,<br />
+          <span>Adana’dan Dünyaya</span> Açılıyor.
+        </h1>
+        <p>
+          Altında altın sarısı çıtır kibrit patates, süzme yoğurt, soğuk sıkım zeytinyağı ve dağ kekiğiyle dinlendirilmiş pamuk gibi bonfile... <strong>Çökertme Dünyası</strong>, Ege'nin ferahlığını Çukurova'nın ustalık ateşiyle buluşturuyor.
+        </p>
+
+        <div class="hero-actions">
+          <a href="uygulama.html" class="btn btn-gold">
+            🛍️ Mobil Uygulamayı Aç (%10 İndirim Kazan)
+          </a>
+          <a href="menu.html" class="btn btn-sea">
+            📱 Masadaki QR Menüyü İncele
+          </a>
+          <a href="#franchise" class="btn" style="background:rgba(255,255,255,0.14); color:#fff; border:1px solid rgba(255,255,255,0.3);">
+            🌍 Franchise / Bayilik Başvurusu
+          </a>
+        </div>
+
+        <div class="hero-stats">
+          <div>
+            <div class="stat-num">%10</div>
+            <div class="stat-label">Mobil Uygulama Sipariş İndirimi</div>
+          </div>
+          <div>
+            <div class="stat-num">5 Al 1 Hediye</div>
+            <div class="stat-label">Çökertme Club Sadakat Programı</div>
+          </div>
+          <div>
+            <div class="stat-num">TR & Global</div>
+            <div class="stat-label">Çoklu Şube & Yurt Dışı Franchise</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-showcase">
+        <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1000&q=85" alt="Çökertme Dünyası İmza Tabağı" />
+        <div class="floating-promo-card">
+          <div style="font-size:2.2rem;">🏆</div>
+          <div>
+            <div style="font-weight:800; color:var(--olive-dark); font-size:0.95rem;">Bodrum Klasik Bonfile Çökertme</div>
+            <div style="font-size:0.8rem; color:var(--text-body);">Çıtır kibrit patates, süzme yoğurt ve tereyağlı sos ile</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 Dijital Modül Hızlı Geçiş Kartları -->
+  <section class="container">
+    <div class="pillars-grid">
+      <div class="pillar-card">
+        <div>
+          <div class="pillar-icon" style="background:var(--olive-soft); color:var(--olive-primary);">📱</div>
+          <span class="badge badge-olive" style="margin-bottom:8px;">Sadece Görüntüleme (Siparişsiz)</span>
+          <h3 style="font-size:1.3rem; margin-bottom:8px; color:var(--olive-dark);">Masada Dijital QR Menü</h3>
+          <p style="font-size:0.9rem; color:var(--text-body); margin-bottom:18px;">
+            Restoran masalarındaki QR kod okutulduğunda açılır. Karışıklık olmaması için masadan sipariş kapalıdır; misafirler 4 dilde ürünleri inceleyip garsona sipariş verir.
+          </p>
+        </div>
+        <a href="menu.html?masa=5" class="btn btn-olive" style="width:100%;">Masa 5 QR Menüsünü Test Et →</a>
+      </div>
+
+      <div class="pillar-card">
+        <div>
+          <div class="pillar-icon" style="background:var(--sea-soft); color:var(--sea-primary);">🛍️</div>
+          <span class="badge badge-sea" style="margin-bottom:8px;">%10 İndirim + Sadakat Puanı</span>
+          <h3 style="font-size:1.3rem; margin-bottom:8px; color:var(--olive-dark);">Mobil Uygulama & Sadakat</h3>
+          <p style="font-size:0.9rem; color:var(--text-body); margin-bottom:18px;">
+            Eve Paket ve Gel-Al siparişlerine özel <strong>otomatik %10 indirim</strong>, %5 Çökertme Puan kazanımı ve "5 Çökertme Alana 1 Hediye" dijital damga kartı.
+          </p>
+        </div>
+        <a href="uygulama.html" class="btn btn-sea" style="width:100%;">Mobil Uygulamayı Deneyimle →</a>
+      </div>
+
+      <div class="pillar-card">
+        <div>
+          <div class="pillar-icon" style="background:var(--gold-soft); color:var(--gold-dark);">⚙️</div>
+          <span class="badge badge-gold" style="margin-bottom:8px;">Canlı Fiyat & QR Baskı</span>
+          <h3 style="font-size:1.3rem; margin-bottom:8px; color:var(--olive-dark);">Merkez Yönetim & QR Üretici</h3>
+          <p style="font-size:0.9rem; color:var(--text-body); margin-bottom:18px;">
+            Fiyatları tek tıkla güncelleyin, tükenen ürünleri kapatın, masalarınız için hazır <strong>Zeytin Yeşili & Deniz Mavisi QR Kartları</strong> yazdırın.
+          </p>
+        </div>
+        <a href="yonetim.html" class="btn btn-gold" style="width:100%;">Yönetim Paneline Git →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Marka Konsepti & Renk Hikayesi -->
+  <section id="hikayemiz" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div class="eyebrow">🫒 Zeytin Ağacının Gölgesinden Deniz Mavisine</div>
+        <h2 class="section-title">Neden Çökertme Dünyası?</h2>
+        <p class="section-desc">
+          Muğla yöresinin asırlık Çökertme Kebabı geleneğini, Adana'nın et ustalığı ve uluslararası hızlı-gurme (Fast-Casual) restoran standartlarıyla birleştirdik.
+        </p>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:22px;">
+        <div style="background:var(--olive-primary); color:#fff; padding:28px; border-radius:var(--radius-md);">
+          <div style="font-size:1.8rem; margin-bottom:10px;">🫒</div>
+          <h3 style="margin-bottom:8px; color:var(--gold-light);">Bodrum Zeytin Yeşili</h3>
+          <p style="font-size:0.9rem; opacity:0.92;">Etlerimizi Milas ve Bodrum'un soğuk sıkım sızma zeytinyağı ve taze dağ kekiği ile marine ediyoruz.</p>
+        </div>
+        <div style="background:var(--sea-primary); color:#fff; padding:28px; border-radius:var(--radius-md);">
+          <div style="font-size:1.8rem; margin-bottom:10px;">🌊</div>
+          <h3 style="margin-bottom:8px; color:var(--gold-light);">Ege & Akdeniz Mavisi</h3>
+          <p style="font-size:0.9rem; opacity:0.92;">Klasik kebapçıların basık havası yerine, Akdeniz sahil kasabalarının ferah, aydınlık ve huzurlu atmosferini sunuyoruz.</p>
+        </div>
+        <div style="background:var(--gold-primary); color:var(--olive-dark); padding:28px; border-radius:var(--radius-md);">
+          <div style="font-size:1.8rem; margin-bottom:10px;">🍟</div>
+          <h3 style="margin-bottom:8px; color:var(--olive-dark);">Çıtır Altın Kibrit Patates</h3>
+          <p style="font-size:0.9rem; font-weight:500;">Özel kesim altın sarısı kibrit patateslerimiz yumuşamadan, ilk lokmadan son lokmaya kadar çıtır kalır.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- İmza Lezzetler Vitrin Bölümü -->
+  <section id="imza-lezzetler" class="section" style="background:var(--cream-warm); border-top:1px solid var(--stone-border); border-bottom:1px solid var(--stone-border);">
+    <div class="container">
+      <div class="section-header">
+        <div class="eyebrow">🥘 Gurme Seçkiler</div>
+        <h2 class="section-title">İmza Çökertme Menümüz</h2>
+        <p class="section-desc">
+          Yönetim panelinden yaptığınız her fiyat veya ürün değişikliği anında hem bu vitrinde, hem masadaki QR Menüde hem de Mobil Uygulamada güncellenir.
+        </p>
+      </div>
+
+      <div id="home-menu-grid" class="menu-grid"></div>
+
+      <div style="text-align:center; margin-top:40px; display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+        <a href="menu.html" class="btn btn-olive">📖 Tüm QR Menüyü Aç (Masadaki Görünüm)</a>
+        <a href="uygulama.html" class="btn btn-sea">📲 Uygulamadan %10 İndirimli Sipariş Ver</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mobil Uygulama & Sadakat Programı Tanıtımı -->
+  <section id="mobil-uygulama" class="section">
+    <div class="container">
+      <div class="app-promo-banner">
+        <div>
+          <span class="badge badge-gold" style="margin-bottom:14px;">📲 ÇÖKERTME CLUB MOBİL UYGULAMASI</span>
+          <h2 style="font-size:2.4rem; margin-bottom:16px; color:#fff;">
+            Uygulamadan Sipariş Verin,<br />Anında <span style="color:var(--gold-light);">%10 İndirim</span> ve Puan Kazanın!
+          </h2>
+          <p style="color:rgba(255,255,255,0.9); font-size:1.02rem;">
+            Aracı yemek platformlarına komisyon ödemek yerine avantajı doğrudan misafirlerimize sunuyoruz. Eve Paket veya Gel-Al siparişlerinizde kendi uygulamamızı kullanın, her siparişte kazanın.
+          </p>
+
+          <ul class="benefit-list">
+            <li>
+              <span style="font-size:1.4rem;">🏷️</span>
+              <div><strong>Otomatik %10 İndirim:</strong> Uygulamadan verilen tüm siparişlerde sepette anında %10 indirim düşülür.</div>
+            </li>
+            <li>
+              <span style="font-size:1.4rem;">🎁</span>
+              <div><strong>5 Çökertme Alana 1 Çökertme Hediye:</strong> Dijital damga kartınız dolduğunda 6. Çökertme Kebabınız bizden!</div>
+            </li>
+            <li>
+              <span style="font-size:1.4rem;">🪙</span>
+              <div><strong>%5 Çökertme Puan Cüzdanı:</strong> Her siparişinizden %5 nakit puan biriktirin, dilediğiniz zaman harcayın.</div>
+            </li>
+          </ul>
+
+          <div style="display:flex; gap:14px; flex-wrap:wrap;">
+            <a href="uygulama.html" class="btn btn-gold">🚀 Canlı Mobil Uygulama Simülatörünü Aç</a>
+          </div>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.1); border:2px solid rgba(255,255,255,0.22); border-radius:28px; padding:28px; text-align:center;">
+          <div style="background:var(--cream-bg); color:var(--text-dark); border-radius:20px; padding:24px; box-shadow:0 16px 36px rgba(0,0,0,0.25);">
+            <div style="font-size:0.8rem; font-weight:800; color:var(--sea-primary); text-transform:uppercase; letter-spacing:0.08em;">Örnek Sepet Avantajı</div>
+            <h3 style="font-size:1.35rem; color:var(--olive-dark); margin:8px 0 16px;">Bodrum Klasik Bonfile Çökertme + Yayık Ayranı</h3>
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed var(--stone-border); font-size:0.92rem;">
+              <span>Normal Liste Fiyatı:</span>
+              <span style="text-decoration:line-through; color:var(--text-muted);">505 ₺</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed var(--stone-border); font-size:0.92rem; color:var(--success); font-weight:700;">
+              <span>Mobil Uygulama %10 İndirimi:</span>
+              <span>-50,50 ₺</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed var(--stone-border); font-size:0.92rem; color:var(--sea-primary); font-weight:700;">
+              <span>Kazanılan Çökertme Puan (%5):</span>
+              <span>+22,70 ₺ Puan</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:14px 0 6px; font-size:1.25rem; font-weight:800; color:var(--olive-dark);">
+              <span>Ödenecek Tutar:</span>
+              <span style="color:var(--gold-dark);">454,50 ₺</span>
+            </div>
+            <a href="uygulama.html" class="btn btn-olive" style="width:100%; margin-top:14px;">Hemen Siparişi Test Et →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Şubelerimiz & Global Büyüme Haritası -->
+  <section id="subeler" class="section" style="padding-top:10px;">
+    <div class="container">
+      <div class="section-header">
+        <div class="eyebrow">📍 Adana'dan Türkiye'ye ve Avrupa'ya</div>
+        <h2 class="section-title">Şubelerimiz & Büyüme Rotamız</h2>
+        <p class="section-desc">
+          Adana merkez şubemizle başlayan yolculuğumuz, Türkiye'nin büyükşehirleri ve yurt dışı bayilik ağımızla büyüyor.
+        </p>
+      </div>
+
+      <div id="branches-container" class="branch-grid"></div>
+    </div>
+  </section>
+
+  <!-- Yurt İçi & Yurt Dışı Franchise (Bayilik) Başvuru Bölümü -->
+  <section id="franchise" class="section" style="background:linear-gradient(180deg, var(--olive-soft) 0%, var(--cream-bg) 100%); border-top:1px solid var(--stone-border);">
+    <div class="container">
+      <div class="franchise-box">
+        <div>
+          <div class="eyebrow">🌍 Global Franchise & Master Bayilik</div>
+          <h2 class="section-title" style="font-size:2.1rem;">Çökertme Dünyası Yatırımcısı Olun</h2>
+          <p style="color:var(--text-body); margin-bottom:24px;">
+            Yüksek kâr marjı, merkezi sos ve marinasyon tedarik zinciri, hazır dijital altyapı (Mobil Uygulama, QR Menü, Merkez POS Sistemi) ve mimari konsept desteğiyle şehrinizde veya ülkenizde <strong>Çökertme Dünyası</strong> bayisi olun.
+          </p>
+
+          <div style="display:grid; gap:14px; margin-bottom:24px;">
+            <div style="background:var(--cream-bg); padding:16px; border-radius:var(--radius-sm); border-left:4px solid var(--olive-primary);">
+              <strong style="color:var(--olive-dark);">1. Standart Lezzet & Operasyon Kolaylığı</strong>
+              <p style="font-size:0.88rem; color:var(--text-body); margin-top:4px;">Usta bağımlılığını ortadan kaldıran reçeteli pişirme standartları ve merkezi eğitim desteği.</p>
+            </div>
+            <div style="background:var(--cream-bg); padding:16px; border-radius:var(--radius-sm); border-left:4px solid var(--sea-primary);">
+              <strong style="color:var(--sea-dark);">2. Komisyonsuz Kendi Sipariş Uygulaması</strong>
+              <p style="font-size:0.88rem; color:var(--text-body); margin-top:4px;">Her şube kendi bölgesindeki mobil uygulama siparişlerini doğrudan alır; şube kârlılığı maksimumda tutulur.</p>
+            </div>
+            <div style="background:var(--cream-bg); padding:16px; border-radius:var(--radius-sm); border-left:4px solid var(--gold-primary);">
+              <strong style="color:var(--gold-dark);">3. Yurt İçi ve Yurt Dışı (Avrupa / Körfez) Master Franchise</strong>
+              <p style="font-size:0.88rem; color:var(--text-body); margin-top:4px;">Almanya, Hollanda, İngiltere, Azerbaycan ve Körfez ülkeleri için ülke/bölge ana bayilik modelleri.</p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="font-size:1.45rem; color:var(--olive-dark); margin-bottom:18px;">Franchise / Bayilik Ön Başvuru Formu</h3>
+          <form id="franchise-form">
+            <div class="form-group">
+              <label class="form-label">Adınız Soyadınız / Şirket Ünvanı *</label>
+              <input type="text" id="fr-name" class="form-input" placeholder="Örn: Ahmet Demir" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Telefon Numaranız (Ülke Kodu ile) *</label>
+              <input type="text" id="fr-phone" class="form-input" placeholder="Örn: +90 532 000 00 00 veya +49 ..." required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Düşündüğünüz Şehir / Ülke *</label>
+              <input type="text" id="fr-location" class="form-input" placeholder="Örn: Mersin, İstanbul, Berlin, Dubai..." required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Planlanan Yatırım Bütçesi Aralığı</label>
+              <select id="fr-budget" class="form-select">
+                <option value="3.000.000 ₺ - 5.000.000 ₺ (Yurt İçi Standart Şube)">3.000.000 ₺ - 5.000.000 ₺ (Yurt İçi Standart Şube)</option>
+                <option value="5.000.000 ₺ + (Yurt İçi Amiral / AVM Şube)">5.000.000 ₺ + (Yurt İçi Amiral / AVM Şube)</option>
+                <option value="150.000 € - 300.000 € (Yurt Dışı / Avrupa Şube)">150.000 € - 300.000 € (Yurt Dışı / Avrupa Şube)</option>
+                <option value="Master Franchise (Ülke / Bölge Geneli)">Master Franchise (Ülke / Bölge Geneli)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Mevcut Dükkan / Lokasyon veya Ek Notunuz</label>
+              <textarea id="fr-note" class="form-textarea" rows="3" placeholder="Varsa dükkan metrekaresi, cadde/AVM bilgisi veya sorularınız..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-olive" style="width:100%; padding:14px;">
+              📩 Bayilik Başvurusunu Gönder (Yönetim Paneline Düşer)
+            </button>
+            <div id="fr-result" style="display:none; margin-top:14px; padding:12px; border-radius:10px; background:var(--olive-soft); color:var(--olive-dark); font-weight:700; text-align:center;"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Alt Bilgi (Footer) -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="brand-logo" style="margin-bottom:14px;">
+            <div class="brand-emblem">ÇD</div>
+            <div class="brand-text">
+              <span class="brand-name" style="color:#fff;">ÇÖKERTME DÜNYASI</span>
+              <span class="brand-sub" style="color:var(--gold-light);">Adana Merkez • Global Franchise</span>
+            </div>
+          </div>
+          <p style="font-size:0.9rem; color:#C4D0BF; max-width:360px;">
+            Muğla'nın geleneksel Çökertme Kebabını; Bodrum zeytin yeşili ve Ege deniz mavisi ferahlığıyla Adana'dan tüm Türkiye'ye ve dünyaya taşıyoruz.
+          </p>
+        </div>
+
+        <div>
+          <h4>Dijital Ekosistem</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Kurumsal Web Sitesi</a></li>
+            <li><a href="menu.html">Masada QR Menü (Görüntüleme)</a></li>
+            <li><a href="uygulama.html">Mobil Uygulama (%10 İndirim)</a></li>
+            <li><a href="yonetim.html">Merkez Yönetim Paneli</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Kurumsal</h4>
+          <ul class="footer-links">
+            <li><a href="#hikayemiz">Marka Hikayemiz</a></li>
+            <li><a href="#subeler">Şubelerimiz</a></li>
+            <li><a href="#franchise">Yurt İçi & Yurt Dışı Bayilik</a></li>
+            <li><a href="yonetim.html">Masa QR Kodları Yazdır</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Adana Merkez İletişim</h4>
+          <ul class="footer-links">
+            <li>📍 Çukurova / Adana, Türkiye</li>
+            <li>📞 +90 (322) 455 01 48</li>
+            <li>📸 @cokertmedunyasi</li>
+            <li>⏰ Her Gün: 11:00 – 23:30</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid rgba(255,255,255,0.12); padding-top:22px; display:flex; justify-content:space-between; flex-wrap:wrap; font-size:0.84rem; color:#A5B49F;">
+        <span>© 2026 Çökertme Dünyası Gıda ve Restoran Zincirleri A.Ş. Tüm Hakları Saklıdır.</span>
+        <span>Kurumsal Renk Kimliği: Zeytin Yeşili • Deniz Mavisi • Çıtır Altın • Taş Kremi</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/data.js"></script>
+  <script>
+    function renderHomePage() {
+      const state = CokertmeStore.getState();
+
+      // İmza ürünlerden ilk 6 tanesini ana sayfada göster
+      const menuGrid = document.getElementById("home-menu-grid");
+      const featuredItems = state.items.slice(0, 6);
+      menuGrid.innerHTML = featuredItems.map(item => `
+        <article class="menu-card">
+          <div class="menu-card-img-wrap">
+            <img class="menu-card-img" src="${item.image}" alt="${item.name.tr}" loading="lazy" />
+            <div class="menu-card-badges">
+              ${(item.badges || []).map(b => `<span class="badge badge-gold">${b}</span>`).join("")}
+            </div>
+            <div class="menu-card-price-tag">${item.price} ₺</div>
+          </div>
+          <div class="menu-card-body">
+            <div>
+              <h3 class="menu-card-title">${item.name.tr}</h3>
+              <p class="menu-card-desc">${item.desc.tr}</p>
+            </div>
+            <div class="menu-card-meta">
+              <span>🔥 ${item.calories || "650 kcal"}</span>
+              <span>⏱️ Hazırlık: ${item.prepTime || "12 dk"}</span>
+              <span style="color:var(--sea-primary); font-weight:700;">Uygulamada: ${Math.round(item.price * 0.9)} ₺</span>
+            </div>
+          </div>
+        </article>
+      `).join("");
+
+      // Şubeleri göster
+      const branchesEl = document.getElementById("branches-container");
+      branchesEl.innerHTML = state.branches.map(b => `
+        <div class="branch-card" style="border-top: 4px solid ${b.isActive ? 'var(--olive-primary)' : 'var(--sea-primary)'};">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <span class="badge ${b.isActive ? 'badge-olive' : 'badge-sea'}">${b.status}</span>
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted);">${b.country}</span>
+          </div>
+          <h3 style="font-size:1.18rem; color:var(--olive-dark); margin-bottom:6px;">${b.name}</h3>
+          <p style="font-size:0.88rem; color:var(--text-body); margin-bottom:10px;">📍 ${b.address}</p>
+          <div style="font-size:0.82rem; color:var(--text-muted); font-weight:600;">⏰ Çalışma Saatleri: ${b.hours}</div>
+        </div>
+      `).join("");
+    }
+
+    // Franchise başvuru formu kaydı
+    document.getElementById("franchise-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const state = CokertmeStore.getState();
+      const newApp = {
+        id: "FR-" + Math.floor(100 + Math.random() * 900),
+        fullName: document.getElementById("fr-name").value.trim(),
+        phone: document.getElementById("fr-phone").value.trim(),
+        location: document.getElementById("fr-location").value.trim(),
+        budget: document.getElementById("fr-budget").value,
+        note: document.getElementById("fr-note").value.trim() || "Belirtilmedi",
+        createdAt: new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })
+      };
+      state.franchiseApplications.unshift(newApp);
+      CokertmeStore.saveState(state);
+
+      const resBox = document.getElementById("fr-result");
+      resBox.style.display = "block";
+      resBox.innerHTML = `✅ Sayın <strong>${newApp.fullName}</strong>, <strong>${newApp.location}</strong> bayilik başvurunuz (#${newApp.id}) Merkez Yönetim Paneline iletildi!`;
+      this.reset();
+    });
+
+    CokertmeStore.syncFromServer().then(renderHomePage);
+  </script>
+</body>
+</html>

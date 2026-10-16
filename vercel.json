@@ -1,0 +1,8 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/menu", "destination": "/menu.html" },
+    { "source": "/uygulama", "destination": "/uygulama.html" },
+    { "source": "/yonetim", "destination": "/yonetim.html" }
+  ]
+}

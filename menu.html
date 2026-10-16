@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Dijital Menü | Çökertme Dünyası</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    .qr-header {
+      background: linear-gradient(135deg, var(--olive-dark) 0%, var(--olive-primary) 55%, var(--sea-primary) 100%);
+      color: #fff;
+      padding: 28px 20px 24px;
+      border-bottom: 4px solid var(--gold-primary);
+    }
+
+    .qr-header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .qr-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .table-info-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1.5px solid var(--gold-primary);
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--gold-light);
+    }
+
+    .lang-curr-bar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .selector-chip {
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .selector-chip.active {
+      background: var(--gold-primary);
+      color: var(--olive-dark);
+      border-color: var(--gold-light);
+    }
+
+    /* Sadece Görüntüleme Bilgilendirme Kutusu */
+    .view-only-notice {
+      background: var(--olive-soft);
+      border: 1.5px solid var(--olive-primary);
+      color: var(--olive-dark);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin: 20px 0 14px;
+    }
+
+    /* Mobil Uygulama Tanıtım Barı */
+    .qr-app-banner {
+      background: linear-gradient(90deg, var(--sea-dark) 0%, var(--sea-primary) 100%);
+      color: #fff;
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 22px;
+      border: 1.5px solid var(--gold-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .qr-container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 18px 64px;
+    }
+
+    .search-bar-wrap {
+      margin: 14px 0 10px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 13px 18px 13px 44px;
+      border-radius: 999px;
+      border: 1.5px solid var(--stone-border);
+      background: #fff;
+      font-size: 0.95rem;
+      font-family: inherit;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--sea-primary);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.05rem;
+    }
+
+    .sold-out-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(30, 38, 27, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.06em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Üst Ekosistem Geçiş Barı -->
+  <div class="ecosystem-bar">
+    <div>
+      📱 <strong>MASADAKİ DİJİTAL QR MENÜ</strong> — Sadece Görüntüleme Modu (Siparişsiz)
+    </div>
+    <div class="ecosystem-links">
+      <a href="index.html">🏛️ Kurumsal Web</a>
+      <a href="menu.html" class="active">📱 Masadaki QR Menü</a>
+      <a href="uygulama.html">🛍️ Mobil Uygulama (%10 İndirim)</a>
+      <a href="yonetim.html">⚙️ Yönetim & QR Üretici</a>
+    </div>
+  </div>
+
+  <!-- QR Menü Üst Başlığı -->
+  <header class="qr-header">
+    <div class="qr-header-inner">
+      <div class="qr-top-row">
+        <div class="brand-logo">
+          <div class="brand-emblem">ÇD</div>
+          <div class="brand-text">
+            <span class="brand-name" style="color:#fff; font-size:1.45rem;">ÇÖKERTME DÜNYASI</span>
+            <span class="brand-sub" style="color:var(--gold-light);" id="branch-subtitle">Adana Merkez Şube • Dijital QR Menü</span>
+          </div>
+        </div>
+
+        <div class="table-info-pill" id="table-pill">
+          🍽️ Masa Menüsü • Sadece Görüntüleme
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <p style="font-size:0.92rem; color:rgba(255,255,255,0.9);" id="welcome-text">
+          Hoş geldiniz! Lezzetlerimizi inceleyip siparişinizi masanızdaki servis personelimize iletebilirsiniz.
+        </p>
+
+        <!-- Çoklu Dil ve Para Birimi Seçici (Yurt Dışı & Turist Uyumu) -->
+        <div class="lang-curr-bar">
+          <button class="selector-chip active" onclick="setLanguage('tr')" id="lang-tr">🇹🇷 TR</button>
+          <button class="selector-chip" onclick="setLanguage('en')" id="lang-en">🇬🇧 EN</button>
+          <button class="selector-chip" onclick="setLanguage('de')" id="lang-de">🇩🇪 DE</button>
+          <button class="selector-chip" onclick="setLanguage('ar')" id="lang-ar">🇸🇦 AR</button>
+          <span style="opacity:0.4;">|</span>
+          <button class="selector-chip active" onclick="setCurrency('TRY')" id="curr-TRY">₺ TL</button>
+          <button class="selector-chip" onclick="setCurrency('EUR')" id="curr-EUR">€ EUR</button>
+          <button class="selector-chip" onclick="setCurrency('USD')" id="curr-USD">$ USD</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="qr-container">
+    <!-- Sadece Görüntüleme Bilgisi -->
+    <div class="view-only-notice">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:1.35rem;">💁‍♂️</span>
+        <div>
+          <strong id="notice-title">Masada Birebir Sıcak Servis Deneyimi</strong>
+          <div style="font-size:0.85rem; color:var(--text-body);" id="notice-desc">
+            Bu QR menü sadece ürünlerimizi ve güncel fiyatlarımızı incelemeniz içindir. Siparişinizi doğrudan servis personelimize verebilirsiniz.
+          </div>
+        </div>
+      </div>
+      <span class="badge badge-olive">Fiyatlara KDV Dahildir</span>
+    </div>
+
+    <!-- Paket / Gel-Al için Mobil Uygulama Tanıtım Banner'ı -->
+    <div class="qr-app-banner">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span style="font-size:1.8rem;">📲</span>
+        <div>
+          <div style="font-weight:800; font-size:0.98rem; color:var(--gold-light);">
+            Eve Paket & Gel-Al Siparişlerinizde %10 İndirim!
+          </div>
+          <div style="font-size:0.84rem; color:rgba(255,255,255,0.9);">
+            Çökertme Dünyası Mobil Uygulamasını indirin; paket siparişlerinizde anında %10 indirim ve Çökertme Puan kazanın.
+          </div>
+        </div>
+      </div>
+      <a href="uygulama.html" class="btn btn-gold" style="padding:9px 16px; font-size:0.84rem;">
+        Uygulamayı İncele →
+      </a>
+    </div>
+
+    <!-- Arama Çubuğu -->
+    <div class="search-bar-wrap">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        id="menu-search"
+        class="search-input"
+        placeholder="Menüde lezzet ara (Örn: Bonfile Çökertme, Kabak Çiçeği, Ayran)..."
+        oninput="renderQRMenu()"
+      />
+    </div>
+
+    <!-- Kategori Sekmeleri -->
+    <div class="category-tabs" id="qr-category-tabs"></div>
+
+    <!-- Ürün Listesi -->
+    <div id="qr-menu-items" class="menu-grid" style="margin-top:16px;"></div>
+  </main>
+
+  <!-- Ürün Detay Modalı (Sadece Görüntüleme) -->
+  <div class="modal-backdrop" id="item-modal" onclick="if(event.target===this) closeItemModal()">
+    <div class="modal-content" id="item-modal-body"></div>
+  </div>
+
+  <script src="assets/data.js"></script>
+  <script>
+    let currentLang = "tr";
+    let currentCurrency = "TRY";
+    let selectedCategory = "all";
+
+    const UI_TEXTS = {
+      tr: {
+        allCategories: "✨ Tüm Lezzetler",
+        welcome: "Hoş geldiniz! Lezzetlerimizi inceleyip siparişinizi masanızdaki servis personelimize iletebilirsiniz.",
+        noticeTitle: "Masada Birebir Sıcak Servis Deneyimi",
+        noticeDesc: "Bu QR menü sadece ürünlerimizi ve güncel fiyatlarımızı incelemeniz içindir. Siparişinizi doğrudan servis personelimize verebilirsiniz.",
+        prepTime: "Hazırlanış",
+        soldOut: "GEÇİCİ OLARAK TÜKENDİ",
+        detailBtn: "İçindekiler & Detay",
+        waiterNote: "Bu ürünü sipariş etmek için masanızdaki servis personelimize söyleyebilirsiniz."
+      },
+      en: {
+        allCategories: "✨ All Dishes",
+        welcome: "Welcome! Browse our dishes and place your order directly with our table service staff.",
+        noticeTitle: "View-Only Table Menu Experience",
+        noticeDesc: "This QR menu is for browsing dishes and live prices. Please give your order to your waiter.",
+        prepTime: "Prep Time",
+        soldOut: "SOLD OUT TODAY",
+        detailBtn: "Ingredients & Info",
+        waiterNote: "To order this dish, please let your waiter know at the table."
+      },
+      de: {
+        allCategories: "✨ Alle Gerichte",
+        welcome: "Willkommen! Bitte geben Sie Ihre Bestellung direkt bei unserem Servicepersonal am Tisch auf.",
+        noticeTitle: "Digitale Tischkarte (Nur Ansicht)",
+        noticeDesc: "Dieses QR-Menü dient zur Ansicht unserer Speisen und aktuellen Preise.",
+        prepTime: "Zubereitung",
+        soldOut: "AUSVERKAUFT",
+        detailBtn: "Zutaten & Details",
+        waiterNote: "Um dieses Gericht zu bestellen, wenden Sie sich bitte an unser Servicepersonal."
+      },
+      ar: {
+        allCategories: "✨ جميع الأطباق",
+        welcome: "أهلاً بكم! يمكنكم تصفح القائمة وإبلاغ النادل بطلبكم مباشرة على الطاولة.",
+        noticeTitle: "قائمة عرض فقط على الطاولة",
+        noticeDesc: "هذه القائمة مخصصة لعرض الأطباق والأسعار الحالية فقط. يرجى تقديم طلبكم للنادل.",
+        prepTime: "وقت التحضير",
+        soldOut: "نفذت الكمية",
+        detailBtn: "المكونات والتفاصيل",
+        waiterNote: "لطلب هذا الطبق، يرجى إبلاغ النادل الخاص بطاولتكم."
+      }
+    };
+
+    function initUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      const masa = params.get("masa");
+      const sube = params.get("sube");
+      if (masa) {
+        document.getElementById("table-pill").innerHTML = `🍽️ Masa #${masa} • Sadece Görüntüleme`;
+      }
+      if (sube) {
+        document.getElementById("branch-subtitle").textContent = `${sube} • Dijital QR Menü`;
+      }
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      ["tr", "en", "de", "ar"].forEach(l => {
+        document.getElementById("lang-" + l).classList.toggle("active", l === lang);
+      });
+      const t = UI_TEXTS[lang];
+      document.getElementById("welcome-text").textContent = t.welcome;
+      document.getElementById("notice-title").textContent = t.noticeTitle;
+      document.getElementById("notice-desc").textContent = t.noticeDesc;
+      renderCategoryTabs();
+      renderQRMenu();
+    }
+
+    function setCurrency(curr) {
+      currentCurrency = curr;
+      ["TRY", "EUR", "USD"].forEach(c => {
+        document.getElementById("curr-" + c).classList.toggle("active", c === curr);
+      });
+      renderQRMenu();
+    }
+
+    function selectCategory(catId) {
+      selectedCategory = catId;
+      renderCategoryTabs();
+      renderQRMenu();
+    }
+
+    function renderCategoryTabs() {
+      const state = CokertmeStore.getState();
+      const t = UI_TEXTS[currentLang];
+      const tabsEl = document.getElementById("qr-category-tabs");
+
+      let html = `
+        <button class="category-pill ${selectedCategory === 'all' ? 'active' : ''}" onclick="selectCategory('all')">
+          ${t.allCategories}
+        </button>
+      `;
+
+      html += state.categories.map(cat => `
+        <button class="category-pill ${selectedCategory === cat.id ? 'active' : ''}" onclick="selectCategory('${cat.id}')">
+          <span>${cat.icon}</span>
+          <span>${cat.name[currentLang] || cat.name.tr}</span>
+        </button>
+      `).join("");
+
+      tabsEl.innerHTML = html;
+    }
+
+    function renderQRMenu() {
+      const state = CokertmeStore.getState();
+      const t = UI_TEXTS[currentLang];
+      const query = (document.getElementById("menu-search").value || "").toLowerCase().trim();
+
+      const filtered = state.items.filter(item => {
+        const matchesCat = selectedCategory === "all" || item.categoryId === selectedCategory;
+        const nameText = (item.name[currentLang] || item.name.tr).toLowerCase();
+        const descText = (item.desc[currentLang] || item.desc.tr).toLowerCase();
+        const matchesQuery = !query || nameText.includes(query) || descText.includes(query);
+        return matchesCat && matchesQuery;
+      });
+
+      const gridEl = document.getElementById("qr-menu-items");
+      if (filtered.length === 0) {
+        gridEl.innerHTML = `
+          <div style="grid-column:1/-1; text-align:center; padding:48px; background:#fff; border-radius:16px; border:1px solid var(--stone-border);">
+            <div style="font-size:2.2rem; margin-bottom:8px;">🫒</div>
+            <h3>Aradığınız kriterde ürün bulunamadı</h3>
+          </div>
+        `;
+        return;
+      }
+
+      gridEl.innerHTML = filtered.map(item => {
+        const title = item.name[currentLang] || item.name.tr;
+        const desc = item.desc[currentLang] || item.desc.tr;
+        const formattedPrice = CokertmeStore.formatPrice(item.price, currentCurrency);
+
+        return `
+          <article class="menu-card" style="cursor:pointer; ${!item.available ? 'opacity:0.72;' : ''}" onclick="openItemModal('${item.id}')">
+            <div class="menu-card-img-wrap">
+              <img class="menu-card-img" src="${item.image}" alt="${title}" loading="lazy" />
+              <div class="menu-card-badges">
+                ${(item.badges || []).map(b => `<span class="badge badge-gold">${b}</span>`).join("")}
+              </div>
+              <div class="menu-card-price-tag">${formattedPrice}</div>
+              ${!item.available ? `<div class="sold-out-overlay">${t.soldOut}</div>` : ""}
+            </div>
+            <div class="menu-card-body">
+              <div>
+                <h3 class="menu-card-title">${title}</h3>
+                <p class="menu-card-desc">${desc}</p>
+              </div>
+              <div class="menu-card-meta">
+                <span>🔥 ${item.calories || "650 kcal"}</span>
+                <span>⏱️ ${t.prepTime}: ${item.prepTime || "12 dk"}</span>
+                <span style="color:var(--olive-primary); font-weight:700;">🔍 ${t.detailBtn}</span>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function openItemModal(itemId) {
+      const state = CokertmeStore.getState();
+      const item = state.items.find(i => i.id === itemId);
+      if (!item) return;
+
+      const t = UI_TEXTS[currentLang];
+      const title = item.name[currentLang] || item.name.tr;
+      const desc = item.desc[currentLang] || item.desc.tr;
+      const formattedPrice = CokertmeStore.formatPrice(item.price, currentCurrency);
+
+      const modalBody = document.getElementById("item-modal-body");
+      modalBody.innerHTML = `
+        <div style="position:relative; height:240px;">
+          <img src="${item.image}" alt="${title}" style="width:100%; height:100%; object-fit:cover;" />
+          <button onclick="closeItemModal()" style="position:absolute; top:14px; right:14px; width:38px; height:38px; border-radius:50%; border:none; background:rgba(0,0,0,0.65); color:#fff; font-size:1.1rem; cursor:pointer;">✕</button>
+          <div class="menu-card-price-tag" style="font-size:1.25rem; padding:8px 18px;">${formattedPrice}</div>
+        </div>
+        <div style="padding:24px;">
+          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;">
+            ${(item.badges || []).map(b => `<span class="badge badge-gold">${b}</span>`).join("")}
+            <span class="badge badge-olive">🔥 ${item.calories || "650 kcal"}</span>
+            <span class="badge badge-sea">⏱️ ${item.prepTime || "12 dk"}</span>
+          </div>
+          <h2 style="font-size:1.5rem; color:var(--olive-dark); margin-bottom:10px;">${title}</h2>
+          <p style="color:var(--text-body); margin-bottom:18px; font-size:0.96rem;">${desc}</p>
+
+          <div style="background:var(--olive-soft); border-left:4px solid var(--olive-primary); padding:12px 16px; border-radius:8px; font-size:0.88rem; color:var(--olive-dark); font-weight:600;">
+            💁‍♂️ ${t.waiterNote}
+          </div>
+        </div>
+      `;
+
+      document.getElementById("item-modal").classList.add("open");
+    }
+
+    function closeItemModal() {
+      document.getElementById("item-modal").classList.remove("open");
+    }
+
+    initUrlParams();
+    CokertmeStore.syncFromServer().then(() => {
+      renderCategoryTabs();
+      renderQRMenu();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobil Uygulama (%10 İndirim & Sadakat) | Çökertme Dünyası</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    .app-showcase-layout {
+      max-width: 1240px;
+      margin: 28px auto 64px;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 430px 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    /* Telefon Çerçevesi */
+    .phone-frame {
+      background: #141B12;
+      border-radius: 44px;
+      padding: 12px;
+      box-shadow: 0 24px 60px rgba(27, 107, 147, 0.25), 0 0 0 3px var(--gold-primary);
+      position: sticky;
+      top: 20px;
+    }
+
+    .phone-screen {
+      background: var(--cream-bg);
+      border-radius: 34px;
+      height: 790px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      scrollbar-width: thin;
+    }
+
+    .app-topbar {
+      background: linear-gradient(135deg, var(--olive-dark) 0%, var(--olive-primary) 55%, var(--sea-primary) 100%);
+      color: #fff;
+      padding: 20px 18px 18px;
+      border-bottom: 3px solid var(--gold-primary);
+    }
+
+    /* Sadakat Kartı (Çökertme Club) */
+    .loyalty-card {
+      background: linear-gradient(135deg, var(--sea-dark) 0%, var(--sea-primary) 60%, var(--olive-primary) 100%);
+      color: #fff;
+      margin: 14px 14px 10px;
+      padding: 16px;
+      border-radius: 20px;
+      border: 1.5px solid var(--gold-primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    .stamp-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      margin-top: 12px;
+      background: rgba(255, 255, 255, 0.12);
+      padding: 10px 12px;
+      border-radius: 14px;
+    }
+
+    .stamp-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 800;
+      border: 2px dashed rgba(255, 255, 255, 0.45);
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .stamp-circle.filled {
+      background: var(--gold-primary);
+      color: var(--olive-dark);
+      border: 2px solid #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Sipariş Modu Seçici (Paket / Gel-Al) */
+    .mode-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 6px 14px 12px;
+      background: var(--cream-warm);
+      padding: 5px;
+      border-radius: 14px;
+      border: 1px solid var(--stone-border);
+    }
+
+    .mode-btn {
+      padding: 10px 8px;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--text-body);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mode-btn.active {
+      background: var(--olive-primary);
+      color: #fff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Uygulama İçi Ürün Listesi */
+    .app-item-list {
+      padding: 0 14px 110px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .app-item-card {
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid var(--stone-border);
+      padding: 12px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .app-item-img {
+      width: 78px;
+      height: 78px;
+      border-radius: 12px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .app-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .app-item-title {
+      font-weight: 800;
+      font-size: 0.92rem;
+      color: var(--olive-dark);
+      margin-bottom: 3px;
+    }
+
+    .app-item-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .app-price-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .old-price {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    .discounted-price {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--olive-primary);
+      background: var(--olive-soft);
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .add-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      border: none;
+      background: var(--sea-primary);
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: 800;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .add-btn:hover {
+      background: var(--olive-primary);
+    }
+
+    /* Alt Yüzen Sepet Çubuğu */
+    .app-cart-bar {
+      position: sticky;
+      bottom: 0;
+      margin-top: auto;
+      background: var(--olive-dark);
+      color: #fff;
+      padding: 14px 16px;
+      border-top: 2px solid var(--gold-primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Sağ Panel: Sadakat, Sepet Detayı ve Mimari Bilgi */
+    .info-panel-card {
+      background: var(--cream-card);
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--stone-border);
+      padding: 28px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 960px) {
+      .app-showcase-layout {
+        grid-template-columns: 1fr;
+      }
+      .phone-frame {
+        position: static;
+        max-width: 440px;
+        margin: 0 auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Üst Ekosistem Geçiş Barı -->
+  <div class="ecosystem-bar">
+    <div>
+      🛍️ <strong>ÇÖKERTME DÜNYASI MOBİL UYGULAMA SİMÜLATÖRÜ</strong> — %10 İndirim & Sadakat Programı
+    </div>
+    <div class="ecosystem-links">
+      <a href="index.html">🏛️ Kurumsal Web</a>
+      <a href="menu.html">📱 Masadaki QR Menü</a>
+      <a href="uygulama.html" class="active">🛍️ Mobil Uygulama (%10 İndirim)</a>
+      <a href="yonetim.html">⚙️ Yönetim & QR Üretici</a>
+    </div>
+  </div>
+
+  <div class="app-showcase-layout">
+    <!-- SOL: İnteraktif Mobil Uygulama Ekranı -->
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <!-- Uygulama Üst Bar -->
+        <div class="app-topbar">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div class="brand-emblem" style="width:38px; height:38px; font-size:1.05rem;">ÇD</div>
+              <div>
+                <div style="font-family:'Playfair Display',serif; font-weight:800; font-size:1.05rem;">ÇÖKERTME DÜNYASI</div>
+                <div style="font-size:0.72rem; color:var(--gold-light);">📍 Adana Çukurova Merkez Şube</div>
+              </div>
+            </div>
+            <button onclick="openMemberQrModal()" style="background:rgba(255,255,255,0.16); color:#fff; border:1px solid var(--gold-primary); padding:6px 10px; border-radius:10px; font-size:0.74rem; font-weight:700; cursor:pointer;">
+              📲 Müşteri QR
+            </button>
+          </div>
+        </div>
+
+        <!-- Çökertme Club Sadakat Kartı -->
+        <div class="loyalty-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold-light); font-weight:800;">
+                🌟 ÇÖKERTME CLUB • <span id="user-tier">Gümüş Gurme</span>
+              </div>
+              <div style="font-size:1.25rem; font-weight:800; margin-top:2px;">
+                Cüzdan: <span id="user-points" style="color:var(--gold-light);">145,00 ₺</span> Puan
+              </div>
+            </div>
+            <span class="badge badge-gold">%10 App İndirimi Aktif</span>
+          </div>
+
+          <div style="font-size:0.76rem; margin-top:10px; opacity:0.92; display:flex; justify-content:space-between;">
+            <span>🎁 <strong>5 Çökertme Alana 1 Hediye</strong> Damga Kartı:</span>
+            <span id="stamp-counter-text">3 / 5 Damga</span>
+          </div>
+          <div class="stamp-row" id="stamp-row"></div>
+        </div>
+
+        <!-- Sipariş Modu (Masadan Sipariş Yok, Sadece Paket ve Gel-Al) -->
+        <div class="mode-switch">
+          <button class="mode-btn active" id="mode-delivery" onclick="setOrderMode('Eve Paket Servis')">
+            🛵 Adrese Paket Servis
+          </button>
+          <button class="mode-btn" id="mode-takeaway" onclick="setOrderMode('Gel-Al (Şubeden Teslim)')">
+            🛍️ Gel-Al (Şubeden)
+          </button>
+        </div>
+
+        <!-- Kategori Seçici -->
+        <div class="category-tabs" id="app-categories" style="padding:4px 14px 10px;"></div>
+
+        <!-- Uygulama Ürün Listesi (%10 İndirimli Fiyatlarla) -->
+        <div class="app-item-list" id="app-item-list"></div>
+
+        <!-- Alt Sepet Barı -->
+        <div class="app-cart-bar">
+          <div>
+            <div style="font-size:0.72rem; color:var(--gold-light); font-weight:700;" id="cart-discount-summary">
+              %10 Uygulama İndirimi Otomatik Uygulanır
+            </div>
+            <div style="font-size:1.05rem; font-weight:800;" id="cart-total-display">
+              Sepet Boş (0 ₺)
+            </div>
+          </div>
+          <button class="btn btn-gold" style="padding:10px 16px; font-size:0.84rem;" onclick="scrollToCheckout()">
+            Sepeti Onayla →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SAĞ: Canlı Sepet, %10 İndirim & Sadakat Hesaplayıcı -->
+    <div>
+      <div class="info-panel-card" id="checkout-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
+          <div>
+            <span class="badge badge-sea">CANLI MOBİL SİPARİŞ & SADAKAT SİMÜLASYONU</span>
+            <h2 style="font-size:1.75rem; color:var(--olive-dark); margin-top:6px;">Mobil Uygulama Sepeti & %10 İndirim</h2>
+          </div>
+          <span class="badge badge-gold" style="font-size:0.85rem; padding:8px 14px;" id="selected-mode-badge">
+            🛵 Mod: Eve Paket Servis
+          </span>
+        </div>
+
+        <p style="font-size:0.92rem; color:var(--text-body); margin-bottom:20px;">
+          Soldaki telefon ekranından ürünleri sepete ekleyin. Sistem <strong>%10 Mobil Uygulama İndirimini</strong> otomatik düşer, siparişten kazanacağınız <strong>%5 Çökertme Puanı</strong> ve <strong>Damga</strong> sayısını hesaplar. Siparişi tamamladığınızda <strong>Yönetim Paneline</strong> canlı düşer.
+        </p>
+
+        <div id="cart-items-container" style="margin-bottom:20px;"></div>
+
+        <!-- İndirim ve Sadakat Özeti -->
+        <div style="background:var(--cream-warm); border-radius:16px; padding:20px; border:1px solid var(--stone-border); margin-bottom:20px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.95rem;">
+            <span>Menü Liste Ara Toplamı:</span>
+            <strong id="summary-subtotal">0,00 ₺</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.95rem; color:var(--success); font-weight:700;">
+            <span>🏷️ Mobil Uygulama Özel %10 İndirimi:</span>
+            <span id="summary-discount">-0,00 ₺</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:0.92rem;">
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; color:var(--sea-dark); font-weight:700;">
+              <input type="checkbox" id="use-points-checkbox" onchange="renderCart()" />
+              <span>🪙 Cüzdandaki Çökertme Puanı Kullan (<span id="available-points-label">145</span> ₺)</span>
+            </label>
+            <span id="summary-points-used" style="color:var(--sea-primary); font-weight:700;">0,00 ₺</span>
+          </div>
+          <div style="border-top:2px dashed var(--stone-border); margin:12px 0; padding-top:12px; display:flex; justify-content:space-between; font-size:1.3rem; font-weight:800; color:var(--olive-dark);">
+            <span>Ödenecek Net Tutar:</span>
+            <span id="summary-final" style="color:var(--olive-primary);">0,00 ₺</span>
+          </div>
+          <div style="background:var(--sea-soft); color:var(--sea-dark); padding:10px 14px; border-radius:10px; font-size:0.85rem; font-weight:700; display:flex; justify-content:space-between;">
+            <span>🎁 Bu Siparişten Kazanacağınız:</span>
+            <span id="summary-earned">+0,00 ₺ Çökertme Puan & +1 Damga</span>
+          </div>
+        </div>
+
+        <!-- Müşteri ve Teslimat Bilgisi -->
+        <form id="app-order-form">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <div class="form-group">
+              <label class="form-label">Adınız Soyadınız *</label>
+              <input type="text" id="order-name" class="form-input" value="Emre Bey (Adana)" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Cep Telefonunuz *</label>
+              <input type="text" id="order-phone" class="form-input" value="0532 455 01 01" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Şube Seçimi (Çoklu Şube / Franchise Altyapısı)</label>
+            <select id="order-branch" class="form-select">
+              <option value="Adana Çukurova Merkez Şube">📍 Adana Çukurova Merkez Şube (Açık)</option>
+              <option value="Muğla Bodrum Konsept Şube">📍 Muğla Bodrum Marina Şube</option>
+              <option value="İstanbul Kadıköy Şube">📍 İstanbul Bağdat Caddesi Şube</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="address-group">
+            <label class="form-label">Teslimat Adresi / Sipariş Notu</label>
+            <input type="text" id="order-address" class="form-input" value="Güzelyalı Mah. Turgut Özal Bulvarı Çukurova / Adana (Kibrit patates bol çıtır olsun)" />
+          </div>
+
+          <button type="submit" class="btn btn-olive" style="width:100%; padding:15px; font-size:1rem;">
+            ✅ %10 İndirimli Siparişi Tamamla ve Puan Kazan
+          </button>
+        </form>
+
+        <div id="order-success-box" style="display:none; margin-top:16px; padding:18px; border-radius:14px; background:var(--olive-soft); border:2px solid var(--olive-primary); color:var(--olive-dark);"></div>
+      </div>
+
+      <!-- Stratejik Tavsiye Özeti -->
+      <div class="info-panel-card" style="background:linear-gradient(135deg, var(--olive-soft), var(--sea-soft));">
+        <h3 style="font-size:1.3rem; color:var(--olive-dark); margin-bottom:10px;">
+          💡 Neden Masada QR Sipariş Yok, Uygulamada %10 İndirim Var?
+        </h3>
+        <ul style="list-style:none; display:grid; gap:10px; font-size:0.9rem; color:var(--text-dark);">
+          <li>✔️ <strong>Restoranda Kalite ve Hız:</strong> Masada misafirler sadece QR menüden yemekleri inceler ve garsona sipariş verir; sıcak Çökertme servisi aksamaz.</li>
+          <li>✔️ <strong>Komisyonsuz Paket Satış:</strong> Müşteri evdeyken veya iş yerindeyken dış yemek siteleri yerine <strong>%10 indirim + Puan</strong> verdiği için doğrudan sizin uygulamanızdan sipariş verir.</li>
+          <li>✔️ <strong>Restoranda Kasada Puan:</strong> Masada yemek yiyen müşteri de hesap öderken uygulamadaki <em>"Müşteri QR"</em> kodunu kasaya okutarak Çökertme Puan biriktirebilir.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Müşteri QR Kod Modalı (Kasada Puan Kazanmak İçin) -->
+  <div class="modal-backdrop" id="member-qr-modal" onclick="if(event.target===this) closeMemberQrModal()">
+    <div class="modal-content" style="max-width:380px; text-align:center; padding:28px;">
+      <span class="badge badge-gold" style="margin-bottom:8px;">ÇÖKERTME CLUB KASA KARTI</span>
+      <h3 style="font-size:1.4rem; color:var(--olive-dark); margin-bottom:6px;">Müşteri Sadakat QR Kodunuz</h3>
+      <p style="font-size:0.86rem; color:var(--text-body); margin-bottom:18px;">
+        Restoranda yemek yedikten sonra kasada ödeme yaparken bu kodu okutarak <strong>%5 Çökertme Puan</strong> ve <strong>Damga</strong> kazanabilirsiniz.
+      </p>
+      <div style="background:#fff; padding:16px; border-radius:16px; border:2px solid var(--gold-primary); display:inline-block; margin-bottom:14px;">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&color=3B5233&data=COKERTME-CLUB-MEMBER-ADANA-01" alt="Müşteri Sadakat QR" width="180" height="180" />
+      </div>
+      <div style="font-weight:800; color:var(--sea-primary); margin-bottom:16px;">Üye No: CKR-ADANA-01</div>
+      <button class="btn btn-olive" style="width:100%;" onclick="closeMemberQrModal()">Kapat</button>
+    </div>
+  </div>
+
+  <script src="assets/data.js"></script>
+  <script>
+    let appSelectedCat = "all";
+    let orderMode = "Eve Paket Servis";
+    let cart = [];
+
+    function initApp() {
+      const state = CokertmeStore.getState();
+      // Başlangıçta örnek olarak 1 Bodrum Klasik Çökertme + 1 Yayık Ayranı sepete ekleyelim ki kullanıcı indirimi hemen görsün
+      if (cart.length === 0 && state.items.length >= 2) {
+        cart = [
+          { itemId: state.items[0].id, qty: 1 },
+          { itemId: state.items[state.items.length - 2].id, qty: 1 }
+        ];
+      }
+      renderLoyaltyHeader();
+      renderAppCategories();
+      renderAppItems();
+      renderCart();
+    }
+
+    function renderLoyaltyHeader() {
+      const state = CokertmeStore.getState();
+      const user = state.loyaltyUser;
+      document.getElementById("user-tier").textContent = user.tier;
+      document.getElementById("user-points").textContent = user.points.toFixed(2) + " ₺";
+      document.getElementById("available-points-label").textContent = user.points.toFixed(0);
+      document.getElementById("stamp-counter-text").textContent = `${user.stamps} / 5 Damga`;
+
+      const stampRow = document.getElementById("stamp-row");
+      let stampsHtml = "";
+      for (let i = 1; i <= 5; i++) {
+        const filled = i <= user.stamps;
+        stampsHtml += `
+          <div class="stamp-circle ${filled ? 'filled' : ''}" title="${i}. Çökertme Damgası">
+            ${filled ? "🥘" : i}
+          </div>
+        `;
+      }
+      stampsHtml += `
+        <div class="stamp-circle" style="border-color:var(--gold-light); color:var(--gold-light); width:auto; padding:0 10px; border-radius:999px; font-size:0.75rem;">
+          🎁 6. Hediye!
+        </div>
+      `;
+      stampRow.innerHTML = stampsHtml;
+    }
+
+    function setOrderMode(mode) {
+      orderMode = mode;
+      document.getElementById("mode-delivery").classList.toggle("active", mode.includes("Paket"));
+      document.getElementById("mode-takeaway").classList.toggle("active", mode.includes("Gel-Al"));
+      document.getElementById("selected-mode-badge").textContent = (mode.includes("Paket") ? "🛵 Mod: " : "🛍️ Mod: ") + mode;
+    }
+
+    function renderAppCategories() {
+      const state = CokertmeStore.getState();
+      const el = document.getElementById("app-categories");
+      let html = `<button class="category-pill ${appSelectedCat === 'all' ? 'active' : ''}" style="padding:7px 14px; font-size:0.78rem;" onclick="selectAppCat('all')">Tümü</button>`;
+      html += state.categories.map(c => `
+        <button class="category-pill ${appSelectedCat === c.id ? 'active' : ''}" style="padding:7px 14px; font-size:0.78rem;" onclick="selectAppCat('${c.id}')">
+          ${c.icon} ${c.name.tr}
+        </button>
+      `).join("");
+      el.innerHTML = html;
+    }
+
+    function selectAppCat(catId) {
+      appSelectedCat = catId;
+      renderAppCategories();
+      renderAppItems();
+    }
+
+    function renderAppItems() {
+      const state = CokertmeStore.getState();
+      const listEl = document.getElementById("app-item-list");
+      const items = state.items.filter(i => i.available && (appSelectedCat === "all" || i.categoryId === appSelectedCat));
+
+      listEl.innerHTML = items.map(item => {
+        const appPrice = (item.price * 0.9).toFixed(0);
+        return `
+          <div class="app-item-card">
+            <img class="app-item-img" src="${item.image}" alt="${item.name.tr}" />
+            <div class="app-item-info">
+              <div class="app-item-title">${item.name.tr}</div>
+              <div class="app-item-desc">${item.desc.tr}</div>
+              <div class="app-price-row">
+                <span class="old-price">${item.price} ₺</span>
+                <span class="discounted-price">%10 App: ${appPrice} ₺</span>
+              </div>
+            </div>
+            <button class="add-btn" onclick="addToCart('${item.id}')" title="Sepete Ekle">+</button>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function addToCart(itemId) {
+      const existing = cart.find(c => c.itemId === itemId);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ itemId, qty: 1 });
+      }
+      renderCart();
+    }
+
+    function changeQty(itemId, delta) {
+      const idx = cart.findIndex(c => c.itemId === itemId);
+      if (idx === -1) return;
+      cart[idx].qty += delta;
+      if (cart[idx].qty <= 0) {
+        cart.splice(idx, 1);
+      }
+      renderCart();
+    }
+
+    function renderCart() {
+      const state = CokertmeStore.getState();
+      const container = document.getElementById("cart-items-container");
+
+      if (cart.length === 0) {
+        container.innerHTML = `
+          <div style="padding:24px; text-align:center; background:var(--cream-bg); border-radius:12px; border:1px dashed var(--stone-border); color:var(--text-muted);">
+            Sepetiniz şu an boş. Soldaki uygulama ekranından "+" butonuna basarak ürün ekleyebilirsiniz.
+          </div>
+        `;
+        document.getElementById("summary-subtotal").textContent = "0,00 ₺";
+        document.getElementById("summary-discount").textContent = "-0,00 ₺";
+        document.getElementById("summary-points-used").textContent = "0,00 ₺";
+        document.getElementById("summary-final").textContent = "0,00 ₺";
+        document.getElementById("summary-earned").textContent = "+0,00 ₺ Puan";
+        document.getElementById("cart-total-display").textContent = "Sepet Boş (0 ₺)";
+        return;
+      }
+
+      let subtotal = 0;
+      container.innerHTML = cart.map(entry => {
+        const item = state.items.find(i => i.id === entry.itemId);
+        if (!item) return "";
+        const lineTotal = item.price * entry.qty;
+        subtotal += lineTotal;
+        return `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--cream-bg); border-radius:12px; margin-bottom:8px; border:1px solid var(--stone-border);">
+            <div>
+              <div style="font-weight:700; color:var(--olive-dark); font-size:0.94rem;">${item.name.tr}</div>
+              <div style="font-size:0.8rem; color:var(--text-muted);">Birim: ${item.price} ₺ • %10 İndirimli: ${(item.price * 0.9).toFixed(1)} ₺</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <button type="button" onclick="changeQty('${item.id}', -1)" style="width:28px; height:28px; border-radius:8px; border:1px solid var(--stone-border); background:#fff; cursor:pointer; font-weight:800;">-</button>
+              <strong style="min-width:18px; text-align:center;">${entry.qty}</strong>
+              <button type="button" onclick="changeQty('${item.id}', 1)" style="width:28px; height:28px; border-radius:8px; border:1px solid var(--stone-border); background:#fff; cursor:pointer; font-weight:800;">+</button>
+              <strong style="min-width:70px; text-align:right; color:var(--olive-dark);">${lineTotal} ₺</strong>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      const discount = subtotal * 0.10; // %10 Mobil Uygulama İndirimi
+      let afterDiscount = subtotal - discount;
+
+      const usePoints = document.getElementById("use-points-checkbox").checked;
+      let pointsUsed = 0;
+      if (usePoints && state.loyaltyUser.points > 0) {
+        pointsUsed = Math.min(state.loyaltyUser.points, afterDiscount);
+        afterDiscount -= pointsUsed;
+      }
+
+      const earnedPoints = afterDiscount * 0.05; // %5 Sadakat Puanı
+
+      document.getElementById("summary-subtotal").textContent = subtotal.toFixed(2) + " ₺";
+      document.getElementById("summary-discount").textContent = "-" + discount.toFixed(2) + " ₺";
+      document.getElementById("summary-points-used").textContent = pointsUsed > 0 ? ("-" + pointsUsed.toFixed(2) + " ₺") : "0,00 ₺";
+      document.getElementById("summary-final").textContent = afterDiscount.toFixed(2) + " ₺";
+      document.getElementById("summary-earned").textContent = `+${earnedPoints.toFixed(2)} ₺ Çökertme Puan & +1 Damga`;
+
+      document.getElementById("cart-discount-summary").textContent = `Kazancınız: ${discount.toFixed(1)} ₺ İndirim + ${earnedPoints.toFixed(1)} ₺ Puan`;
+      document.getElementById("cart-total-display").textContent = `Toplam: ${afterDiscount.toFixed(2)} ₺`;
+    }
+
+    function scrollToCheckout() {
+      document.getElementById("checkout-panel").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function openMemberQrModal() {
+      document.getElementById("member-qr-modal").classList.add("open");
+    }
+
+    function closeMemberQrModal() {
+      document.getElementById("member-qr-modal").classList.remove("open");
+    }
+
+    document.getElementById("app-order-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      if (cart.length === 0) {
+        alert("Lütfen önce sepetinize ürün ekleyin.");
+        return;
+      }
+
+      const state = CokertmeStore.getState();
+      let subtotal = 0;
+      const itemNames = [];
+
+      cart.forEach(entry => {
+        const item = state.items.find(i => i.id === entry.itemId);
+        if (item) {
+          subtotal += item.price * entry.qty;
+          itemNames.push(`${entry.qty}x ${item.name.tr}`);
+        }
+      });
+
+      const discount = subtotal * 0.10;
+      let finalTotal = subtotal - discount;
+      const usePoints = document.getElementById("use-points-checkbox").checked;
+      let pointsUsed = 0;
+      if (usePoints && state.loyaltyUser.points > 0) {
+        pointsUsed = Math.min(state.loyaltyUser.points, finalTotal);
+        finalTotal -= pointsUsed;
+        state.loyaltyUser.points -= pointsUsed;
+      }
+
+      const pointsEarned = finalTotal * 0.05;
+      state.loyaltyUser.points += pointsEarned;
+      state.loyaltyUser.stamps = (state.loyaltyUser.stamps + 1) % 6;
+
+      const newOrder = {
+        id: "CKR-" + Math.floor(1000 + Math.random() * 9000),
+        customerName: document.getElementById("order-name").value.trim(),
+        phone: document.getElementById("order-phone").value.trim(),
+        mode: orderMode,
+        branch: document.getElementById("order-branch").value,
+        items: itemNames,
+        subtotal: subtotal,
+        discount: Number(discount.toFixed(2)),
+        total: Number(finalTotal.toFixed(2)),
+        pointsEarned: Number(pointsEarned.toFixed(2)),
+        status: "Yeni Sipariş (Uygulama %10 İndirimli)",
+        createdAt: new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })
+      };
+
+      state.orders.unshift(newOrder);
+      CokertmeStore.saveState(state);
+
+      const box = document.getElementById("order-success-box");
+      box.style.display = "block";
+      box.innerHTML = `
+        <div style="font-weight:800; font-size:1.08rem; margin-bottom:6px;">
+          🎉 Siparişiniz Alındı! (#${newOrder.id})
+        </div>
+        <div style="font-size:0.9rem;">
+          • <strong>%10 Mobil Uygulama İndirimi:</strong> ${discount.toFixed(2)} ₺ kazandınız.<br/>
+          • <strong>Sadakat Cüzdanınıza Eklenen:</strong> +${pointsEarned.toFixed(2)} ₺ Çökertme Puan ve +1 Çökertme Damgası!<br/>
+          • Siparişiniz <strong><a href="yonetim.html" style="text-decoration:underline;">Merkez/Şube Yönetim Paneline</a></strong> iletildi.
+        </div>
+      `;
+
+      cart = [];
+      document.getElementById("use-points-checkbox").checked = false;
+      renderLoyaltyHeader();
+      renderCart();
+    });
+
+    CokertmeStore.syncFromServer().then(initApp);
+  </script>
+</body>
+</html>
