@@ -2,465 +2,1156 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QR Dijital Menü | Çökertme Dünyası</title>
-  <link rel="stylesheet" href="assets/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>À La Carte QR Menü – Çökertme Dünyası</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    .qr-header {
-      background: linear-gradient(135deg, var(--olive-dark) 0%, var(--olive-primary) 55%, var(--sea-primary) 100%);
-      color: #fff;
-      padding: 28px 20px 24px;
-      border-bottom: 4px solid var(--gold-primary);
+    :root {
+      --pt-primary: #dd5903;
+      --pt-secondary: #033a58;
+      --pt-navy: #14314F;
+      --pt-text: #0a253e;
+      --pt-text-muted: #4e657a;
+      --pt-olive: #3B5233;
+      --pt-gold: #D49B35;
+      --pt-mist-top: #F3F7FA;
+      --pt-mist-bottom: #F8FCFF;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Jost', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    .qr-header-inner {
-      max-width: 960px;
-      margin: 0 auto;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    .qr-top-row {
-      display: flex;
-      justify-content: space-between;
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--pt-text);
+      background-color: #ffffff;
+      line-height: 1.7;
+      font-weight: 400;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    /* ==========================================================================
+       1. PATIOTIME DEMO 4 OVERLAP & STICKY HEADER
+       ========================================================================== */
+    .pt-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 900;
+      padding: 24px 48px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 18px;
+      transition: all 0.35s ease;
+      background: linear-gradient(180deg, rgba(10, 37, 62, 0.72) 0%, rgba(10, 37, 62, 0) 100%);
     }
 
-    .table-info-pill {
+    .pt-header.scrolled {
+      background: rgba(20, 49, 79, 0.96);
+      backdrop-filter: blur(10px);
+      padding: 14px 48px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.16);
+    }
+
+    .pt-menu-toggle {
+      background: transparent;
+      border: none;
+      color: #fff;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.14);
-      border: 1.5px solid var(--gold-primary);
-      padding: 8px 16px;
-      border-radius: 999px;
-      font-size: 0.86rem;
-      font-weight: 700;
-      color: var(--gold-light);
-    }
-
-    .lang-curr-bar {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .selector-chip {
-      background: rgba(255, 255, 255, 0.14);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.28);
-      padding: 6px 12px;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .selector-chip.active {
-      background: var(--gold-primary);
-      color: var(--olive-dark);
-      border-color: var(--gold-light);
-    }
-
-    /* Sadece Görüntüleme Bilgilendirme Kutusu */
-    .view-only-notice {
-      background: var(--olive-soft);
-      border: 1.5px solid var(--olive-primary);
-      color: var(--olive-dark);
-      border-radius: var(--radius-md);
-      padding: 14px 18px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       gap: 14px;
-      flex-wrap: wrap;
-      margin: 20px 0 14px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 500;
+      width: fit-content;
     }
 
-    /* Mobil Uygulama Tanıtım Barı */
-    .qr-app-banner {
-      background: linear-gradient(90deg, var(--sea-dark) 0%, var(--sea-primary) 100%);
-      color: #fff;
-      border-radius: var(--radius-md);
-      padding: 16px 20px;
+    .pt-hamburger-lines {
+      width: 30px;
+      height: 18px;
       display: flex;
+      flex-direction: column;
       justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 14px;
-      margin-bottom: 22px;
-      border: 1.5px solid var(--gold-primary);
-      box-shadow: var(--shadow-sm);
     }
 
-    .qr-container {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 0 18px 64px;
-    }
-
-    .search-bar-wrap {
-      margin: 14px 0 10px;
-      position: relative;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 13px 18px 13px 44px;
-      border-radius: 999px;
-      border: 1.5px solid var(--stone-border);
+    .pt-hamburger-lines span {
+      display: block;
+      height: 1.5px;
       background: #fff;
-      font-size: 0.95rem;
-      font-family: inherit;
-      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
     }
 
-    .search-input:focus {
-      outline: none;
-      border-color: var(--sea-primary);
+    .pt-hamburger-lines span:nth-child(2) {
+      width: 75%;
     }
 
-    .search-icon {
-      position: absolute;
-      left: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 1.05rem;
+    .pt-menu-toggle:hover .pt-hamburger-lines span {
+      width: 100%;
+      background: var(--pt-gold);
     }
 
-    .sold-out-overlay {
-      position: absolute;
+    .pt-logo-center {
+      text-align: center;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .pt-logo-stars {
+      color: var(--pt-gold);
+      font-size: 11px;
+      letter-spacing: 6px;
+      margin-bottom: 3px;
+    }
+
+    .pt-logo-title {
+      font-family: var(--font-display);
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      line-height: 1;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    .pt-logo-sub {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.82);
+      margin-top: 4px;
+    }
+
+    .pt-header-right {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pt-btn-outline {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 11px 22px;
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      color: #fff;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .pt-btn-outline:hover {
+      background: #fff;
+      color: var(--pt-navy);
+    }
+
+    /* ==========================================================================
+       2. SOL KAYAR YAN MENÜ (SIDEMENU DRAWER - max-width: 475px, #f8fcff)
+       ========================================================================== */
+    .pt-sidemenu-backdrop {
+      position: fixed;
       inset: 0;
-      background: rgba(30, 38, 27, 0.65);
+      background: rgba(2, 25, 40, 0.65);
+      backdrop-filter: blur(3px);
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+
+    .pt-sidemenu-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .pt-sidemenu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      max-width: 475px;
+      background: var(--pt-mist-bottom);
+      color: var(--pt-text);
+      z-index: 1001;
+      padding: 44px 48px;
+      transform: translateX(-100%);
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-y: auto;
+      border-right: 3px solid var(--pt-olive);
+    }
+
+    .pt-sidemenu.open {
+      transform: translateX(0);
+    }
+
+    .pt-sidemenu-close {
+      background: none;
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--pt-text);
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .pt-sidemenu-nav {
+      list-style: none;
+      margin: 32px 0;
+    }
+
+    .pt-sidemenu-nav li {
+      border-bottom: 1px solid rgba(3, 58, 88, 0.08);
+    }
+
+    .pt-sidemenu-nav a {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-display);
+      font-size: 27px;
+      font-weight: 600;
+      padding: 11px 0;
+      color: var(--pt-text);
+    }
+
+    .pt-sidemenu-nav a:hover {
+      color: var(--pt-primary);
+      padding-left: 8px;
+    }
+
+    /* ==========================================================================
+       3. PATIOTIME À LA CARTE MENU HERO BANNER (min-height: 560px, #14314F)
+       ========================================================================== */
+    .pt-menu-hero {
+      position: relative;
+      min-height: 560px;
+      background-color: var(--pt-navy);
+      background-image: url("https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1920&q=85");
+      background-position: center center;
+      background-size: cover;
       display: flex;
       align-items: center;
       justify-content: center;
+      text-align: center;
       color: #fff;
-      font-weight: 800;
-      font-size: 1.1rem;
+      padding: 120px 24px 70px;
+    }
+
+    .pt-menu-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(20, 49, 79, 0.62) 0%,
+        rgba(20, 49, 79, 0.45) 50%,
+        rgba(20, 49, 79, 0.72) 100%
+      );
+    }
+
+    .pt-menu-hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 820px;
+    }
+
+    .pt-menu-hero-title {
+      font-family: var(--font-display);
+      font-size: 68px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .pt-menu-hero-meta {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 24px;
+    }
+
+    /* Dil ve Para Birimi + Kategori Hızlı Geçiş Barı */
+    .pt-toolbar {
+      background: var(--pt-mist-bottom);
+      border-bottom: 1px solid rgba(3, 58, 88, 0.1);
+      padding: 16px 24px;
+      position: sticky;
+      top: 67px;
+      z-index: 800;
+    }
+
+    .pt-toolbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .pt-quick-cats {
+      display: flex;
+      gap: 22px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .pt-quick-cats a {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 600;
+      text-transform: uppercase;
       letter-spacing: 0.06em;
+      color: var(--pt-text);
+      white-space: nowrap;
+      padding-bottom: 3px;
+      border-bottom: 2px solid transparent;
+    }
+
+    .pt-quick-cats a:hover {
+      color: var(--pt-primary);
+      border-bottom-color: var(--pt-primary);
+    }
+
+    .pt-lang-pills {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .pt-chip {
+      border: 1px solid rgba(10, 37, 62, 0.2);
+      background: #fff;
+      color: var(--pt-text);
+      padding: 5px 11px;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .pt-chip.active,
+    .pt-chip:hover {
+      background: var(--pt-secondary);
+      color: #fff;
+      border-color: var(--pt-secondary);
+    }
+
+    /* ==========================================================================
+       4. PATIOTIME SECTION HEADINGS & 2-COLUMN FOOD MENU (food-menu-style-3)
+       ========================================================================== */
+    .pt-menu-section-header {
+      padding: 100px 24px 60px;
+      text-align: center;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .pt-subtitle {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--pt-primary);
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .pt-title {
+      font-family: var(--font-display);
+      font-size: 52px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--pt-text);
+      line-height: 1.15;
+    }
+
+    .pt-menu-columns-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 120px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    .pt-menu-col-left {
+      padding-right: 50px;
+    }
+
+    .pt-menu-col-right {
+      padding-left: 50px;
+    }
+
+    /* Orijinal PatioTime .pt-food-menu.food-menu-style-3 */
+    .pt-food-menu-item {
+      margin-bottom: 34px;
+      cursor: pointer;
+      padding: 8px 10px;
+      margin-left: -10px;
+      margin-right: -10px;
+      border-radius: 6px;
+      transition: background-color 0.22s ease;
+    }
+
+    .pt-food-menu-item:hover {
+      background-color: var(--pt-mist-bottom);
+    }
+
+    .pt-food-menu-header {
+      display: flex;
+      align-items: baseline;
+      width: 100%;
+    }
+
+    .pt-food-menu-title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--pt-text);
+      line-height: 1.3;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pt-food-badge {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      background: var(--pt-olive);
+      color: #fff;
+      vertical-align: middle;
+    }
+
+    .pt-food-menu-lines {
+      flex: 1;
+      border-bottom: 1px solid rgba(10, 37, 62, 0.22);
+      margin: 0 14px;
+      position: relative;
+      top: -4px;
+      min-width: 24px;
+    }
+
+    .pt-food-menu-price {
+      font-family: var(--font-display);
+      font-size: 25px;
+      font-weight: 700;
+      color: var(--pt-text);
+      white-space: nowrap;
+    }
+
+    .pt-food-menu-details {
+      font-family: var(--font-sans);
+      font-size: 15px;
+      color: var(--pt-text-muted);
+      margin-top: 5px;
+      line-height: 1.6;
+    }
+
+    /* ==========================================================================
+       5. PATIOTIME FULL-WIDTH PARALLAX IMAGE DIVIDERS (min-height: 560px)
+       ========================================================================== */
+    .pt-parallax-divider {
+      min-height: 560px;
+      background-position: center center;
+      background-size: cover;
+      background-attachment: fixed;
+      position: relative;
+    }
+
+    .pt-parallax-divider::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(20, 49, 79, 0.16);
+    }
+
+    /* ==========================================================================
+       6. MOBİL UYGULAMA TANITIM BÖLÜMÜ (post-368.css #F3F7FA -> #F8FCFF)
+       ========================================================================== */
+    .pt-promo-section {
+      background-image: linear-gradient(180deg, var(--pt-mist-top) 0%, var(--pt-mist-bottom) 100%);
+      padding: 100px 24px 80px;
+    }
+
+    .pt-promo-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 32px;
+    }
+
+    .pt-btn-solid {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 16px 32px;
+      background: var(--pt-primary);
+      color: #fff;
+      border: 1px solid var(--pt-primary);
+      cursor: pointer;
+    }
+
+    .pt-btn-solid:hover {
+      background: var(--pt-olive);
+      border-color: var(--pt-olive);
+    }
+
+    /* ==========================================================================
+       7. PATIOTIME DEMO 4 FOOTER WITH TOP WAVE SVG (post-368.css #14314F)
+       ========================================================================== */
+    .pt-footer {
+      position: relative;
+      background-color: var(--pt-navy);
+      background-image: url("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920&q=80");
+      background-position: center center;
+      background-size: cover;
+      color: #fff;
+      padding: 170px 24px 40px;
+    }
+
+    .pt-footer-overlay {
+      position: absolute;
+      inset: 0;
+      background-color: var(--pt-navy);
+      opacity: 0.91;
+    }
+
+    .pt-footer-shape-top {
+      position: absolute;
+      top: -1px;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      line-height: 0;
+      z-index: 3;
+    }
+
+    .pt-footer-shape-top svg {
+      position: relative;
+      display: block;
+      width: calc(112% + 1.3px);
+      height: 89px;
+      transform: translateX(-6%) rotateY(180deg);
+    }
+
+    .pt-footer-shape-top .shape-fill {
+      fill: var(--pt-mist-bottom);
+    }
+
+    .pt-footer-inner {
+      position: relative;
+      z-index: 4;
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    .pt-footer-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+      gap: 48px;
+      padding-bottom: 64px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .pt-footer h4 {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .pt-footer p {
+      font-size: 15px;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.8;
+    }
+
+    .pt-footer-bottom {
+      padding-top: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 13.5px;
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    /* ==========================================================================
+       8. ÜRÜN DETAY VE FOTOĞRAF MODALI (SADECE GÖRÜNTÜLEME - SİPARİŞSİZ)
+       ========================================================================== */
+    .pt-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 37, 62, 0.82);
+      backdrop-filter: blur(5px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .pt-modal-backdrop.open {
+      display: flex;
+    }
+
+    .pt-modal-card {
+      background: #fff;
+      max-width: 560px;
+      width: 100%;
+      overflow: hidden;
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.4);
+      border-top: 4px solid var(--pt-olive);
+      position: relative;
+    }
+
+    @media (max-width: 1024px) {
+      .pt-menu-col-left {
+        padding-right: 28px;
+      }
+      .pt-menu-col-right {
+        padding-left: 28px;
+      }
+      .pt-menu-section-header {
+        padding: 80px 24px 50px;
+      }
+      .pt-menu-columns-container {
+        padding-bottom: 80px;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .pt-header {
+        padding: 16px 18px;
+      }
+      .pt-logo-title {
+        font-size: 22px;
+      }
+      .pt-menu-hero {
+        min-height: 400px;
+        padding: 110px 20px 50px;
+      }
+      .pt-menu-hero-title {
+        font-size: 42px;
+      }
+      .pt-title {
+        font-size: 36px;
+      }
+      .pt-menu-columns-container {
+        grid-template-columns: 1fr;
+        padding-bottom: 60px;
+      }
+      .pt-menu-col-left {
+        padding-right: 0;
+      }
+      .pt-menu-col-right {
+        padding-left: 0;
+        padding-top: 8px;
+      }
+      .pt-parallax-divider {
+        min-height: 360px;
+        background-attachment: scroll;
+      }
+      .pt-footer-grid {
+        grid-template-columns: 1fr;
+      }
+      .pt-toolbar {
+        top: 58px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Üst Ekosistem Geçiş Barı -->
-  <div class="ecosystem-bar">
+  <!-- ========================================================================
+       SOL KAYAR MENÜ (PATIOTIME DEMO 4 SIDEMENU)
+       ======================================================================== -->
+  <div class="pt-sidemenu-backdrop" id="sidemenu-backdrop" onclick="toggleSideMenu(false)"></div>
+  <aside class="pt-sidemenu" id="sidemenu">
     <div>
-      📱 <strong>MASADAKİ DİJİTAL QR MENÜ</strong> — Sadece Görüntüleme Modu (Siparişsiz)
-    </div>
-    <div class="ecosystem-links">
-      <a href="index.html">🏛️ Kurumsal Web</a>
-      <a href="menu.html" class="active">📱 Masadaki QR Menü</a>
-      <a href="uygulama.html">🛍️ Mobil Uygulama (%10 İndirim)</a>
-      <a href="yonetim.html">⚙️ Yönetim & QR Üretici</a>
-    </div>
-  </div>
-
-  <!-- QR Menü Üst Başlığı -->
-  <header class="qr-header">
-    <div class="qr-header-inner">
-      <div class="qr-top-row">
-        <div class="brand-logo">
-          <div class="brand-emblem">ÇD</div>
-          <div class="brand-text">
-            <span class="brand-name" style="color:#fff; font-size:1.45rem;">ÇÖKERTME DÜNYASI</span>
-            <span class="brand-sub" style="color:var(--gold-light);" id="branch-subtitle">Adana Merkez Şube • Dijital QR Menü</span>
-          </div>
-        </div>
-
-        <div class="table-info-pill" id="table-pill">
-          🍽️ Masa Menüsü • Sadece Görüntüleme
-        </div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <button class="pt-sidemenu-close" onclick="toggleSideMenu(false)">✕ KAPAT</button>
+        <span style="font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--pt-olive); font-weight:700;">DİJİTAL QR MENÜ</span>
       </div>
 
-      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-        <p style="font-size:0.92rem; color:rgba(255,255,255,0.9);" id="welcome-text">
-          Hoş geldiniz! Lezzetlerimizi inceleyip siparişinizi masanızdaki servis personelimize iletebilirsiniz.
-        </p>
+      <ul class="pt-sidemenu-nav">
+        <li><a href="index.html"><span>Ana Sayfa</span><span>→</span></a></li>
+        <li><a href="#sec-cokertmeler" onclick="toggleSideMenu(false)"><span>İmza Çökertme Kebapları</span><span>→</span></a></li>
+        <li><a href="#sec-baslangiclar" onclick="toggleSideMenu(false)"><span>Ege &amp; Akdeniz Başlangıçlar</span><span>→</span></a></li>
+        <li><a href="#sec-tatlilar" onclick="toggleSideMenu(false)"><span>Tatlılar &amp; İçecekler</span><span>→</span></a></li>
+        <li><a href="uygulama.html"><span>%10 İndirimli Mobil Uygulama</span><span>→</span></a></li>
+        <li><a href="yonetim.html"><span>Yönetim Paneli</span><span>→</span></a></li>
+      </ul>
+    </div>
 
-        <!-- Çoklu Dil ve Para Birimi Seçici (Yurt Dışı & Turist Uyumu) -->
-        <div class="lang-curr-bar">
-          <button class="selector-chip active" onclick="setLanguage('tr')" id="lang-tr">🇹🇷 TR</button>
-          <button class="selector-chip" onclick="setLanguage('en')" id="lang-en">🇬🇧 EN</button>
-          <button class="selector-chip" onclick="setLanguage('de')" id="lang-de">🇩🇪 DE</button>
-          <button class="selector-chip" onclick="setLanguage('ar')" id="lang-ar">🇸🇦 AR</button>
-          <span style="opacity:0.4;">|</span>
-          <button class="selector-chip active" onclick="setCurrency('TRY')" id="curr-TRY">₺ TL</button>
-          <button class="selector-chip" onclick="setCurrency('EUR')" id="curr-EUR">€ EUR</button>
-          <button class="selector-chip" onclick="setCurrency('USD')" id="curr-USD">$ USD</button>
-        </div>
+    <div style="font-size:14px; color:var(--pt-text-muted); border-top:1px solid rgba(3,58,88,0.12); padding-top:20px;">
+      <div>📍 Turgut Özal Bulvarı, Çukurova / Adana</div>
+      <div>📞 +90 (322) 455 01 48</div>
+      <div style="margin-top:8px; color:var(--pt-olive); font-weight:600;">
+        🍽️ Masada Sadece Görüntüleme Modu Aktif
       </div>
+    </div>
+  </aside>
+
+  <!-- ========================================================================
+       ÜST HEADER (OVERLAP & STICKY)
+       ======================================================================== -->
+  <header class="pt-header" id="main-header">
+    <div>
+      <button class="pt-menu-toggle" onclick="toggleSideMenu(true)">
+        <div class="pt-hamburger-lines">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <span>MENÜ</span>
+      </button>
+    </div>
+
+    <a href="index.html" class="pt-logo-center">
+      <div class="pt-logo-stars">★ ★ ★ ★ ★</div>
+      <div class="pt-logo-title">ÇÖKERTME DÜNYASI</div>
+      <div class="pt-logo-sub" id="table-badge-sub">ADANA MERKEZ • À LA CARTE QR MENÜ</div>
+    </a>
+
+    <div class="pt-header-right">
+      <a href="uygulama.html" class="pt-btn-outline">%10 APP SİPARİŞ</a>
     </div>
   </header>
 
-  <main class="qr-container">
-    <!-- Sadece Görüntüleme Bilgisi -->
-    <div class="view-only-notice">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <span style="font-size:1.35rem;">💁‍♂️</span>
+  <!-- ========================================================================
+       HERO BANNER (PatioTime Demo 4 À La Carte Menu Hero - min-height: 560px)
+       ======================================================================== -->
+  <section class="pt-menu-hero">
+    <div class="pt-menu-hero-overlay"></div>
+    <div class="pt-menu-hero-content">
+      <h1 class="pt-menu-hero-title" id="hero-main-title">À la Carte Menü</h1>
+      <div class="pt-menu-hero-meta" id="hero-meta-note">
+        MASADA SADECE GÖRÜNTÜLEME • SİPARİŞİNİZİ SERVİS PERSONELİMİZE İLETEBİLİRSİNİZ
+      </div>
+      <div style="font-size:13px; color:rgba(255,255,255,0.82);">
+        💡 Ürün fotoğrafını ve detaylarını görmek için herhangi bir lezzetin üzerine dokunabilirsiniz.
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       YAPIŞKAN KATEGORİ & DİL / PARA BİRİMİ BARI
+       ======================================================================== -->
+  <div class="pt-toolbar">
+    <div class="pt-toolbar-inner">
+      <nav class="pt-quick-cats">
+        <a href="#sec-cokertmeler" id="nav-cat-1">01. İmza Çökertme Kebapları</a>
+        <a href="#sec-baslangiclar" id="nav-cat-2">02. Başlangıçlar &amp; Salatalar</a>
+        <a href="#sec-tatlilar" id="nav-cat-3">03. Tatlılar &amp; İçecekler</a>
+      </nav>
+
+      <div class="pt-lang-pills">
+        <button class="pt-chip active" id="lang-tr" onclick="setLang('tr')">TR</button>
+        <button class="pt-chip" id="lang-en" onclick="setLang('en')">EN</button>
+        <button class="pt-chip" id="lang-de" onclick="setLang('de')">DE</button>
+        <button class="pt-chip" id="lang-ar" onclick="setLang('ar')">AR</button>
+        <span style="opacity:0.3;">|</span>
+        <button class="pt-chip active" id="curr-TRY" onclick="setCurr('TRY')">₺ TL</button>
+        <button class="pt-chip" id="curr-EUR" onclick="setCurr('EUR')">€ EUR</button>
+        <button class="pt-chip" id="curr-USD" onclick="setCurr('USD')">$ USD</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       BÖLÜM 1: İMZA ÇÖKERTME KEBAPLARI (ANA YEMEKLER - 2 SÜTUN)
+       ======================================================================== -->
+  <section id="sec-cokertmeler">
+    <div class="pt-menu-section-header">
+      <span class="pt-subtitle" id="sub-sec-1">SOĞUK SIKIM ZEYTİNYAĞI &amp; USTALIK ATEŞİ</span>
+      <h2 class="pt-title" id="title-sec-1">İmza Çökertme Kebapları</h2>
+    </div>
+
+    <div class="pt-menu-columns-container" id="grid-cokertmeler"></div>
+  </section>
+
+  <!-- ========================================================================
+       PARALLAX GÖRSEL AYIRICI 1 (PatioTime min-height: 560px)
+       ======================================================================== -->
+  <div class="pt-parallax-divider" style="background-image:url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1920&q=85');"></div>
+
+  <!-- ========================================================================
+       BÖLÜM 2: EGE & AKDENİZ BAŞLANGIÇLAR VE SALATALAR (2 SÜTUN)
+       ======================================================================== -->
+  <section id="sec-baslangiclar">
+    <div class="pt-menu-section-header">
+      <span class="pt-subtitle" id="sub-sec-2">DAMAK TADINIZI TAZELEYİN</span>
+      <h2 class="pt-title" id="title-sec-2">Başlangıçlar &amp; Salatalar</h2>
+    </div>
+
+    <div class="pt-menu-columns-container" id="grid-baslangiclar"></div>
+  </section>
+
+  <!-- ========================================================================
+       PARALLAX GÖRSEL AYIRICI 2 (PatioTime min-height: 560px)
+       ======================================================================== -->
+  <div class="pt-parallax-divider" style="background-image:url('https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1920&q=85');"></div>
+
+  <!-- ========================================================================
+       BÖLÜM 3: GELENEKSEL TATLILAR & FERAHLATICI İÇECEKLER (2 SÜTUN)
+       ======================================================================== -->
+  <section id="sec-tatlilar">
+    <div class="pt-menu-section-header">
+      <span class="pt-subtitle" id="sub-sec-3">TATLI BİR FİNAL &amp; EGE ESİNTİSİ</span>
+      <h2 class="pt-title" id="title-sec-3">Tatlılar &amp; İçecekler</h2>
+    </div>
+
+    <div class="pt-menu-columns-container" id="grid-tatlilar"></div>
+  </section>
+
+  <!-- ========================================================================
+       PATIOTIME DEMO 4 ALT BÜLTEN / %10 MOBİL UYGULAMA TANITIM ALANI
+       ======================================================================== -->
+  <section class="pt-promo-section">
+    <div class="pt-promo-container">
+      <div style="max-width:680px;">
+        <span class="pt-subtitle">ÇÖKERTME CLUB MOBİL UYGULAMASI</span>
+        <h3 style="font-family:var(--font-display); font-size:40px; text-transform:uppercase; color:var(--pt-text); line-height:1.15; margin-bottom:10px;">
+          Eve Paket ve Gel-Al Siparişlerinizde %10 İndirim Kazanın
+        </h3>
+        <p style="color:var(--pt-text-muted); font-size:15.5px;">
+          Masadaki QR menümüz sadece inceleme amaçlıdır. Paket servis veya Gel-Al siparişlerinizde kendi mobil uygulamamızı kullanarak anında <strong>%10 indirim</strong> ve <strong>Çökertme Puan</strong> kazanabilirsiniz.
+        </p>
+      </div>
+      <div>
+        <a href="uygulama.html" class="pt-btn-solid">MOBİL UYGULAMAYI AÇ (%10 İNDİRİM)</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       PATIOTIME DEMO 4 FOOTER WITH TOP WAVE SVG (#14314F)
+       ======================================================================== -->
+  <footer class="pt-footer">
+    <div class="pt-footer-shape-top" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" preserveAspectRatio="none">
+        <path class="shape-fill" opacity="0.33" d="M473,67.3c-203.9,88.3-263.1-34-320.3,0C66,119.1,0,59.7,0,59.7V0h1000v59.7 c0,0-62.1,26.1-94.9,29.3c-32.8,3.3-62.8-12.3-75.8-22.1C806,49.6,745.3,8.7,694.9,4.7S492.4,59,473,67.3z"></path>
+        <path class="shape-fill" opacity="0.66" d="M734,67.3c-45.5,0-77.2-23.2-129.1-39.1c-28.6-8.7-150.3-10.1-254,39.1 s-91.7-34.4-149.2,0C115.7,118.3,0,39.8,0,39.8V0h1000v36.5c0,0-28.2-18.5-92.1-18.5C810.2,18.1,775.7,67.3,734,67.3z"></path>
+        <path class="shape-fill" d="M766.1,28.9c-200-57.5-266,65.5-395.1,19.5C242,1.8,242,5.4,184.8,20.6C128,35.8,132.3,44.9,89.9,52.5C28.6,63.7,0,0,0,0 h1000c0,0-9.9,40.9-83.6,48.1S829.6,47,766.1,28.9z"></path>
+      </svg>
+    </div>
+
+    <div class="pt-footer-overlay"></div>
+
+    <div class="pt-footer-inner">
+      <div class="pt-footer-grid">
         <div>
-          <strong id="notice-title">Masada Birebir Sıcak Servis Deneyimi</strong>
-          <div style="font-size:0.85rem; color:var(--text-body);" id="notice-desc">
-            Bu QR menü sadece ürünlerimizi ve güncel fiyatlarımızı incelemeniz içindir. Siparişinizi doğrudan servis personelimize verebilirsiniz.
-          </div>
+          <div class="pt-logo-stars">★ ★ ★ ★ ★</div>
+          <div class="pt-logo-title" style="font-size:26px; margin-bottom:14px;">ÇÖKERTME DÜNYASI</div>
+          <p>
+            Muğla'nın geleneksel Çökertme Kebabını; Bodrum zeytin yeşili ve Ege deniz mavisi ferahlığıyla Adana'dan tüm Türkiye'ye ve dünyaya taşıyoruz.
+          </p>
+        </div>
+
+        <div>
+          <h4>Merkez Şube</h4>
+          <p>
+            Turgut Özal Bulvarı<br />
+            Çukurova / Adana, Türkiye<br /><br />
+            Telefon: +90 (322) 455 01 48
+          </p>
+        </div>
+
+        <div>
+          <h4>Servis Saatleri</h4>
+          <p>
+            <strong style="color:var(--pt-gold);">HER GÜN AÇIK</strong><br />
+            Öğle &amp; Akşam Servisi<br />
+            11:00 – 23:30
+          </p>
+        </div>
+
+        <div>
+          <h4>Bağlantılar</h4>
+          <p style="display:grid; gap:8px;">
+            <a href="index.html">🏛️ Kurumsal Web Sitesi</a>
+            <a href="uygulama.html">🛍️ %10 İndirimli Uygulama</a>
+            <a href="yonetim.html">⚙️ Yönetim &amp; Fiyat Güncelle</a>
+          </p>
         </div>
       </div>
-      <span class="badge badge-olive">Fiyatlara KDV Dahildir</span>
-    </div>
 
-    <!-- Paket / Gel-Al için Mobil Uygulama Tanıtım Banner'ı -->
-    <div class="qr-app-banner">
-      <div style="display:flex; align-items:center; gap:12px;">
-        <span style="font-size:1.8rem;">📲</span>
-        <div>
-          <div style="font-weight:800; font-size:0.98rem; color:var(--gold-light);">
-            Eve Paket & Gel-Al Siparişlerinizde %10 İndirim!
-          </div>
-          <div style="font-size:0.84rem; color:rgba(255,255,255,0.9);">
-            Çökertme Dünyası Mobil Uygulamasını indirin; paket siparişlerinizde anında %10 indirim ve Çökertme Puan kazanın.
-          </div>
+      <div class="pt-footer-bottom">
+        <div>© 2026 Çökertme Dünyası. Tüm Fiyatlarımıza KDV Dahildir.</div>
+        <div style="display:flex; gap:20px; text-transform:uppercase; letter-spacing:0.12em; font-size:12px;">
+          <a href="index.html">Ana Sayfa</a>
+          <a href="uygulama.html">Mobil Uygulama</a>
+          <a href="yonetim.html">Yönetim</a>
         </div>
       </div>
-      <a href="uygulama.html" class="btn btn-gold" style="padding:9px 16px; font-size:0.84rem;">
-        Uygulamayı İncele →
-      </a>
     </div>
+  </footer>
 
-    <!-- Arama Çubuğu -->
-    <div class="search-bar-wrap">
-      <span class="search-icon">🔍</span>
-      <input
-        type="text"
-        id="menu-search"
-        class="search-input"
-        placeholder="Menüde lezzet ara (Örn: Bonfile Çökertme, Kabak Çiçeği, Ayran)..."
-        oninput="renderQRMenu()"
-      />
-    </div>
-
-    <!-- Kategori Sekmeleri -->
-    <div class="category-tabs" id="qr-category-tabs"></div>
-
-    <!-- Ürün Listesi -->
-    <div id="qr-menu-items" class="menu-grid" style="margin-top:16px;"></div>
-  </main>
-
-  <!-- Ürün Detay Modalı (Sadece Görüntüleme) -->
-  <div class="modal-backdrop" id="item-modal" onclick="if(event.target===this) closeItemModal()">
-    <div class="modal-content" id="item-modal-body"></div>
+  <!-- ========================================================================
+       ÜRÜN FOTOĞRAFI VE İÇERİĞİ MODALI (SADECE GÖRÜNTÜLEME)
+       ======================================================================== -->
+  <div class="pt-modal-backdrop" id="dish-modal" onclick="if(event.target===this) closeDishModal()">
+    <div class="pt-modal-card" id="dish-modal-content"></div>
   </div>
 
   <script src="assets/data.js"></script>
   <script>
     let currentLang = "tr";
-    let currentCurrency = "TRY";
-    let selectedCategory = "all";
+    let currentCurr = "TRY";
 
-    const UI_TEXTS = {
+    const I18N = {
       tr: {
-        allCategories: "✨ Tüm Lezzetler",
-        welcome: "Hoş geldiniz! Lezzetlerimizi inceleyip siparişinizi masanızdaki servis personelimize iletebilirsiniz.",
-        noticeTitle: "Masada Birebir Sıcak Servis Deneyimi",
-        noticeDesc: "Bu QR menü sadece ürünlerimizi ve güncel fiyatlarımızı incelemeniz içindir. Siparişinizi doğrudan servis personelimize verebilirsiniz.",
-        prepTime: "Hazırlanış",
-        soldOut: "GEÇİCİ OLARAK TÜKENDİ",
-        detailBtn: "İçindekiler & Detay",
-        waiterNote: "Bu ürünü sipariş etmek için masanızdaki servis personelimize söyleyebilirsiniz."
+        heroTitle: "À la Carte Menü",
+        heroMeta: "MASADA SADECE GÖRÜNTÜLEME • SİPARİŞİNİZİ SERVİS PERSONELİMİZE İLETEBİLİRSİNİZ",
+        sub1: "SOĞUK SIKIM ZEYTİNYAĞI & USTALIK ATEŞİ",
+        title1: "İmza Çökertme Kebapları",
+        sub2: "DAMAK TADINIZI TAZELEYİN",
+        title2: "Başlangıçlar & Salatalar",
+        sub3: "TATLI BİR FİNAL & EGE ESİNTİSİ",
+        title3: "Tatlılar & İçecekler",
+        soldOut: "TÜKENDİ",
+        waiterNote: "Siparişinizi masanızdaki servis personelimize iletebilirsiniz."
       },
       en: {
-        allCategories: "✨ All Dishes",
-        welcome: "Welcome! Browse our dishes and place your order directly with our table service staff.",
-        noticeTitle: "View-Only Table Menu Experience",
-        noticeDesc: "This QR menu is for browsing dishes and live prices. Please give your order to your waiter.",
-        prepTime: "Prep Time",
-        soldOut: "SOLD OUT TODAY",
-        detailBtn: "Ingredients & Info",
-        waiterNote: "To order this dish, please let your waiter know at the table."
+        heroTitle: "À la Carte Menu",
+        heroMeta: "VIEW-ONLY TABLE MENU • PLEASE PLACE YOUR ORDER WITH OUR SERVICE STAFF",
+        sub1: "COLD-PRESSED OLIVE OIL & ARTISAN GRILL",
+        title1: "Signature Çökertme Kebabs",
+        sub2: "REFRESH YOUR TASTE BUDS",
+        title2: "Starters & Fresh Salads",
+        sub3: "SWEET FINALE & REFRESHING DRINKS",
+        title3: "Desserts & Beverages",
+        soldOut: "SOLD OUT",
+        waiterNote: "Please let your waiter know to order this dish."
       },
       de: {
-        allCategories: "✨ Alle Gerichte",
-        welcome: "Willkommen! Bitte geben Sie Ihre Bestellung direkt bei unserem Servicepersonal am Tisch auf.",
-        noticeTitle: "Digitale Tischkarte (Nur Ansicht)",
-        noticeDesc: "Dieses QR-Menü dient zur Ansicht unserer Speisen und aktuellen Preise.",
-        prepTime: "Zubereitung",
+        heroTitle: "À la Carte Menü",
+        heroMeta: "DIGITALE TISCHKARTE (NUR ANSICHT) • BITTE BESTELLEN SIE BEIM SERVICEPERSONAL",
+        sub1: "KALTGEPRESSTES OLIVENÖL & GRILLKUNST",
+        title1: "Signature Çökertme Kebabs",
+        sub2: "ERFRISCHEN SIE IHREN GAUMEN",
+        title2: "Vorspeisen & Frische Salate",
+        sub3: "TRADITIONELLE DESSERTS & GETRÄNKE",
+        title3: "Desserts & Getränke",
         soldOut: "AUSVERKAUFT",
-        detailBtn: "Zutaten & Details",
-        waiterNote: "Um dieses Gericht zu bestellen, wenden Sie sich bitte an unser Servicepersonal."
+        waiterNote: "Bitte geben Sie Ihre Bestellung bei unserem Servicepersonal auf."
       },
       ar: {
-        allCategories: "✨ جميع الأطباق",
-        welcome: "أهلاً بكم! يمكنكم تصفح القائمة وإبلاغ النادل بطلبكم مباشرة على الطاولة.",
-        noticeTitle: "قائمة عرض فقط على الطاولة",
-        noticeDesc: "هذه القائمة مخصصة لعرض الأطباق والأسعار الحالية فقط. يرجى تقديم طلبكم للنادل.",
-        prepTime: "وقت التحضير",
+        heroTitle: "قائمة الطعام",
+        heroMeta: "قائمة عرض فقط على الطاولة • يرجى إبلاغ النادل بطلبكم",
+        sub1: "زيت زيتون بكر ومشويات فاخرة",
+        title1: "كباب تشوكيرتمي المميز",
+        sub2: "مقبلات وسلطات طازجة",
+        title2: "المقبلات والسلطات",
+        sub3: "حلويات تقليدية ومشروبات",
+        title3: "الحلويات والمشروبات",
         soldOut: "نفذت الكمية",
-        detailBtn: "المكونات والتفاصيل",
         waiterNote: "لطلب هذا الطبق، يرجى إبلاغ النادل الخاص بطاولتكم."
       }
     };
 
-    function initUrlParams() {
+    window.addEventListener("scroll", () => {
+      document.getElementById("main-header").classList.toggle("scrolled", window.scrollY > 50);
+    });
+
+    function toggleSideMenu(open) {
+      document.getElementById("sidemenu").classList.toggle("open", open);
+      document.getElementById("sidemenu-backdrop").classList.toggle("open", open);
+    }
+
+    function initTableParam() {
       const params = new URLSearchParams(window.location.search);
       const masa = params.get("masa");
-      const sube = params.get("sube");
       if (masa) {
-        document.getElementById("table-pill").innerHTML = `🍽️ Masa #${masa} • Sadece Görüntüleme`;
-      }
-      if (sube) {
-        document.getElementById("branch-subtitle").textContent = `${sube} • Dijital QR Menü`;
+        document.getElementById("table-badge-sub").textContent = `MASA #${masa} • SADECE GÖRÜNTÜLEME`;
       }
     }
 
-    function setLanguage(lang) {
+    function setLang(lang) {
       currentLang = lang;
       ["tr", "en", "de", "ar"].forEach(l => {
         document.getElementById("lang-" + l).classList.toggle("active", l === lang);
       });
-      const t = UI_TEXTS[lang];
-      document.getElementById("welcome-text").textContent = t.welcome;
-      document.getElementById("notice-title").textContent = t.noticeTitle;
-      document.getElementById("notice-desc").textContent = t.noticeDesc;
-      renderCategoryTabs();
-      renderQRMenu();
+      const t = I18N[lang];
+      document.getElementById("hero-main-title").textContent = t.heroTitle;
+      document.getElementById("hero-meta-note").textContent = t.heroMeta;
+      document.getElementById("sub-sec-1").textContent = t.sub1;
+      document.getElementById("title-sec-1").textContent = t.title1;
+      document.getElementById("sub-sec-2").textContent = t.sub2;
+      document.getElementById("title-sec-2").textContent = t.title2;
+      document.getElementById("sub-sec-3").textContent = t.sub3;
+      document.getElementById("title-sec-3").textContent = t.title3;
+      renderPatioMenu();
     }
 
-    function setCurrency(curr) {
-      currentCurrency = curr;
+    function setCurr(curr) {
+      currentCurr = curr;
       ["TRY", "EUR", "USD"].forEach(c => {
         document.getElementById("curr-" + c).classList.toggle("active", c === curr);
       });
-      renderQRMenu();
+      renderPatioMenu();
     }
 
-    function selectCategory(catId) {
-      selectedCategory = catId;
-      renderCategoryTabs();
-      renderQRMenu();
-    }
+    function buildTwoColumnHtml(itemsList) {
+      const t = I18N[currentLang];
+      const half = Math.ceil(itemsList.length / 2);
+      const leftItems = itemsList.slice(0, half);
+      const rightItems = itemsList.slice(half);
 
-    function renderCategoryTabs() {
-      const state = CokertmeStore.getState();
-      const t = UI_TEXTS[currentLang];
-      const tabsEl = document.getElementById("qr-category-tabs");
-
-      let html = `
-        <button class="category-pill ${selectedCategory === 'all' ? 'active' : ''}" onclick="selectCategory('all')">
-          ${t.allCategories}
-        </button>
-      `;
-
-      html += state.categories.map(cat => `
-        <button class="category-pill ${selectedCategory === cat.id ? 'active' : ''}" onclick="selectCategory('${cat.id}')">
-          <span>${cat.icon}</span>
-          <span>${cat.name[currentLang] || cat.name.tr}</span>
-        </button>
-      `).join("");
-
-      tabsEl.innerHTML = html;
-    }
-
-    function renderQRMenu() {
-      const state = CokertmeStore.getState();
-      const t = UI_TEXTS[currentLang];
-      const query = (document.getElementById("menu-search").value || "").toLowerCase().trim();
-
-      const filtered = state.items.filter(item => {
-        const matchesCat = selectedCategory === "all" || item.categoryId === selectedCategory;
-        const nameText = (item.name[currentLang] || item.name.tr).toLowerCase();
-        const descText = (item.desc[currentLang] || item.desc.tr).toLowerCase();
-        const matchesQuery = !query || nameText.includes(query) || descText.includes(query);
-        return matchesCat && matchesQuery;
-      });
-
-      const gridEl = document.getElementById("qr-menu-items");
-      if (filtered.length === 0) {
-        gridEl.innerHTML = `
-          <div style="grid-column:1/-1; text-align:center; padding:48px; background:#fff; border-radius:16px; border:1px solid var(--stone-border);">
-            <div style="font-size:2.2rem; margin-bottom:8px;">🫒</div>
-            <h3>Aradığınız kriterde ürün bulunamadı</h3>
-          </div>
-        `;
-        return;
-      }
-
-      gridEl.innerHTML = filtered.map(item => {
+      const renderItem = (item) => {
         const title = item.name[currentLang] || item.name.tr;
         const desc = item.desc[currentLang] || item.desc.tr;
-        const formattedPrice = CokertmeStore.formatPrice(item.price, currentCurrency);
+        const priceStr = CokertmeStore.formatPrice(item.price, currentCurr);
+        const badge = !item.available
+          ? `<span class="pt-food-badge" style="background:#C94A38;">${t.soldOut}</span>`
+          : (item.badges && item.badges[0] ? `<span class="pt-food-badge">${item.badges[0]}</span>` : "");
 
         return `
-          <article class="menu-card" style="cursor:pointer; ${!item.available ? 'opacity:0.72;' : ''}" onclick="openItemModal('${item.id}')">
-            <div class="menu-card-img-wrap">
-              <img class="menu-card-img" src="${item.image}" alt="${title}" loading="lazy" />
-              <div class="menu-card-badges">
-                ${(item.badges || []).map(b => `<span class="badge badge-gold">${b}</span>`).join("")}
+          <div class="pt-food-menu-item" onclick="openDishModal('${item.id}')" style="${!item.available ? 'opacity:0.55;' : ''}">
+            <div class="pt-food-menu-main">
+              <div class="pt-food-menu-header">
+                <h6 class="pt-food-menu-title">
+                  <span class="title-wrap">${title}</span>
+                  ${badge}
+                </h6>
+                <div class="pt-food-menu-lines"></div>
+                <span class="pt-food-menu-price">${priceStr}</span>
               </div>
-              <div class="menu-card-price-tag">${formattedPrice}</div>
-              ${!item.available ? `<div class="sold-out-overlay">${t.soldOut}</div>` : ""}
+              <p class="pt-food-menu-details">${desc}</p>
             </div>
-            <div class="menu-card-body">
-              <div>
-                <h3 class="menu-card-title">${title}</h3>
-                <p class="menu-card-desc">${desc}</p>
-              </div>
-              <div class="menu-card-meta">
-                <span>🔥 ${item.calories || "650 kcal"}</span>
-                <span>⏱️ ${t.prepTime}: ${item.prepTime || "12 dk"}</span>
-                <span style="color:var(--olive-primary); font-weight:700;">🔍 ${t.detailBtn}</span>
-              </div>
-            </div>
-          </article>
+          </div>
         `;
-      }).join("");
+      };
+
+      return `
+        <div class="pt-menu-col-left">
+          <div class="pt-food-menu food-menu-style-3">
+            ${leftItems.map(renderItem).join("")}
+          </div>
+        </div>
+        <div class="pt-menu-col-right">
+          <div class="pt-food-menu food-menu-style-3">
+            ${rightItems.map(renderItem).join("")}
+          </div>
+        </div>
+      `;
     }
 
-    function openItemModal(itemId) {
+    function renderPatioMenu() {
+      const state = CokertmeStore.getState();
+
+      const cokertmeler = state.items.filter(i => i.categoryId === "cokertmeler");
+      const baslangicVeSalata = state.items.filter(i => i.categoryId === "baslangiclar" || i.categoryId === "salatalar");
+      const tatliVeIcecek = state.items.filter(i => i.categoryId === "tatlilar" || i.categoryId === "icecekler");
+
+      document.getElementById("grid-cokertmeler").innerHTML = buildTwoColumnHtml(cokertmeler);
+      document.getElementById("grid-baslangiclar").innerHTML = buildTwoColumnHtml(baslangicVeSalata);
+      document.getElementById("grid-tatlilar").innerHTML = buildTwoColumnHtml(tatliVeIcecek);
+    }
+
+    function openDishModal(itemId) {
       const state = CokertmeStore.getState();
       const item = state.items.find(i => i.id === itemId);
       if (!item) return;
 
-      const t = UI_TEXTS[currentLang];
+      const t = I18N[currentLang];
       const title = item.name[currentLang] || item.name.tr;
       const desc = item.desc[currentLang] || item.desc.tr;
-      const formattedPrice = CokertmeStore.formatPrice(item.price, currentCurrency);
+      const priceStr = CokertmeStore.formatPrice(item.price, currentCurr);
 
-      const modalBody = document.getElementById("item-modal-body");
-      modalBody.innerHTML = `
-        <div style="position:relative; height:240px;">
+      document.getElementById("dish-modal-content").innerHTML = `
+        <div style="position:relative; height:250px;">
           <img src="${item.image}" alt="${title}" style="width:100%; height:100%; object-fit:cover;" />
-          <button onclick="closeItemModal()" style="position:absolute; top:14px; right:14px; width:38px; height:38px; border-radius:50%; border:none; background:rgba(0,0,0,0.65); color:#fff; font-size:1.1rem; cursor:pointer;">✕</button>
-          <div class="menu-card-price-tag" style="font-size:1.25rem; padding:8px 18px;">${formattedPrice}</div>
+          <button onclick="closeDishModal()" style="position:absolute; top:14px; right:14px; background:rgba(10,37,62,0.8); color:#fff; border:none; width:36px; height:36px; cursor:pointer; font-size:15px;">✕</button>
         </div>
-        <div style="padding:24px;">
-          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;">
-            ${(item.badges || []).map(b => `<span class="badge badge-gold">${b}</span>`).join("")}
-            <span class="badge badge-olive">🔥 ${item.calories || "650 kcal"}</span>
-            <span class="badge badge-sea">⏱️ ${item.prepTime || "12 dk"}</span>
+        <div style="padding:32px;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:10px;">
+            <h3 style="font-family:var(--font-display); font-size:30px; color:var(--pt-text);">${title}</h3>
+            <span style="font-family:var(--font-display); font-size:28px; font-weight:700; color:var(--pt-primary); white-space:nowrap;">${priceStr}</span>
           </div>
-          <h2 style="font-size:1.5rem; color:var(--olive-dark); margin-bottom:10px;">${title}</h2>
-          <p style="color:var(--text-body); margin-bottom:18px; font-size:0.96rem;">${desc}</p>
-
-          <div style="background:var(--olive-soft); border-left:4px solid var(--olive-primary); padding:12px 16px; border-radius:8px; font-size:0.88rem; color:var(--olive-dark); font-weight:600;">
-            💁‍♂️ ${t.waiterNote}
+          <p style="color:var(--pt-text-muted); font-size:15.5px; margin-bottom:18px;">${desc}</p>
+          <div style="display:flex; gap:16px; font-size:13px; color:var(--pt-olive); font-weight:600; margin-bottom:18px;">
+            <span>🔥 Kalori: ${item.calories || "650 kcal"}</span>
+            <span>⏱️ Hazırlanış: ${item.prepTime || "12 dk"}</span>
+          </div>
+          <div style="background:var(--pt-mist-bottom); border-left:3px solid var(--pt-olive); padding:12px 16px; font-size:13.5px; color:var(--pt-text);">
+            🍽️ ${t.waiterNote}
           </div>
         </div>
       `;
-
-      document.getElementById("item-modal").classList.add("open");
+      document.getElementById("dish-modal").classList.add("open");
     }
 
-    function closeItemModal() {
-      document.getElementById("item-modal").classList.remove("open");
+    function closeDishModal() {
+      document.getElementById("dish-modal").classList.remove("open");
     }
 
-    initUrlParams();
-    CokertmeStore.syncFromServer().then(() => {
-      renderCategoryTabs();
-      renderQRMenu();
-    });
+    initTableParam();
+    CokertmeStore.syncFromServer().then(renderPatioMenu);
   </script>
 </body>
 </html>
