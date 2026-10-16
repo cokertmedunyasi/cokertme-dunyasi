@@ -631,68 +631,199 @@
     }
 
     /* ==========================================================================
-       7. NEWSLETTER / HIZLI БАYİLİK BARI & 4 SÜTUNLU PATIOTIME FOOTER
+       7. PATIOTIME DEMO 4 NEWSLETTER & 3-KATMANLI DALGALI (WAVE) FOOTER
        ========================================================================== */
     .pt-newsletter-bar {
-      background: var(--pt-light-bg);
-      border-top: 1px solid rgba(3, 58, 88, 0.1);
-      border-bottom: 1px solid rgba(3, 58, 88, 0.1);
-      padding: 56px 24px;
+      background-image: linear-gradient(180deg, #F3F7FA 0%, #F8FCFF 100%);
+      padding: 100px 24px 80px;
     }
 
     .pt-newsletter-inner {
-      max-width: 1200px;
+      max-width: 1320px;
       margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 24px;
+      gap: 60px;
+    }
+
+    .pt-newsletter-title {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #033a58;
+      letter-spacing: 0.02em;
+      margin-bottom: 10px;
+      line-height: 1.2;
+    }
+
+    .pt-newsletter-sub {
+      font-size: 16px;
+      color: #0a253e;
+    }
+
+    .pt-newsletter-form-line {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid rgba(3, 58, 88, 0.35);
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+    }
+
+    .pt-newsletter-form-line input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-family: var(--font-sans);
+      font-size: 15px;
+      color: #0a253e;
+      outline: none;
+    }
+
+    .pt-newsletter-form-line button {
+      background: none;
+      border: none;
+      color: #033a58;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px 8px;
     }
 
     .pt-footer {
-      background-color: var(--pt-sea-deep);
+      position: relative;
+      background-color: #14314F;
+      background-image: url("https://patiotime.loftocean.com/demo4/wp-content/uploads/sites/7/2022/04/luca-lago-fwxbrSGG6xY-unsplash.jpg");
+      background-position: center center;
+      background-size: cover;
       color: #fff;
-      padding: 90px 24px 40px;
+      padding: 180px 24px 0;
+      overflow: hidden;
+    }
+
+    .pt-footer-overlay {
+      position: absolute;
+      inset: 0;
+      background-color: #14314F;
+      opacity: 0.88;
+      z-index: 1;
+    }
+
+    /* PatioTime Demo 4 Orijinal Üst Dalga SVG (elementor-shape-top) */
+    .pt-footer-wave-top {
+      position: absolute;
+      top: -1px;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      line-height: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .pt-footer-wave-top svg {
+      position: relative;
+      display: block;
+      width: calc(112% + 1.3px);
+      height: 89px;
+      left: 50%;
+      transform: translateX(-50%) rotateY(180deg);
+    }
+
+    .pt-footer-wave-top .elementor-shape-fill {
+      fill: #F8FCFF;
+    }
+
+    .pt-footer-container {
+      position: relative;
+      z-index: 3;
+      max-width: 1320px;
+      margin: 0 auto;
     }
 
     .pt-footer-grid {
-      max-width: 1240px;
-      margin: 0 auto;
       display: grid;
-      grid-template-columns: 1.5fr 1fr 1fr 1fr;
-      gap: 48px;
-      padding-bottom: 64px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      grid-template-columns: 1.25fr 1fr 1fr 1.05fr;
+      gap: 56px;
+      padding-bottom: 80px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
     }
 
     .pt-footer h4 {
-      font-family: var(--font-display);
-      font-size: 24px;
+      font-family: var(--font-sans);
+      font-size: 16px;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.12em;
       color: #fff;
       margin-bottom: 22px;
     }
 
     .pt-footer p,
     .pt-footer li {
-      font-size: 15px;
-      color: rgba(255, 255, 255, 0.78);
-      line-height: 1.8;
+      font-size: 15.5px;
+      color: rgba(255, 255, 255, 0.88);
+      line-height: 1.75;
+    }
+
+    .pt-footer-contact-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .pt-footer-btn-outline {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 13px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      color: #fff;
+      font-family: var(--font-sans);
+      font-size: 12.5px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      background: transparent;
+      transition: all 0.25s ease;
+    }
+
+    .pt-footer-btn-outline:hover {
+      background: #fff;
+      color: #14314F;
+    }
+
+    .pt-footer-btn-solid {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 14px 18px;
+      border: 1px solid var(--pt-accent);
+      background: var(--pt-accent);
+      color: #fff;
+      font-family: var(--font-sans);
+      font-size: 12.5px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .pt-footer-btn-solid:hover {
+      background: var(--pt-olive);
+      border-color: var(--pt-olive);
     }
 
     .pt-footer-bottom {
-      max-width: 1240px;
-      margin: 32px auto 0;
+      padding: 32px 0 36px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 16px;
-      font-size: 13.5px;
-      color: rgba(255, 255, 255, 0.65);
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.8);
     }
 
     /* ==========================================================================
@@ -763,6 +894,10 @@
       }
       .pt-parallax-container {
         grid-template-columns: 1fr;
+      }
+      .pt-newsletter-inner {
+        grid-template-columns: 1fr;
+        gap: 28px;
       }
       .pt-footer-grid {
         grid-template-columns: 1fr 1fr;
@@ -1032,81 +1167,114 @@
   </section>
 
   <!-- ========================================================================
-       SECTION 8: PATIOTIME NEWSLETTER / HIZLI BAYİLİK BARI
+       SECTION 8: PATIOTIME DEMO 4 NEWSLETTER BÖLÜMÜ (#F3F7FA -> #F8FCFF)
        ======================================================================== -->
   <section class="pt-newsletter-bar">
     <div class="pt-newsletter-inner">
       <div>
-        <span class="pt-subtitle" style="margin-bottom:6px;">ÇÖKERTME CLUB &amp; YATIRIMCI BÜLTENİ</span>
-        <h3 style="font-family:var(--font-display); font-size:34px; text-transform:uppercase; color:var(--pt-sea-darker);">
-          Yeni Şubeler ve %10 İndirim Fırsatlarından Haberdar Olun
-        </h3>
+        <h3 class="pt-newsletter-title">BÜLTENİMİZE KAYIT OLUN</h3>
+        <p class="pt-newsletter-sub">
+          Özel haberlerimizi, %10 uygulama indirimlerini ve yeni şube açılışlarımızı ilk öğrenen siz olun.
+        </p>
       </div>
-      <div style="display:flex; gap:12px; flex-wrap:wrap;">
-        <button class="pt-btn pt-btn-solid-olive" onclick="openFranchiseModal()">BAYİLİK FORMU DOLDUR</button>
-        <a href="uygulama.html" class="pt-btn pt-btn-solid-accent">UYGULAMADAN SİPARİŞ VER</a>
-      </div>
+
+      <form onsubmit="event.preventDefault(); alert('Bülten kaydınız başarıyla alındı!'); this.reset();">
+        <div class="pt-newsletter-form-line">
+          <input type="email" placeholder="E-Posta Adresiniz" required />
+          <button type="submit" aria-label="Kayıt Ol">→</button>
+        </div>
+        <label style="display:inline-flex; align-items:center; gap:8px; font-size:13.5px; color:#0a253e; cursor:pointer;">
+          <input type="checkbox" required />
+          <span>Gizlilik Politikasını ve kampanya bildirimlerini kabul ediyorum</span>
+        </label>
+      </form>
     </div>
   </section>
 
   <!-- ========================================================================
-       SECTION 9: PATIOTIME DEMO 4 4-COLUMN FOOTER (#023A58)
+       SECTION 9: PATIOTIME DEMO 4 3-KATMANLI DALGALI (WAVE) FOOTER (#14314F)
        ======================================================================== -->
   <footer class="pt-footer">
-    <div class="pt-footer-grid">
-      <div>
-        <div class="pt-logo-stars">★ ★ ★ ★ ★</div>
-        <div class="pt-logo-title" style="font-size:26px; margin-bottom:16px;">ÇÖKERTME DÜNYASI</div>
-        <p style="margin-bottom:20px;">
-          Muğla yöresinin efsane Çökertme Kebabını; Bodrum zeytin yeşili ve Ege deniz mavisi konseptiyle Adana'dan tüm Türkiye'ye ve dünyaya taşıyoruz.
-        </p>
-        <div style="display:flex; gap:16px; font-size:13px; letter-spacing:0.12em; text-transform:uppercase; color:var(--pt-gold);">
-          <a href="menu.html">QR Menü</a>
-          <a href="uygulama.html">Mobil App</a>
-          <a href="yonetim.html">Yönetim</a>
+    <!-- PatioTime Demo 4 Orijinal Üst Dalga SVG (3 Katmanlı Opacity 0.33 / 0.66 / 1.0) -->
+    <div class="pt-footer-wave-top" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" preserveAspectRatio="none">
+        <path class="elementor-shape-fill" opacity="0.33" d="M473,67.3c-203.9,88.3-263.1-34-320.3,0C66,119.1,0,59.7,0,59.7V0h1000v59.7 c0,0-62.1,26.1-94.9,29.3c-32.8,3.3-62.8-12.3-75.8-22.1C806,49.6,745.3,8.7,694.9,4.7S492.4,59,473,67.3z"></path>
+        <path class="elementor-shape-fill" opacity="0.66" d="M734,67.3c-45.5,0-77.2-23.2-129.1-39.1c-28.6-8.7-150.3-10.1-254,39.1 s-91.7-34.4-149.2,0C115.7,118.3,0,39.8,0,39.8V0h1000v36.5c0,0-28.2-18.5-92.1-18.5C810.2,18.1,775.7,67.3,734,67.3z"></path>
+        <path class="elementor-shape-fill" d="M766.1,28.9c-200-57.5-266,65.5-395.1,19.5C242,1.8,242,5.4,184.8,20.6C128,35.8,132.3,44.9,89.9,52.5C28.6,63.7,0,0,0,0 h1000c0,0-9.9,40.9-83.6,48.1S829.6,47,766.1,28.9z"></path>
+      </svg>
+    </div>
+
+    <div class="pt-footer-overlay"></div>
+
+    <div class="pt-footer-container">
+      <div class="pt-footer-grid">
+        <div>
+          <div style="font-family:var(--font-display); font-size:36px; font-style:italic; font-weight:600; color:#fff; margin-bottom:14px; line-height:1.1;">
+            Çökertme Dünyası
+          </div>
+          <p style="margin-bottom:22px;">
+            İyi yemek gerçek mutluluğun temelidir. Muğla'nın efsane Çökertme Kebabını, zeytinyağı ferahlığı ve ustalık ateşiyle Adana'dan tüm Türkiye'ye ve dünyaya sunuyoruz.
+          </p>
+          <div style="display:flex; gap:18px; font-size:14px; font-weight:600; color:#fff;">
+            <a href="https://instagram.com" target="_blank">Instagram</a>
+            <a href="https://facebook.com" target="_blank">Facebook</a>
+            <a href="menu.html">QR Menü</a>
+            <a href="uygulama.html">%10 App</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>LOKASYON</h4>
+          <p>
+            Turgut Özal Bulvarı,<br />
+            Çukurova Merkez Şube<br />
+            Adana, Türkiye<br />
+            Telefon: <a href="tel:+903224550148">+90 (322) 455 01 48</a>
+          </p>
+          <a href="https://maps.google.com/?q=Turgut+Ozal+Bulvari+Cukurova+Adana" target="_blank" class="pt-btn-underline" style="color:#fff; margin-top:18px; font-size:12px;">
+            HARİTADA GÖR
+          </a>
+        </div>
+
+        <div>
+          <h4>ÇALIŞMA SAATLERİ</h4>
+          <p style="margin-bottom:16px;">
+            <strong>ÖĞLE SERVİSİ</strong><br />
+            Pazartesi – Pazar<br />
+            11:00 – 16:00
+          </p>
+          <p>
+            <strong>AKŞAM SERVİSİ</strong><br />
+            Pazartesi – Pazar<br />
+            16:00 – 23:30
+          </p>
+        </div>
+
+        <div>
+          <h4>İLETİŞİM &amp; ERİŞİM</h4>
+          <div class="pt-footer-contact-btns">
+            <a href="mailto:cokertmedunyasi@gmail.com" class="pt-footer-btn-outline">
+              E-POSTA GÖNDER
+            </a>
+            <a href="tel:+903224550148" class="pt-footer-btn-outline">
+              TEL: +90 (322) 455 01 48
+            </a>
+            <button type="button" onclick="openFranchiseModal()" class="pt-footer-btn-solid">
+              BAYİLİK &amp; FRANCHISE BAŞVURUSU
+            </button>
+          </div>
         </div>
       </div>
 
-      <div>
-        <h4>Merkez Şube</h4>
-        <p>
-          Turgut Özal Bulvarı<br />
-          Çukurova / Adana, Türkiye<br /><br />
-          <strong>Telefon:</strong> +90 (322) 455 01 48<br />
-          <strong>E-Posta:</strong> cokertmedunyasi@gmail.com
-        </p>
-      </div>
-
-      <div>
-        <h4>Çalışma Saatleri</h4>
-        <p>
-          <strong style="color:var(--pt-gold);">ÖĞLE SERVİSİ</strong><br />
-          Pazartesi – Pazar<br />
-          11:00 – 16:00<br /><br />
-          <strong style="color:var(--pt-gold);">AKŞAM SERVİSİ</strong><br />
-          Pazartesi – Pazar<br />
-          16:00 – 23:30
-        </p>
-      </div>
-
-      <div>
-        <h4>Hızlı Erişim</h4>
-        <p style="display:grid; gap:8px;">
-          <a href="menu.html">📱 Masadaki Dijital QR Menü</a>
-          <a href="uygulama.html">🛍️ %10 İndirimli Uygulama</a>
-          <a href="javascript:void(0)" onclick="openFranchiseModal()">🌍 Yurt İçi &amp; Yurt Dışı Bayilik</a>
-          <a href="yonetim.html">⚙️ Yönetim &amp; Masa QR Baskı</a>
-        </p>
-      </div>
-    </div>
-
-    <div class="pt-footer-bottom">
-      <div>© 2026 Çökertme Dünyası. Tüm Hakları Saklıdır.</div>
-      <div style="display:flex; gap:24px; text-transform:uppercase; letter-spacing:0.12em; font-size:12px;">
-        <a href="#hikayemiz">Hakkımızda</a>
-        <a href="menu.html">QR Menü</a>
-        <a href="uygulama.html">Mobil Uygulama</a>
-        <a href="javascript:void(0)" onclick="openFranchiseModal()">Franchise</a>
+      <div class="pt-footer-bottom">
+        <div>© Copyright 2026 Çökertme Dünyası Restoran Zincirleri.</div>
+        <div style="display:flex; gap:26px; text-transform:uppercase; letter-spacing:0.12em; font-size:12.5px;">
+          <a href="#hikayemiz">HAKKIMIZDA</a>
+          <a href="menu.html">QR MENÜ</a>
+          <a href="uygulama.html">MOBİL UYGULAMA</a>
+          <a href="javascript:void(0)" onclick="openFranchiseModal()">BAYİLİK</a>
+          <a href="yonetim.html">YÖNETİM</a>
+        </div>
       </div>
     </div>
   </footer>
