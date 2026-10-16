@@ -309,7 +309,7 @@
       margin-bottom: 24px;
     }
 
-    /* Dil ve Para Birimi + Kategori Hızlı Geçiş Barı */
+    /* Kategori Hızlı Geçiş Barı */
     .pt-toolbar {
       background: var(--pt-mist-bottom);
       border-bottom: 1px solid rgba(3, 58, 88, 0.1);
@@ -323,15 +323,13 @@
       max-width: 1200px;
       margin: 0 auto;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 14px;
     }
 
     .pt-quick-cats {
       display: flex;
-      gap: 22px;
+      gap: 28px;
       overflow-x: auto;
       scrollbar-width: none;
     }
@@ -351,34 +349,6 @@
     .pt-quick-cats a:hover {
       color: var(--pt-primary);
       border-bottom-color: var(--pt-primary);
-    }
-
-    .pt-lang-pills {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .pt-chip {
-      border: 1px solid rgba(10, 37, 62, 0.2);
-      background: #fff;
-      color: var(--pt-text);
-      padding: 5px 11px;
-      font-family: var(--font-sans);
-      font-size: 11.5px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .pt-chip.active,
-    .pt-chip:hover {
-      background: var(--pt-secondary);
-      color: #fff;
-      border-color: var(--pt-secondary);
     }
 
     /* ==========================================================================
@@ -859,7 +829,7 @@
   </section>
 
   <!-- ========================================================================
-       YAPIŞKAN KATEGORİ & DİL / PARA BİRİMİ BARI
+       YAPIŞKAN KATEGORİ HIZLI GEÇİŞ BARI
        ======================================================================== -->
   <div class="pt-toolbar">
     <div class="pt-toolbar-inner">
@@ -868,17 +838,6 @@
         <a href="#sec-baslangiclar" id="nav-cat-2">02. Başlangıçlar &amp; Salatalar</a>
         <a href="#sec-tatlilar" id="nav-cat-3">03. Tatlılar &amp; İçecekler</a>
       </nav>
-
-      <div class="pt-lang-pills">
-        <button class="pt-chip active" id="lang-tr" onclick="setLang('tr')">TR</button>
-        <button class="pt-chip" id="lang-en" onclick="setLang('en')">EN</button>
-        <button class="pt-chip" id="lang-de" onclick="setLang('de')">DE</button>
-        <button class="pt-chip" id="lang-ar" onclick="setLang('ar')">AR</button>
-        <span style="opacity:0.3;">|</span>
-        <button class="pt-chip active" id="curr-TRY" onclick="setCurr('TRY')">₺ TL</button>
-        <button class="pt-chip" id="curr-EUR" onclick="setCurr('EUR')">€ EUR</button>
-        <button class="pt-chip" id="curr-USD" onclick="setCurr('USD')">$ USD</button>
-      </div>
     </div>
   </div>
 
@@ -1020,60 +979,6 @@
 
   <script src="assets/data.js"></script>
   <script>
-    let currentLang = "tr";
-    let currentCurr = "TRY";
-
-    const I18N = {
-      tr: {
-        heroTitle: "À la Carte Menü",
-        heroMeta: "MASADA SADECE GÖRÜNTÜLEME • SİPARİŞİNİZİ SERVİS PERSONELİMİZE İLETEBİLİRSİNİZ",
-        sub1: "SOĞUK SIKIM ZEYTİNYAĞI & USTALIK ATEŞİ",
-        title1: "İmza Çökertme Kebapları",
-        sub2: "DAMAK TADINIZI TAZELEYİN",
-        title2: "Başlangıçlar & Salatalar",
-        sub3: "TATLI BİR FİNAL & EGE ESİNTİSİ",
-        title3: "Tatlılar & İçecekler",
-        soldOut: "TÜKENDİ",
-        waiterNote: "Siparişinizi masanızdaki servis personelimize iletebilirsiniz."
-      },
-      en: {
-        heroTitle: "À la Carte Menu",
-        heroMeta: "VIEW-ONLY TABLE MENU • PLEASE PLACE YOUR ORDER WITH OUR SERVICE STAFF",
-        sub1: "COLD-PRESSED OLIVE OIL & ARTISAN GRILL",
-        title1: "Signature Çökertme Kebabs",
-        sub2: "REFRESH YOUR TASTE BUDS",
-        title2: "Starters & Fresh Salads",
-        sub3: "SWEET FINALE & REFRESHING DRINKS",
-        title3: "Desserts & Beverages",
-        soldOut: "SOLD OUT",
-        waiterNote: "Please let your waiter know to order this dish."
-      },
-      de: {
-        heroTitle: "À la Carte Menü",
-        heroMeta: "DIGITALE TISCHKARTE (NUR ANSICHT) • BITTE BESTELLEN SIE BEIM SERVICEPERSONAL",
-        sub1: "KALTGEPRESSTES OLIVENÖL & GRILLKUNST",
-        title1: "Signature Çökertme Kebabs",
-        sub2: "ERFRISCHEN SIE IHREN GAUMEN",
-        title2: "Vorspeisen & Frische Salate",
-        sub3: "TRADITIONELLE DESSERTS & GETRÄNKE",
-        title3: "Desserts & Getränke",
-        soldOut: "AUSVERKAUFT",
-        waiterNote: "Bitte geben Sie Ihre Bestellung bei unserem Servicepersonal auf."
-      },
-      ar: {
-        heroTitle: "قائمة الطعام",
-        heroMeta: "قائمة عرض فقط على الطاولة • يرجى إبلاغ النادل بطلبكم",
-        sub1: "زيت زيتون بكر ومشويات فاخرة",
-        title1: "كباب تشوكيرتمي المميز",
-        sub2: "مقبلات وسلطات طازجة",
-        title2: "المقبلات والسلطات",
-        sub3: "حلويات تقليدية ومشروبات",
-        title3: "الحلويات والمشروبات",
-        soldOut: "نفذت الكمية",
-        waiterNote: "لطلب هذا الطبق، يرجى إبلاغ النادل الخاص بطاولتكم."
-      }
-    };
-
     window.addEventListener("scroll", () => {
       document.getElementById("main-header").classList.toggle("scrolled", window.scrollY > 50);
     });
@@ -1091,43 +996,17 @@
       }
     }
 
-    function setLang(lang) {
-      currentLang = lang;
-      ["tr", "en", "de", "ar"].forEach(l => {
-        document.getElementById("lang-" + l).classList.toggle("active", l === lang);
-      });
-      const t = I18N[lang];
-      document.getElementById("hero-main-title").textContent = t.heroTitle;
-      document.getElementById("hero-meta-note").textContent = t.heroMeta;
-      document.getElementById("sub-sec-1").textContent = t.sub1;
-      document.getElementById("title-sec-1").textContent = t.title1;
-      document.getElementById("sub-sec-2").textContent = t.sub2;
-      document.getElementById("title-sec-2").textContent = t.title2;
-      document.getElementById("sub-sec-3").textContent = t.sub3;
-      document.getElementById("title-sec-3").textContent = t.title3;
-      renderPatioMenu();
-    }
-
-    function setCurr(curr) {
-      currentCurr = curr;
-      ["TRY", "EUR", "USD"].forEach(c => {
-        document.getElementById("curr-" + c).classList.toggle("active", c === curr);
-      });
-      renderPatioMenu();
-    }
-
     function buildTwoColumnHtml(itemsList) {
-      const t = I18N[currentLang];
       const half = Math.ceil(itemsList.length / 2);
       const leftItems = itemsList.slice(0, half);
       const rightItems = itemsList.slice(half);
 
       const renderItem = (item) => {
-        const title = item.name[currentLang] || item.name.tr;
-        const desc = item.desc[currentLang] || item.desc.tr;
-        const priceStr = CokertmeStore.formatPrice(item.price, currentCurr);
+        const title = item.name.tr || item.name;
+        const desc = item.desc.tr || item.desc;
+        const priceStr = `${Math.round(item.price)} ₺`;
         const badge = !item.available
-          ? `<span class="pt-food-badge" style="background:#C94A38;">${t.soldOut}</span>`
+          ? `<span class="pt-food-badge" style="background:#C94A38;">TÜKENDİ</span>`
           : (item.badges && item.badges[0] ? `<span class="pt-food-badge">${item.badges[0]}</span>` : "");
 
         return `
@@ -1178,10 +1057,9 @@
       const item = state.items.find(i => i.id === itemId);
       if (!item) return;
 
-      const t = I18N[currentLang];
-      const title = item.name[currentLang] || item.name.tr;
-      const desc = item.desc[currentLang] || item.desc.tr;
-      const priceStr = CokertmeStore.formatPrice(item.price, currentCurr);
+      const title = item.name.tr || item.name;
+      const desc = item.desc.tr || item.desc;
+      const priceStr = `${Math.round(item.price)} ₺`;
 
       document.getElementById("dish-modal-content").innerHTML = `
         <div style="position:relative; height:250px;">
@@ -1199,7 +1077,7 @@
             <span>⏱️ Hazırlanış: ${item.prepTime || "12 dk"}</span>
           </div>
           <div style="background:var(--pt-mist-bottom); border-left:3px solid var(--pt-olive); padding:12px 16px; font-size:13.5px; color:var(--pt-text);">
-            🍽️ ${t.waiterNote}
+            🍽️ Siparişinizi masanızdaki servis personelimize iletebilirsiniz.
           </div>
         </div>
       `;

@@ -66,7 +66,7 @@ Yeni açılacak **her sayfada** şu 5 ana yapı standart olarak yer almalıdır:
 
 ## 4. İş Modeli ve Fonksiyonel Kurallar
 
-- **Masadaki QR Menü (`menu.html` / `/menu`):** Sadece görüntüleme (**View-Only**) modundadır. Masadan sepete ekleme veya sipariş verme butonu **bulunmamalıdır**. 4 dil (`TR`, `EN`, `DE`, `AR`) ve 3 para birimi (`₺`, `€`, `$`) desteklenir.
+- **Masadaki QR Menü (`menu.html` / `/menu`):** Sadece görüntüleme (**View-Only**) modundadır. Masadan sepete ekleme veya sipariş verme butonu **bulunmamalıdır**. Sistemde ve sayfada **sadece Türkçe (`TR`) dil ve Türk Lirası (`₺ TL`) para birimi** kullanılır; yabancı dil (`EN`, `DE`, `AR`) veya döviz (`€`, `$`) seçici butonlar **kesinlikle yer almamalıdır**.
 - **Mobil Uygulama (`uygulama.html` / `/uygulama`):** Sadece **Eve Paket Servis** ve **Gel-Al (Şubeden Teslim)** siparişleri içindir. Otomatik **%10 Mobil Uygulama İndirimi**, **%5 Çökertme Puan** ve **5 Al 1 Hediye** damga kartı sistemi içerir.
 - **Merkez Yönetim (`yonetim.html` / `/yonetim`):** `CokertmeStore` (`assets/data.js`) üzerinden yapılan fiyat ve stok değişiklikleri QR kodları değiştirmeye gerek kalmadan anında tüm sayfalara yansır.
 - **Canlı Yayın (GitHub & Vercel):** Yapılan tüm sayfa tasarımları ve güncellemeler `https://github.com/cokertmedunyasi/cokertme-dunyasi` deposuna push edilerek `https://cokertmedunyasi.com` üzerinde canlıya alınmalıdır.

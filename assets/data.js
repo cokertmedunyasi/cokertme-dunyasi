@@ -16,9 +16,7 @@ const DEFAULT_COKERTME_DATA = {
     stampsForFreeMeal: 5
   },
   currencies: {
-    TRY: { symbol: "₺", rate: 1, code: "TRY", label: "₺ TL" },
-    EUR: { symbol: "€", rate: 0.027, code: "EUR", label: "€ EUR" },
-    USD: { symbol: "$", rate: 0.029, code: "USD", label: "$ USD" }
+    TRY: { symbol: "₺", rate: 1, code: "TRY", label: "₺ TL" }
   },
   categories: [
     {
@@ -514,14 +512,8 @@ const CokertmeStore = {
     return DEFAULT_COKERTME_DATA;
   },
 
-  formatPrice(amountTRY, currencyCode = "TRY") {
-    const state = this.getState();
-    const curr = state.currencies[currencyCode] || state.currencies.TRY;
-    const converted = amountTRY * curr.rate;
-    if (currencyCode === "TRY") {
-      return `${Math.round(converted)} ${curr.symbol}`;
-    }
-    return `${curr.symbol}${converted.toFixed(2)}`;
+  formatPrice(amountTRY) {
+    return `${Math.round(amountTRY)} ₺`;
   }
 };
 
