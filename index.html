@@ -601,7 +601,8 @@
     .pt-food-header {
       display: flex;
       align-items: baseline;
-      gap: 12px;
+      justify-content: space-between;
+      gap: 10px;
     }
 
     .pt-food-title {
@@ -609,11 +610,13 @@
       font-size: 24px;
       font-weight: 700;
       color: var(--pt-sea-darker);
+      line-height: 1.25;
     }
 
     .pt-food-line {
       flex: 1;
-      border-bottom: 1px solid rgba(10, 37, 62, 0.22);
+      min-width: 18px;
+      border-bottom: 1px dashed rgba(10, 37, 62, 0.25);
       position: relative;
       top: -5px;
     }
@@ -623,12 +626,14 @@
       font-size: 24px;
       font-weight: 700;
       color: var(--pt-accent);
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .pt-food-desc {
       font-size: 14.5px;
       color: var(--pt-text-muted);
-      margin-top: 3px;
+      margin-top: 4px;
     }
 
     /* ==========================================================================
@@ -933,6 +938,10 @@
       .pt-split-content {
         padding: 64px 28px;
       }
+      .pt-parallax-menu {
+        background-attachment: scroll;
+        padding: 56px 16px;
+      }
       .pt-parallax-container {
         grid-template-columns: 1fr;
       }
@@ -955,6 +964,42 @@
       .pt-logo-sub {
         font-size: 7.5px;
         letter-spacing: 0.14em;
+      }
+      .pt-hero-title {
+        font-size: 38px;
+      }
+      .pt-section-title {
+        font-size: 34px !important;
+      }
+      .pt-split-content {
+        padding: 48px 20px;
+      }
+      .pt-numbered-list a {
+        font-size: 21px;
+        padding: 15px 0;
+        gap: 10px;
+      }
+      .pt-num-prefix {
+        margin-right: 10px;
+        font-size: 14px;
+      }
+      .pt-floating-menu-box {
+        padding: 32px 20px;
+      }
+      .pt-food-title {
+        font-size: 19.5px;
+      }
+      .pt-food-price {
+        font-size: 21px;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .pt-food-line {
+        min-width: 14px;
+      }
+      .pt-floating-menu-box .pt-btn {
+        width: 100%;
+        justify-content: center;
       }
       .pt-modal-box {
         padding: 28px 20px;
@@ -1199,7 +1244,7 @@
         "Sade, özgün ve dengeli. Ege'nin zeytinyağı ferahlığı ile Çukurova'nın ateşini tek bir tabakta buluşturduk."
       </p>
       <p style="color:var(--pt-text-muted); margin-bottom:16px;">
-        Restoranımızda masadaki QR kod ile menümüzü 4 dilde inceleyebilir; ev veya iş yeri siparişlerinizde ise <strong>Çökertme Dünyası Mobil Uygulaması</strong> üzerinden anında <strong>%10 indirim</strong>, <strong>%5 Çökertme Puan</strong> ve <em>"5 Çökertme Alana 1 Çökertme Hediye"</em> ayrıcalığından yararlanabilirsiniz.
+        Restoranımızda masadaki QR kod ile menümüzü anında inceleyebilir; ev veya iş yeri siparişlerinizde ise <strong>Çökertme Dünyası Mobil Uygulaması</strong> üzerinden anında <strong>%10 indirim</strong>, <strong>%5 Çökertme Puan</strong> ve <em>"5 Çökertme Alana 1 Çökertme Hediye"</em> ayrıcalığından yararlanabilirsiniz.
       </p>
       <div style="display:flex; gap:18px; flex-wrap:wrap;">
         <a href="uygulama.html" class="pt-btn-underline">MOBİL UYGULAMAYI DENEYİMLE</a>
