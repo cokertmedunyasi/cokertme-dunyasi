@@ -685,10 +685,46 @@
 
     @media (max-width: 767px) {
       .pt-header {
-        padding: 16px 18px;
+        padding: 12px 16px;
+        grid-template-columns: 40px 1fr auto;
+        gap: 8px;
+      }
+      .pt-header.scrolled {
+        padding: 9px 16px;
+      }
+      .pt-menu-toggle .pt-menu-label {
+        display: none;
+      }
+      .pt-hamburger-lines {
+        width: 24px;
+        height: 15px;
+      }
+      .pt-logo-stars {
+        font-size: 9px;
+        letter-spacing: 3px;
+        margin-bottom: 1px;
       }
       .pt-logo-title {
-        font-size: 22px;
+        font-size: 18px;
+        letter-spacing: 0.08em;
+        white-space: nowrap;
+      }
+      .pt-logo-sub {
+        font-size: 7.5px;
+        letter-spacing: 0.14em;
+        white-space: nowrap;
+      }
+      .pt-header-right {
+        gap: 8px;
+      }
+      .pt-header-right .pt-btn-outline {
+        padding: 7px 10px;
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        white-space: nowrap;
+      }
+      .pt-header-right .pt-btn-outline .pt-btn-extra {
+        display: none;
       }
       .pt-menu-hero {
         min-height: 400px;
@@ -719,7 +755,31 @@
         grid-template-columns: 1fr;
       }
       .pt-toolbar {
-        top: 58px;
+        top: 52px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .pt-header {
+        padding: 10px 12px;
+        grid-template-columns: 34px 1fr auto;
+        gap: 6px;
+      }
+      .pt-header.scrolled {
+        padding: 8px 12px;
+      }
+      .pt-logo-title {
+        font-size: 15.5px;
+        letter-spacing: 0.06em;
+      }
+      .pt-logo-sub {
+        font-size: 6.5px;
+        letter-spacing: 0.1em;
+      }
+      .pt-header-right .pt-btn-outline {
+        padding: 6px 8px;
+        font-size: 9.5px;
+        letter-spacing: 0.06em;
       }
     }
   </style>
@@ -761,13 +821,13 @@
        ======================================================================== -->
   <header class="pt-header" id="main-header">
     <div>
-      <button class="pt-menu-toggle" onclick="toggleSideMenu(true)">
+      <button class="pt-menu-toggle" onclick="toggleSideMenu(true)" aria-label="Menüyü Aç">
         <div class="pt-hamburger-lines">
           <span></span>
           <span></span>
           <span></span>
         </div>
-        <span>MENÜ</span>
+        <span class="pt-menu-label">MENÜ</span>
       </button>
     </div>
 
@@ -778,7 +838,7 @@
     </a>
 
     <div class="pt-header-right">
-      <a href="uygulama.html" class="pt-btn-outline">%10 APP SİPARİŞ</a>
+      <a href="uygulama.html" class="pt-btn-outline">%10 APP<span class="pt-btn-extra"> SİPARİŞ</span></a>
     </div>
   </header>
 

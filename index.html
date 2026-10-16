@@ -877,10 +877,50 @@
 
     @media (max-width: 980px) {
       .pt-header {
-        padding: 18px 20px;
+        padding: 14px 18px;
+        grid-template-columns: 44px 1fr auto;
+        gap: 8px;
+      }
+      .pt-header.scrolled {
+        padding: 10px 18px;
+      }
+      .pt-menu-toggle .pt-menu-label {
+        display: none;
+      }
+      .pt-hamburger-lines {
+        width: 24px;
+        height: 15px;
+      }
+      .pt-logo-stars {
+        font-size: 8.5px;
+        letter-spacing: 4px;
+        margin-bottom: 2px;
+      }
+      .pt-logo-title {
+        font-size: 18.5px;
+        letter-spacing: 0.09em;
+        white-space: nowrap;
+      }
+      .pt-logo-sub {
+        font-size: 8px;
+        letter-spacing: 0.16em;
+        white-space: nowrap;
+        margin-top: 3px;
+      }
+      .pt-header-right .hide-mobile {
+        display: none;
+      }
+      .pt-header-right .pt-btn-mobile-compact {
+        padding: 8px 11px !important;
+        font-size: 10px !important;
+        letter-spacing: 0.1em !important;
+        white-space: nowrap;
+      }
+      .pt-header-right .pt-btn-mobile-compact .desktop-only-text {
+        display: none;
       }
       .pt-hero-title {
-        font-size: 46px;
+        font-size: 44px;
       }
       .pt-section-title {
         font-size: 38px;
@@ -902,9 +942,6 @@
       .pt-footer-grid {
         grid-template-columns: 1fr 1fr;
       }
-      .pt-header-right .hide-mobile {
-        display: none;
-      }
     }
 
     @media (max-width: 600px) {
@@ -912,7 +949,11 @@
         grid-template-columns: 1fr;
       }
       .pt-logo-title {
-        font-size: 22px;
+        font-size: 17px;
+      }
+      .pt-logo-sub {
+        font-size: 7.5px;
+        letter-spacing: 0.14em;
       }
       .pt-modal-box {
         padding: 28px 20px;
@@ -971,7 +1012,7 @@
           <span></span>
           <span></span>
         </div>
-        <span>MENÜ</span>
+        <span class="pt-menu-label">MENÜ</span>
       </button>
     </div>
 
@@ -985,8 +1026,8 @@
       <a href="uygulama.html" class="pt-btn pt-btn-solid-accent hide-mobile" style="padding:12px 20px;">
         %10 APP SİPARİŞ
       </a>
-      <button class="pt-btn pt-btn-outline-light" style="padding:12px 22px;" onclick="openFranchiseModal()">
-        BAYİLİK & QR MENÜ
+      <button class="pt-btn pt-btn-outline-light pt-btn-mobile-compact" style="padding:12px 22px;" onclick="openFranchiseModal()">
+        BAYİLİK<span class="desktop-only-text"> &amp; QR MENÜ</span>
       </button>
     </div>
   </header>
