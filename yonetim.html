@@ -3,106 +3,623 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Merkez Yönetim & Masa QR Üretici | Çökertme Dünyası</title>
-  <link rel="stylesheet" href="assets/style.css" />
+  <title>Merkez Yönetim & Masa QR Üretici — Çökertme Dünyası</title>
+  <meta name="description" content="Çökertme Dünyası Merkez Bulut Yönetim Paneli: Anlık QR menü fiyat güncelleme, masa QR kod baskı kartları, mobil uygulama siparişleri ve franchise başvuruları." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    .admin-header {
-      background: linear-gradient(135deg, var(--olive-dark) 0%, var(--olive-primary) 55%, var(--sea-dark) 100%);
-      color: #fff;
-      padding: 32px 24px;
-      border-bottom: 4px solid var(--gold-primary);
+    /* ==========================================================================
+       PATIOTIME DEMO 4 — ÇÖKERTME DÜNYASI DESIGN SYSTEM (YÖNETİM SAYFASI)
+       ========================================================================== */
+    :root {
+      --pt-navy: #023A58;
+      --pt-navy-dark: #14314F;
+      --pt-olive: #3B5233;
+      --pt-olive-dark: #283822;
+      --pt-terracotta: #dd5903;
+      --pt-gold: #D49B35;
+      --pt-gold-soft: #F3D999;
+      --pt-cream: #FAF7F2;
+      --pt-white: #FFFFFF;
+      --pt-text: #033A58;
+      --pt-text-muted: rgba(3, 58, 88, 0.72);
+      --pt-border: rgba(3, 58, 88, 0.14);
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Jost', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      font-size: 16.5px;
+      line-height: 1.65;
+      color: var(--pt-text);
+      background-color: var(--pt-white);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4, .serif {
+      font-family: var(--font-serif);
+      font-weight: 500;
+      line-height: 1.15;
+      color: var(--pt-navy);
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s ease;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    /* ==========================================================================
+       1. PATIOTIME DEMO 4 HEADER (OVERLAP TRANSPARENT + STICKY OLIVE)
+       ========================================================================== */
+    .pt-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      padding: 24px 48px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      transition: background 0.35s ease, padding 0.35s ease, box-shadow 0.35s ease;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .pt-header.scrolled {
+      background: rgba(59, 82, 51, 0.97);
+      backdrop-filter: blur(12px);
+      padding: 14px 48px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+      border-bottom: 1px solid rgba(212, 155, 53, 0.35);
+    }
+
+    .pt-menu-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      background: none;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .pt-hamburger-lines {
+      width: 28px;
+      height: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .pt-hamburger-lines span {
+      display: block;
+      height: 1.5px;
+      background: #fff;
+      transition: all 0.3s ease;
+    }
+
+    .pt-hamburger-lines span:nth-child(2) {
+      width: 75%;
+    }
+
+    .pt-menu-toggle:hover .pt-hamburger-lines span:nth-child(2) {
+      width: 100%;
+      background: var(--pt-gold-soft);
+    }
+
+    .pt-logo-center {
+      text-align: center;
+      color: #fff;
+    }
+
+    .pt-logo-stars {
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--pt-gold-soft);
+      margin-bottom: 2px;
+    }
+
+    .pt-logo-title {
+      font-family: var(--font-serif);
+      font-size: 30px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .pt-logo-sub {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: 4px;
+    }
+
+    .pt-header-right {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .pt-btn-outline {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 24px;
+      border: 2px solid #fff;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .pt-btn-outline:hover {
+      background: #fff;
+      color: var(--pt-navy);
+    }
+
+    .pt-btn-fill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 26px;
+      background: var(--pt-terracotta);
+      border: 2px solid var(--pt-terracotta);
+      color: #fff;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .pt-btn-fill:hover {
+      background: var(--pt-olive);
+      border-color: var(--pt-olive);
+      color: #fff;
+    }
+
+    .pt-btn-olive {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 24px;
+      background: var(--pt-olive);
+      border: 2px solid var(--pt-olive);
+      color: #fff;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .pt-btn-olive:hover {
+      background: var(--pt-navy);
+      border-color: var(--pt-navy);
+    }
+
+    .pt-btn-navy {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 22px;
+      background: var(--pt-navy);
+      border: 2px solid var(--pt-navy);
+      color: #fff;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .pt-btn-navy:hover {
+      background: var(--pt-terracotta);
+      border-color: var(--pt-terracotta);
+    }
+
+    /* ==========================================================================
+       2. SLIDE-OUT SIDE MENU (PATIOTIME DEMO 4 OFF-CANVAS)
+       ========================================================================== */
+    .pt-sidemenu-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 25, 38, 0.65);
+      z-index: 1999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.35s ease;
+    }
+
+    .pt-sidemenu-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .pt-sidemenu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 400px;
+      max-width: 88vw;
+      height: 100vh;
+      background: var(--pt-cream);
+      z-index: 2000;
+      padding: 44px 40px;
+      transform: translateX(-100%);
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-right: 3px solid var(--pt-gold);
+    }
+
+    .pt-sidemenu.open {
+      transform: translateX(0);
+    }
+
+    .pt-sidemenu-close {
+      background: none;
+      border: none;
+      font-size: 14px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--pt-navy);
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .pt-sidemenu-nav {
+      list-style: none;
+      margin: 36px 0;
+    }
+
+    .pt-sidemenu-nav li {
+      border-bottom: 1px solid var(--pt-border);
+    }
+
+    .pt-sidemenu-nav a {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      font-family: var(--font-serif);
+      font-size: 25px;
+      font-weight: 600;
+      color: var(--pt-navy);
+    }
+
+    .pt-sidemenu-nav a:hover {
+      color: var(--pt-terracotta);
+      padding-left: 8px;
+    }
+
+    /* ==========================================================================
+       3. PAGE HERO BANNER + 3-LAYER WAVY SVG DIVIDER
+       ========================================================================== */
+    .pt-page-hero {
+      position: relative;
+      min-height: 490px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #fff;
+      padding: 140px 24px 90px;
+      background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920&q=85');
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+    }
+
+    .pt-page-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(20, 49, 79, 0.82) 0%,
+        rgba(40, 56, 34, 0.7) 55%,
+        rgba(2, 58, 88, 0.88) 100%
+      );
+      z-index: 1;
+    }
+
+    .pt-page-hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 880px;
+    }
+
+    .pt-hero-eyebrow {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--pt-gold-soft);
+      margin-bottom: 14px;
+    }
+
+    .pt-page-hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(40px, 6vw, 68px);
+      font-weight: 500;
+      color: #fff;
+      line-height: 1.08;
+      margin-bottom: 16px;
+    }
+
+    .pt-page-hero-sub {
+      font-size: 17px;
+      color: rgba(255, 255, 255, 0.9);
+      max-width: 720px;
+      margin: 0 auto 26px;
+    }
+
+    .pt-wave-bottom {
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      line-height: 0;
+      transform: rotate(180deg);
+      z-index: 5;
+    }
+
+    .pt-wave-bottom svg {
+      position: relative;
+      display: block;
+      width: calc(100% + 1.3px);
+      height: 56px;
+    }
+
+    .pt-wave-bottom .shape-fill {
+      fill: var(--pt-white);
+    }
+
+    /* ==========================================================================
+       4. SUBTITLE & SECTION TYPOGRAPHY (PATIOTIME DEMO 4)
+       ========================================================================== */
+    .pt-subtitle {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      font-family: var(--font-sans);
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--pt-olive);
+      margin-bottom: 10px;
+    }
+
+    .pt-subtitle::before,
+    .pt-subtitle::after {
+      content: "";
+      width: 26px;
+      height: 1px;
+      background: var(--pt-gold);
+    }
+
+    .pt-title {
+      font-family: var(--font-serif);
+      font-size: clamp(30px, 3.8vw, 44px);
+      font-weight: 500;
+      color: var(--pt-navy);
+      margin-bottom: 10px;
+    }
+
+    /* ==========================================================================
+       5. ADMIN CONTAINER, KPI CARDS, QR GENERATOR & TABLES
+       ========================================================================== */
     .admin-container {
-      max-width: 1240px;
-      margin: 28px auto 72px;
-      padding: 0 24px;
+      max-width: 1260px;
+      margin: 0 auto;
+      padding: 70px 24px 100px;
     }
 
     .admin-kpi-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 18px;
-      margin-bottom: 32px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      margin-bottom: 48px;
     }
 
     .kpi-card {
-      background: var(--cream-card);
-      border-radius: var(--radius-md);
-      padding: 20px 22px;
-      border: 1.5px solid var(--stone-border);
-      box-shadow: var(--shadow-sm);
+      background: var(--pt-cream);
+      padding: 28px 26px;
+      border: 1px solid var(--pt-border);
+      border-top: 3px solid var(--pt-gold);
+      transition: transform 0.25s ease;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .kpi-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--pt-text-muted);
+      margin-bottom: 8px;
     }
 
     .kpi-val {
-      font-family: 'Playfair Display', serif;
-      font-size: 2rem;
-      font-weight: 800;
-      color: var(--olive-primary);
+      font-family: var(--font-serif);
+      font-size: 46px;
+      font-weight: 600;
+      color: var(--pt-navy);
+      line-height: 1;
+      margin-bottom: 8px;
     }
 
     .admin-panel-box {
-      background: var(--cream-card);
-      border-radius: var(--radius-lg);
-      border: 1.5px solid var(--stone-border);
-      padding: 28px;
-      box-shadow: var(--shadow-sm);
-      margin-bottom: 28px;
+      background: var(--pt-cream);
+      border: 1px solid var(--pt-border);
+      padding: 40px;
+      margin-bottom: 40px;
+      position: relative;
     }
 
-    .admin-table {
+    .admin-panel-box::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
-      border-collapse: collapse;
-      font-size: 0.92rem;
+      height: 3px;
+      background: linear-gradient(90deg, var(--pt-olive), var(--pt-gold), var(--pt-navy));
     }
 
-    .admin-table th,
-    .admin-table td {
-      padding: 12px 10px;
-      text-align: left;
-      border-bottom: 1px solid var(--stone-border);
+    .pt-badge {
+      display: inline-block;
+      padding: 5px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: rgba(59, 82, 51, 0.12);
+      color: var(--pt-olive);
     }
 
-    .admin-table th {
-      color: var(--olive-dark);
-      font-weight: 800;
-      background: var(--cream-warm);
+    .pt-badge-navy {
+      background: rgba(2, 58, 88, 0.1);
+      color: var(--pt-navy);
+    }
+
+    .pt-badge-gold {
+      background: rgba(212, 155, 53, 0.22);
+      color: var(--pt-navy);
+    }
+
+    .pt-badge-danger {
+      background: rgba(221, 89, 3, 0.15);
+      color: var(--pt-terracotta);
+    }
+
+    .pt-form-input,
+    .pt-form-select {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--pt-border);
+      background: #fff;
+      font-family: var(--font-sans);
+      font-size: 14.5px;
+      color: var(--pt-navy);
+      outline: none;
+    }
+
+    .pt-form-input:focus,
+    .pt-form-select:focus {
+      border-color: var(--pt-terracotta);
+    }
+
+    .pt-form-label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--pt-navy);
+      margin-bottom: 6px;
     }
 
     /* Masa QR Stand Kartları */
     .qr-cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 24px;
+      margin-top: 24px;
     }
 
     .qr-stand-card {
-      background: var(--cream-bg);
-      border: 3px solid var(--olive-primary);
-      border-radius: 22px;
-      padding: 20px 16px;
+      background: #fff;
+      border: 2px solid var(--pt-olive);
+      padding: 22px 18px;
       text-align: center;
-      box-shadow: var(--shadow-sm);
       position: relative;
       overflow: hidden;
     }
 
     .qr-stand-top {
-      background: linear-gradient(135deg, var(--olive-primary), var(--sea-primary));
+      background: linear-gradient(135deg, var(--pt-olive-dark), var(--pt-navy));
       color: #fff;
-      margin: -20px -16px 14px;
-      padding: 12px 10px;
-      border-bottom: 2px solid var(--gold-primary);
+      margin: -22px -18px 16px;
+      padding: 14px 10px;
+      border-bottom: 2px solid var(--pt-gold);
     }
 
     .qr-stand-img-box {
-      background: #fff;
-      padding: 10px;
-      border-radius: 14px;
-      border: 1.5px solid var(--gold-primary);
+      background: var(--pt-cream);
+      padding: 12px;
+      border: 1px solid var(--pt-gold);
       display: inline-block;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+    }
+
+    /* Fiyat & Stok Tablosu */
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      background: #fff;
+    }
+
+    .admin-table th,
+    .admin-table td {
+      padding: 14px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--pt-border);
+    }
+
+    .admin-table th {
+      color: var(--pt-navy);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      background: rgba(3, 58, 88, 0.04);
     }
 
     @media print {
@@ -120,100 +637,305 @@
         width: 100%;
         border: none;
         box-shadow: none;
+        background: #fff;
       }
       .no-print {
         display: none !important;
+      }
+    }
+
+    /* ==========================================================================
+       6. PATIOTIME DEMO 4 FOOTER WITH 3-LAYER WAVY SVG TOP
+       ========================================================================== */
+    .pt-footer {
+      position: relative;
+      background: #14314F;
+      color: rgba(255, 255, 255, 0.85);
+      padding: 135px 24px 50px;
+      overflow: hidden;
+    }
+
+    .pt-footer-wave-top {
+      position: absolute;
+      top: -1px;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      line-height: 0;
+      z-index: 5;
+    }
+
+    .pt-footer-wave-top svg {
+      position: relative;
+      display: block;
+      width: calc(100% + 1.3px);
+      height: 68px;
+    }
+
+    .pt-footer-wave-top .shape-fill {
+      fill: var(--pt-white);
+    }
+
+    .pt-footer-grid {
+      max-width: 1240px;
+      margin: 0 auto 60px;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1fr;
+      gap: 48px;
+    }
+
+    .pt-footer-title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    .pt-footer-links {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .pt-footer-links a:hover {
+      color: var(--pt-gold-soft);
+    }
+
+    .pt-footer-bottom {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255, 255, 255, 0.14);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    /* ==========================================================================
+       7. RESPONSIVE & SINGLE-LINE MOBILE HEADER RULES
+       ========================================================================== */
+    @media (max-width: 980px) {
+      .pt-header {
+        padding: 12px 16px;
+        grid-template-columns: 40px 1fr auto;
+        gap: 8px;
+      }
+      .pt-header.scrolled {
+        padding: 9px 16px;
+      }
+      .pt-menu-toggle .pt-menu-label {
+        display: none;
+      }
+      .pt-hamburger-lines {
+        width: 24px;
+        height: 15px;
+      }
+      .pt-logo-stars {
+        font-size: 9px;
+        letter-spacing: 3px;
+        margin-bottom: 1px;
+      }
+      .pt-logo-title {
+        font-size: 18px;
+        letter-spacing: 0.08em;
+        white-space: nowrap;
+      }
+      .pt-logo-sub {
+        font-size: 7.5px;
+        letter-spacing: 0.14em;
+        white-space: nowrap;
+      }
+      .pt-header-right .pt-btn-outline {
+        padding: 7px 10px;
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        white-space: nowrap;
+      }
+      .pt-header-right .pt-btn-outline .pt-btn-extra {
+        display: none;
+      }
+      .admin-panel-box {
+        padding: 26px 18px;
+      }
+      .pt-footer-grid {
+        grid-template-columns: 1fr;
+      }
+      .pt-footer {
+        padding-top: 95px;
+      }
+      .pt-footer-wave-top svg {
+        height: 42px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .pt-header {
+        padding: 10px 12px;
+        grid-template-columns: 34px 1fr auto;
+        gap: 6px;
+      }
+      .pt-header.scrolled {
+        padding: 8px 12px;
+      }
+      .pt-logo-title {
+        font-size: 15.5px;
+        letter-spacing: 0.06em;
+      }
+      .pt-logo-sub {
+        font-size: 6.5px;
+        letter-spacing: 0.1em;
+      }
+      .pt-header-right .pt-btn-outline {
+        padding: 6px 8px;
+        font-size: 9.5px;
+        letter-spacing: 0.06em;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Üst Ekosistem Geçiş Barı -->
-  <div class="ecosystem-bar no-print">
+  <!-- ========================================================================
+       SOL KAYAR MENÜ (PATIOTIME DEMO 4 SIDEMENU)
+       ======================================================================== -->
+  <div class="pt-sidemenu-backdrop no-print" id="sidemenu-backdrop" onclick="toggleSideMenu(false)"></div>
+  <aside class="pt-sidemenu no-print" id="sidemenu">
     <div>
-      ⚙️ <strong>MERKEZ & FRANCHISE YÖNETİM PANELİ</strong> — Fiyat Güncelleme, Masa QR Baskı ve Sipariş Takibi
-    </div>
-    <div class="ecosystem-links">
-      <a href="index.html">🏛️ Kurumsal Web</a>
-      <a href="menu.html">📱 Masadaki QR Menü</a>
-      <a href="uygulama.html">🛍️ Mobil Uygulama (%10 İndirim)</a>
-      <a href="yonetim.html" class="active">⚙️ Yönetim & QR Üretici</a>
-    </div>
-  </div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <button class="pt-sidemenu-close" onclick="toggleSideMenu(false)">✕ KAPAT</button>
+        <span style="font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--pt-olive); font-weight:700;">YÖNETİM MERKEZİ</span>
+      </div>
 
-  <header class="admin-header no-print">
-    <div class="container" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
-      <div>
-        <span class="badge badge-gold" style="margin-bottom:8px;">MERKEZ BULUT KONTROL PANELİ</span>
-        <h1 style="font-size:2rem; color:#fff;">Çökertme Dünyası Yönetim ve Masa QR Merkezi</h1>
-        <p style="font-size:0.92rem; color:rgba(255,255,255,0.88);">
-          Buradan değiştirdiğiniz fiyatlar anında masalardaki QR Menüde (QR kodları yeniden basmaya gerek kalmadan) ve Mobil Uygulamada güncellenir.
-        </p>
+      <ul class="pt-sidemenu-nav">
+        <li><a href="index.html"><span>Ana Sayfa</span><span>→</span></a></li>
+        <li><a href="menu.html"><span>À la Carte QR Menü</span><span>→</span></a></li>
+        <li><a href="uygulama.html"><span>Mobil Uygulama (%10 İndirim)</span><span>→</span></a></li>
+        <li><a href="index.html#franchise"><span>Franchise &amp; Bayilik</span><span>→</span></a></li>
+        <li><a href="yonetim.html"><span>Merkez Yönetim &amp; QR</span><span>→</span></a></li>
+      </ul>
+    </div>
+
+    <div style="font-size:14px; color:var(--pt-text-muted); border-top:1px solid var(--pt-border); padding-top:20px;">
+      <div>📍 Turgut Özal Bulvarı, Çukurova / Adana</div>
+      <div>📞 +90 (322) 455 01 48</div>
+      <div style="margin-top:8px; color:var(--pt-olive); font-weight:600;">
+        ⚙️ Bulut Senkronizasyon Aktif
       </div>
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <a href="menu.html" class="btn btn-gold">📱 QR Menüyü Aç</a>
-        <button onclick="resetAllData()" class="btn" style="background:rgba(255,255,255,0.15); color:#fff; border:1px solid rgba(255,255,255,0.3);">
-          🔄 Varsayılan Verilere Sıfırla
-        </button>
-      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================================================
+       ÜST HEADER (OVERLAP & STICKY)
+       ======================================================================== -->
+  <header class="pt-header no-print" id="main-header">
+    <div>
+      <button class="pt-menu-toggle" onclick="toggleSideMenu(true)" aria-label="Menüyü Aç">
+        <div class="pt-hamburger-lines">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <span class="pt-menu-label">MENÜ</span>
+      </button>
+    </div>
+
+    <a href="index.html" class="pt-logo-center">
+      <div class="pt-logo-stars">★ ★ ★ ★ ★</div>
+      <div class="pt-logo-title">ÇÖKERTME DÜNYASI</div>
+      <div class="pt-logo-sub">ADANA MERKEZ • YÖNETİM &amp; MASA QR MERKEZİ</div>
+    </a>
+
+    <div class="pt-header-right">
+      <a href="menu.html" class="pt-btn-outline">QR MENÜ<span class="pt-btn-extra">YÜ AÇ</span></a>
     </div>
   </header>
 
+  <!-- ========================================================================
+       SAYFA HERO BANNER + 3 KATMANLI DALGALI SVG GEÇİŞİ
+       ======================================================================== -->
+  <section class="pt-page-hero no-print">
+    <div class="pt-page-hero-overlay"></div>
+    <div class="pt-page-hero-content">
+      <div class="pt-hero-eyebrow">MERKEZ BULUT KONTROL PANELİ</div>
+      <h1 class="pt-page-hero-title">Yönetim &amp; Masa QR Merkezi</h1>
+      <p class="pt-page-hero-sub">
+        Buradan değiştirdiğiniz fiyatlar ve stok durumları, masalardaki QR kodları yeniden basmaya gerek kalmadan <strong>À la Carte QR Menüde</strong> ve <strong>%10 İndirimli Mobil Uygulamada</strong> anında güncellenir.
+      </p>
+      <div style="display:flex; justify-content:center; gap:14px; flex-wrap:wrap;">
+        <a href="menu.html" class="pt-btn-fill">CANLI QR MENÜYÜ GÖRÜNTÜLE →</a>
+        <button onclick="resetAllData()" class="pt-btn-outline">🔄 VARSAYILAN VERİLERE SIFIRLA</button>
+      </div>
+    </div>
+
+    <div class="pt-wave-bottom">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+        <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="shape-fill"></path>
+        <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="shape-fill"></path>
+        <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="shape-fill"></path>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       YÖNETİM PANELİ ANA İÇERİĞİ
+       ======================================================================== -->
   <main class="admin-container">
+
     <!-- KPI Kartları -->
     <div class="admin-kpi-grid no-print">
       <div class="kpi-card">
-        <div style="font-size:0.8rem; font-weight:700; color:var(--text-muted);">AKTİF MENÜ ÜRÜNÜ</div>
+        <div class="kpi-label">AKTİF MENÜ ÜRÜNÜ</div>
         <div class="kpi-val" id="kpi-items">14</div>
-        <div style="font-size:0.8rem; color:var(--sea-primary); font-weight:600;">4 Dilde Otomatik Yayında</div>
+        <div style="font-size:13.5px; color:var(--pt-olive); font-weight:600;">4 Dilde &amp; 3 Para Biriminde Yayında</div>
       </div>
       <div class="kpi-card">
-        <div style="font-size:0.8rem; font-weight:700; color:var(--text-muted);">UYGULAMA SİPARİŞLERİ (%10 İNDİRİMLİ)</div>
+        <div class="kpi-label">UYGULAMA SİPARİŞLERİ (%10 İNDİRİMLİ)</div>
         <div class="kpi-val" id="kpi-orders">1</div>
-        <div style="font-size:0.8rem; color:var(--success); font-weight:600;">Aracı Komisyonu: 0 ₺</div>
+        <div style="font-size:13.5px; color:var(--pt-olive); font-weight:600;">Aracı Komisyonu: 0 ₺</div>
       </div>
       <div class="kpi-card">
-        <div style="font-size:0.8rem; font-weight:700; color:var(--text-muted);">FRANCHISE / BAYİLİK BAŞVURUSU</div>
+        <div class="kpi-label">FRANCHISE / BAYİLİK BAŞVURUSU</div>
         <div class="kpi-val" id="kpi-franchise">1</div>
-        <div style="font-size:0.8rem; color:var(--gold-dark); font-weight:600;">Yurt İçi & Yurt Dışı Adaylar</div>
+        <div style="font-size:13.5px; color:var(--pt-terracotta); font-weight:600;">Yurt İçi &amp; Yurt Dışı Adaylar</div>
       </div>
       <div class="kpi-card">
-        <div style="font-size:0.8rem; font-weight:700; color:var(--text-muted);">MASADA QR MENÜ MODU</div>
-        <div class="kpi-val" style="font-size:1.35rem; padding-top:8px; color:var(--sea-primary);">Sadece Görüntüleme</div>
-        <div style="font-size:0.8rem; color:var(--text-body); font-weight:600;">Masadan Sipariş Kapalı ✓</div>
+        <div class="kpi-label">MASADA QR MENÜ MODU</div>
+        <div class="kpi-val" style="font-size:30px; padding-top:8px; color:var(--pt-navy);">Sadece Görüntüleme</div>
+        <div style="font-size:13.5px; color:var(--pt-text-muted); font-weight:600;">Masadan Sipariş Kapalı ✓</div>
       </div>
     </div>
 
     <!-- 1. MASA QR KOD ÜRETİCİ VE YAZDIRICI -->
     <section class="admin-panel-box" id="printable-qr-section">
-      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; margin-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:18px; margin-bottom:20px;">
         <div>
-          <span class="badge badge-olive no-print">MASALAR İÇİN HAZIR BASKI MODÜLÜ</span>
-          <h2 style="font-size:1.55rem; color:var(--olive-dark); margin-top:4px;">
-            🖨️ Restoran Masaları İçin QR Menü Kartları (Sadece Görüntüleme)
-          </h2>
-          <p class="no-print" style="font-size:0.9rem; color:var(--text-body);">
-            Adana şubenizdeki masalara koyacağınız pleksi veya ahşap standlar için kurumsal renklerde (Zeytin Yeşili & Deniz Mavisi) hazır QR kodlar.
+          <div class="pt-subtitle no-print">MASALAR İÇİN HAZIR BASKI MODÜLÜ</div>
+          <h2 class="pt-title">Restoran Masaları İçin QR Menü Kartları</h2>
+          <p class="no-print" style="font-size:15.5px; color:var(--pt-text-muted);">
+            Şubelerinizdeki masalara koyacağınız pleksi veya ahşap standlar için kurumsal renklerde (Zeytin Yeşili &amp; Ege Mavisi) hazır QR kodlar.
           </p>
         </div>
 
-        <div class="no-print" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-          <label style="font-size:0.85rem; font-weight:700;">Masa Sayısı:</label>
-          <select id="qr-table-count" class="form-select" style="width:110px; padding:8px 12px;" onchange="renderTableQRCards()">
+        <div class="no-print" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+          <label style="font-size:12px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase;">MASA SAYISI:</label>
+          <select id="qr-table-count" class="pt-form-select" style="width:120px; padding:10px 12px;" onchange="renderTableQRCards()">
             <option value="4">4 Masa</option>
             <option value="8" selected>8 Masa</option>
             <option value="12">12 Masa</option>
             <option value="20">20 Masa</option>
           </select>
-          <button onclick="window.print()" class="btn btn-sea">🖨️ Masa QR Kartlarını Yazdır / PDF Yap</button>
+          <button onclick="window.print()" class="pt-btn-navy">🖨️ MASA QR KARTLARINI YAZDIR / PDF YAP</button>
         </div>
       </div>
 
-      <div class="no-print" style="background:var(--cream-warm); padding:12px 16px; border-radius:12px; margin-bottom:16px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
-        <strong style="font-size:0.86rem; color:var(--olive-dark);">🔗 QR Kodların Yönleneceği Menü Adresi (Domain):</strong>
-        <input type="text" id="qr-base-url" class="form-input" style="max-width:440px; padding:8px 12px; background:#fff;" oninput="renderTableQRCards()" />
-        <span style="font-size:0.8rem; color:var(--text-muted);">Canlıya aldığınızda buraya <code>https://cokertmedunyasi.com/menu.html</code> yazmanız yeterlidir.</span>
+      <div class="no-print" style="background:#fff; padding:16px 20px; border:1px solid var(--pt-border); margin-bottom:20px; display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
+        <strong style="font-size:13px; letter-spacing:0.06em; text-transform:uppercase; color:var(--pt-navy);">🔗 QR Kodların Yönleneceği Menü Adresi:</strong>
+        <input type="text" id="qr-base-url" class="pt-form-input" style="max-width:420px;" oninput="renderTableQRCards()" />
+        <span style="font-size:13.5px; color:var(--pt-text-muted);">Sabit tek QR için <code>https://www.cokertmedunyasi.com/menu</code> adresini kullanabilirsiniz.</span>
       </div>
 
       <div class="qr-cards-grid" id="qr-cards-grid"></div>
@@ -221,45 +943,45 @@
 
     <!-- 2. HIZLI FİYAT VE STOK YÖNETİMİ -->
     <section class="admin-panel-box no-print">
-      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; margin-bottom:18px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; margin-bottom:24px;">
         <div>
-          <span class="badge badge-gold">ANLIK MENÜ & FİYAT GÜNCELLEME</span>
-          <h2 style="font-size:1.55rem; color:var(--olive-dark); margin-top:4px;">Menü Fiyatları ve Ürün Durumu</h2>
-          <p style="font-size:0.9rem; color:var(--text-body);">
-            Fiyatı değiştirip <strong>"Kaydet"</strong> dediğiniz anda masadaki QR menüde ve mobil uygulamada (%10 indirimli haliyle) anında güncellenir.
+          <div class="pt-subtitle">ANLIK MENÜ &amp; FİYAT GÜNCELLEME</div>
+          <h2 class="pt-title">Menü Fiyatları ve Ürün Durumu</h2>
+          <p style="font-size:15.5px; color:var(--pt-text-muted);">
+            Fiyatı değiştirip <strong>"Fiyatı Kaydet"</strong> dediğiniz anda masadaki QR menüde ve mobil uygulamada (%10 indirimli haliyle) anında güncellenir.
           </p>
         </div>
-        <button class="btn btn-olive" onclick="toggleNewItemForm()">+ Yeni Ürün Ekle</button>
+        <button class="pt-btn-olive" onclick="toggleNewItemForm()">+ YENİ ÜRÜN EKLE</button>
       </div>
 
       <!-- Yeni Ürün Ekleme Formu -->
-      <form id="new-item-form" style="display:none; background:var(--cream-warm); padding:20px; border-radius:16px; margin-bottom:20px; border:1.5px solid var(--olive-primary);">
-        <h3 style="margin-bottom:14px; color:var(--olive-dark);">Yeni Menü Ürünü Ekle</h3>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px;">
-          <div class="form-group">
-            <label class="form-label">Ürün Adı (Türkçe) *</label>
-            <input type="text" id="new-name" class="form-input" placeholder="Örn: Kaşarlı Bonfile Çökertme" required />
+      <form id="new-item-form" style="display:none; background:#fff; padding:26px; margin-bottom:26px; border:1px solid var(--pt-gold);">
+        <h3 style="font-size:26px; margin-bottom:18px; color:var(--pt-navy);">Yeni Menü Ürünü Ekle</h3>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:16px;">
+          <div>
+            <label class="pt-form-label">Ürün Adı (Türkçe) *</label>
+            <input type="text" id="new-name" class="pt-form-input" placeholder="Örn: Kaşarlı Bonfile Çökertme" required />
           </div>
-          <div class="form-group">
-            <label class="form-label">Kategori *</label>
-            <select id="new-cat" class="form-select">
+          <div>
+            <label class="pt-form-label">Kategori *</label>
+            <select id="new-cat" class="pt-form-select">
               <option value="cokertmeler">🥘 İmza Çökertme Kebapları</option>
-              <option value="baslangiclar">🫒 Ege & Akdeniz Başlangıçlar</option>
-              <option value="salatalar">🥗 Ferah Salatalar & Mezeler</option>
+              <option value="baslangiclar">🫒 Ege &amp; Akdeniz Başlangıçlar</option>
+              <option value="salatalar">🥗 Ferah Salatalar &amp; Mezeler</option>
               <option value="tatlilar">🍯 Geleneksel Tatlılar</option>
               <option value="icecekler">🍋 Ferahlatıcı İçecekler</option>
             </select>
           </div>
-          <div class="form-group">
-            <label class="form-label">Liste Fiyatı (₺) *</label>
-            <input type="number" id="new-price" class="form-input" placeholder="Örn: 470" required />
+          <div>
+            <label class="pt-form-label">Liste Fiyatı (₺) *</label>
+            <input type="number" id="new-price" class="pt-form-input" placeholder="Örn: 470" required />
           </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Ürün Açıklaması (İçindekiler) *</label>
-          <input type="text" id="new-desc" class="form-input" placeholder="Örn: Çıtır kibrit patates, süzme yoğurt ve eritilmiş Bergama tulum/kaşar ile..." required />
+        <div style="margin-bottom:18px;">
+          <label class="pt-form-label">Ürün Açıklaması (İçindekiler) *</label>
+          <input type="text" id="new-desc" class="pt-form-input" placeholder="Örn: Çıtır kibrit patates, süzme yoğurt ve eritilmiş Bergama tulum ile..." required />
         </div>
-        <button type="submit" class="btn btn-olive">✅ Ürünü Menüye Ekle</button>
+        <button type="submit" class="pt-btn-fill">✓ ÜRÜNÜ MENÜYE EKLE</button>
       </form>
 
       <div style="overflow-x:auto;">
@@ -280,31 +1002,92 @@
     </section>
 
     <!-- 3. MOBİL UYGULAMADAN GELEN SİPARİŞLER & FRANCHISE BAŞVURULARI -->
-    <div class="no-print" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(460px, 1fr)); gap:24px;">
-      <section class="admin-panel-box">
-        <span class="badge badge-sea">MOBİL UYGULAMA SİPARİŞ AKIŞI</span>
-        <h3 style="font-size:1.35rem; color:var(--olive-dark); margin:6px 0 14px;">
-          🛍️ Gelen Uygulama Siparişleri (%10 İndirimli)
+    <div class="no-print" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:30px;">
+      <section class="admin-panel-box" style="margin-bottom:0;">
+        <div class="pt-subtitle">MOBİL UYGULAMA SİPARİŞ AKIŞI</div>
+        <h3 style="font-size:30px; color:var(--pt-navy); margin-bottom:18px;">
+          Gelen Uygulama Siparişleri (%10 İndirimli)
         </h3>
-        <div id="admin-orders-list" style="display:grid; gap:12px;"></div>
+        <div id="admin-orders-list" style="display:grid; gap:14px;"></div>
       </section>
 
-      <section class="admin-panel-box">
-        <span class="badge badge-gold">YATIRIMCI & BAYİLİK PORTALI</span>
-        <h3 style="font-size:1.35rem; color:var(--olive-dark); margin:6px 0 14px;">
-          🌍 Yurt İçi & Yurt Dışı Franchise Başvuruları
+      <section class="admin-panel-box" style="margin-bottom:0;">
+        <div class="pt-subtitle">YATIRIMCI &amp; BAYİLİK PORTALI</div>
+        <h3 style="font-size:30px; color:var(--pt-navy); margin-bottom:18px;">
+          Yurt İçi &amp; Yurt Dışı Franchise Başvuruları
         </h3>
-        <div id="admin-franchise-list" style="display:grid; gap:12px;"></div>
+        <div id="admin-franchise-list" style="display:grid; gap:14px;"></div>
       </section>
     </div>
+
   </main>
+
+  <!-- ========================================================================
+       PATIOTIME DEMO 4 FOOTER + 3 KATMANLI DALGALI SVG
+       ======================================================================== -->
+  <footer class="pt-footer no-print">
+    <div class="pt-footer-wave-top">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+        <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="shape-fill"></path>
+        <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="shape-fill"></path>
+        <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="shape-fill"></path>
+      </svg>
+    </div>
+
+    <div class="pt-footer-grid">
+      <div>
+        <div style="font-size:11px; letter-spacing:4px; color:var(--pt-gold-soft); margin-bottom:6px;">★ ★ ★ ★ ★</div>
+        <div class="pt-footer-title">ÇÖKERTME DÜNYASI</div>
+        <p style="font-size:15px; color:rgba(255,255,255,0.75); max-width:340px;">
+          Ege'nin asırlık çökertme mirasını Adana'nın ustalık ateşiyle harmanlayan yeni nesil gastronomi ve global franchise markası.
+        </p>
+      </div>
+
+      <div>
+        <div class="pt-footer-title">Dijital Ekosistem</div>
+        <ul class="pt-footer-links">
+          <li><a href="index.html">Ana Sayfa (Kurumsal &amp; Hikayemiz)</a></li>
+          <li><a href="menu.html">À la Carte QR Menü (Masada Görüntüleme)</a></li>
+          <li><a href="uygulama.html">Mobil Uygulama (%10 İndirim &amp; Sadakat)</a></li>
+          <li><a href="yonetim.html">Merkez Yönetim &amp; Masa QR Üretici</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="pt-footer-title">Adana Merkez &amp; İletişim</div>
+        <p style="font-size:15px; margin-bottom:8px;">📍 Turgut Özal Bulvarı, Güzelyalı Mah. Çukurova / Adana</p>
+        <p style="font-size:15px; margin-bottom:8px;">📞 +90 (322) 455 01 48</p>
+        <p style="font-size:15px; margin-bottom:8px;">✉️ franchise@cokertmedunyasi.com</p>
+        <p style="font-size:13px; color:var(--pt-gold-soft); margin-top:12px;">Her Gün: 11:00 – 23:30</p>
+      </div>
+    </div>
+
+    <div class="pt-footer-bottom">
+      <div>© 2026 Çökertme Dünyası Gastronomi A.Ş. Tüm Hakları Saklıdır.</div>
+      <div>cokertmedunyasi.com • Adana'dan Dünyaya</div>
+    </div>
+  </footer>
 
   <script src="assets/data.js"></script>
   <script>
+    window.addEventListener("scroll", function () {
+      const hdr = document.getElementById("main-header");
+      if (window.scrollY > 50) {
+        hdr.classList.add("scrolled");
+      } else {
+        hdr.classList.remove("scrolled");
+      }
+    });
+
+    function toggleSideMenu(open) {
+      document.getElementById("sidemenu").classList.toggle("open", open);
+      document.getElementById("sidemenu-backdrop").classList.toggle("open", open);
+    }
+
     function initAdmin() {
       const baseInput = document.getElementById("qr-base-url");
       if (!baseInput.value) {
-        baseInput.value = "https://cokertmedunyasi.com/menu";
+        baseInput.value = "https://www.cokertmedunyasi.com/menu";
       }
       renderAdminAll();
     }
@@ -323,35 +1106,36 @@
 
     function renderTableQRCards() {
       const count = parseInt(document.getElementById("qr-table-count").value, 10) || 8;
-      const baseUrl = (document.getElementById("qr-base-url").value || "https://cokertmedunyasi.com/menu.html").trim();
+      const baseUrl = (document.getElementById("qr-base-url").value || "https://www.cokertmedunyasi.com/menu").trim();
       const grid = document.getElementById("qr-cards-grid");
 
       let html = "";
       for (let m = 1; m <= count; m++) {
         const sep = baseUrl.includes("?") ? "&" : "?";
         const targetUrl = `${baseUrl}${sep}sube=Adana-Merkez&masa=${m}`;
-        const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&color=2A3C24&bgcolor=FAF7F2&data=${encodeURIComponent(targetUrl)}`;
+        const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&color=023A58&bgcolor=FAF7F2&data=${encodeURIComponent(targetUrl)}`;
 
         html += `
           <div class="qr-stand-card">
             <div class="qr-stand-top">
-              <div style="font-family:'Playfair Display',serif; font-weight:800; font-size:1.05rem;">ÇÖKERTME DÜNYASI</div>
-              <div style="font-size:0.7rem; color:var(--gold-light); letter-spacing:0.08em;">DİJİTAL LEZZET MENÜSÜ</div>
+              <div style="font-size:9px; letter-spacing:3px; color:var(--pt-gold-soft);">★ ★ ★ ★ ★</div>
+              <div style="font-family:var(--font-serif); font-weight:600; font-size:19px; letter-spacing:0.06em;">ÇÖKERTME DÜNYASI</div>
+              <div style="font-size:10px; color:var(--pt-gold-soft); letter-spacing:0.16em;">À LA CARTE QR MENÜ</div>
             </div>
-            <div style="font-weight:800; color:var(--sea-primary); font-size:1.1rem; margin-bottom:8px;">
+            <div style="font-family:var(--font-serif); font-weight:700; color:var(--pt-navy); font-size:22px; margin-bottom:8px;">
               🍽️ MASA ${m}
             </div>
             <div class="qr-stand-img-box">
               <img src="${qrApiUrl}" alt="Masa ${m} QR Menü" width="145" height="145" loading="lazy" />
             </div>
-            <div style="font-size:0.78rem; font-weight:700; color:var(--olive-dark); margin-bottom:4px;">
+            <div style="font-size:12.5px; font-weight:600; color:var(--pt-olive); margin-bottom:4px;">
               Menüyü Görüntülemek İçin Okutun
             </div>
-            <div style="font-size:0.7rem; color:var(--text-muted);">
+            <div style="font-size:11px; color:var(--pt-text-muted);">
               🇹🇷 TR • 🇬🇧 EN • 🇩🇪 DE • 🇸🇦 AR
             </div>
-            <div class="no-print" style="margin-top:8px;">
-              <a href="menu.html?masa=${m}" style="font-size:0.76rem; color:var(--sea-primary); font-weight:700; text-decoration:underline;">
+            <div class="no-print" style="margin-top:10px;">
+              <a href="menu.html?masa=${m}" style="font-size:12px; color:var(--pt-terracotta); font-weight:600; text-decoration:underline;">
                 Masa ${m} Menüsünü Test Et →
               </a>
             </div>
@@ -369,26 +1153,26 @@
       tbody.innerHTML = state.items.map(item => `
         <tr>
           <td>
-            <strong style="color:var(--olive-dark);">${item.name.tr}</strong>
+            <strong style="font-family:var(--font-serif); font-size:20px; color:var(--pt-navy);">${item.name.tr}</strong>
           </td>
-          <td><span class="badge badge-olive">${catMap[item.categoryId] || item.categoryId}</span></td>
+          <td><span class="pt-badge">${catMap[item.categoryId] || item.categoryId}</span></td>
           <td>
             <div style="display:flex; align-items:center; gap:6px;">
-              <input type="number" id="price-${item.id}" value="${item.price}" class="form-input" style="width:95px; padding:6px 10px; font-weight:700;" />
+              <input type="number" id="price-${item.id}" value="${item.price}" class="pt-form-input" style="width:95px; padding:7px 10px; font-weight:700;" />
               <span>₺</span>
             </div>
           </td>
           <td>
-            <strong style="color:var(--sea-primary);">${(item.price * 0.9).toFixed(1)} ₺</strong>
+            <strong style="color:var(--pt-olive);">${(item.price * 0.9).toFixed(1)} ₺</strong>
           </td>
           <td>
-            <button type="button" onclick="toggleAvailability('${item.id}')" class="badge ${item.available ? 'badge-olive' : 'badge-danger'}" style="border:none; cursor:pointer; padding:6px 12px;">
+            <button type="button" onclick="toggleAvailability('${item.id}')" class="pt-badge ${item.available ? '' : 'pt-badge-danger'}" style="border:none; cursor:pointer; padding:7px 12px;">
               ${item.available ? '✓ Serviste (Açık)' : '✕ Tükendi (Kapalı)'}
             </button>
           </td>
           <td>
-            <button type="button" onclick="saveItemPrice('${item.id}')" class="btn btn-gold" style="padding:6px 14px; font-size:0.8rem;">
-              💾 Fiyatı Kaydet
+            <button type="button" onclick="saveItemPrice('${item.id}')" class="pt-btn-fill" style="padding:8px 14px; font-size:11px;">
+              💾 FİYATI KAYDET
             </button>
           </td>
         </tr>
@@ -452,20 +1236,20 @@
     function renderOrders(state) {
       const el = document.getElementById("admin-orders-list");
       el.innerHTML = state.orders.map(o => `
-        <div style="background:var(--cream-bg); padding:16px; border-radius:14px; border:1px solid var(--stone-border); border-left:4px solid var(--sea-primary);">
-          <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-            <strong style="color:var(--olive-dark);">#${o.id} — ${o.customerName}</strong>
-            <span class="badge badge-sea">${o.mode}</span>
+        <div style="background:#fff; padding:18px; border:1px solid var(--pt-border); border-left:4px solid var(--pt-olive);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:8px;">
+            <strong style="font-family:var(--font-serif); font-size:21px; color:var(--pt-navy);">#${o.id} — ${o.customerName}</strong>
+            <span class="pt-badge pt-badge-navy">${o.mode}</span>
           </div>
-          <div style="font-size:0.84rem; color:var(--text-body); margin-bottom:6px;">
+          <div style="font-size:13.5px; color:var(--pt-text-muted); margin-bottom:6px;">
             📍 ${o.branch} • 📞 ${o.phone} • ⏰ ${o.createdAt}
           </div>
-          <div style="font-size:0.88rem; font-weight:600; margin-bottom:8px; color:var(--olive-dark);">
+          <div style="font-size:14.5px; font-weight:600; margin-bottom:10px; color:var(--pt-navy);">
             🍽️ ${o.items.join(", ")}
           </div>
-          <div style="display:flex; justify-content:space-between; font-size:0.84rem; padding-top:8px; border-top:1px dashed var(--stone-border);">
-            <span>Liste: ${o.subtotal} ₺ | <strong style="color:var(--success);">%10 İndirim: -${o.discount} ₺</strong></span>
-            <strong style="color:var(--olive-primary); font-size:0.96rem;">Tahsilat: ${o.total} ₺</strong>
+          <div style="display:flex; justify-content:space-between; font-size:13.5px; padding-top:8px; border-top:1px dashed var(--pt-border);">
+            <span>Liste: ${o.subtotal} ₺ | <strong style="color:var(--pt-olive);">%10 İndirim: -${o.discount} ₺</strong></span>
+            <strong style="color:var(--pt-terracotta); font-size:15px;">Tahsilat: ${o.total} ₺</strong>
           </div>
         </div>
       `).join("");
@@ -474,15 +1258,15 @@
     function renderFranchise(state) {
       const el = document.getElementById("admin-franchise-list");
       el.innerHTML = state.franchiseApplications.map(f => `
-        <div style="background:var(--cream-bg); padding:16px; border-radius:14px; border:1px solid var(--stone-border); border-left:4px solid var(--gold-primary);">
-          <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-            <strong style="color:var(--olive-dark);">${f.fullName} (${f.location})</strong>
-            <span class="badge badge-gold">${f.budget}</span>
+        <div style="background:#fff; padding:18px; border:1px solid var(--pt-border); border-left:4px solid var(--pt-gold);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:8px;">
+            <strong style="font-family:var(--font-serif); font-size:21px; color:var(--pt-navy);">${f.fullName} (${f.location})</strong>
+            <span class="pt-badge pt-badge-gold">${f.budget}</span>
           </div>
-          <div style="font-size:0.84rem; color:var(--text-body); margin-bottom:6px;">
+          <div style="font-size:13.5px; color:var(--pt-text-muted); margin-bottom:8px;">
             📞 ${f.phone} • ⏰ ${f.createdAt}
           </div>
-          <div style="font-size:0.86rem; color:var(--text-dark); background:#fff; padding:8px 12px; border-radius:8px; border:1px solid var(--stone-border);">
+          <div style="font-size:14px; color:var(--pt-navy); background:var(--pt-cream); padding:10px 14px; border:1px solid var(--pt-border);">
             "${f.note}"
           </div>
         </div>
