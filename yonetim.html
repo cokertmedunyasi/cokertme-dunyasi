@@ -952,8 +952,8 @@
           </p>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <button type="button" class="pt-btn-navy" style="background:var(--pt-gold); border-color:var(--pt-gold); color:var(--pt-navy-dark);" onclick="addDefaultComplimentaryItems()">🎁 MASA İKRAMLARINI MENÜYE EKLE</button>
-          <button type="button" class="pt-btn-navy" style="background:#b93829; border-color:#b93829;" onclick="deleteUnavailableItems()">🗑️ TÜKENDİ (KAPALI) OLANLARI SİL</button>
+          <button type="button" class="pt-btn-navy" style="background:var(--pt-gold); border-color:var(--pt-gold); color:var(--pt-navy-dark);" onclick="addDefaultComplimentaryItems()">MASA İKRAMLARINI MENÜYE EKLE</button>
+          <button type="button" class="pt-btn-navy" style="background:#b93829; border-color:#b93829;" onclick="deleteUnavailableItems()">TÜKENDİ (KAPALI) OLANLARI SİL</button>
           <button type="button" class="pt-btn-olive" onclick="toggleNewItemForm()">+ YENİ ÜRÜN EKLE</button>
         </div>
       </div>
@@ -969,12 +969,12 @@
           <div>
             <label class="pt-form-label">Kategori *</label>
             <select id="new-cat" class="pt-form-select" onchange="handleCategoryChange()">
-              <option value="cokertmeler">🥘 İmza Çökertme Kebapları</option>
-              <option value="ikramlar">🎁 Masa İkramlarımız (Zeytin, Turşu, Salata, Tatlı, Çay, Kahve)</option>
-              <option value="baslangiclar">🫒 Ege &amp; Akdeniz Başlangıçlar</option>
-              <option value="salatalar">🥗 Ferah Salatalar &amp; Mezeler</option>
-              <option value="tatlilar">🍯 Geleneksel Tatlılar</option>
-              <option value="icecekler">🍋 Ferahlatıcı İçecekler</option>
+              <option value="cokertmeler">İmza Çökertme Kebapları</option>
+              <option value="ikramlar">Masa İkramlarımız (Zeytin, Acı Turşu, Özel Soslu Salata, Özel Tatlı, Çay, Kahve)</option>
+              <option value="baslangiclar">Ege &amp; Akdeniz Başlangıçlar</option>
+              <option value="salatalar">Ferah Salatalar &amp; Mezeler</option>
+              <option value="tatlilar">Geleneksel Tatlılar</option>
+              <option value="icecekler">Ferahlatıcı İçecekler</option>
             </select>
           </div>
           <div>
@@ -982,7 +982,7 @@
             <input type="number" id="new-price" class="pt-form-input" placeholder="Örn: 470 (İkram için 0)" min="0" required />
             <label style="display:inline-flex; align-items:center; gap:7px; margin-top:7px; font-size:13px; font-weight:600; color:var(--pt-olive); cursor:pointer;">
               <input type="checkbox" id="new-is-ikram" onchange="toggleIkramPrice(this.checked)" />
-              <span>🎁 Bu ürün ücretsiz İKRAMDIR (Fiyat yerine "İKRAM" yazar)</span>
+              <span>Bu ürün ücretsiz İKRAMDIR (Fiyat yerine "İKRAM" yazar)</span>
             </label>
           </div>
         </div>
@@ -995,15 +995,15 @@
         <!-- Yemeğin Yanında Verilen İkramlar Seçimi -->
         <div id="accompaniments-box" style="background:var(--pt-cream); padding:16px 18px; border:1px solid var(--pt-border); margin-bottom:18px;">
           <div style="font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--pt-olive); margin-bottom:8px;">
-            🎁 BU YEMEĞİN YANINDA VERİLEN MASA İKRAMLARI (Menüde yemeğin altında gösterilir):
+            BU YEMEĞİN YANINDA VERİLEN MASA İKRAMLARI (Menüde yemeğin altında gösterilir):
           </div>
           <div style="display:flex; flex-wrap:wrap; gap:14px; font-size:14px; font-weight:600; color:var(--pt-navy);">
-            <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" class="ikram-side-cb" value="Zeytin" checked /> 🫒 Zeytin</label>
-            <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" class="ikram-side-cb" value="Turşu" checked /> 🥒 Turşu</label>
-            <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" class="ikram-side-cb" value="Salata" checked /> 🥗 Salata</label>
-            <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" class="ikram-side-cb" value="Tatlı" checked /> 🍮 Tatlı</label>
-            <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" class="ikram-side-cb" value="Çay" checked /> 🫖 Çay</label>
-            <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" class="ikram-side-cb" value="Türk Kahvesi" checked /> ☕ Türk Kahvesi</label>
+            <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" class="ikram-side-cb" value="Ege Zeytini" checked /> Ege Zeytini</label>
+            <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" class="ikram-side-cb" value="Acı Turşu" checked /> Acı Turşu</label>
+            <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" class="ikram-side-cb" value="Özel Soslu Salata" checked /> Özel Soslu Salata</label>
+            <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" class="ikram-side-cb" value="Özel Tatlı" checked /> Özel Tatlı</label>
+            <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" class="ikram-side-cb" value="Demleme Çay" checked /> Demleme Çay</label>
+            <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" class="ikram-side-cb" value="Türk Kahvesi" checked /> Türk Kahvesi</label>
           </div>
         </div>
 
@@ -1174,15 +1174,30 @@
     function renderMenuTable(state) {
       const tbody = document.getElementById("admin-menu-tbody");
       const catMap = {
-        ikramlar: "🎁 Masa İkramlarımız"
+        ikramlar: "Masa İkramlarımız"
       };
-      state.categories.forEach(c => { catMap[c.id] = `${c.icon} ${c.name.tr}`; });
+      state.categories.forEach(c => { catMap[c.id] = `${c.name.tr}`; });
+
+      const sideNameMap = {
+        "Zeytin": "Ege Zeytini",
+        "Turşu": "Acı Turşu",
+        "Ev Yapımı Turşu": "Acı Turşu",
+        "Salata": "Özel Soslu Salata",
+        "Mevsim Salata": "Özel Soslu Salata",
+        "Tatlı": "Özel Tatlı",
+        "Günün Tatlısı": "Özel Tatlı",
+        "Çay": "Demleme Çay"
+      };
 
       tbody.innerHTML = state.items.map(item => {
         const isIkram = !item.price || Number(item.price) <= 0;
-        const ikramSides = item.sides && item.sides.length
-          ? `<div style="font-size:12px; color:var(--pt-olive); margin-top:3px; font-weight:600;">🎁 Yanında İkram: ${item.sides.join(" • ")}</div>`
-          : (item.categoryId === "cokertmeler" ? `<div style="font-size:12px; color:var(--pt-olive); margin-top:3px; font-weight:600;">🎁 Yanında İkram: Zeytin • Turşu • Salata • Tatlı • Çay • Türk Kahvesi</div>` : "");
+        const normalizedSides = item.sides && item.sides.length
+          ? item.sides.map(s => sideNameMap[s] || s)
+          : (item.categoryId === "cokertmeler" && !isIkram ? ["Ege Zeytini", "Acı Turşu", "Özel Soslu Salata", "Özel Tatlı", "Demleme Çay", "Türk Kahvesi"] : []);
+
+        const ikramSides = normalizedSides.length
+          ? `<div style="font-size:12px; color:var(--pt-olive); margin-top:3px; font-weight:600;">Yanında İkram: ${normalizedSides.join(" • ")}</div>`
+          : "";
 
         return `
         <tr>
@@ -1194,11 +1209,11 @@
           <td>
             <div style="display:flex; align-items:center; gap:6px;">
               <input type="number" id="price-${item.id}" value="${item.price}" min="0" class="pt-form-input" style="width:95px; padding:7px 10px; font-weight:700;" />
-              <span>${isIkram ? '🎁 İKRAM' : '₺'}</span>
+              <span>${isIkram ? 'İKRAM' : '₺'}</span>
             </div>
           </td>
           <td>
-            <strong style="color:var(--pt-olive);">${isIkram ? '🎁 ÜCRETSİZ İKRAM' : (item.price * 0.9).toFixed(1) + ' ₺'}</strong>
+            <strong style="color:var(--pt-olive);">${isIkram ? 'ÜCRETSİZ İKRAM' : (item.price * 0.9).toFixed(1) + ' ₺'}</strong>
           </td>
           <td>
             <button type="button" onclick="toggleAvailability('${item.id}')" class="pt-badge ${item.available ? '' : 'pt-badge-danger'}" style="border:none; cursor:pointer; padding:7px 12px;">
@@ -1208,10 +1223,10 @@
           <td>
             <div style="display:flex; align-items:center; gap:8px; flex-wrap:nowrap;">
               <button type="button" onclick="saveItemPrice('${item.id}')" class="pt-btn-fill" style="padding:8px 14px; font-size:11px; white-space:nowrap;">
-                💾 FİYATI KAYDET
+                FİYATI KAYDET
               </button>
               <button type="button" onclick="deleteItem('${item.id}')" class="pt-btn-navy" style="padding:8px 12px; font-size:11px; background:#b93829; border-color:#b93829; white-space:nowrap;" title="Ürünü Menüden Tamamen Sil">
-                🗑️ SİL
+                SİL
               </button>
             </div>
           </td>
@@ -1230,9 +1245,9 @@
       CokertmeStore.saveState(state);
       renderAdminAll();
       if (newVal === 0) {
-        alert(`🎁 "${item.name.tr}" ücretsiz MASA İKRAMI (0 ₺) olarak güncellendi! Masadaki QR Menüde fiyat yerine 'İKRAM' olarak görünecektir.`);
+        alert(`"${item.name.tr}" ücretsiz MASA İKRAMI (0 ₺) olarak güncellendi! Masadaki QR Menüde fiyat yerine 'İKRAM' olarak görünecektir.`);
       } else {
-        alert(`✅ "${item.name.tr}" fiyatı ${newVal} ₺ olarak güncellendi! Masadaki QR Menü ve Mobil Uygulama (%10 indirimli: ${(newVal * 0.9).toFixed(1)} ₺) anında senkronize edildi.`);
+        alert(`"${item.name.tr}" fiyatı ${newVal} ₺ olarak güncellendi! Masadaki QR Menü ve Mobil Uygulama (%10 indirimli: ${(newVal * 0.9).toFixed(1)} ₺) anında senkronize edildi.`);
       }
     }
 
@@ -1253,7 +1268,7 @@
       const state = CokertmeStore.getState();
       const closedItems = state.items.filter(i => !i.available);
       if (closedItems.length === 0) {
-        alert("Şu anda 'Tükendi (Kapalı)' durumunda olan bir ürün bulunmuyor. Silmek istediğiniz ürünün yanındaki '🗑️ SİL' butonunu doğrudan kullanabilirsiniz.");
+        alert("Şu anda 'Tükendi (Kapalı)' durumunda olan bir ürün bulunmuyor. Silmek istediğiniz ürünün yanındaki 'SİL' butonunu doğrudan kullanabilirsiniz.");
         return;
       }
       if (!confirm(`'Tükendi (Kapalı)' durumundaki ${closedItems.length} adet ürünü menüden tamamen silmek istediğinize emin misiniz?`)) {
@@ -1305,12 +1320,12 @@
     function addDefaultComplimentaryItems() {
       const state = CokertmeStore.getState();
       const defaults = [
-        { name: "Ege Kırma & Çizik Zeytin İkramı", desc: "Soğuk sıkım sızma zeytinyağı ve dağ kekiği ile marine edilmiş seçme Ege zeytinleri.", cat: "ikramlar" },
-        { name: "Ev Yapımı Kütür Turşu İkramı", desc: "Çökertme kebabının yanında geleneksel kurulum kütür köy turşusu seçkisi.", cat: "ikramlar" },
-        { name: "Taze Mevsim Salata İkramı", desc: "Nar ekşisi ve sızma zeytinyağı soslu günlük taze mevsim yeşillikleri salatası.", cat: "ikramlar" },
-        { name: "Günün Geleneksel Tatlı İkramı", desc: "Yemek sonrasında tüm misafirlerimize sunulan günlük taze tatlı ikramımız.", cat: "ikramlar" },
-        { name: "Taze Demleme Çay İkramı", desc: "Yemek sonrasında ince belli bardakta sınırsız taze demleme Rize çayı ikramımız.", cat: "ikramlar" },
-        { name: "Bakır Cezvede Türk Kahvesi İkramı", desc: "Yemek sonrasında çifte kavrulmuş lokum eşliğinde ağır ateşte pişmiş Türk kahvesi ikramımız.", cat: "ikramlar" }
+        { name: "Ege Zeytini", desc: "Soğuk sıkım sızma zeytinyağı ve dağ kekiği ile marine edilmiş seçme Ege zeytinleri.", cat: "ikramlar" },
+        { name: "Acı Turşu", desc: "Çökertme kebabının yanında geleneksel kurulum kütür acı turşu seçkisi.", cat: "ikramlar" },
+        { name: "Özel Soslu Salata", desc: "Nar ekşisi ve sızma zeytinyağlı özel sosuyla günlük taze hazırlanan salata ikramımız.", cat: "ikramlar" },
+        { name: "Özel Tatlı", desc: "Yemek sonrasında tüm misafirlerimize sunulan günlük taze özel tatlı ikramımız.", cat: "ikramlar" },
+        { name: "Demleme Çay", desc: "Yemek sonrasında ince belli bardakta sınırsız taze demleme çay ikramımız.", cat: "ikramlar" },
+        { name: "Türk Kahvesi", desc: "Yemek sonrasında çifte kavrulmuş lokum eşliğinde ağır ateşte pişmiş Türk kahvesi ikramımız.", cat: "ikramlar" }
       ];
 
       let added = 0;
@@ -1337,8 +1352,8 @@
       CokertmeStore.saveState(state);
       renderAdminAll();
       alert(added > 0
-        ? `🎁 ${added} adet Masa İkramı (Zeytin, Turşu, Salata, Tatlı, Çay, Türk Kahvesi) menüye 'İKRAM' olarak eklendi!`
-        : "🎁 Masa ikramlarının tamamı zaten menünüzde ekli durumda.");
+        ? `${added} adet Masa İkramı (Ege Zeytini, Acı Turşu, Özel Soslu Salata, Özel Tatlı, Demleme Çay, Türk Kahvesi) menüye 'İKRAM' olarak eklendi!`
+        : "Masa ikramlarının tamamı zaten menünüzde ekli durumda.");
     }
 
     document.getElementById("new-item-form").addEventListener("submit", function(e) {
