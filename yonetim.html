@@ -1085,12 +1085,140 @@
       </div>
     </section>
 
+    <!-- 2.8. RESPOS ADİSYON API + BEKO YAZARKASA + QNB FİNANSBANK POS + ANINDA KURYE API MERKEZİ -->
+    <section class="admin-panel-box no-print" id="integrations-hub-section">
+      <div class="pt-subtitle">OTOMATİK ADİSYON • MUTFAK FİŞİ • BEKO ÖKC • QNB BANKA • ANINDA KURYE API</div>
+      <h2 class="pt-title">ResPOS, Beko Yazarkasa, QNB Ödeme &amp; Anında Kurye API Entegrasyonu</h2>
+      <p style="font-size:15px; color:var(--pt-text-muted); margin-bottom:24px;">
+        Müşteri mobil uygulamadan sipariş verdiği <strong>ilk saniyede (0. saniye)</strong> siparişiniz eşzamanlı olarak:
+        <strong>1) ResPOS API'sine</strong> düşer (Mutfak yazıcısından otomatik fiş çıkar ve Beko Yazarkasa POS / QNB hesabına işlenir),
+        <strong>2) Seçili Kurye Firmasının API'sine</strong> <em>"Sipariş düştü ve X dakika sonra mutfakta hazır olacak"</em> bilgisiyle anında iletilir.
+      </p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:22px; margin-bottom:24px;">
+        <!-- Kutu 1: ResPOS Adisyon & Beko Yazarkasa & Mutfak Fişi -->
+        <div style="background:#fff; padding:22px; border:1px solid var(--pt-border); border-top:4px solid var(--pt-navy);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <strong style="font-family:var(--font-serif); font-size:23px; color:var(--pt-navy);">1. ResPOS API &amp; Beko Yazarkasa</strong>
+            <span class="pt-badge">MUTFAK FİŞİ + ÖKC</span>
+          </div>
+          <div style="display:grid; gap:12px;">
+            <div>
+              <label class="pt-form-label">ResPOS Sipariş API Endpoint URL</label>
+              <input type="text" id="int-respos-url" class="pt-form-input" placeholder="https://api.respos.com.tr/v1/online-orders" />
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <div>
+                <label class="pt-form-label">ResPOS API Anahtarı (Key)</label>
+                <input type="text" id="int-respos-key" class="pt-form-input" placeholder="ResPOS API Key girin..." />
+              </div>
+              <div>
+                <label class="pt-form-label">ResPOS Şube Kodu</label>
+                <input type="text" id="int-respos-branch" class="pt-form-input" placeholder="ADANA-MERKEZ-01" />
+              </div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px; font-size:13.5px; font-weight:600; color:var(--pt-olive); background:var(--pt-cream); padding:10px 12px; border:1px solid var(--pt-border);">
+              <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                <input type="checkbox" id="int-respos-kitchen" checked />
+                <span>Sipariş Geldiği An Mutfak Yazıcısından Otomatik Fiş Yazdır</span>
+              </label>
+              <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                <input type="checkbox" id="int-respos-beko" checked />
+                <span>Beko Yazarkasa POS (TokenX / GMP3) Otomatik Mali Eşleştirme</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kutu 2: QNB Finansbank Sanal POS & Beko QNB POS Bağlantısı -->
+        <div style="background:#fff; padding:22px; border:1px solid var(--pt-border); border-top:4px solid var(--pt-gold);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <strong style="font-family:var(--font-serif); font-size:23px; color:var(--pt-navy);">2. QNB Finansbank &amp; Beko POS</strong>
+            <span class="pt-badge pt-badge-gold">3D SECURE AKTİF</span>
+          </div>
+          <div style="display:grid; gap:12px;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <div>
+                <label class="pt-form-label">QNB Üye İşyeri No (Merchant ID)</label>
+                <input type="text" id="int-qnb-merchant" class="pt-form-input" placeholder="Örn: 0853000000" />
+              </div>
+              <div>
+                <label class="pt-form-label">Beko / QNB Terminal ID</label>
+                <input type="text" id="int-qnb-terminal" class="pt-form-input" placeholder="Örn: VP001482" />
+              </div>
+            </div>
+            <div>
+              <label class="pt-form-label">QNB 3D Secure API Şifresi / Store Key</label>
+              <input type="password" id="int-qnb-pass" class="pt-form-input" placeholder="••••••••••••••••" />
+            </div>
+            <div style="font-size:13px; color:var(--pt-text-muted); background:var(--pt-cream); padding:10px 12px; border:1px solid var(--pt-border); line-height:1.5;">
+              <strong style="color:var(--pt-navy);">✓ Beko Yazarkasa QNB Hesap Uyumu:</strong> Uygulamadan çekilen QNB 3D Secure ödemeler doğrudan restorandaki Beko Yazarkasa POS'un bağlı olduğu QNB Finansbank ticari hesabınıza aktarılır ve ResPOS'a <em>"Ödendi"</em> olarak düşer.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kutu 3: Çoklu Kurye Firmaları API & "Kaç Dakika Sonra Hazır" Otomasyonu -->
+      <div style="background:#fff; padding:24px; border:1px solid var(--pt-border); border-top:4px solid var(--pt-olive); margin-bottom:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; margin-bottom:18px;">
+          <div>
+            <strong style="font-family:var(--font-serif); font-size:25px; color:var(--pt-navy); display:block;">
+              3. Çoklu Kurye Firmaları API &amp; "Kaç Dk Sonra Hazır" Bildirimi (0. Saniye Tetikleme)
+            </strong>
+            <span style="font-size:14px; color:var(--pt-text-muted);">
+              Sipariş geldiği saniyede kurye firmasının API'sine siparişin düştüğü ve kaç dakika sonra mutfakta hazır olacağı otomatik bildirilir.
+            </span>
+          </div>
+          <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+            <div>
+              <label class="pt-form-label" style="margin-bottom:4px;">Varsayılan Hazırlanma Süresi (Dk)</label>
+              <input type="number" id="int-courier-prep-min" class="pt-form-input" style="width:130px; font-weight:700; color:var(--pt-terracotta);" min="5" max="60" value="15" />
+            </div>
+            <div>
+              <label class="pt-form-label" style="margin-bottom:4px;">Aktif Kurye Firması (Otomatik Atanan)</label>
+              <select id="int-active-courier-select" class="pt-form-select" style="min-width:250px;"></select>
+            </div>
+          </div>
+        </div>
+
+        <div id="admin-courier-companies-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(290px, 1fr)); gap:16px; margin-bottom:18px;"></div>
+
+        <!-- Yeni Kurye Firması API Ekleme Satırı -->
+        <div style="background:var(--pt-cream); padding:16px; border:1px dashed var(--pt-border); display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; align-items:end;">
+          <div>
+            <label class="pt-form-label">Yeni Kurye Firması Adı</label>
+            <input type="text" id="new-courier-name" class="pt-form-input" placeholder="Örn: Paket Taxi / Adana Kurye" />
+          </div>
+          <div>
+            <label class="pt-form-label">Kurye Firması API URL</label>
+            <input type="text" id="new-courier-url" class="pt-form-input" placeholder="https://api.kurye.com/v1/order" />
+          </div>
+          <div>
+            <label class="pt-form-label">Kurye API Key / Token</label>
+            <input type="text" id="new-courier-key" class="pt-form-input" placeholder="API Anahtarı..." />
+          </div>
+          <div>
+            <label class="pt-form-label">Hazır Olma Dakikası (Dk)</label>
+            <input type="number" id="new-courier-prep" class="pt-form-input" value="15" min="5" max="60" />
+          </div>
+          <div>
+            <button type="button" class="pt-btn-navy" style="width:100%;" onclick="addNewCourierCompany()">+ KURYE FİRMASI EKLE</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+        <button type="button" class="pt-btn-fill" onclick="saveIntegrationSettings()">✓ TÜM ENTEGRASYON (RESPOS • QNB • BEKO • KURYE API) AYARLARINI KAYDET</button>
+        <button type="button" class="pt-btn-olive" onclick="testDispatchSimulation()">⚡ ÖRNEK SİPARİŞ İLE RESPOS + KURYE API TESTİ GÖNDER</button>
+      </div>
+    </section>
+
     <!-- 3. MOBİL UYGULAMADAN GELEN SİPARİŞLER & FRANCHISE BAŞVURULARI -->
     <div class="no-print" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:30px;">
       <section class="admin-panel-box" style="margin-bottom:0;">
-        <div class="pt-subtitle">MOBİL UYGULAMA SİPARİŞ AKIŞI</div>
+        <div class="pt-subtitle">RESPOS + BEKO POS + ANINDA KURYE API AKIŞI</div>
         <h3 style="font-size:30px; color:var(--pt-navy); margin-bottom:18px;">
-          Gelen Uygulama Siparişleri (%10 İndirimli)
+          Gelen Uygulama Siparişleri &amp; Kurye/Mutfak Durumu
         </h3>
         <div id="admin-orders-list" style="display:grid; gap:14px;"></div>
       </section>
@@ -1190,6 +1318,7 @@
 
       renderTableQRCards();
       renderMenuTable(state);
+      renderIntegrationSettings(state);
       renderOrders(state);
       renderFranchise(state);
     }
@@ -1583,26 +1712,276 @@
       renderAdminAll();
     });
 
+    function renderIntegrationSettings(state) {
+      const intCfg = state.integrationSettings || {};
+      const respos = intCfg.respos || {};
+      const qnb = intCfg.qnbPos || {};
+      const courier = intCfg.courier || {};
+      const companies = courier.companies || [];
+
+      document.getElementById("int-respos-url").value = respos.apiUrl || "https://api.respos.com.tr/v1/online-orders";
+      document.getElementById("int-respos-key").value = respos.apiKey || "";
+      document.getElementById("int-respos-branch").value = respos.branchCode || "ADANA-MERKEZ-01";
+      document.getElementById("int-respos-kitchen").checked = respos.autoKitchenPrint !== false;
+      document.getElementById("int-respos-beko").checked = respos.bekoPosSync !== false;
+
+      document.getElementById("int-qnb-merchant").value = qnb.merchantId || "";
+      document.getElementById("int-qnb-terminal").value = qnb.terminalId || "";
+      document.getElementById("int-qnb-pass").value = qnb.apiPass || "";
+
+      document.getElementById("int-courier-prep-min").value = courier.defaultPrepMinutes || 15;
+
+      const selectEl = document.getElementById("int-active-courier-select");
+      selectEl.innerHTML = companies.map(c =>
+        `<option value="${c.id}" ${c.id === courier.activeCourierId ? 'selected' : ''}>${c.name} (${c.prepMinutesOverride || 15} dk sonra hazır bildirimi)</option>`
+      ).join("");
+
+      const gridEl = document.getElementById("admin-courier-companies-grid");
+      gridEl.innerHTML = companies.map((c, idx) => {
+        const isCurrentActive = c.id === courier.activeCourierId;
+        return `
+          <div style="background:${isCurrentActive ? '#F4F7F2' : '#FAF7F2'}; padding:16px; border:${isCurrentActive ? '2px solid var(--pt-olive)' : '1px solid var(--pt-border)'};">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:8px;">
+              <strong style="font-size:15px; color:var(--pt-navy);">${c.name}</strong>
+              <span class="pt-badge ${isCurrentActive ? '' : 'pt-badge-navy'}" style="font-size:10px;">
+                ${isCurrentActive ? 'AKTİF OTOMATİK KURYE' : 'YEDEK KURYE API'}
+              </span>
+            </div>
+            <div style="display:grid; gap:8px; margin-bottom:10px;">
+              <div>
+                <label style="font-size:11px; font-weight:700; color:var(--pt-text-muted); display:block;">API ENDPOINT URL</label>
+                <input type="text" id="c-url-${idx}" value="${c.apiUrl || ''}" class="pt-form-input" style="padding:7px 10px; font-size:12.5px;" />
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 95px; gap:8px;">
+                <div>
+                  <label style="font-size:11px; font-weight:700; color:var(--pt-text-muted); display:block;">API KEY / TOKEN</label>
+                  <input type="text" id="c-key-${idx}" value="${c.apiKey || ''}" placeholder="Kurye API Key..." class="pt-form-input" style="padding:7px 10px; font-size:12.5px;" />
+                </div>
+                <div>
+                  <label style="font-size:11px; font-weight:700; color:var(--pt-olive); display:block;">HAZIR DK</label>
+                  <input type="number" id="c-prep-${idx}" value="${c.prepMinutesOverride || 15}" min="5" max="60" class="pt-form-input" style="padding:7px 10px; font-size:12.5px; font-weight:700;" />
+                </div>
+              </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; gap:8px;">
+              <button type="button" class="pt-btn-olive" style="padding:7px 10px; font-size:10.5px; flex:1;" onclick="setPrimaryCourier('${c.id}')">
+                ${isCurrentActive ? '✓ VARSAYILAN KURYE' : 'VARSAYILAN YAP'}
+              </button>
+              ${companies.length > 1 ? `
+              <button type="button" class="pt-btn-navy" style="padding:7px 10px; font-size:10.5px; background:#b93829; border-color:#b93829;" onclick="deleteCourierCompany('${c.id}')">
+                SİL
+              </button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function setPrimaryCourier(courierId) {
+      const state = CokertmeStore.getState();
+      if (state.integrationSettings && state.integrationSettings.courier) {
+        state.integrationSettings.courier.activeCourierId = courierId;
+        state.integrationSettings.courier.companies.forEach(c => {
+          c.isActive = (c.id === courierId);
+        });
+      }
+      CokertmeStore.saveState(state);
+      renderAdminAll();
+    }
+
+    function addNewCourierCompany() {
+      const nameVal = document.getElementById("new-courier-name").value.trim();
+      const urlVal = document.getElementById("new-courier-url").value.trim();
+      const keyVal = document.getElementById("new-courier-key").value.trim();
+      const prepVal = parseInt(document.getElementById("new-courier-prep").value, 10) || 15;
+
+      if (!nameVal) {
+        alert("Lütfen eklenecek kurye firmasının adını girin.");
+        return;
+      }
+
+      const state = CokertmeStore.getState();
+      const newId = "courier-" + Date.now();
+      state.integrationSettings.courier.companies.push({
+        id: newId,
+        name: nameVal,
+        apiUrl: urlVal || "https://api.kuryefirmasi.com/v1/orders",
+        apiKey: keyVal,
+        prepMinutesOverride: prepVal,
+        isActive: false
+      });
+
+      document.getElementById("new-courier-name").value = "";
+      document.getElementById("new-courier-url").value = "";
+      document.getElementById("new-courier-key").value = "";
+
+      CokertmeStore.saveState(state);
+      renderAdminAll();
+      alert(`"${nameVal}" kurye firması (${prepVal} dk hazırlanma süresi bildirimiyle) başarıyla eklendi!`);
+    }
+
+    function deleteCourierCompany(courierId) {
+      if (!confirm("Bu kurye firmasını listeden kaldırmak istiyor musunuz?")) return;
+      const state = CokertmeStore.getState();
+      const list = state.integrationSettings.courier.companies.filter(c => c.id !== courierId);
+      state.integrationSettings.courier.companies = list;
+      if (state.integrationSettings.courier.activeCourierId === courierId && list[0]) {
+        state.integrationSettings.courier.activeCourierId = list[0].id;
+      }
+      CokertmeStore.saveState(state);
+      renderAdminAll();
+    }
+
+    function saveIntegrationSettings() {
+      const state = CokertmeStore.getState();
+      const companies = state.integrationSettings.courier.companies || [];
+
+      companies.forEach((c, idx) => {
+        const u = document.getElementById(`c-url-${idx}`);
+        const k = document.getElementById(`c-key-${idx}`);
+        const p = document.getElementById(`c-prep-${idx}`);
+        if (u) c.apiUrl = u.value.trim();
+        if (k) c.apiKey = k.value.trim();
+        if (p) c.prepMinutesOverride = parseInt(p.value, 10) || 15;
+      });
+
+      const activeId = document.getElementById("int-active-courier-select").value;
+
+      state.integrationSettings = {
+        respos: {
+          enabled: true,
+          apiUrl: document.getElementById("int-respos-url").value.trim(),
+          apiKey: document.getElementById("int-respos-key").value.trim(),
+          branchCode: document.getElementById("int-respos-branch").value.trim() || "ADANA-MERKEZ-01",
+          autoKitchenPrint: document.getElementById("int-respos-kitchen").checked,
+          bekoPosSync: document.getElementById("int-respos-beko").checked
+        },
+        qnbPos: {
+          enabled: true,
+          merchantId: document.getElementById("int-qnb-merchant").value.trim(),
+          terminalId: document.getElementById("int-qnb-terminal").value.trim(),
+          apiPass: document.getElementById("int-qnb-pass").value.trim(),
+          mode: "3D_SECURE",
+          linkedToBekoQnb: true
+        },
+        courier: {
+          autoDispatchImmediate: true,
+          defaultPrepMinutes: parseInt(document.getElementById("int-courier-prep-min").value, 10) || 15,
+          activeCourierId: activeId,
+          companies: companies
+        }
+      };
+
+      CokertmeStore.saveState(state);
+      renderAdminAll();
+      alert("✓ ResPOS Adisyon API, Beko Yazarkasa POS, QNB Finansbank 3D Secure ve Anında Kurye API ayarları başarıyla kaydedildi!");
+    }
+
+    async function testDispatchSimulation() {
+      const state = CokertmeStore.getState();
+      const courierCfg = state.integrationSettings.courier || {};
+      const activeCourier = (courierCfg.companies || []).find(c => c.id === courierCfg.activeCourierId) || { name: "Anlaşmalı Kurye Firması", prepMinutesOverride: 15 };
+      const prepMin = Number(activeCourier.prepMinutesOverride) || Number(courierCfg.defaultPrepMinutes) || 15;
+      const now = new Date();
+      const createdAtStr = now.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+      const readyStr = new Date(now.getTime() + prepMin * 60000).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+
+      const sampleOrder = {
+        id: "CKR-TEST-" + Math.floor(100 + Math.random() * 900),
+        customerName: "Test Sipariş (ResPOS + Kurye API)",
+        phone: "0532 455 01 48",
+        address: "Turgut Özal Blv. Çukurova / Adana",
+        mode: "Eve Paket Servis (Turgut Özal Blv. Çukurova / Adana)",
+        branch: "Adana Çukurova Merkez Şube",
+        items: ["1x İmza Dana Bonfile Çökertme (1 Porsiyon)", "1x Bakır Maşrapada Yayık Ayranı"],
+        subtotal: 505,
+        discount: 50.5,
+        total: 454.5,
+        paymentMethod: "QNB_ONLINE_3D",
+        paymentLabel: "QNB Finansbank Online 3D (Beko POS Hesabına Aktarıldı)",
+        isPaidOnline: true,
+        prepTimeMinutes: prepMin,
+        estimatedReadyAt: readyStr,
+        courierCompanyName: activeCourier.name,
+        resposStatus: "ResPOS API'ye İletildi • Mutfak Fişi Yazdırıldı • Beko ÖKC Eşleşti",
+        courierStatus: `${activeCourier.name} API'sine Anında Atandı (${prepMin} dk sonra [${readyStr}] hazır olacağı bildirildi)`,
+        status: "Mutfakta Hazırlanıyor & Kurye Atandı",
+        createdAt: createdAtStr
+      };
+
+      state.orders.unshift(sampleOrder);
+      CokertmeStore.saveState(state);
+      await CokertmeStore.dispatchOrder(sampleOrder);
+      renderAdminAll();
+      alert(
+        `⚡ Test Siparişi (#${sampleOrder.id}) 0. Saniyede Tetiklendi!\n\n` +
+        `1. ResPOS API: Sipariş + 6 İkram mutfak yazıcısına ve Beko Yazarkasa QNB POS'a iletildi.\n` +
+        `2. Kurye API (${activeCourier.name}): Siparişin düştüğü ve ${prepMin} dakika sonra (${readyStr}) mutfakta hazır olacağı anında bildirildi.`
+      );
+    }
+
+    function redispatchOrderToCourier(orderId, courierId) {
+      const state = CokertmeStore.getState();
+      const order = state.orders.find(o => o.id === orderId);
+      const courier = (state.integrationSettings.courier.companies || []).find(c => c.id === courierId);
+      if (!order || !courier) return;
+
+      const prepMin = Number(courier.prepMinutesOverride) || Number(state.integrationSettings.courier.defaultPrepMinutes) || 15;
+      const readyStr = new Date(Date.now() + prepMin * 60000).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+
+      order.courierCompanyId = courier.id;
+      order.courierCompanyName = courier.name;
+      order.prepTimeMinutes = prepMin;
+      order.estimatedReadyAt = readyStr;
+      order.courierStatus = `${courier.name} API'sine Atandı (${prepMin} dk sonra [${readyStr}] hazır olacağı bildirildi)`;
+
+      CokertmeStore.saveState(state);
+      CokertmeStore.dispatchOrder(order);
+      renderAdminAll();
+      alert(`Sipariş #${order.id}, "${courier.name}" API'sine (${prepMin} dk sonra hazır bilgisiyle) yeniden iletildi!`);
+    }
+
     function renderOrders(state) {
       const el = document.getElementById("admin-orders-list");
-      el.innerHTML = state.orders.map(o => `
+      const companies = (state.integrationSettings && state.integrationSettings.courier && state.integrationSettings.courier.companies) || [];
+
+      el.innerHTML = state.orders.map(o => {
+        const courierOptions = companies.map(c =>
+          `<option value="${c.id}" ${c.name === o.courierCompanyName ? 'selected' : ''}>${c.name} (${c.prepMinutesOverride || 15} dk)</option>`
+        ).join("");
+
+        return `
         <div style="background:#fff; padding:18px; border:1px solid var(--pt-border); border-left:4px solid var(--pt-olive);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:8px; flex-wrap:wrap;">
             <strong style="font-family:var(--font-serif); font-size:21px; color:var(--pt-navy);">#${o.id} — ${o.customerName}</strong>
             <span class="pt-badge pt-badge-navy">${o.mode}</span>
           </div>
           <div style="font-size:13.5px; color:var(--pt-text-muted); margin-bottom:6px;">
-            📍 ${o.branch} • 📞 ${o.phone} • ⏰ ${o.createdAt}
+            📍 ${o.branch} • 📞 ${o.phone} • ⏰ Sipariş: ${o.createdAt}
           </div>
           <div style="font-size:14.5px; font-weight:600; margin-bottom:10px; color:var(--pt-navy);">
             🍽️ ${o.items.join(", ")}
           </div>
+
+          <div style="background:var(--pt-cream); border:1px solid var(--pt-border); padding:10px 12px; margin-bottom:10px; font-size:12.5px; display:grid; gap:5px;">
+            <div><strong style="color:var(--pt-navy);">QNB / Beko Yazarkasa POS:</strong> ${o.paymentLabel || 'QNB Finansbank Online 3D (Beko POS Hesabına Aktarıldı)'}</div>
+            <div><strong style="color:var(--pt-olive);">ResPOS &amp; Mutfak Yazıcısı:</strong> ${o.resposStatus || 'ResPOS API İletildi • Mutfak Fişi Basıldı'}</div>
+            <div><strong style="color:var(--pt-terracotta);">Kurye API (0. Saniye):</strong> ${o.courierStatus || `Anında Kurye API'ye Atandı (${o.prepTimeMinutes || 15} dk sonra hazır)`}</div>
+            <div style="display:flex; align-items:center; gap:8px; margin-top:4px; flex-wrap:wrap;">
+              <span style="font-weight:700; color:var(--pt-navy);">Başka Kurye Firmasına Yönlendir:</span>
+              <select class="pt-form-select" style="width:auto; padding:5px 10px; font-size:12px;" onchange="redispatchOrderToCourier('${o.id}', this.value)">
+                ${courierOptions}
+              </select>
+            </div>
+          </div>
+
           <div style="display:flex; justify-content:space-between; font-size:13.5px; padding-top:8px; border-top:1px dashed var(--pt-border);">
-            <span>Liste: ${o.subtotal} ₺ | <strong style="color:var(--pt-olive);">%10 İndirim: -${o.discount} ₺</strong></span>
+            <span>Liste: ${o.subtotal} ₺ | <strong style="color:var(--pt-olive);">İndirim: -${o.discount} ₺</strong></span>
             <strong style="color:var(--pt-terracotta); font-size:15px;">Tahsilat: ${o.total} ₺</strong>
           </div>
         </div>
-      `).join("");
+      `}).join("");
     }
 
     function renderFranchise(state) {

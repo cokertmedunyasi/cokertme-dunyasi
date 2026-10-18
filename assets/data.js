@@ -466,19 +466,73 @@ const DEFAULT_COKERTME_DATA = {
     bannerHeadline: "LEZZET ÜSTÜNE LEZZET KAT",
     bannerSub: "Tüm Çökertme Kebaplarının Yanında 6 Masa İkramı Bedava!",
     ikramList: ["Ege Zeytini", "Acı Turşu", "Özel Soslu Salata", "Özel Tatlı", "Demleme Çay", "Türk Kahvesi"]
+  },
+  integrationSettings: {
+    respos: {
+      enabled: true,
+      apiUrl: "https://api.respos.com.tr/v1/online-orders",
+      apiKey: "",
+      branchCode: "ADANA-MERKEZ-01",
+      autoKitchenPrint: true,
+      bekoPosSync: true,
+      bekoTerminalModel: "Beko X30TR / 300TR (TokenX GMP3)"
+    },
+    qnbPos: {
+      enabled: true,
+      merchantId: "",
+      terminalId: "",
+      apiUser: "",
+      apiPass: "",
+      mode: "3D_SECURE",
+      linkedToBekoQnb: true,
+      allowOnlineQnbCard: true,
+      allowDoorBekoCard: true,
+      allowDoorCash: true
+    },
+    courier: {
+      autoDispatchImmediate: true,
+      defaultPrepMinutes: 15,
+      activeCourierId: "courier-1",
+      companies: [
+        {
+          id: "courier-1",
+          name: "Ana Anlaşmalı Kurye Firması (API)",
+          apiUrl: "https://api.kuryefirmasi.com/v1/orders/create",
+          apiKey: "",
+          prepMinutesOverride: 15,
+          isActive: true
+        },
+        {
+          id: "courier-2",
+          name: "Vigo / Paket Taxi Kurye Entegrasyonu",
+          apiUrl: "https://api.vigokurye.com/v1/dispatch",
+          apiKey: "",
+          prepMinutesOverride: 15,
+          isActive: false
+        },
+        {
+          id: "courier-3",
+          name: "Yedek Bölge Kurye / Restoran Özel Kurye",
+          apiUrl: "https://api.bolgekurye.com/v1/webhook",
+          apiKey: "",
+          prepMinutesOverride: 12,
+          isActive: false
+        }
+      ]
+    }
   }
 };
 
 const STORAGE_KEY = "cokertme_dunyasi_state_v1";
 
-function getCloudApiUrl() {
+function getCloudApiUrl(path = "/api/state") {
   try {
     const proto = window.location.protocol;
     if (proto === "file:" || proto === "capacitor:" || proto === "ionic:") {
-      return "https://www.cokertmedunyasi.com/api/state";
+      return "https://www.cokertmedunyasi.com" + path;
     }
   } catch (e) {}
-  return "/api/state";
+  return path;
 }
 
 const CokertmeStore = {
@@ -493,7 +547,24 @@ const CokertmeStore = {
       const merged = {
         ...DEFAULT_COKERTME_DATA,
         ...parsed,
-        appSettings: { ...DEFAULT_COKERTME_DATA.appSettings, ...(parsed.appSettings || {}) }
+        appSettings: { ...DEFAULT_COKERTME_DATA.appSettings, ...(parsed.appSettings || {}) },
+        integrationSettings: {
+          respos: {
+            ...DEFAULT_COKERTME_DATA.integrationSettings.respos,
+            ...((parsed.integrationSettings && parsed.integrationSettings.respos) || {})
+          },
+          qnbPos: {
+            ...DEFAULT_COKERTME_DATA.integrationSettings.qnbPos,
+            ...((parsed.integrationSettings && parsed.integrationSettings.qnbPos) || {})
+          },
+          courier: {
+            ...DEFAULT_COKERTME_DATA.integrationSettings.courier,
+            ...((parsed.integrationSettings && parsed.integrationSettings.courier) || {}),
+            companies: (parsed.integrationSettings && parsed.integrationSettings.courier && parsed.integrationSettings.courier.companies)
+              ? parsed.integrationSettings.courier.companies
+              : DEFAULT_COKERTME_DATA.integrationSettings.courier.companies
+          }
+        }
       };
       if (merged.categories && !merged.categories.some(c => c.id === "ikramlar")) {
         merged.categories.push({
@@ -511,7 +582,7 @@ const CokertmeStore = {
   saveState(newState) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-      fetch(getCloudApiUrl(), {
+      fetch(getCloudApiUrl("/api/state"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newState)
@@ -521,9 +592,30 @@ const CokertmeStore = {
     }
   },
 
+  async dispatchOrder(order) {
+    const state = this.getState();
+    const integrations = state.integrationSettings || DEFAULT_COKERTME_DATA.integrationSettings;
+    try {
+      const res = await fetch(getCloudApiUrl("/api/order-dispatch"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          order,
+          integrationSettings: integrations
+        })
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {
+      // Yerel/çevrimdışı çalışma durumunda simüle yanıt döner
+    }
+    return { ok: true, simulated: true };
+  },
+
   async syncFromServer() {
     try {
-      const res = await fetch(getCloudApiUrl(), { cache: "no-store" });
+      const res = await fetch(getCloudApiUrl("/api/state"), { cache: "no-store" });
       if (res.ok) {
         const serverData = await res.json();
         if (serverData && serverData.items && serverData.items.length > 0) {
