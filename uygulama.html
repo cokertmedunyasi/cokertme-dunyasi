@@ -2124,7 +2124,7 @@
 
         ${cardsHtml}
 
-        <!-- Teslimat ve Hızlı Sipariş Bilgisi -->
+        <!-- Teslimat ve Hızlı Sipariş Bilgisi (Üye Olmadan Devam Edenler İçin de Cinsiyet / Kalıp Zorunlu) -->
         <div class="cart-card" style="background:var(--pt-cream);">
           <div style="font-weight:700; font-size:15px; margin-bottom:10px; color:var(--pt-navy);">1. Teslimat &amp; İletişim Bilgileri</div>
           <div style="display:grid; gap:10px;">
@@ -2134,6 +2134,24 @@
             </select>
             <input type="text" id="checkout-name" placeholder="Adınız Soyadınız *" value="${appUser && appUser.fullName ? appUser.fullName : ''}" style="padding:11px 12px; border:1px solid var(--pt-border); border-radius:10px; font-size:14px;" />
             <input type="tel" id="checkout-phone" placeholder="Telefon Numaranız (05XX...) *" value="${appUser && appUser.phone ? appUser.phone : ''}" style="padding:11px 12px; border:1px solid var(--pt-border); border-radius:10px; font-size:14px;" />
+
+            <!-- Cinsiyet & Çökertme Kalıbı Seçimi (Zorunlu: Kalpli Kalıp veya Çember Kalıp) -->
+            <div style="background:#fff; border:1.5px solid var(--pt-gold); border-radius:10px; padding:10px 12px;">
+              <label style="font-size:12.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:4px;">
+                Cinsiyet Seçimi * <span style="font-weight:600; color:var(--pt-olive); font-size:11.5px;">(Çökertme Kalıbı: Kalpli veya Çember Sunum İçin Zorunlu)</span>
+              </label>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px;">
+                <label style="display:flex; align-items:center; gap:7px; padding:9px 10px; border:1.5px solid var(--pt-border); border-radius:8px; background:#FAF7F2; font-size:13px; font-weight:700; color:var(--pt-navy); cursor:pointer;">
+                  <input type="radio" name="checkout-gender" value="Kadın" ${appUser && appUser.gender === 'Kadın' ? 'checked' : ''} />
+                  <span>Kadın (Kalpli Kalıp)</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:7px; padding:9px 10px; border:1.5px solid var(--pt-border); border-radius:8px; background:#FAF7F2; font-size:13px; font-weight:700; color:var(--pt-navy); cursor:pointer;">
+                  <input type="radio" name="checkout-gender" value="Erkek" ${appUser && appUser.gender === 'Erkek' ? 'checked' : ''} />
+                  <span>Erkek (Çember Kalıp)</span>
+                </label>
+              </div>
+            </div>
+
             <input type="text" id="checkout-address" placeholder="Teslimat Adresi veya Sipariş Notunuz *" value="${appUser && appUser.address ? appUser.address : ''}" style="padding:11px 12px; border:1px solid var(--pt-border); border-radius:10px; font-size:14px;" />
           </div>
         </div>
@@ -2233,6 +2251,8 @@
       const phoneVal = (document.getElementById("checkout-phone").value || "").trim();
       const addrVal = (document.getElementById("checkout-address").value || "").trim();
       const modeVal = document.getElementById("checkout-mode").value;
+      const genderRadio = document.querySelector('input[name="checkout-gender"]:checked');
+      const genderVal = genderRadio ? genderRadio.value : "";
       const payRadio = document.querySelector('input[name="checkout-pay-method"]:checked');
       const payMethodCode = payRadio ? payRadio.value : "QNB_ONLINE_3D";
 
@@ -2240,6 +2260,15 @@
         alert("Lütfen siparişinizi onaylamak için Ad Soyad ve Telefon Numaranızı girin.");
         return;
       }
+
+      if (!genderVal) {
+        alert("Lütfen Çökertme kalıbınızı (Kadın: Kalpli Kalıp / Erkek: Çember Kalıp) belirleyebilmemiz için Cinsiyet seçiminizi yapın.");
+        return;
+      }
+
+      const moldType = genderVal === "Kadın"
+        ? "Kalpli Çökertme Kalıbı (Kadın Sunumu)"
+        : "Çember Çökertme Kalıbı (Erkek Sunumu)";
 
       const state = CokertmeStore.getState();
       const appCfg = state.appSettings || {};
@@ -2280,6 +2309,8 @@
       const newOrder = {
         id: "CKR-" + Math.floor(1000 + Math.random() * 9000),
         customerName: nameVal,
+        customerGender: genderVal,
+        moldType: moldType,
         phone: phoneVal,
         address: addrVal,
         deliveryType: modeVal,
@@ -2297,10 +2328,10 @@
         estimatedReadyAt: estimatedReadyAtStr,
         courierCompanyId: activeCourier.id,
         courierCompanyName: activeCourier.name,
-        resposStatus: "ResPOS API'ye İletildi • Mutfak Fişi Yazdırıldı • Beko ÖKC Eşleşti",
+        resposStatus: `ResPOS API'ye İletildi • Mutfak Fişi (${moldType}) Yazdırıldı • Beko ÖKC Eşleşti`,
         courierStatus: modeVal.includes("Paket")
           ? `${activeCourier.name} API'sine Anında Atandı (${prepMinutes} dk sonra [${estimatedReadyAtStr}] hazır olacağı bildirildi)`
-          : "Şubeden Gel-Al (${prepMinutes} dk sonra [${estimatedReadyAtStr}] hazır)",
+          : `Şubeden Gel-Al (${prepMinutes} dk sonra [${estimatedReadyAtStr}] hazır)`,
         status: "Mutfakta Hazırlanıyor & Kurye Atandı",
         createdAt: createdAtStr
       };
@@ -2311,10 +2342,12 @@
       // 0. Saniyede ResPOS API + Kurye Firması API'sini paralel tetikle
       CokertmeStore.dispatchOrder(newOrder);
 
-      // Kullanıcıyı da kaydet
+      // Kullanıcıyı da cinsiyet ve kalıp bilgisiyle kaydet
       appUser = {
         phone: phoneVal,
         fullName: nameVal,
+        gender: genderVal,
+        moldType: moldType,
         address: addrVal,
         kvkkApproved: true
       };
@@ -2325,8 +2358,9 @@
 
       alert(
         `Siparişiniz (#${newOrder.id}) başarıyla onaylandı!\n\n` +
+        `• Sunum Kalıbı: ${moldType}\n` +
         `• Ödeme: ${newOrder.paymentLabel}\n` +
-        `• ResPOS & Mutfak: Sipariş fişiniz mutfak yazıcısından otomatik yazdırıldı.\n` +
+        `• ResPOS & Mutfak: Sipariş fişiniz (${moldType}) mutfak yazıcısından otomatik yazdırıldı.\n` +
         `• Kurye Bildirimi: ${activeCourier.name} sistemine siparişin ${prepMinutes} dk sonra (${estimatedReadyAtStr}) hazır olacağı anında iletildi!`
       );
       openAccountSubTab("siparislerim");
@@ -2404,13 +2438,28 @@
               </div>
               <h3 style="font-size:22px; font-weight:700; margin-bottom:6px;">Kişisel Bilgileriniz</h3>
               <p style="font-size:14px; color:var(--pt-text-muted); margin-bottom:16px;">
-                Sipariş verebilmek için lütfen bilgilerinizi tamamlayın.
+                Sipariş verebilmek ve Çökertme kalıbınızı (Kalpli veya Çember) belirleyebilmemiz için lütfen bilgilerinizi tamamlayın.
               </p>
 
               <label style="font-size:13.5px; font-weight:700; display:block;">Ad Soyad <span style="color:var(--pt-terracotta);">*</span></label>
               <div class="phone-input-group">
                 <span class="prefix">👤</span>
                 <input type="text" id="login-fullname-input" placeholder="Adınız Soyadınız" />
+              </div>
+
+              <label style="font-size:13.5px; font-weight:700; display:block; margin-bottom:6px;">
+                Cinsiyet Seçimi <span style="color:var(--pt-terracotta);">*</span>
+                <span style="font-size:11.5px; font-weight:600; color:var(--pt-olive); display:block;">(Çökertme sunum kalıbınız cinsiyetinize göre Kalpli veya Çember kalıpta hazırlanır)</span>
+              </label>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
+                <label style="display:flex; align-items:center; gap:8px; padding:12px; border:1.5px solid var(--pt-gold); border-radius:10px; background:var(--pt-cream); font-size:13.5px; font-weight:700; color:var(--pt-navy); cursor:pointer;">
+                  <input type="radio" name="login-gender" value="Kadın" />
+                  <span>Kadın (Kalpli Kalıp)</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; padding:12px; border:1.5px solid var(--pt-gold); border-radius:10px; background:var(--pt-cream); font-size:13.5px; font-weight:700; color:var(--pt-navy); cursor:pointer;">
+                  <input type="radio" name="login-gender" value="Erkek" />
+                  <span>Erkek (Çember Kalıp)</span>
+                </label>
               </div>
 
               <label style="display:flex; align-items:flex-start; gap:10px; background:#f8fafc; border:1px solid var(--pt-border); border-radius:12px; padding:14px; margin-bottom:16px; font-size:13.5px; cursor:pointer;">
@@ -2455,7 +2504,7 @@
             <div style="width:42px; height:42px; border-radius:50%; background:#FDF3E7; color:var(--pt-terracotta); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px;">👤</div>
             <div>
               <div style="font-weight:700; font-size:15px;">${appUser.fullName || appUser.phone}</div>
-              <div style="font-size:12.5px; color:var(--pt-text-muted);">+90 ${appUser.phone}</div>
+              <div style="font-size:12px; color:var(--pt-olive); font-weight:600;">+90 ${appUser.phone} • ${appUser.moldType || (appUser.gender === 'Kadın' ? 'Kalpli Kalıp' : 'Çember Kalıp')}</div>
             </div>
           </div>
           <button onclick="logoutAppUser()" style="background:none; border:none; color:var(--pt-terracotta); font-weight:700; font-size:13.5px; cursor:pointer;">Çıkış</button>
@@ -2478,7 +2527,7 @@
         ${accountSubTab === 'profil' ? `
           <div class="acc-banner-header">
             <h3>Hesap Bilgilerim</h3>
-            <p>Kişisel bilgilerinizi ve hesap ayarlarınızı yönetin</p>
+            <p>Kişisel bilgilerinizi ve Çökertme sunum kalıbınızı yönetin</p>
           </div>
 
           <div class="login-card-box">
@@ -2486,10 +2535,16 @@
               <strong style="font-size:16px;">Kişisel Bilgiler</strong>
               <span style="background:var(--pt-gold); color:#fff; font-size:11px; font-weight:700; padding:2px 8px; border-radius:6px;">Profil</span>
             </div>
-            <p style="font-size:13px; color:var(--pt-text-muted); margin-bottom:14px;">Ad soyad ve iletişim bilgileriniz</p>
+            <p style="font-size:13px; color:var(--pt-text-muted); margin-bottom:14px;">Ad soyad, cinsiyet (sunum kalıbı) ve iletişim bilgileriniz</p>
 
             <label style="font-size:13px; font-weight:700; display:block; margin-bottom:4px;">Ad Soyad *</label>
             <input type="text" id="prof-name" value="${appUser.fullName || ''}" style="width:100%; padding:12px; border:1px solid var(--pt-border); border-radius:10px; margin-bottom:12px; font-size:14.5px;" />
+
+            <label style="font-size:13px; font-weight:700; display:block; margin-bottom:4px;">Cinsiyet &amp; Çökertme Sunum Kalıbı *</label>
+            <select id="prof-gender" style="width:100%; padding:12px; border:1.5px solid var(--pt-gold); border-radius:10px; background:var(--pt-cream); margin-bottom:12px; font-size:14px; font-weight:700; color:var(--pt-navy);">
+              <option value="Kadın" ${appUser.gender === 'Kadın' ? 'selected' : ''}>Kadın — Kalpli Çökertme Kalıbı Sunumu</option>
+              <option value="Erkek" ${appUser.gender === 'Erkek' ? 'selected' : ''}>Erkek — Çember Çökertme Kalıbı Sunumu</option>
+            </select>
 
             <label style="font-size:13px; font-weight:700; display:block; margin-bottom:4px;">Telefon</label>
             <input type="text" value="+90 ${appUser.phone}" disabled style="width:100%; padding:12px; border:1px solid var(--pt-border); border-radius:10px; background:#f4f6f8; color:var(--pt-text-muted); margin-bottom:14px; font-size:14.5px;" />
@@ -2533,6 +2588,7 @@
               <div style="font-size:14px; font-weight:700; margin-bottom:10px; color:var(--pt-text);">${o.items.join(", ")}</div>
 
               <div style="background:#F4F7F2; border:1px solid rgba(59,82,51,0.25); border-left:3px solid var(--pt-olive); border-radius:8px; padding:8px 10px; margin-bottom:10px; font-size:12px; display:grid; gap:4px;">
+                <div><strong style="color:var(--pt-navy);">Çökertme Sunum Kalıbı:</strong> ${o.moldType || (o.customerGender === 'Kadın' ? 'Kalpli Çökertme Kalıbı (Kadın)' : 'Çember Çökertme Kalıbı (Erkek)')}</div>
                 <div><strong style="color:var(--pt-navy);">Ödeme (QNB / Beko POS):</strong> ${o.paymentLabel || 'QNB Finansbank Online 3D'}</div>
                 <div><strong style="color:var(--pt-olive);">ResPOS &amp; Mutfak:</strong> ${o.resposStatus || 'ResPOS API İletildi • Mutfak Fişi Yazdırıldı'}</div>
                 <div><strong style="color:var(--pt-terracotta);">Kurye &amp; Hazırlık Süresi:</strong> ${o.courierStatus || `Kurye Firmasına Anında Atandı (${o.prepTimeMinutes || 15} dk sonra hazır)`}</div>
@@ -2593,18 +2649,30 @@
 
     function handleCompleteProfile() {
       const nameVal = (document.getElementById("login-fullname-input").value || "").trim();
+      const genderRadio = document.querySelector('input[name="login-gender"]:checked');
+      const genderVal = genderRadio ? genderRadio.value : "";
       const kvkk = document.getElementById("login-kvkk-cb").checked;
       if (!nameVal) {
         alert("Lütfen Ad Soyad bilginizi girin.");
+        return;
+      }
+      if (!genderVal) {
+        alert("Lütfen Çökertme kalıbınızı (Kadın: Kalpli Kalıp / Erkek: Çember Kalıp) belirleyebilmemiz için Cinsiyet seçiminizi yapın.");
         return;
       }
       if (!kvkk) {
         alert("Lütfen KVKK aydınlatma metnini onaylayın.");
         return;
       }
+      const moldType = genderVal === "Kadın"
+        ? "Kalpli Çökertme Kalıbı (Kadın Sunumu)"
+        : "Çember Çökertme Kalıbı (Erkek Sunumu)";
+
       appUser = {
         phone: tempPhone,
         fullName: nameVal,
+        gender: genderVal,
+        moldType: moldType,
         address: "",
         kvkkApproved: true
       };
@@ -2615,10 +2683,15 @@
 
     function saveProfileChanges() {
       const n = (document.getElementById("prof-name").value || "").trim();
+      const g = document.getElementById("prof-gender") ? document.getElementById("prof-gender").value : (appUser.gender || "Kadın");
       if (n) {
         appUser.fullName = n;
+        appUser.gender = g;
+        appUser.moldType = g === "Kadın"
+          ? "Kalpli Çökertme Kalıbı (Kadın Sunumu)"
+          : "Çember Çökertme Kalıbı (Erkek Sunumu)";
         saveAppUser();
-        alert("Bilgileriniz başarıyla güncellendi.");
+        alert(`Bilgileriniz ve sunum kalıbınız (${appUser.moldType}) başarıyla güncellendi.`);
         renderCurrentView();
       }
     }

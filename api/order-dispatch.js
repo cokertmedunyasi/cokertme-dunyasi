@@ -39,13 +39,18 @@ module.exports = async function handler(req, res) {
 
     const prepMinutes = Number(order.prepTimeMinutes) || Number(activeCourier.prepMinutesOverride) || Number(courierCfg.defaultPrepMinutes) || 15;
 
-    // 1. ResPOS API Paketi (Mutfak Fişi + Beko Yazarkasa POS + QNB Ödeme Durumu)
+    const customerGender = order.customerGender || "Belirtilmedi";
+    const moldType = order.moldType || (customerGender === "Kadın" ? "Kalpli Çökertme Kalıbı (Kadın Sunumu)" : "Çember Çökertme Kalıbı (Erkek Sunumu)");
+
+    // 1. ResPOS API Paketi (Mutfak Fişi + Sunum Kalıbı + Beko Yazarkasa POS + QNB Ödeme Durumu)
     const resposPayload = {
       externalOrderId: order.id,
       branchCode: resposCfg.branchCode || "ADANA-MERKEZ-01",
       createdAt: order.createdAt,
       customer: {
         name: order.customerName,
+        gender: customerGender,
+        moldType: moldType,
         phone: order.phone,
         address: order.address || order.mode
       },
@@ -60,6 +65,8 @@ module.exports = async function handler(req, res) {
       },
       kitchenReceipt: {
         autoPrint: resposCfg.autoKitchenPrint !== false,
+        presentationMold: moldType,
+        kitchenNote: `DİKKAT MUTFAK KALIBI: ${moldType.toUpperCase()}`,
         prepTimeMinutes: prepMinutes,
         estimatedReadyTime: order.estimatedReadyAt,
         complimentaryItems: ["Ege Zeytini", "Acı Turşu", "Özel Soslu Salata", "Özel Tatlı", "Demleme Çay", "Türk Kahvesi"]
@@ -77,6 +84,8 @@ module.exports = async function handler(req, res) {
       readyInNotice: `Sipariş ${prepMinutes} dakika sonra (${order.estimatedReadyAt}) mutfakta hazır olacaktır.`,
       customer: {
         fullName: order.customerName,
+        gender: customerGender,
+        presentationMold: moldType,
         phone: order.phone,
         address: order.address || order.mode
       },

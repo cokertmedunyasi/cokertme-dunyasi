@@ -1889,7 +1889,9 @@
 
       const sampleOrder = {
         id: "CKR-TEST-" + Math.floor(100 + Math.random() * 900),
-        customerName: "Test Sipariş (ResPOS + Kurye API)",
+        customerName: "Ayşe Yılmaz (Test Sipariş)",
+        customerGender: "Kadın",
+        moldType: "Kalpli Çökertme Kalıbı (Kadın Sunumu)",
         phone: "0532 455 01 48",
         address: "Turgut Özal Blv. Çukurova / Adana",
         mode: "Eve Paket Servis (Turgut Özal Blv. Çukurova / Adana)",
@@ -1904,7 +1906,7 @@
         prepTimeMinutes: prepMin,
         estimatedReadyAt: readyStr,
         courierCompanyName: activeCourier.name,
-        resposStatus: "ResPOS API'ye İletildi • Mutfak Fişi Yazdırıldı • Beko ÖKC Eşleşti",
+        resposStatus: "ResPOS API'ye İletildi • Mutfak Fişi (Kalpli Çökertme Kalıbı) Yazdırıldı • Beko ÖKC Eşleşti",
         courierStatus: `${activeCourier.name} API'sine Anında Atandı (${prepMin} dk sonra [${readyStr}] hazır olacağı bildirildi)`,
         status: "Mutfakta Hazırlanıyor & Kurye Atandı",
         createdAt: createdAtStr
@@ -1916,7 +1918,8 @@
       renderAdminAll();
       alert(
         `⚡ Test Siparişi (#${sampleOrder.id}) 0. Saniyede Tetiklendi!\n\n` +
-        `1. ResPOS API: Sipariş + 6 İkram mutfak yazıcısına ve Beko Yazarkasa QNB POS'a iletildi.\n` +
+        `• Cinsiyet & Sunum Kalıbı: Kadın -> Kalpli Çökertme Kalıbı\n` +
+        `1. ResPOS API: Sipariş + Kalpli Kalıp bilgisi + 6 İkram mutfak yazıcısına ve Beko Yazarkasa QNB POS'a iletildi.\n` +
         `2. Kurye API (${activeCourier.name}): Siparişin düştüğü ve ${prepMin} dakika sonra (${readyStr}) mutfakta hazır olacağı anında bildirildi.`
       );
     }
@@ -1950,12 +1953,16 @@
         const courierOptions = companies.map(c =>
           `<option value="${c.id}" ${c.name === o.courierCompanyName ? 'selected' : ''}>${c.name} (${c.prepMinutesOverride || 15} dk)</option>`
         ).join("");
+        const moldDisplay = o.moldType || (o.customerGender === "Kadın" ? "Kalpli Çökertme Kalıbı (Kadın Sunumu)" : "Çember Çökertme Kalıbı (Erkek Sunumu)");
 
         return `
         <div style="background:#fff; padding:18px; border:1px solid var(--pt-border); border-left:4px solid var(--pt-olive);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:8px; flex-wrap:wrap;">
             <strong style="font-family:var(--font-serif); font-size:21px; color:var(--pt-navy);">#${o.id} — ${o.customerName}</strong>
-            <span class="pt-badge pt-badge-navy">${o.mode}</span>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <span class="pt-badge pt-badge-gold">${moldDisplay}</span>
+              <span class="pt-badge pt-badge-navy">${o.mode}</span>
+            </div>
           </div>
           <div style="font-size:13.5px; color:var(--pt-text-muted); margin-bottom:6px;">
             📍 ${o.branch} • 📞 ${o.phone} • ⏰ Sipariş: ${o.createdAt}
@@ -1965,6 +1972,7 @@
           </div>
 
           <div style="background:var(--pt-cream); border:1px solid var(--pt-border); padding:10px 12px; margin-bottom:10px; font-size:12.5px; display:grid; gap:5px;">
+            <div><strong style="color:var(--pt-terracotta);">Mutfak Sunum Kalıbı (Cinsiyet):</strong> <strong>${moldDisplay}</strong></div>
             <div><strong style="color:var(--pt-navy);">QNB / Beko Yazarkasa POS:</strong> ${o.paymentLabel || 'QNB Finansbank Online 3D (Beko POS Hesabına Aktarıldı)'}</div>
             <div><strong style="color:var(--pt-olive);">ResPOS &amp; Mutfak Yazıcısı:</strong> ${o.resposStatus || 'ResPOS API İletildi • Mutfak Fişi Basıldı'}</div>
             <div><strong style="color:var(--pt-terracotta);">Kurye API (0. Saniye):</strong> ${o.courierStatus || `Anında Kurye API'ye Atandı (${o.prepTimeMinutes || 15} dk sonra hazır)`}</div>
