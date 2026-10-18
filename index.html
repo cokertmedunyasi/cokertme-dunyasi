@@ -1443,11 +1443,16 @@
       document.getElementById("franchise-modal").classList.remove("open");
     }
 
-    // 5. PatioTime "Selected Menus" Alanını CokertmeStore'dan Doldur
+    // 5. PatioTime "Selected Menus" Alanını CokertmeStore'dan Doldur (Sadece İmza Çökertme Kebapları)
     function renderSelectedMenus() {
       const state = CokertmeStore.getState();
       const container = document.getElementById("pt-selected-menu-list");
-      const selected = state.items.slice(0, 5);
+      const selected = state.items.filter(item =>
+        item.categoryId === "cokertmeler" &&
+        Number(item.price) > 0 &&
+        !item.isComplimentary &&
+        item.available !== false
+      );
 
       container.innerHTML = selected.map(item => `
         <div class="pt-food-item">

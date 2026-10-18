@@ -1200,7 +1200,7 @@
     function renderPatioMenu() {
       const state = CokertmeStore.getState();
 
-      const cokertmeler = state.items.filter(i => i.categoryId === "cokertmeler");
+      const cokertmeler = state.items.filter(i => i.categoryId === "cokertmeler" && Number(i.price) > 0 && !i.isComplimentary);
       const customIkramlar = state.items.filter(i => i.categoryId === "ikramlar" || (!i.price || Number(i.price) <= 0));
       const ikramlarToRender = customIkramlar.length > 0 ? customIkramlar : DEFAULT_COMPLIMENTARY_SHOWCASE;
       const baslangicVeSalata = state.items.filter(i => (i.categoryId === "baslangiclar" || i.categoryId === "salatalar") && Number(i.price) > 0);

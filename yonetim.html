@@ -1295,10 +1295,18 @@
 
     function toggleIkramPrice(isIkram) {
       const priceInput = document.getElementById("new-price");
+      const catSelect = document.getElementById("new-cat");
+      const accBox = document.getElementById("accompaniments-box");
       if (isIkram) {
         priceInput.value = 0;
+        catSelect.value = "ikramlar";
+        accBox.style.display = "none";
       } else if (priceInput.value === "0") {
         priceInput.value = "";
+        if (catSelect.value === "ikramlar") {
+          catSelect.value = "cokertmeler";
+        }
+        accBox.style.display = "block";
       }
     }
 
@@ -1361,9 +1369,9 @@
       const state = CokertmeStore.getState();
       const nameTr = document.getElementById("new-name").value.trim();
       const descTr = document.getElementById("new-desc").value.trim();
-      const catId = document.getElementById("new-cat").value;
       const isIkram = document.getElementById("new-is-ikram").checked;
       const priceVal = isIkram ? 0 : (parseFloat(document.getElementById("new-price").value) || 0);
+      const catId = priceVal === 0 ? "ikramlar" : document.getElementById("new-cat").value;
 
       const selectedSides = [];
       if (catId !== "ikramlar" && !isIkram) {

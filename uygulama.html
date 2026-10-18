@@ -1326,7 +1326,7 @@
       const state = CokertmeStore.getState();
       const el = document.getElementById("app-categories");
       let html = `<button class="app-cat-pill ${appSelectedCat === 'all' ? 'active' : ''}" onclick="selectAppCat('all')">TÜMÜ</button>`;
-      html += state.categories.map(c => `
+      html += state.categories.filter(c => c.id !== "ikramlar").map(c => `
         <button class="app-cat-pill ${appSelectedCat === c.id ? 'active' : ''}" onclick="selectAppCat('${c.id}')">
           ${c.icon} ${c.name.tr}
         </button>
@@ -1343,7 +1343,7 @@
     function renderAppItems() {
       const state = CokertmeStore.getState();
       const listEl = document.getElementById("app-item-list");
-      const items = state.items.filter(i => i.available && (appSelectedCat === "all" || i.categoryId === appSelectedCat));
+      const items = state.items.filter(i => i.available && Number(i.price) > 0 && i.categoryId !== "ikramlar" && (appSelectedCat === "all" || i.categoryId === appSelectedCat));
 
       listEl.innerHTML = items.map(item => {
         const appPrice = (item.price * 0.9).toFixed(0);
