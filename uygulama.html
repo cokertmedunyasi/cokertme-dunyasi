@@ -1076,6 +1076,185 @@
       white-space: nowrap;
     }
 
+    /* Sepet İçi Hızlı 2./3. Çökertme Ekleme (Sepette Olmayan Çökertmeler) */
+    .cart-quick-cokertme-box {
+      margin: 14px 16px;
+      background: linear-gradient(180deg, #FFFFFF 0%, #FAF7F2 100%);
+      border: 2px solid var(--pt-gold);
+      border-radius: 16px;
+      padding: 15px;
+      box-shadow: 0 6px 20px rgba(2, 58, 88, 0.06);
+    }
+
+    .cart-quick-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .cart-quick-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--pt-navy);
+      line-height: 1.3;
+    }
+
+    .cart-quick-badge {
+      background: var(--pt-terracotta);
+      color: #fff;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .cart-quick-desc {
+      font-size: 12px;
+      color: var(--pt-text-muted);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .cart-quick-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .cart-quick-item {
+      background: #fff;
+      border: 1.5px solid var(--pt-border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      transition: all 0.18s ease;
+    }
+
+    .cart-quick-item.expanded {
+      border: 2px solid var(--pt-olive);
+      box-shadow: 0 4px 16px rgba(59, 82, 51, 0.12);
+    }
+
+    .cart-quick-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .cart-quick-item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .cart-quick-item-img {
+      width: 54px;
+      height: 54px;
+      border-radius: 10px;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 1px solid var(--pt-border);
+    }
+
+    .cart-quick-item-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .cart-quick-item-info h5 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--pt-navy);
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .cart-quick-item-info .sub {
+      font-size: 11.5px;
+      color: var(--pt-olive);
+      font-weight: 600;
+    }
+
+    .cart-quick-item-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .cart-quick-item-price {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--pt-terracotta);
+      white-space: nowrap;
+    }
+
+    .btn-quick-select {
+      background: var(--pt-olive);
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .btn-quick-select:hover {
+      background: var(--pt-olive-dark);
+    }
+
+    .btn-quick-select.active {
+      background: var(--pt-navy);
+    }
+
+    .cart-quick-config {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--pt-border);
+    }
+
+    .quick-pill-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .quick-pill-btn {
+      padding: 8px 6px;
+      border-radius: 8px;
+      border: 1.5px solid var(--pt-border);
+      background: #FAF7F2;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--pt-navy);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+
+    .quick-pill-btn.active {
+      border-color: var(--pt-olive);
+      background: var(--pt-olive);
+      color: #fff;
+    }
+
     .cart-summary-footer {
       background: #fff;
       border-top: 1px solid var(--pt-border);
@@ -2174,6 +2353,36 @@
               ${drinkCardsHtml}
             </div>
           </div>
+
+          <!-- Hızlı 2. / 3. Farklı Çökertmeye Geçiş (Ana Sayfaya Dönmeden) -->
+          ${(() => {
+            const addedIds = new Set(appCart.map(c => c.itemId));
+            addedIds.add(item.id);
+            const otherUnadded = allItems.filter(i => i.categoryId === "cokertmeler" && !addedIds.has(i.id));
+            if (otherUnadded.length === 0) return "";
+            return `
+              <div style="margin-top:16px; padding:12px; background:var(--pt-cream); border:1.5px dashed var(--pt-gold); border-radius:12px;">
+                <div style="font-size:12.5px; font-weight:700; color:var(--pt-navy); margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--pt-terracotta)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                  <span>Arkadaşınız İçin 2. / 3. Çökertme mi Ekleyeceksiniz?</span>
+                </div>
+                <div style="font-size:11.5px; color:var(--pt-text-muted); margin-bottom:8px;">
+                  Bu ürünü seçtikten sonra aşağıdaki diğer Çökertmelerden birine dokunarak <strong>ana sayfaya dönmeden</strong> hemen 2. Çökertmeyi de ekleyebilirsiniz (Sepet ekranında da hızlı seçim mevcuttur):
+                </div>
+                <div style="display:flex; gap:8px; overflow-x:auto; padding-bottom:4px;">
+                  ${otherUnadded.map(o => `
+                    <button type="button" onclick="confirmAddAndSwitchToNextCokertme('${item.id}', '${o.id}')" style="display:flex; align-items:center; gap:7px; padding:6px 10px; background:#fff; border:1.5px solid var(--pt-border); border-radius:9px; cursor:pointer; flex-shrink:0; text-align:left;">
+                      <img src="${o.image}" alt="${o.name.tr}" style="width:32px; height:32px; border-radius:6px; object-fit:cover;" />
+                      <div>
+                        <div style="font-size:11.5px; font-weight:700; color:var(--pt-navy); white-space:nowrap;">+ ${o.name.tr}</div>
+                        <div style="font-size:11px; font-weight:700; color:var(--pt-terracotta);">${Math.round(o.price)} TL</div>
+                      </div>
+                    </button>
+                  `).join("")}
+                </div>
+              </div>
+            `;
+          })()}
           ` : ''}
         </div>
 
@@ -2202,10 +2411,10 @@
       renderCurrentView();
     }
 
-    function confirmAddToCart(itemId) {
+    function addCurrentDetailItemToCartArray(itemId) {
       const allItems = getOrderableItems();
       const item = allItems.find(i => i.id === itemId);
-      if (!item) return;
+      if (!item) return false;
 
       // Çökertme menülerinde içecek veya "İçecek İstemiyorum" seçimi yapılmadan devam edilemez!
       if (item.categoryId === "cokertmeler" && !currentDetailNoDrink && currentDetailDrinkIds.length === 0) {
@@ -2217,7 +2426,7 @@
           promoBox.style.borderRadius = "12px";
           promoBox.scrollIntoView({ behavior: "smooth", block: "center" });
         }
-        return;
+        return false;
       }
 
       const selectedPromoDrinks = (item.categoryId === "cokertmeler" && !currentDetailNoDrink)
@@ -2232,7 +2441,7 @@
         : selectedPromoDrinks.map(d => d.id).sort().join(",");
 
       const existing = appCart.find(
-        c => c.itemId === itemId && c.portion === currentDetailPortion && (c.drinkKey || "") === drinkKey
+        c => c.itemId === itemId && c.portion === currentDetailPortion && (c.drinkKey || "") === drinkKey && !c.itemMold
       );
       if (existing) {
         existing.qty += currentDetailQty;
@@ -2247,7 +2456,17 @@
         });
       }
       saveCart();
+      return true;
+    }
+
+    function confirmAddToCart(itemId) {
+      if (!addCurrentDetailItemToCartArray(itemId)) return;
       switchTab("cart");
+    }
+
+    function confirmAddAndSwitchToNextCokertme(currentItemId, nextItemId) {
+      if (!addCurrentDetailItemToCartArray(currentItemId)) return;
+      openProductDetail(nextItemId);
     }
 
     function getCartEntryUnitPrice(state, entry) {
@@ -2255,6 +2474,260 @@
       if (!item) return 0;
       const drinksExtra = (entry.promoDrinks || []).reduce((acc, d) => acc + (Number(d.price) || 0), 0);
       return Number(item.price) + drinksExtra;
+    }
+
+    // =========================================================================
+    // SEPET İÇİ HIZLI 2. / 3. ÇÖKERTME SEÇİCİ DURUMU (ANA SAYFAYA DÖNMEDEN)
+    // =========================================================================
+    let cartQuickItemId = null;
+    let cartQuickPortion = "1 Porsiyon (Standart)";
+    let cartQuickMold = ""; // "" (Genel) | "Kadın (Kalpli Kalıp)" | "Erkek (Çember Kalıp)"
+    let cartQuickNoDrink = false;
+    let cartQuickDrinkIds = [];
+    let cartShowAllCokertme = false;
+    let cartCheckoutDraft = null;
+
+    function captureCartCheckoutDraft() {
+      const modeEl = document.getElementById("checkout-mode");
+      const nameEl = document.getElementById("checkout-name");
+      const phoneEl = document.getElementById("checkout-phone");
+      const addrEl = document.getElementById("checkout-address");
+      const genderRadio = document.querySelector('input[name="checkout-gender"]:checked');
+      const cardHolderEl = document.getElementById("qnb-card-holder");
+      const cardNumEl = document.getElementById("qnb-card-number");
+      const cardExpEl = document.getElementById("qnb-card-exp");
+      const cardCvvEl = document.getElementById("qnb-card-cvv");
+
+      if (nameEl || phoneEl || addrEl) {
+        cartCheckoutDraft = {
+          mode: modeEl ? modeEl.value : "Eve Paket Servis",
+          name: nameEl ? nameEl.value : "",
+          phone: phoneEl ? phoneEl.value : "",
+          address: addrEl ? addrEl.value : "",
+          gender: genderRadio ? genderRadio.value : "",
+          cardHolder: cardHolderEl ? cardHolderEl.value : "",
+          cardNumber: cardNumEl ? cardNumEl.value : "",
+          cardExp: cardExpEl ? cardExpEl.value : "",
+          cardCvv: cardCvvEl ? cardCvvEl.value : ""
+        };
+      }
+    }
+
+    function toggleCartQuickItem(itemId) {
+      captureCartCheckoutDraft();
+      if (cartQuickItemId === itemId) {
+        cartQuickItemId = null;
+      } else {
+        cartQuickItemId = itemId;
+        cartQuickPortion = "1 Porsiyon (Standart)";
+        cartQuickMold = "";
+        cartQuickNoDrink = false;
+        cartQuickDrinkIds = [];
+      }
+      renderCurrentView();
+    }
+
+    function setCartQuickPortion(portionVal) {
+      captureCartCheckoutDraft();
+      cartQuickPortion = portionVal;
+      renderCurrentView();
+    }
+
+    function setCartQuickMold(moldVal) {
+      captureCartCheckoutDraft();
+      cartQuickMold = moldVal;
+      renderCurrentView();
+    }
+
+    function selectCartQuickNoDrink() {
+      captureCartCheckoutDraft();
+      cartQuickNoDrink = true;
+      cartQuickDrinkIds = [];
+      renderCurrentView();
+    }
+
+    function toggleCartQuickDrink(drinkId) {
+      captureCartCheckoutDraft();
+      cartQuickNoDrink = false;
+      const idx = cartQuickDrinkIds.indexOf(drinkId);
+      if (idx >= 0) {
+        cartQuickDrinkIds.splice(idx, 1);
+      } else {
+        cartQuickDrinkIds.push(drinkId);
+      }
+      renderCurrentView();
+    }
+
+    function toggleCartShowAllCokertme() {
+      captureCartCheckoutDraft();
+      cartShowAllCokertme = !cartShowAllCokertme;
+      renderCurrentView();
+    }
+
+    function confirmCartQuickAdd(itemId) {
+      captureCartCheckoutDraft();
+      const allItems = getOrderableItems();
+      const item = allItems.find(i => i.id === itemId);
+      if (!item) return;
+
+      if (!cartQuickNoDrink && cartQuickDrinkIds.length === 0) {
+        alert("Lütfen eklemek istediğiniz Çökertme için bir içecek seçin veya 'İçecek İstemiyorum' seçeneğini işaretleyin.");
+        return;
+      }
+
+      const selectedPromoDrinks = !cartQuickNoDrink
+        ? cartQuickDrinkIds.map(dId => {
+            const d = allItems.find(i => i.id === dId);
+            return d ? { id: d.id, name: d.name.tr, price: Number(d.price) } : null;
+          }).filter(Boolean)
+        : [];
+
+      const drinkKey = cartQuickNoDrink
+        ? "NO_DRINK"
+        : selectedPromoDrinks.map(d => d.id).sort().join(",");
+
+      const existing = appCart.find(
+        c => c.itemId === itemId && c.portion === cartQuickPortion && (c.drinkKey || "") === drinkKey && (c.itemMold || "") === cartQuickMold
+      );
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        appCart.push({
+          itemId,
+          qty: 1,
+          portion: cartQuickPortion,
+          itemMold: cartQuickMold,
+          drinkKey,
+          noDrinkSelected: cartQuickNoDrink,
+          promoDrinks: selectedPromoDrinks
+        });
+      }
+
+      cartQuickItemId = null;
+      cartQuickNoDrink = false;
+      cartQuickDrinkIds = [];
+      cartQuickMold = "";
+      saveCart();
+      renderCurrentView();
+    }
+
+    function renderCartQuickCokertmeBoxHtml() {
+      const allItems = getOrderableItems();
+      const allCokertmeler = allItems.filter(i => i.categoryId === "cokertmeler");
+      const addedCokertmeIds = new Set(appCart.map(c => c.itemId));
+      const unaddedCokertmeler = allCokertmeler.filter(i => !addedCokertmeIds.has(i.id));
+      const listToShow = (cartShowAllCokertme || unaddedCokertmeler.length === 0) ? allCokertmeler : unaddedCokertmeler;
+      const drinkItems = allItems.filter(i => i.categoryId === "icecekler");
+
+      const itemsHtml = listToShow.map(cItem => {
+        const isExpanded = cartQuickItemId === cItem.id;
+        const quickDrinkSum = isExpanded
+          ? cartQuickDrinkIds.reduce((acc, dId) => {
+              const d = drinkItems.find(x => x.id === dId);
+              return acc + (d ? Number(d.price) : 0);
+            }, 0)
+          : 0;
+        const quickTotal = Math.round(Number(cItem.price) + quickDrinkSum);
+
+        return `
+          <div class="cart-quick-item ${isExpanded ? 'expanded' : ''}">
+            <div class="cart-quick-item-row">
+              <div class="cart-quick-item-left" onclick="toggleCartQuickItem('${cItem.id}')" style="cursor:pointer;">
+                <img class="cart-quick-item-img" src="${cItem.image}" alt="${cItem.name.tr}" />
+                <div class="cart-quick-item-info">
+                  <h5>${cItem.name.tr}</h5>
+                  <div class="sub">Yanında 4 İkram Bedava • Porsiyon &amp; İçecek Seç</div>
+                </div>
+              </div>
+              <div class="cart-quick-item-right">
+                <span class="cart-quick-item-price">${Math.round(cItem.price)} TL</span>
+                <button type="button" class="btn-quick-select ${isExpanded ? 'active' : ''}" onclick="toggleCartQuickItem('${cItem.id}')">
+                  ${isExpanded ? `
+                    <span>Kapat</span>
+                  ` : `
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <span>Hızlı Seç</span>
+                  `}
+                </button>
+              </div>
+            </div>
+
+            ${isExpanded ? `
+              <div class="cart-quick-config">
+                <!-- 1. Porsiyon Seçimi -->
+                <div style="font-size:12px; font-weight:700; color:var(--pt-navy); margin-bottom:6px; display:flex; justify-content:space-between;">
+                  <span>1. Porsiyon / Tercih Seçimi:</span>
+                  <span style="color:var(--pt-olive);">${cartQuickPortion}</span>
+                </div>
+                <div class="quick-pill-row">
+                  <button type="button" class="quick-pill-btn ${cartQuickPortion === '1 Porsiyon (Standart)' ? 'active' : ''}" onclick="setCartQuickPortion('1 Porsiyon (Standart)')">1 Porsiyon</button>
+                  <button type="button" class="quick-pill-btn ${cartQuickPortion === '1.5 Porsiyon' ? 'active' : ''}" onclick="setCartQuickPortion('1.5 Porsiyon')">1.5 Porsiyon</button>
+                  <button type="button" class="quick-pill-btn ${cartQuickPortion === 'Sarımsaksız Yoğurtlu' ? 'active' : ''}" onclick="setCartQuickPortion('Sarımsaksız Yoğurtlu')">Sarımsaksız</button>
+                </div>
+
+                <!-- 2. Arkadaş / Kişi Kalıp Tercihi (Opsiyonel: Tek Hesaptan Kadın/Erkek Karışık Sipariş İçin) -->
+                <div style="font-size:12px; font-weight:700; color:var(--pt-navy); margin-bottom:6px; display:flex; justify-content:space-between;">
+                  <span>2. Bu Çökertme Kimin İçin? (Sunum Kalıbı):</span>
+                </div>
+                <div class="quick-pill-row">
+                  <button type="button" class="quick-pill-btn ${cartQuickMold === '' ? 'active' : ''}" onclick="setCartQuickMold('')">Ortak / Genel</button>
+                  <button type="button" class="quick-pill-btn ${cartQuickMold === 'Kadın (Kalpli Kalıp)' ? 'active' : ''}" onclick="setCartQuickMold('Kadın (Kalpli Kalıp)')">Kadın (Kalpli)</button>
+                  <button type="button" class="quick-pill-btn ${cartQuickMold === 'Erkek (Çember Kalıp)' ? 'active' : ''}" onclick="setCartQuickMold('Erkek (Çember Kalıp)')">Erkek (Çember)</button>
+                </div>
+
+                <!-- 3. İçecek Promosyon Seçimi (Zorunlu) -->
+                <div style="font-size:12px; font-weight:700; color:var(--pt-navy); margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+                  <span>3. İçecek Seçimi (Zorunlu) <span style="color:var(--pt-terracotta);">*</span></span>
+                  <span style="font-size:11px; color:var(--pt-terracotta);">İçecek veya "İstemiyorum" seçin</span>
+                </div>
+                <div class="promo-drink-grid" style="margin-bottom:12px;">
+                  <button type="button" class="promo-drink-card ${cartQuickNoDrink ? 'active-no-drink' : ''}" onclick="selectCartQuickNoDrink()">
+                    <span class="promo-drink-name">İçecek İstemiyorum</span>
+                    <span class="promo-drink-price">-</span>
+                  </button>
+                  ${drinkItems.map(d => {
+                    const isSel = cartQuickDrinkIds.includes(d.id);
+                    return `
+                      <button type="button" class="promo-drink-card ${isSel ? 'active-drink' : ''}" onclick="toggleCartQuickDrink('${d.id}')">
+                        <span class="promo-drink-name">${d.name.tr}</span>
+                        <span class="promo-drink-price">+${Math.round(d.price)} TL</span>
+                      </button>
+                    `;
+                  }).join("")}
+                </div>
+
+                <button type="button" class="btn-approve-cart" style="padding:12px 14px; font-size:14px; border-radius:10px;" onclick="confirmCartQuickAdd('${cItem.id}')">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Bu Çökertmeyi de Hesaba Ekle (${quickTotal} TL)</span>
+                </button>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join("");
+
+      return `
+        <div class="cart-quick-cokertme-box">
+          <div class="cart-quick-header">
+            <div class="cart-quick-title">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--pt-terracotta)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+              <span>2. veya 3. Çökertme Ekle (Sepette Olmayan Çökertmeler)</span>
+            </div>
+            <span class="cart-quick-badge">${unaddedCokertmeler.length > 0 ? `${unaddedCokertmeler.length} Farklı Çeşit` : 'Tüm Çeşitler'}</span>
+          </div>
+          <div class="cart-quick-desc">
+            Ana sayfaya dönmenize gerek yok! Arkadaşlarınızla tek hesaptan sipariş verirken <strong>henüz sepete eklenmemiş diğer Çökertme menülerimizi</strong> buradan saniyeler içinde seçip hesaba ekleyebilirsiniz.
+            ${unaddedCokertmeler.length > 0 && unaddedCokertmeler.length < allCokertmeler.length ? `
+              <a href="javascript:void(0)" onclick="toggleCartShowAllCokertme()" style="color:var(--pt-olive); font-weight:700; text-decoration:underline; margin-left:4px;">
+                ${cartShowAllCokertme ? 'Sadece Eklenmemişleri Göster' : 'Sepettekiler Dahil Tümünü Göster'}
+              </a>
+            ` : ''}
+          </div>
+          <div class="cart-quick-list">
+            ${itemsHtml}
+          </div>
+        </div>
+      `;
     }
 
     // =========================================================================
@@ -2301,6 +2774,9 @@
               ? `<div style="display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--pt-terracotta); font-weight:700; margin-bottom:5px; background:#FFF6F0; border:1px solid rgba(221,89,3,0.22); padding:3px 8px; border-radius:6px;">${drinkSvgIcon}<span>Seçilen İçecek: ${promoDrinksList.map(d => `${d.name} (+${Math.round(d.price)} TL)`).join(", ")}</span></div>`
               : `<div style="display:inline-flex; align-items:center; gap:6px; font-size:11.5px; color:var(--pt-text-muted); font-weight:600; margin-bottom:5px;">${drinkSvgIcon}<span>İçecek Tercihi: İçecek İstemiyorum</span></div>`)
           : "";
+        const itemMoldHtml = entry.itemMold
+          ? `<div style="font-size:11.5px; color:var(--pt-navy); font-weight:700; margin-bottom:4px;">Kişi / Sunum Kalıbı: <span style="color:var(--pt-terracotta);">${entry.itemMold}</span></div>`
+          : "";
 
         return `
           <div class="cart-card">
@@ -2309,6 +2785,7 @@
               <div class="cart-card-info">
                 <h4>${item.name.tr}</h4>
                 <p>Porsiyon Seçimi: ${entry.portion || '1 Porsiyon'}</p>
+                ${itemMoldHtml}
                 ${promoDrinkHtml}
                 ${cartSides.length > 0 ? `
                 <div style="font-size:11.5px; color:var(--pt-olive); font-weight:700; margin-bottom:6px; background:#F4F7F2; padding:4px 8px; border-radius:6px; border-left:2px solid var(--pt-olive);">
@@ -2340,6 +2817,16 @@
       const discount = subtotal * (discountPct / 100);
       const finalTotal = subtotal - discount;
 
+      const draftMode = cartCheckoutDraft ? cartCheckoutDraft.mode : "Eve Paket Servis";
+      const draftName = cartCheckoutDraft ? cartCheckoutDraft.name : (appUser && appUser.fullName ? appUser.fullName : "");
+      const draftPhone = cartCheckoutDraft ? cartCheckoutDraft.phone : (appUser && appUser.phone ? appUser.phone : "");
+      const draftAddr = cartCheckoutDraft ? cartCheckoutDraft.address : (appUser && appUser.address ? appUser.address : "");
+      const draftGender = cartCheckoutDraft ? cartCheckoutDraft.gender : (appUser && appUser.gender ? appUser.gender : "");
+      const draftCardHolder = cartCheckoutDraft ? cartCheckoutDraft.cardHolder : (appUser && appUser.fullName ? appUser.fullName.toUpperCase() : "");
+      const draftCardNum = cartCheckoutDraft ? cartCheckoutDraft.cardNumber : "";
+      const draftCardExp = cartCheckoutDraft ? cartCheckoutDraft.cardExp : "";
+      const draftCardCvv = cartCheckoutDraft ? cartCheckoutDraft.cardCvv : "";
+
       return `
         <div class="cart-header-bar">
           <div class="cart-header-title">
@@ -2356,6 +2843,9 @@
         </div>
 
         ${cardsHtml}
+
+        <!-- KIRMIZI İLE İŞARETLENEN ALAN: SEPETE EKLENMEMİŞ DİĞER ÇÖKERTME MENÜLERİMİZ (HIZLI 2. / 3. ÇÖKERTME EKLEME) -->
+        ${renderCartQuickCokertmeBoxHtml()}
 
         <!-- Teslimat ve Hızlı Sipariş Bilgisi (Üye Olma Zorunluluğu Yok - Sipariş Bilgileriyle Otomatik Üyelik Açılır) -->
         <div class="cart-card" style="background:var(--pt-cream);">
@@ -2374,11 +2864,11 @@
 
           <div style="display:grid; gap:10px;">
             <select id="checkout-mode" class="phone-input-group" style="margin:0; padding:10px 12px; border-width:1px; border-color:var(--pt-border); font-size:14px;">
-              <option value="Eve Paket Servis">Eve / Adrese Paket Servis (Anında Kurye Atamalı)</option>
-              <option value="Şubeden Gel-Al">Şubeden Gel-Al (Beklemeden Teslim)</option>
+              <option value="Eve Paket Servis" ${draftMode === 'Eve Paket Servis' ? 'selected' : ''}>Eve / Adrese Paket Servis (Anında Kurye Atamalı)</option>
+              <option value="Şubeden Gel-Al" ${draftMode === 'Şubeden Gel-Al' ? 'selected' : ''}>Şubeden Gel-Al (Beklemeden Teslim)</option>
             </select>
-            <input type="text" id="checkout-name" placeholder="Adınız Soyadınız *" value="${appUser && appUser.fullName ? appUser.fullName : ''}" style="padding:11px 12px; border:1px solid var(--pt-border); border-radius:10px; font-size:14px;" />
-            <input type="tel" id="checkout-phone" placeholder="Telefon Numaranız (05XX...) *" value="${appUser && appUser.phone ? appUser.phone : ''}" style="padding:11px 12px; border:1px solid var(--pt-border); border-radius:10px; font-size:14px;" />
+            <input type="text" id="checkout-name" placeholder="Adınız Soyadınız *" value="${draftName}" style="padding:11px 12px; border:1px solid var(--pt-border); border-radius:10px; font-size:14px;" />
+            <input type="tel" id="checkout-phone" placeholder="Telefon Numaranız (05XX...) *" value="${draftPhone}" style="padding:11px 12px; border:1px solid var(--pt-border); border-radius:10px; font-size:14px;" />
 
             <!-- Cinsiyet & Çökertme Kalıbı Seçimi (Zorunlu: Kalpli Kalıp veya Çember Kalıp) -->
             <div style="background:#fff; border:1.5px solid var(--pt-gold); border-radius:10px; padding:10px 12px;">
@@ -2387,17 +2877,17 @@
               </label>
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px;">
                 <label style="display:flex; align-items:center; gap:7px; padding:9px 10px; border:1.5px solid var(--pt-border); border-radius:8px; background:#FAF7F2; font-size:13px; font-weight:700; color:var(--pt-navy); cursor:pointer;">
-                  <input type="radio" name="checkout-gender" value="Kadın" ${appUser && appUser.gender === 'Kadın' ? 'checked' : ''} />
+                  <input type="radio" name="checkout-gender" value="Kadın" ${draftGender === 'Kadın' ? 'checked' : ''} />
                   <span>Kadın (Kalpli Kalıp)</span>
                 </label>
                 <label style="display:flex; align-items:center; gap:7px; padding:9px 10px; border:1.5px solid var(--pt-border); border-radius:8px; background:#FAF7F2; font-size:13px; font-weight:700; color:var(--pt-navy); cursor:pointer;">
-                  <input type="radio" name="checkout-gender" value="Erkek" ${appUser && appUser.gender === 'Erkek' ? 'checked' : ''} />
+                  <input type="radio" name="checkout-gender" value="Erkek" ${draftGender === 'Erkek' ? 'checked' : ''} />
                   <span>Erkek (Çember Kalıp)</span>
                 </label>
               </div>
             </div>
 
-            <input type="text" id="checkout-address" placeholder="Teslimat Adresi (Mahalle, Sokak, Bina/Daire No) *" value="${appUser && appUser.address ? appUser.address : ''}" style="padding:11px 12px; border:1px solid var(--pt-border); border-radius:10px; font-size:14px;" />
+            <input type="text" id="checkout-address" placeholder="Teslimat Adresi (Mahalle, Sokak, Bina/Daire No) *" value="${draftAddr}" style="padding:11px 12px; border:1px solid var(--pt-border); border-radius:10px; font-size:14px;" />
           </div>
         </div>
 
@@ -2416,20 +2906,20 @@
             <div style="display:grid; gap:9px;">
               <div>
                 <label style="font-size:11.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">Kart Üzerindeki İsim Soyisim *</label>
-                <input type="text" id="qnb-card-holder" placeholder="Örn: AHMET YILMAZ" value="${appUser && appUser.fullName ? appUser.fullName.toUpperCase() : ''}" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:14px; font-weight:600;" />
+                <input type="text" id="qnb-card-holder" placeholder="Örn: AHMET YILMAZ" value="${draftCardHolder}" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:14px; font-weight:600;" />
               </div>
               <div>
                 <label style="font-size:11.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">Kredi / Banka Kartı Numarası (16 Hane) *</label>
-                <input type="tel" id="qnb-card-number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" oninput="formatCardNumberInput(this)" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:15px; font-weight:700; letter-spacing:1.5px;" />
+                <input type="tel" id="qnb-card-number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" value="${draftCardNum}" oninput="formatCardNumberInput(this)" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:15px; font-weight:700; letter-spacing:1.5px;" />
               </div>
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                 <div>
                   <label style="font-size:11.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">Son Kullanma (AA/YY) *</label>
-                  <input type="tel" id="qnb-card-exp" placeholder="AA/YY" maxlength="5" oninput="formatCardExpInput(this)" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:14px; font-weight:700; text-align:center;" />
+                  <input type="tel" id="qnb-card-exp" placeholder="AA/YY" maxlength="5" value="${draftCardExp}" oninput="formatCardExpInput(this)" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:14px; font-weight:700; text-align:center;" />
                 </div>
                 <div>
                   <label style="font-size:11.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">CVV Güvenlik Kodu *</label>
-                  <input type="password" id="qnb-card-cvv" placeholder="***" maxlength="4" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:14px; font-weight:700; text-align:center;" />
+                  <input type="password" id="qnb-card-cvv" placeholder="***" maxlength="4" value="${draftCardCvv}" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:14px; font-weight:700; text-align:center;" />
                 </div>
               </div>
             </div>
@@ -2507,6 +2997,7 @@
 
     function updateCartItemQty(idx, delta) {
       if (!appCart[idx]) return;
+      captureCartCheckoutDraft();
       appCart[idx].qty += delta;
       if (appCart[idx].qty <= 0) {
         appCart.splice(idx, 1);
@@ -2516,6 +3007,7 @@
     }
 
     function removeCartItem(idx) {
+      captureCartCheckoutDraft();
       appCart.splice(idx, 1);
       saveCart();
       renderCurrentView();
@@ -2524,6 +3016,7 @@
     function clearAllCart() {
       if (confirm("Sepetinizdeki tüm ürünleri temizlemek istiyor musunuz?")) {
         appCart = [];
+        cartQuickItemId = null;
         saveCart();
         renderCurrentView();
       }
@@ -2624,7 +3117,8 @@
           const drinkSuffix = promoDrinks.length > 0
             ? ` + İçecek: ${promoDrinks.map(d => d.name).join(", ")}`
             : (item.categoryId === "cokertmeler" ? " (İçecek İstemiyorum)" : "");
-          summaryItems.push(`${entry.qty}x ${item.name.tr} (${entry.portion || '1 Porsiyon'})${drinkSuffix}`);
+          const moldSuffix = entry.itemMold ? ` [Kalıp: ${entry.itemMold}]` : "";
+          summaryItems.push(`${entry.qty}x ${item.name.tr} (${entry.portion || '1 Porsiyon'})${moldSuffix}${drinkSuffix}`);
         }
       });
 
