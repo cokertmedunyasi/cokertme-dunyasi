@@ -858,8 +858,9 @@
     <div class="pt-toolbar-inner">
       <nav class="pt-quick-cats">
         <a href="#sec-cokertmeler" id="nav-cat-1">01. İmza Çökertme Kebapları</a>
-        <a href="#sec-baslangiclar" id="nav-cat-2">02. Başlangıçlar &amp; Salatalar</a>
-        <a href="#sec-tatlilar" id="nav-cat-3">03. Tatlılar &amp; İçecekler</a>
+        <a href="#sec-ikramlar" id="nav-cat-ikram">02. Masa İkramlarımız</a>
+        <a href="#sec-baslangiclar" id="nav-cat-2">03. Başlangıçlar &amp; Salatalar</a>
+        <a href="#sec-tatlilar" id="nav-cat-3">04. Tatlılar &amp; İçecekler</a>
       </nav>
     </div>
   </div>
@@ -868,12 +869,47 @@
        BÖLÜM 1: İMZA ÇÖKERTME KEBAPLARI (ANA YEMEKLER - 2 SÜTUN)
        ======================================================================== -->
   <section id="sec-cokertmeler">
-    <div class="pt-menu-section-header">
+    <div class="pt-menu-section-header" style="padding-bottom:34px;">
       <span class="pt-subtitle" id="sub-sec-1">SOĞUK SIKIM ZEYTİNYAĞI &amp; USTALIK ATEŞİ</span>
       <h2 class="pt-title" id="title-sec-1">İmza Çökertme Kebapları</h2>
+
+      <!-- Tüm Ana Yemeklerin Yanında Verilen Masa İkramları Bandı -->
+      <div style="margin-top:22px; background:var(--pt-mist-bottom); border:1px solid rgba(59, 82, 51, 0.25); border-top:3px solid var(--pt-gold); padding:18px 22px; text-align:center;">
+        <div style="font-size:11.5px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--pt-olive); margin-bottom:8px;">
+          🎁 TÜM ÇÖKERTME KEBAPLARIMIZIN YANINDA ÜCRETSİZ MASA İKRAMLARIMIZ
+        </div>
+        <div style="display:flex; justify-content:center; flex-wrap:wrap; gap:10px 18px; font-family:var(--font-display); font-size:20px; font-weight:600; color:var(--pt-text);">
+          <span>🫒 Ege Zeytini</span>
+          <span style="color:var(--pt-gold);">•</span>
+          <span>🥒 Ev Yapımı Turşu</span>
+          <span style="color:var(--pt-gold);">•</span>
+          <span>🥗 Mevsim Salata</span>
+          <span style="color:var(--pt-gold);">•</span>
+          <span>🍮 Günün Tatlısı</span>
+          <span style="color:var(--pt-gold);">•</span>
+          <span>🫖 Demleme Çay</span>
+          <span style="color:var(--pt-gold);">•</span>
+          <span>☕ Türk Kahvesi</span>
+        </div>
+      </div>
     </div>
 
     <div class="pt-menu-columns-container" id="grid-cokertmeler"></div>
+  </section>
+
+  <!-- ========================================================================
+       BÖLÜM 2: MASA İKRAMLARIMIZ (ZEYTİN, TURŞU, SALATA, TATLI, ÇAY, TÜRK KAHVESİ)
+       ======================================================================== -->
+  <section id="sec-ikramlar" style="background:var(--pt-mist-bottom); border-top:1px solid rgba(3,58,88,0.08); border-bottom:1px solid rgba(3,58,88,0.08);">
+    <div class="pt-menu-section-header">
+      <span class="pt-subtitle">MİSAFİRPERVERLİK GELENEĞİMİZ</span>
+      <h2 class="pt-title">Masa İkramlarımız</h2>
+      <p style="color:var(--pt-text-muted); font-size:15.5px; max-width:640px; margin:10px auto 0;">
+        Sipariş ettiğiniz ana yemeklerin yanında ve yemek sonrasında masanıza ücretsiz olarak sunulan geleneksel ikramlarımızdır.
+      </p>
+    </div>
+
+    <div class="pt-menu-columns-container" id="grid-ikramlar"></div>
   </section>
 
   <!-- ========================================================================
@@ -882,7 +918,7 @@
   <div class="pt-parallax-divider" style="background-image:url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1920&q=85');"></div>
 
   <!-- ========================================================================
-       BÖLÜM 2: EGE & AKDENİZ BAŞLANGIÇLAR VE SALATALAR (2 SÜTUN)
+       BÖLÜM 3: EGE & AKDENİZ BAŞLANGIÇLAR VE SALATALAR (2 SÜTUN)
        ======================================================================== -->
   <section id="sec-baslangiclar">
     <div class="pt-menu-section-header">
@@ -899,7 +935,7 @@
   <div class="pt-parallax-divider" style="background-image:url('https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1920&q=85');"></div>
 
   <!-- ========================================================================
-       BÖLÜM 3: GELENEKSEL TATLILAR & FERAHLATICI İÇECEKLER (2 SÜTUN)
+       BÖLÜM 4: GELENEKSEL TATLILAR & FERAHLATICI İÇECEKLER (2 SÜTUN)
        ======================================================================== -->
   <section id="sec-tatlilar">
     <div class="pt-menu-section-header">
@@ -1002,6 +1038,75 @@
 
   <script src="assets/data.js"></script>
   <script>
+    const DEFAULT_COMPLIMENTARY_SHOWCASE = [
+      {
+        id: "default-ikram-1",
+        categoryId: "ikramlar",
+        name: { tr: "Ege Kırma & Çizik Zeytin" },
+        desc: { tr: "Soğuk sıkım sızma zeytinyağı ve dağ kekiği ile marine edilmiş seçme Ege zeytinleri." },
+        price: 0,
+        isComplimentary: true,
+        available: true,
+        badges: ["MASA İKRAMIMIZ"],
+        image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        id: "default-ikram-2",
+        categoryId: "ikramlar",
+        name: { tr: "Ev Yapımı Kütür Turşu" },
+        desc: { tr: "Çökertme kebabının yanında sunulan geleneksel kurulum kütür köy turşusu seçkisi." },
+        price: 0,
+        isComplimentary: true,
+        available: true,
+        badges: ["MASA İKRAMIMIZ"],
+        image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        id: "default-ikram-3",
+        categoryId: "ikramlar",
+        name: { tr: "Taze Mevsim Salata" },
+        desc: { tr: "Nar ekşisi ve sızma zeytinyağı soslu günlük taze mevsim yeşillikleri salatası." },
+        price: 0,
+        isComplimentary: true,
+        available: true,
+        badges: ["MASA İKRAMIMIZ"],
+        image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        id: "default-ikram-4",
+        categoryId: "ikramlar",
+        name: { tr: "Günün Geleneksel Tatlısı" },
+        desc: { tr: "Yemek sonrasında tüm misafirlerimize sunulan günlük taze tatlı ikramımız." },
+        price: 0,
+        isComplimentary: true,
+        available: true,
+        badges: ["MASA İKRAMIMIZ"],
+        image: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        id: "default-ikram-5",
+        categoryId: "ikramlar",
+        name: { tr: "Taze Demleme Rize Çayı" },
+        desc: { tr: "Yemek sonrasında ince belli bardakta sunulan taze demleme çay ikramımız." },
+        price: 0,
+        isComplimentary: true,
+        available: true,
+        badges: ["MASA İKRAMIMIZ"],
+        image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        id: "default-ikram-6",
+        categoryId: "ikramlar",
+        name: { tr: "Bakır Cezvede Türk Kahvesi" },
+        desc: { tr: "Yemek sonrasında çifte kavrulmuş lokum eşliğinde ağır ateşte pişmiş Türk kahvesi ikramımız." },
+        price: 0,
+        isComplimentary: true,
+        available: true,
+        badges: ["MASA İKRAMIMIZ"],
+        image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=900&q=80"
+      }
+    ];
+
     window.addEventListener("scroll", () => {
       document.getElementById("main-header").classList.toggle("scrolled", window.scrollY > 50);
     });
@@ -1027,10 +1132,23 @@
       const renderItem = (item) => {
         const title = item.name.tr || item.name;
         const desc = item.desc.tr || item.desc;
-        const priceStr = `${Math.round(item.price)} ₺`;
+        const isIkram = !item.price || Number(item.price) <= 0 || item.isComplimentary;
+        const priceStr = isIkram ? "İKRAM" : `${Math.round(item.price)} ₺`;
+        const priceStyle = isIkram
+          ? "color:var(--pt-olive); font-size:18px; letter-spacing:0.1em; background:rgba(59,82,51,0.1); padding:2px 10px;"
+          : "";
+
         const badge = !item.available
           ? `<span class="pt-food-badge" style="background:#C94A38;">TÜKENDİ</span>`
           : (item.badges && item.badges[0] ? `<span class="pt-food-badge">${item.badges[0]}</span>` : "");
+
+        const sidesList = (item.sides && item.sides.length)
+          ? item.sides
+          : (item.categoryId === "cokertmeler" && !isIkram ? ["Zeytin", "Turşu", "Salata", "Tatlı", "Çay", "Türk Kahvesi"] : []);
+
+        const sidesHtml = sidesList.length > 0
+          ? `<div style="margin-top:6px; font-size:12.5px; font-weight:600; color:var(--pt-olive);">🎁 Yanında İkram: ${sidesList.join(" • ")}</div>`
+          : "";
 
         return `
           <div class="pt-food-menu-item" onclick="openDishModal('${item.id}')" style="${!item.available ? 'opacity:0.55;' : ''}">
@@ -1041,9 +1159,10 @@
                   ${badge}
                 </h6>
                 <div class="pt-food-menu-lines"></div>
-                <span class="pt-food-menu-price">${priceStr}</span>
+                <span class="pt-food-menu-price" style="${priceStyle}">${priceStr}</span>
               </div>
               <p class="pt-food-menu-details">${desc}</p>
+              ${sidesHtml}
             </div>
           </div>
         `;
@@ -1067,22 +1186,36 @@
       const state = CokertmeStore.getState();
 
       const cokertmeler = state.items.filter(i => i.categoryId === "cokertmeler");
-      const baslangicVeSalata = state.items.filter(i => i.categoryId === "baslangiclar" || i.categoryId === "salatalar");
-      const tatliVeIcecek = state.items.filter(i => i.categoryId === "tatlilar" || i.categoryId === "icecekler");
+      const customIkramlar = state.items.filter(i => i.categoryId === "ikramlar" || (!i.price || Number(i.price) <= 0));
+      const ikramlarToRender = customIkramlar.length > 0 ? customIkramlar : DEFAULT_COMPLIMENTARY_SHOWCASE;
+      const baslangicVeSalata = state.items.filter(i => (i.categoryId === "baslangiclar" || i.categoryId === "salatalar") && Number(i.price) > 0);
+      const tatliVeIcecek = state.items.filter(i => (i.categoryId === "tatlilar" || i.categoryId === "icecekler") && Number(i.price) > 0);
 
       document.getElementById("grid-cokertmeler").innerHTML = buildTwoColumnHtml(cokertmeler);
+      document.getElementById("grid-ikramlar").innerHTML = buildTwoColumnHtml(ikramlarToRender);
       document.getElementById("grid-baslangiclar").innerHTML = buildTwoColumnHtml(baslangicVeSalata);
       document.getElementById("grid-tatlilar").innerHTML = buildTwoColumnHtml(tatliVeIcecek);
     }
 
     function openDishModal(itemId) {
       const state = CokertmeStore.getState();
-      const item = state.items.find(i => i.id === itemId);
+      const item = state.items.find(i => i.id === itemId) || DEFAULT_COMPLIMENTARY_SHOWCASE.find(i => i.id === itemId);
       if (!item) return;
 
       const title = item.name.tr || item.name;
       const desc = item.desc.tr || item.desc;
-      const priceStr = `${Math.round(item.price)} ₺`;
+      const isIkram = !item.price || Number(item.price) <= 0 || item.isComplimentary;
+      const priceStr = isIkram ? "İKRAMIMIZDIR" : `${Math.round(item.price)} ₺`;
+
+      const sidesList = (item.sides && item.sides.length)
+        ? item.sides
+        : (item.categoryId === "cokertmeler" && !isIkram ? ["Zeytin", "Turşu", "Salata", "Tatlı", "Çay", "Türk Kahvesi"] : []);
+
+      const sidesBox = sidesList.length > 0
+        ? `<div style="background:rgba(59,82,51,0.08); border:1px solid rgba(59,82,51,0.22); padding:10px 14px; font-size:13px; color:var(--pt-olive); font-weight:600; margin-bottom:14px;">
+             🎁 <strong>Yanında Ücretsiz İkramlarımız:</strong> ${sidesList.join(" • ")}
+           </div>`
+        : "";
 
       document.getElementById("dish-modal-content").innerHTML = `
         <div style="position:relative; height:250px;">
@@ -1092,9 +1225,10 @@
         <div style="padding:32px;">
           <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:10px;">
             <h3 style="font-family:var(--font-display); font-size:30px; color:var(--pt-text);">${title}</h3>
-            <span style="font-family:var(--font-display); font-size:28px; font-weight:700; color:var(--pt-primary); white-space:nowrap;">${priceStr}</span>
+            <span style="font-family:var(--font-display); font-size:26px; font-weight:700; color:var(--pt-primary); white-space:nowrap;">${priceStr}</span>
           </div>
-          <p style="color:var(--pt-text-muted); font-size:15.5px; margin-bottom:18px;">${desc}</p>
+          <p style="color:var(--pt-text-muted); font-size:15.5px; margin-bottom:16px;">${desc}</p>
+          ${sidesBox}
           <div style="display:flex; gap:16px; font-size:13px; color:var(--pt-olive); font-weight:600; margin-bottom:18px;">
             <span>🔥 Kalori: ${item.calories || "650 kcal"}</span>
             <span>⏱️ Hazırlanış: ${item.prepTime || "12 dk"}</span>

@@ -63,10 +63,14 @@ const DEFAULT_COKERTME_DATA = {
       id: "icecekler",
       icon: "🍋",
       name: {
-        tr: "Ferahlatıcı İçecekler",
-        en: "Refreshing Drinks",
-        de: "Erfrischungsgetränke",
-        ar: "مشروبات منعشة"
+        tr: "Ferahlatıcı İçecekler"
+      }
+    },
+    {
+      id: "ikramlar",
+      icon: "🎁",
+      name: {
+        tr: "Masa İkramlarımız"
       }
     }
   ],
@@ -470,7 +474,15 @@ const CokertmeStore = {
         return JSON.parse(JSON.stringify(DEFAULT_COKERTME_DATA));
       }
       const parsed = JSON.parse(raw);
-      return { ...DEFAULT_COKERTME_DATA, ...parsed };
+      const merged = { ...DEFAULT_COKERTME_DATA, ...parsed };
+      if (merged.categories && !merged.categories.some(c => c.id === "ikramlar")) {
+        merged.categories.push({
+          id: "ikramlar",
+          icon: "🎁",
+          name: { tr: "Masa İkramlarımız" }
+        });
+      }
+      return merged;
     } catch (e) {
       return JSON.parse(JSON.stringify(DEFAULT_COKERTME_DATA));
     }
@@ -513,6 +525,9 @@ const CokertmeStore = {
   },
 
   formatPrice(amountTRY) {
+    if (amountTRY === undefined || amountTRY === null || Number(amountTRY) <= 0) {
+      return "İKRAM";
+    }
     return `${Math.round(amountTRY)} ₺`;
   }
 };
