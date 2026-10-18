@@ -69,7 +69,7 @@ module.exports = async function handler(req, res) {
         kitchenNote: `DİKKAT MUTFAK KALIBI: ${moldType.toUpperCase()}`,
         prepTimeMinutes: prepMinutes,
         estimatedReadyTime: order.estimatedReadyAt,
-        complimentaryItems: ["Ege Zeytini", "Acı Turşu", "Özel Soslu Salata", "Özel Tatlı", "Demleme Çay", "Türk Kahvesi"]
+        complimentaryItems: ["Ege Zeytini", "Acı Turşu", "Özel Soslu Salata", "Özel Tatlı"]
       },
       items: order.items
     };

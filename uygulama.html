@@ -1557,7 +1557,7 @@
       cokertmeler: {
         title: "İMZA ÇÖKERTME KEBAPLARI",
         shortTitle: "İMZA ÇÖKERTME KEBAPLARI",
-        sub: "Yanında 6 İkram Bedava",
+        sub: "Yanında 4 İkram Bedava",
         img: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80"
       },
       baslangiclar: {
@@ -1704,9 +1704,12 @@
     }
 
     function getItemComplimentaryList(item) {
-      const defaultSides = ["Ege Zeytini", "Acı Turşu", "Özel Soslu Salata", "Özel Tatlı", "Demleme Çay", "Türk Kahvesi"];
+      // Mobil Uygulama (Paket Servis & Gel-Al) için Çay ve Türk Kahvesi hariç 4 ikram dahildir (Restoranda 6 ikram)
+      const defaultSides = ["Ege Zeytini", "Acı Turşu", "Özel Soslu Salata", "Özel Tatlı"];
       const raw = (item.sides && item.sides.length > 0) ? item.sides : defaultSides;
-      return raw.map(normalizeAppSideName);
+      return raw
+        .map(normalizeAppSideName)
+        .filter(s => !s.toLowerCase().includes("çay") && !s.toLowerCase().includes("kahve"));
     }
 
     // =========================================================================
@@ -1717,7 +1720,8 @@
       const appCfg = state.appSettings || {};
       const discountPct = Number(appCfg.discountPercent) || 10;
       const bannerHeadline = appCfg.bannerHeadline || "LEZZET ÜSTÜNE LEZZET KAT";
-      const bannerSub = appCfg.bannerSub || "Tüm Çökertme Kebaplarının Yanında 6 Masa İkramı Bedava!";
+      const rawBannerSub = appCfg.bannerSub || "Tüm Çökertme Kebaplarının Yanında 4 Paket İkramı Bedava!";
+      const bannerSub = rawBannerSub.replace("6 Masa İkramı", "4 Paket İkramı").replace("6 İkram", "4 İkram");
 
       const allItems = getOrderableItems();
       const catOrder = ["cokertmeler", "baslangiclar", "salatalar", "tatlilar", "icecekler"];
@@ -1791,13 +1795,6 @@
           `;
         }).join("");
 
-        const categoryComplimentaryBanner = catId === "cokertmeler"
-          ? `<div class="category-ikram-strip">
-               <div class="category-ikram-strip-title">TÜM ÇÖKERTME YEMEKLERİMİZDE ÜCRETSİZ İKRAMLARIMIZ</div>
-               <div class="category-ikram-strip-items">Ege Zeytini • Acı Turşu • Özel Soslu Salata • Özel Tatlı • Demleme Çay • Türk Kahvesi</div>
-             </div>`
-          : "";
-
         return `
           <section class="menu-category-block">
             <div class="category-block-header">
@@ -1812,7 +1809,6 @@
                 ${selectedCategoryFilter === catId ? 'Tüm Menü' : 'Tümü'} <span>›</span>
               </button>
             </div>
-            ${categoryComplimentaryBanner}
             <div class="products-grid-2col">
               ${cardsHtml}
             </div>
@@ -1834,9 +1830,6 @@
               <span class="big">%${discountPct}</span>
               <span class="small">İNDİRİM</span>
             </div>
-          </div>
-          <div class="promo-strip-note">
-            ÜCRETSİZ İKRAMLAR: Ege Zeytini • Acı Turşu • Özel Soslu Salata • Özel Tatlı • Demleme Çay • Türk Kahvesi
           </div>
         </div>
         ` : ''}
