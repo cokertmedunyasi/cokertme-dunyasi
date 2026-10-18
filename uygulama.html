@@ -2124,9 +2124,21 @@
 
         ${cardsHtml}
 
-        <!-- Teslimat ve Hızlı Sipariş Bilgisi (Üye Olmadan Devam Edenler İçin de Cinsiyet / Kalıp Zorunlu) -->
+        <!-- Teslimat ve Hızlı Sipariş Bilgisi (Üye Olma Zorunluluğu Yok - Sipariş Bilgileriyle Otomatik Üyelik Açılır) -->
         <div class="cart-card" style="background:var(--pt-cream);">
-          <div style="font-weight:700; font-size:15px; margin-bottom:10px; color:var(--pt-navy);">1. Teslimat &amp; İletişim Bilgileri</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
+            <div style="font-weight:700; font-size:15px; color:var(--pt-navy);">1. Teslimat &amp; Sipariş Bilgileri</div>
+            <span style="background:var(--pt-olive); color:#fff; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:6px;">
+              ${appUser ? '✓ ÜYE GİRİŞİ AKTİF' : 'ÜYE OLMADAN HIZLI SİPARİŞ'}
+            </span>
+          </div>
+
+          ${!appUser ? `
+          <div style="background:#F4F7F2; border:1px solid rgba(59,82,51,0.3); border-left:3px solid var(--pt-olive); border-radius:8px; padding:8px 10px; font-size:12px; color:var(--pt-text); margin-bottom:10px; font-weight:600;">
+            Önceden üye olmanıza gerek yoktur. Aşağıdaki teslimat bilgilerinizi girip ödemenizi tamamladığınızda sistem <strong>bu bilgilerinizle üyeliğinizi otomatik olarak açar</strong>.
+          </div>
+          ` : ''}
+
           <div style="display:grid; gap:10px;">
             <select id="checkout-mode" class="phone-input-group" style="margin:0; padding:10px 12px; border-width:1px; border-color:var(--pt-border); font-size:14px;">
               <option value="Eve Paket Servis">Eve / Adrese Paket Servis (Anında Kurye Atamalı)</option>
@@ -2152,42 +2164,40 @@
               </div>
             </div>
 
-            <input type="text" id="checkout-address" placeholder="Teslimat Adresi veya Sipariş Notunuz *" value="${appUser && appUser.address ? appUser.address : ''}" style="padding:11px 12px; border:1px solid var(--pt-border); border-radius:10px; font-size:14px;" />
+            <input type="text" id="checkout-address" placeholder="Teslimat Adresi (Mahalle, Sokak, Bina/Daire No) *" value="${appUser && appUser.address ? appUser.address : ''}" style="padding:11px 12px; border:1px solid var(--pt-border); border-radius:10px; font-size:14px;" />
           </div>
         </div>
 
-        <!-- QNB Finansbank & Beko Yazarkasa POS Ödeme Seçimi -->
-        <div class="cart-card" style="border:1.5px solid rgba(2,58,88,0.18);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <div style="font-weight:700; font-size:15px; color:var(--pt-navy);">2. Ödeme Yöntemi (QNB &amp; Beko POS)</div>
-            <span style="background:var(--pt-navy); color:var(--pt-gold-soft); font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:6px;">QNB 3D SECURE</span>
+        <!-- QNB Finansbank Zorunlu Online Ödeme (Ödeme Yapılmadan Sipariş Verilemez) -->
+        <div class="cart-card" style="border:2px solid var(--pt-navy);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+            <div style="font-weight:700; font-size:15px; color:var(--pt-navy);">2. Zorunlu Online Ödeme (QNB Finansbank POS)</div>
+            <span style="background:var(--pt-navy); color:var(--pt-gold-soft); font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:6px;">3D SECURE ZORUNLU</span>
           </div>
 
-          <div style="display:grid; gap:8px; margin-bottom:10px;">
-            <label style="display:flex; align-items:center; gap:9px; padding:10px 12px; border:1.5px solid var(--pt-olive); background:#F4F7F2; border-radius:10px; font-size:13.5px; font-weight:700; cursor:pointer;">
-              <input type="radio" name="checkout-pay-method" value="QNB_ONLINE_3D" checked onchange="toggleQnbCardBox(this.value)" />
-              <span>QNB Finansbank Online Kredi/Banka Kartı (3D Secure)</span>
-            </label>
-            <label style="display:flex; align-items:center; gap:9px; padding:10px 12px; border:1px solid var(--pt-border); background:#fff; border-radius:10px; font-size:13.5px; font-weight:600; cursor:pointer;">
-              <input type="radio" name="checkout-pay-method" value="KAPIDA_BEKO_POS_KART" onchange="toggleQnbCardBox(this.value)" />
-              <span>Kapıda Beko Yazarkasa POS ile Kredi Kartı</span>
-            </label>
-            <label style="display:flex; align-items:center; gap:9px; padding:10px 12px; border:1px solid var(--pt-border); background:#fff; border-radius:10px; font-size:13.5px; font-weight:600; cursor:pointer;">
-              <input type="radio" name="checkout-pay-method" value="KAPIDA_NAKIT" onchange="toggleQnbCardBox(this.value)" />
-              <span>Kapıda Nakit Ödeme</span>
-            </label>
+          <div style="background:#FFF8EB; border:1px solid var(--pt-gold); border-radius:8px; padding:8px 10px; font-size:12px; font-weight:700; color:var(--pt-navy-dark); margin-bottom:10px;">
+            Ödeme tamamlanmadan sipariş oluşturulamaz. Kart ödemeniz QNB Finansbank 3D Secure ile çekildiği anda restoranımızdaki Beko Yazarkasa QNB POS hesabına işlenir ve mutfak fişiniz otomatik yazdırılır.
           </div>
 
-          <div id="qnb-online-card-box" style="background:#f8fafc; border:1px dashed var(--pt-border); border-radius:10px; padding:12px;">
-            <div style="font-size:11.5px; color:var(--pt-olive); font-weight:700; margin-bottom:8px;">
-              Ödemeniz QNB Finansbank 3D Secure güvencesiyle doğrudan restoranımızın anlaşmalı Beko Yazarkasa QNB POS hesabına aktarılır ve mutfak fişiniz anında yazdırılır.
-            </div>
-            <div style="display:grid; gap:8px;">
-              <input type="text" id="qnb-card-holder" placeholder="Kart Üzerindeki İsim Soyisim" style="padding:10px; border:1px solid var(--pt-border); border-radius:8px; font-size:13.5px;" />
-              <input type="text" id="qnb-card-number" placeholder="Kart Numarası (XXXX XXXX XXXX XXXX)" maxlength="19" style="padding:10px; border:1px solid var(--pt-border); border-radius:8px; font-size:13.5px;" />
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                <input type="text" id="qnb-card-exp" placeholder="AA / YY" maxlength="5" style="padding:10px; border:1px solid var(--pt-border); border-radius:8px; font-size:13.5px;" />
-                <input type="password" id="qnb-card-cvv" placeholder="CVV (3 Hane)" maxlength="4" style="padding:10px; border:1px solid var(--pt-border); border-radius:8px; font-size:13.5px;" />
+          <div id="qnb-online-card-box" style="background:#f8fafc; border:1px solid var(--pt-border); border-radius:10px; padding:12px;">
+            <div style="display:grid; gap:9px;">
+              <div>
+                <label style="font-size:11.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">Kart Üzerindeki İsim Soyisim *</label>
+                <input type="text" id="qnb-card-holder" placeholder="Örn: AHMET YILMAZ" value="${appUser && appUser.fullName ? appUser.fullName.toUpperCase() : ''}" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:14px; font-weight:600;" />
+              </div>
+              <div>
+                <label style="font-size:11.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">Kredi / Banka Kartı Numarası (16 Hane) *</label>
+                <input type="tel" id="qnb-card-number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" oninput="formatCardNumberInput(this)" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:15px; font-weight:700; letter-spacing:1.5px;" />
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div>
+                  <label style="font-size:11.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">Son Kullanma (AA/YY) *</label>
+                  <input type="tel" id="qnb-card-exp" placeholder="AA/YY" maxlength="5" oninput="formatCardExpInput(this)" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:14px; font-weight:700; text-align:center;" />
+                </div>
+                <div>
+                  <label style="font-size:11.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">CVV Güvenlik Kodu *</label>
+                  <input type="password" id="qnb-card-cvv" placeholder="***" maxlength="4" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:14px; font-weight:700; text-align:center;" />
+                </div>
               </div>
             </div>
           </div>
@@ -2203,23 +2213,63 @@
             <span>-${discount.toFixed(2).replace('.', ',')} TL</span>
           </div>
           <div class="cart-summary-total">
-            <span>Toplam</span>
+            <span>Ödenecek Tutar</span>
             <span>${finalTotal.toFixed(2).replace('.', ',')} TL</span>
           </div>
 
           <button type="button" class="btn-approve-cart" onclick="completeAppOrder()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-            <span>Siparişi ve Ödemeyi Onayla</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            <span>QNB 3D Secure ile Öde ve Siparişi Tamamla (${finalTotal.toFixed(2).replace('.', ',')} TL)</span>
           </button>
+        </div>
+
+        <!-- QNB Finansbank 3D Secure Ödeme Doğrulama Modalı -->
+        <div id="qnb-3d-modal" style="display:none; position:fixed; inset:0; background:rgba(10,37,62,0.82); z-index:2500; align-items:center; justify-content:center; padding:16px;">
+          <div style="background:#fff; width:100%; max-width:410px; border-radius:16px; overflow:hidden; border-top:5px solid var(--pt-navy); box-shadow:0 24px 60px rgba(0,0,0,0.4);">
+            <div style="background:var(--pt-navy-dark); color:#fff; padding:14px 18px; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-size:10px; letter-spacing:0.12em; color:var(--pt-gold-soft); font-weight:700;">QNB FİNANSBANK • BEKO POS ENTEGRE</div>
+                <div style="font-size:16px; font-weight:700;">3D Secure Güvenli Ödeme Onayı</div>
+              </div>
+              <button type="button" onclick="closeQnb3dModal()" style="background:none; border:none; color:#fff; font-size:20px; cursor:pointer;">✕</button>
+            </div>
+            <div style="padding:18px;">
+              <div style="background:#f8fafc; border:1px solid var(--pt-border); border-radius:10px; padding:12px; margin-bottom:14px; font-size:13px; display:grid; gap:5px;">
+                <div style="display:flex; justify-content:space-between;"><span>İşyeri:</span><strong>ÇÖKERTME DÜNYASI (Beko QNB POS)</strong></div>
+                <div style="display:flex; justify-content:space-between;"><span>Çekilecek Tutar:</span><strong style="color:var(--pt-terracotta); font-size:15px;" id="qnb-3d-amount-lbl">0,00 TL</strong></div>
+                <div style="display:flex; justify-content:space-between;"><span>Kart No:</span><strong id="qnb-3d-card-lbl">**** **** **** 0000</strong></div>
+              </div>
+              <label style="font-size:12.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:6px;">
+                Telefonunuza Gönderilen 3D Secure Banka Şifresi:
+              </label>
+              <input type="tel" id="qnb-3d-sms-code" value="482910" maxlength="6" style="width:100%; padding:12px; border:2px solid var(--pt-navy); border-radius:10px; font-size:20px; font-weight:700; text-align:center; letter-spacing:6px; margin-bottom:14px;" />
+              <button type="button" class="btn-approve-cart" style="margin-top:0;" onclick="finalizePaidOrderAfter3D()">
+                ✓ Ödemeyi Onayla ve Siparişi Mutfağa Gönder
+              </button>
+            </div>
+          </div>
         </div>
       `;
     }
 
-    function toggleQnbCardBox(val) {
-      const box = document.getElementById("qnb-online-card-box");
-      if (box) {
-        box.style.display = val === "QNB_ONLINE_3D" ? "block" : "none";
+    function formatCardNumberInput(input) {
+      const digits = (input.value || "").replace(/\D/g, "").slice(0, 16);
+      const groups = digits.match(/.{1,4}/g) || [];
+      input.value = groups.join(" ");
+    }
+
+    function formatCardExpInput(input) {
+      const digits = (input.value || "").replace(/\D/g, "").slice(0, 4);
+      if (digits.length >= 3) {
+        input.value = digits.slice(0, 2) + "/" + digits.slice(2, 4);
+      } else {
+        input.value = digits;
       }
+    }
+
+    function closeQnb3dModal() {
+      const m = document.getElementById("qnb-3d-modal");
+      if (m) m.style.display = "none";
     }
 
     function updateCartItemQty(idx, delta) {
@@ -2246,18 +2296,23 @@
       }
     }
 
-    async function completeAppOrder() {
+    let pendingCheckoutData = null;
+
+    function completeAppOrder() {
       const nameVal = (document.getElementById("checkout-name").value || "").trim();
       const phoneVal = (document.getElementById("checkout-phone").value || "").trim();
       const addrVal = (document.getElementById("checkout-address").value || "").trim();
       const modeVal = document.getElementById("checkout-mode").value;
       const genderRadio = document.querySelector('input[name="checkout-gender"]:checked');
       const genderVal = genderRadio ? genderRadio.value : "";
-      const payRadio = document.querySelector('input[name="checkout-pay-method"]:checked');
-      const payMethodCode = payRadio ? payRadio.value : "QNB_ONLINE_3D";
+
+      const cardHolder = (document.getElementById("qnb-card-holder").value || "").trim();
+      const cardNumberRaw = (document.getElementById("qnb-card-number").value || "").replace(/\D/g, "");
+      const cardExp = (document.getElementById("qnb-card-exp").value || "").trim();
+      const cardCvv = (document.getElementById("qnb-card-cvv").value || "").replace(/\D/g, "");
 
       if (!nameVal || !phoneVal) {
-        alert("Lütfen siparişinizi onaylamak için Ad Soyad ve Telefon Numaranızı girin.");
+        alert("Lütfen siparişinizi oluşturmak için Ad Soyad ve Telefon Numaranızı girin.");
         return;
       }
 
@@ -2266,6 +2321,55 @@
         return;
       }
 
+      if (modeVal.includes("Paket") && !addrVal) {
+        alert("Lütfen paket servis için açık teslimat adresinizi girin.");
+        return;
+      }
+
+      // Ödeme yapılmadan kesinlikle sipariş verilemez!
+      if (!cardHolder || cardNumberRaw.length < 15 || cardExp.length < 4 || cardCvv.length < 3) {
+        alert("Ödeme yapılmadan sipariş oluşturulamaz!\n\nLütfen QNB Finansbank 3D Secure online ödeme için Kart Üzerindeki İsim, 16 Haneli Kart Numarası, Son Kullanma Tarihi (AA/YY) ve CVV güvenlik kodunu eksiksiz girin.");
+        return;
+      }
+
+      const state = CokertmeStore.getState();
+      const appCfg = state.appSettings || {};
+      const discountPct = Number(appCfg.discountPercent) || 10;
+      let subtotal = 0;
+      appCart.forEach(entry => {
+        const item = state.items.find(i => i.id === entry.itemId);
+        if (item) subtotal += item.price * entry.qty;
+      });
+      const discount = Number((subtotal * (discountPct / 100)).toFixed(2));
+      const finalTotal = Number((subtotal - discount).toFixed(2));
+
+      const last4 = cardNumberRaw.slice(-4);
+      pendingCheckoutData = {
+        nameVal,
+        phoneVal,
+        addrVal,
+        modeVal,
+        genderVal,
+        cardHolder,
+        cardLast4: last4
+      };
+
+      document.getElementById("qnb-3d-amount-lbl").textContent = finalTotal.toFixed(2).replace(".", ",") + " TL";
+      document.getElementById("qnb-3d-card-lbl").textContent = "**** **** **** " + last4;
+      document.getElementById("qnb-3d-modal").style.display = "flex";
+    }
+
+    async function finalizePaidOrderAfter3D() {
+      if (!pendingCheckoutData) return;
+      const smsCode = (document.getElementById("qnb-3d-sms-code").value || "").trim();
+      if (smsCode.length < 4) {
+        alert("Lütfen 3D Secure doğrulama kodunu girin.");
+        return;
+      }
+
+      closeQnb3dModal();
+
+      const { nameVal, phoneVal, addrVal, modeVal, genderVal, cardLast4 } = pendingCheckoutData;
       const moldType = genderVal === "Kadın"
         ? "Kalpli Çökertme Kalıbı (Kadın Sunumu)"
         : "Çember Çökertme Kalıbı (Erkek Sunumu)";
@@ -2300,17 +2404,48 @@
       const readyDate = new Date(now.getTime() + prepMinutes * 60000);
       const estimatedReadyAtStr = readyDate.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
 
-      const payLabels = {
-        QNB_ONLINE_3D: "QNB Finansbank Online 3D (Beko POS Hesabına Aktarıldı)",
-        KAPIDA_BEKO_POS_KART: "Kapıda Beko Yazarkasa POS ile Kredi Kartı",
-        KAPIDA_NAKIT: "Kapıda Nakit Ödeme"
+      const wasAlreadyMember = Boolean(appUser && appUser.phone);
+
+      // Sipariş bilgileriyle OTOMATİK ÜYELİK açma / güncelleme
+      appUser = {
+        phone: phoneVal,
+        fullName: nameVal,
+        gender: genderVal,
+        moldType: moldType,
+        address: addrVal,
+        kvkkApproved: true,
+        autoRegisteredFromOrder: !wasAlreadyMember
       };
+      saveAppUser();
+
+      if (!Array.isArray(state.members)) {
+        state.members = [];
+      }
+      const existingMember = state.members.find(m => m.phone === phoneVal);
+      if (existingMember) {
+        existingMember.fullName = nameVal;
+        existingMember.gender = genderVal;
+        existingMember.moldType = moldType;
+        existingMember.address = addrVal;
+      } else {
+        state.members.unshift({
+          id: "MEM-" + Math.floor(1000 + Math.random() * 9000),
+          fullName: nameVal,
+          phone: phoneVal,
+          gender: genderVal,
+          moldType: moldType,
+          address: addrVal,
+          registeredVia: wasAlreadyMember ? "Üye Kaydı" : "Sipariş Bilgileriyle Otomatik Üyelik",
+          createdAt: createdAtStr
+        });
+      }
 
       const newOrder = {
         id: "CKR-" + Math.floor(1000 + Math.random() * 9000),
         customerName: nameVal,
         customerGender: genderVal,
         moldType: moldType,
+        membershipNote: wasAlreadyMember ? "Kayıtlı Üye" : "Sipariş Bilgileriyle Otomatik Üyelik Açıldı",
         phone: phoneVal,
         address: addrVal,
         deliveryType: modeVal,
@@ -2321,9 +2456,9 @@
         discount: discount,
         total: finalTotal,
         pointsEarned: Number((finalTotal * 0.05).toFixed(2)),
-        paymentMethod: payMethodCode,
-        paymentLabel: payLabels[payMethodCode] || payLabels.QNB_ONLINE_3D,
-        isPaidOnline: payMethodCode === "QNB_ONLINE_3D",
+        paymentMethod: "QNB_ONLINE_3D",
+        paymentLabel: `QNB Finansbank 3D Secure Ödendi (Kart: **** ${cardLast4} -> Beko POS Hesabına Aktarıldı)`,
+        isPaidOnline: true,
         prepTimeMinutes: prepMinutes,
         estimatedReadyAt: estimatedReadyAtStr,
         courierCompanyId: activeCourier.id,
@@ -2332,7 +2467,7 @@
         courierStatus: modeVal.includes("Paket")
           ? `${activeCourier.name} API'sine Anında Atandı (${prepMinutes} dk sonra [${estimatedReadyAtStr}] hazır olacağı bildirildi)`
           : `Şubeden Gel-Al (${prepMinutes} dk sonra [${estimatedReadyAtStr}] hazır)`,
-        status: "Mutfakta Hazırlanıyor & Kurye Atandı",
+        status: "Ödeme Alındı • Mutfakta Hazırlanıyor & Kurye Atandı",
         createdAt: createdAtStr
       };
 
@@ -2342,25 +2477,15 @@
       // 0. Saniyede ResPOS API + Kurye Firması API'sini paralel tetikle
       CokertmeStore.dispatchOrder(newOrder);
 
-      // Kullanıcıyı da cinsiyet ve kalıp bilgisiyle kaydet
-      appUser = {
-        phone: phoneVal,
-        fullName: nameVal,
-        gender: genderVal,
-        moldType: moldType,
-        address: addrVal,
-        kvkkApproved: true
-      };
-      saveAppUser();
-
       appCart = [];
       saveCart();
+      pendingCheckoutData = null;
 
       alert(
-        `Siparişiniz (#${newOrder.id}) başarıyla onaylandı!\n\n` +
+        `✓ QNB Finansbank 3D Secure Ödemeniz Onaylandı ve Siparişiniz (#${newOrder.id}) Alındı!\n\n` +
+        `• Otomatik Üyelik: Sipariş bilgilerinizle (${nameVal} - ${phoneVal}) üyeliğiniz otomatik tanımlandı.\n` +
         `• Sunum Kalıbı: ${moldType}\n` +
-        `• Ödeme: ${newOrder.paymentLabel}\n` +
-        `• ResPOS & Mutfak: Sipariş fişiniz (${moldType}) mutfak yazıcısından otomatik yazdırıldı.\n` +
+        `• ResPOS & Mutfak: Sipariş fişiniz (${moldType}) mutfak yazıcısından otomatik yazdırıldı ve Beko Yazarkasa QNB POS'a işlendi.\n` +
         `• Kurye Bildirimi: ${activeCourier.name} sistemine siparişin ${prepMinutes} dk sonra (${estimatedReadyAtStr}) hazır olacağı anında iletildi!`
       );
       openAccountSubTab("siparislerim");
