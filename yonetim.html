@@ -942,25 +942,31 @@
     </section>
 
     <!-- 2. HIZLI FİYAT VE STOK YÖNETİMİ -->
-    <section class="admin-panel-box no-print">
+    <!-- 2. HIZLI FİYAT, FOTOĞRAF, STOK VE MOBİL UYGULAMA (ANDROID & iOS) MENÜ YÖNETİMİ -->
+    <section class="admin-panel-box no-print" id="menu-management-section">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; margin-bottom:24px;">
         <div>
-          <div class="pt-subtitle">ANLIK MENÜ &amp; FİYAT GÜNCELLEME</div>
-          <h2 class="pt-title">Menü Fiyatları ve Ürün Durumu</h2>
+          <div class="pt-subtitle">WEB • QR MENÜ • ANDROID &amp; iOS UYGULAMA TEK MERKEZ</div>
+          <h2 class="pt-title">Menü, Fiyat, Fotoğraf ve İkram Yönetimi</h2>
           <p style="font-size:15.5px; color:var(--pt-text-muted);">
-            Fiyatı değiştirip <strong>"Fiyatı Kaydet"</strong> dediğiniz anda veya <strong>"Sil"</strong> butonuyla kaldırdığınızda masadaki QR menüde ve mobil uygulamada anında güncellenir.
+            Ayrı bir panele ihtiyaç duymadan buradan yaptığınız her değişiklik (fiyat, ürün fotoğrafı, yeni yemek, ikramlar ve stok durumu) <strong>Masadaki QR Menüde</strong>, <strong>Web Sitesinde</strong> ve <strong>Android / iOS Mobil Uygulamada</strong> anında güncellenir.
           </p>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
           <button type="button" class="pt-btn-navy" style="background:var(--pt-gold); border-color:var(--pt-gold); color:var(--pt-navy-dark);" onclick="addDefaultComplimentaryItems()">MASA İKRAMLARINI MENÜYE EKLE</button>
           <button type="button" class="pt-btn-navy" style="background:#b93829; border-color:#b93829;" onclick="deleteUnavailableItems()">TÜKENDİ (KAPALI) OLANLARI SİL</button>
-          <button type="button" class="pt-btn-olive" onclick="toggleNewItemForm()">+ YENİ ÜRÜN EKLE</button>
+          <button type="button" class="pt-btn-olive" onclick="openNewItemForm()">+ YENİ ÜRÜN EKLE</button>
         </div>
       </div>
 
-      <!-- Yeni Ürün Ekleme Formu -->
-      <form id="new-item-form" style="display:none; background:#fff; padding:26px; margin-bottom:26px; border:1px solid var(--pt-gold);">
-        <h3 style="font-size:26px; margin-bottom:18px; color:var(--pt-navy);">Yeni Menü Ürünü veya İkram Ekle</h3>
+      <!-- Yeni Ürün Ekleme / Mevcut Ürünü Düzenleme Formu -->
+      <form id="new-item-form" style="display:none; background:#fff; padding:26px; margin-bottom:26px; border:2px solid var(--pt-gold);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+          <h3 id="item-form-title" style="font-size:26px; color:var(--pt-navy);">Yeni Menü Ürünü veya İkram Ekle</h3>
+          <button type="button" onclick="cancelItemForm()" style="background:none; border:none; font-size:13px; font-weight:700; color:var(--pt-terracotta); cursor:pointer;">✕ FORMU KAPAT</button>
+        </div>
+        <input type="hidden" id="edit-item-id" value="" />
+
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:16px;">
           <div>
             <label class="pt-form-label">Ürün Adı (Türkçe) *</label>
@@ -992,10 +998,36 @@
           <input type="text" id="new-desc" class="pt-form-input" placeholder="Örn: Çıtır kibrit patates, süzme yoğurt ve tereyağlı sos ile..." required />
         </div>
 
+        <!-- Ürün Fotoğrafı Yükleme / Seçme Alanı (Android & iOS Uygulama ve QR Menü İçin) -->
+        <div style="background:var(--pt-cream); padding:16px 18px; border:1px solid var(--pt-border); margin-bottom:16px;">
+          <label class="pt-form-label" style="margin-bottom:8px;">Ürün Fotoğrafı (Uygulama &amp; QR Menüde Görünür)</label>
+          <div style="display:grid; grid-template-columns:auto 1fr auto; gap:14px; align-items:center; flex-wrap:wrap;">
+            <img id="new-image-preview" src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80" alt="Önizleme" style="width:74px; height:74px; object-fit:cover; border:2px solid var(--pt-gold); background:#fff;" />
+            <div>
+              <input type="text" id="new-image" class="pt-form-input" placeholder="Fotoğraf URL adresi veya sağdan fotoğraf yükleyin..." value="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80" oninput="document.getElementById('new-image-preview').src=this.value" style="margin-bottom:8px;" />
+              <div style="display:flex; gap:6px; flex-wrap:wrap; font-size:11.5px;">
+                <span style="color:var(--pt-text-muted); font-weight:600;">Hazır Görsel Seç:</span>
+                <button type="button" onclick="selectPresetImage('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80')" style="border:1px solid var(--pt-border); background:#fff; padding:2px 8px; cursor:pointer;">Bonfile Çökertme</button>
+                <button type="button" onclick="selectPresetImage('https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=900&q=80')" style="border:1px solid var(--pt-border); background:#fff; padding:2px 8px; cursor:pointer;">Tavuk Çökertme</button>
+                <button type="button" onclick="selectPresetImage('https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=900&q=80')" style="border:1px solid var(--pt-border); background:#fff; padding:2px 8px; cursor:pointer;">Karides Çökertme</button>
+                <button type="button" onclick="selectPresetImage('https://images.unsplash.com/photo-1529042410759-befb1204b468?auto=format&fit=crop&w=900&q=80')" style="border:1px solid var(--pt-border); background:#fff; padding:2px 8px; cursor:pointer;">Köfte Çökertme</button>
+                <button type="button" onclick="selectPresetImage('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80')" style="border:1px solid var(--pt-border); background:#fff; padding:2px 8px; cursor:pointer;">Salata</button>
+                <button type="button" onclick="selectPresetImage('https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=900&q=80')" style="border:1px solid var(--pt-border); background:#fff; padding:2px 8px; cursor:pointer;">Tatlı</button>
+              </div>
+            </div>
+            <div>
+              <label class="pt-btn-navy" style="cursor:pointer; padding:11px 16px; font-size:11.5px; display:inline-block;">
+                FOTOĞRAF YÜKLE
+                <input type="file" accept="image/*" style="display:none;" onchange="handlePhotoFileUpload(this)" />
+              </label>
+            </div>
+          </div>
+        </div>
+
         <!-- Yemeğin Yanında Verilen İkramlar Seçimi -->
         <div id="accompaniments-box" style="background:var(--pt-cream); padding:16px 18px; border:1px solid var(--pt-border); margin-bottom:18px;">
           <div style="font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--pt-olive); margin-bottom:8px;">
-            BU YEMEĞİN YANINDA VERİLEN MASA İKRAMLARI (Menüde yemeğin altında gösterilir):
+            BU YEMEĞİN YANINDA VERİLEN MASA İKRAMLARI (Menüde ve Uygulamada yemeğin altında ilk bakışta gösterilir):
           </div>
           <div style="display:flex; flex-wrap:wrap; gap:14px; font-size:14px; font-weight:600; color:var(--pt-navy);">
             <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" class="ikram-side-cb" value="Ege Zeytini" checked /> Ege Zeytini</label>
@@ -1007,23 +1039,49 @@
           </div>
         </div>
 
-        <button type="submit" class="pt-btn-fill">✓ ÜRÜNÜ MENÜYE EKLE</button>
+        <button type="submit" id="item-form-submit-btn" class="pt-btn-fill">✓ ÜRÜNÜ KAYDET VE YAYINLA</button>
       </form>
 
       <div style="overflow-x:auto;">
         <table class="admin-table">
           <thead>
             <tr>
-              <th>Ürün Adı</th>
+              <th>Ürün &amp; İkramlar</th>
               <th>Kategori</th>
               <th>QR Menü Fiyatı (₺)</th>
-              <th>Uygulama %10 İndirimli</th>
+              <th>Uygulama İndirimli</th>
               <th>Stok Durumu</th>
               <th>İşlem</th>
             </tr>
           </thead>
           <tbody id="admin-menu-tbody"></tbody>
         </table>
+      </div>
+    </section>
+
+    <!-- 2.5. MOBİL UYGULAMA (ANDROID & iOS) KAMPANYA VE İNDİRİM YÖNETİMİ -->
+    <section class="admin-panel-box no-print">
+      <div class="pt-subtitle">ANDROID • iOS • MOBİL WEB UYGULAMA PANELİ</div>
+      <h2 class="pt-title">Mobil Uygulama Kampanya &amp; İndirim Ayarları</h2>
+      <p style="font-size:15px; color:var(--pt-text-muted); margin-bottom:20px;">
+        Android ve iOS mobil uygulamanızın en üstünde yer alan kampanya afişini ve uygulama indirim oranını buradan anında güncelleyebilirsiniz.
+      </p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; align-items:end;">
+        <div>
+          <label class="pt-form-label">Uygulama İndirim Oranı (%)</label>
+          <input type="number" id="app-discount-Input" class="pt-form-input" min="0" max="50" value="10" />
+        </div>
+        <div>
+          <label class="pt-form-label">Üst Kampanya Ana Başlığı</label>
+          <input type="text" id="app-headline-input" class="pt-form-input" value="LEZZET ÜSTÜNE LEZZET KAT" />
+        </div>
+        <div>
+          <label class="pt-form-label">Kampanya Alt Açıklaması</label>
+          <input type="text" id="app-sub-input" class="pt-form-input" value="Tüm Çökertme Kebaplarının Yanında 6 Masa İkramı Bedava!" />
+        </div>
+        <div>
+          <button type="button" class="pt-btn-olive" style="width:100%;" onclick="saveAppSettings()">UYGULAMA AYARLARINI KAYDET</button>
+        </div>
       </div>
     </section>
 
@@ -1073,7 +1131,7 @@
         <div class="pt-footer-title">Dijital Ekosistem</div>
         <ul class="pt-footer-links">
           <li><a href="index.html">Ana Sayfa (Kurumsal &amp; Hikayemiz)</a></li>
-          <li><a href="menu.html">À la Carte QR Menü (Masada Görüntüleme)</a></li>
+          <li><a href="menu.html">Çökertme QR Menü (Masada Görüntüleme)</a></li>
           <li><a href="uygulama.html">Mobil Uygulama (%10 İndirim &amp; Sadakat)</a></li>
           <li><a href="yonetim.html">Merkez Yönetim &amp; Masa QR Üretici</a></li>
         </ul>
@@ -1124,10 +1182,56 @@
       document.getElementById("kpi-orders").textContent = state.orders.length;
       document.getElementById("kpi-franchise").textContent = state.franchiseApplications.length;
 
+      if (state.appSettings) {
+        document.getElementById("app-discount-Input").value = state.appSettings.discountPercent ?? 10;
+        document.getElementById("app-headline-input").value = state.appSettings.bannerHeadline || "LEZZET ÜSTÜNE LEZZET KAT";
+        document.getElementById("app-sub-input").value = state.appSettings.bannerSub || "Tüm Çökertme Kebaplarının Yanında 6 Masa İkramı Bedava!";
+      }
+
       renderTableQRCards();
       renderMenuTable(state);
       renderOrders(state);
       renderFranchise(state);
+    }
+
+    function saveAppSettings() {
+      const state = CokertmeStore.getState();
+      state.appSettings = {
+        discountPercent: parseFloat(document.getElementById("app-discount-Input").value) || 10,
+        bannerHeadline: document.getElementById("app-headline-input").value.trim() || "LEZZET ÜSTÜNE LEZZET KAT",
+        bannerSub: document.getElementById("app-sub-input").value.trim() || "Tüm Çökertme Kebaplarının Yanında 6 Masa İkramı Bedava!"
+      };
+      CokertmeStore.saveState(state);
+      renderAdminAll();
+      alert("Mobil Uygulama (Android & iOS) kampanya ve indirim ayarları kaydedildi ve canlıya yayınlandı!");
+    }
+
+    function selectPresetImage(url) {
+      document.getElementById("new-image").value = url;
+      document.getElementById("new-image-preview").src = url;
+    }
+
+    function handlePhotoFileUpload(input) {
+      const file = input.files && input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement("canvas");
+          const maxW = 720;
+          const scale = img.width > maxW ? (maxW / img.width) : 1;
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const dataUrl = canvas.toDataURL("image/jpeg", 0.82);
+          document.getElementById("new-image").value = dataUrl;
+          document.getElementById("new-image-preview").src = dataUrl;
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
     }
 
     function renderTableQRCards() {
@@ -1146,10 +1250,10 @@
             <div class="qr-stand-top">
               <div style="font-size:9px; letter-spacing:3px; color:var(--pt-gold-soft);">★ ★ ★ ★ ★</div>
               <div style="font-family:var(--font-serif); font-weight:600; font-size:19px; letter-spacing:0.06em;">ÇÖKERTME DÜNYASI</div>
-              <div style="font-size:10px; color:var(--pt-gold-soft); letter-spacing:0.16em;">À LA CARTE QR MENÜ</div>
+              <div style="font-size:10px; color:var(--pt-gold-soft); letter-spacing:0.16em;">ÇÖKERTME QR MENÜ</div>
             </div>
             <div style="font-family:var(--font-serif); font-weight:700; color:var(--pt-navy); font-size:22px; margin-bottom:8px;">
-              🍽️ MASA ${m}
+              MASA ${m}
             </div>
             <div class="qr-stand-img-box">
               <img src="${qrApiUrl}" alt="Masa ${m} QR Menü" width="145" height="145" loading="lazy" />
@@ -1189,6 +1293,8 @@
         "Çay": "Demleme Çay"
       };
 
+      const discRate = (state.appSettings && state.appSettings.discountPercent) ? state.appSettings.discountPercent : 10;
+
       tbody.innerHTML = state.items.map(item => {
         const isIkram = !item.price || Number(item.price) <= 0;
         const normalizedSides = item.sides && item.sides.length
@@ -1202,8 +1308,13 @@
         return `
         <tr>
           <td>
-            <strong style="font-family:var(--font-serif); font-size:20px; color:var(--pt-navy);">${item.name.tr}</strong>
-            ${ikramSides}
+            <div style="display:flex; align-items:center; gap:12px;">
+              <img src="${item.image || 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=300&q=80'}" alt="${item.name.tr}" style="width:52px; height:52px; object-fit:cover; border:1px solid var(--pt-border); flex-shrink:0;" />
+              <div>
+                <strong style="font-family:var(--font-serif); font-size:20px; color:var(--pt-navy);">${item.name.tr}</strong>
+                ${ikramSides}
+              </div>
+            </div>
           </td>
           <td><span class="pt-badge">${catMap[item.categoryId] || item.categoryId}</span></td>
           <td>
@@ -1213,7 +1324,7 @@
             </div>
           </td>
           <td>
-            <strong style="color:var(--pt-olive);">${isIkram ? 'ÜCRETSİZ İKRAM' : (item.price * 0.9).toFixed(1) + ' ₺'}</strong>
+            <strong style="color:var(--pt-olive);">${isIkram ? 'ÜCRETSİZ İKRAM' : (item.price * (1 - discRate / 100)).toFixed(1) + ' ₺'}</strong>
           </td>
           <td>
             <button type="button" onclick="toggleAvailability('${item.id}')" class="pt-badge ${item.available ? '' : 'pt-badge-danger'}" style="border:none; cursor:pointer; padding:7px 12px;">
@@ -1221,9 +1332,12 @@
             </button>
           </td>
           <td>
-            <div style="display:flex; align-items:center; gap:8px; flex-wrap:nowrap;">
-              <button type="button" onclick="saveItemPrice('${item.id}')" class="pt-btn-fill" style="padding:8px 14px; font-size:11px; white-space:nowrap;">
+            <div style="display:flex; align-items:center; gap:6px; flex-wrap:nowrap;">
+              <button type="button" onclick="saveItemPrice('${item.id}')" class="pt-btn-fill" style="padding:8px 12px; font-size:11px; white-space:nowrap;">
                 FİYATI KAYDET
+              </button>
+              <button type="button" onclick="editExistingItem('${item.id}')" class="pt-btn-olive" style="padding:8px 12px; font-size:11px; white-space:nowrap;">
+                DÜZENLE
               </button>
               <button type="button" onclick="deleteItem('${item.id}')" class="pt-btn-navy" style="padding:8px 12px; font-size:11px; background:#b93829; border-color:#b93829; white-space:nowrap;" title="Ürünü Menüden Tamamen Sil">
                 SİL
@@ -1242,13 +1356,74 @@
       if (isNaN(newVal) || newVal < 0) return;
 
       item.price = newVal;
+      if (newVal === 0) {
+        item.categoryId = "ikramlar";
+        item.isComplimentary = true;
+      }
       CokertmeStore.saveState(state);
       renderAdminAll();
       if (newVal === 0) {
-        alert(`"${item.name.tr}" ücretsiz MASA İKRAMI (0 ₺) olarak güncellendi! Masadaki QR Menüde fiyat yerine 'İKRAM' olarak görünecektir.`);
+        alert(`"${item.name.tr}" ücretsiz MASA İKRAMI (0 ₺) olarak güncellendi!`);
       } else {
-        alert(`"${item.name.tr}" fiyatı ${newVal} ₺ olarak güncellendi! Masadaki QR Menü ve Mobil Uygulama (%10 indirimli: ${(newVal * 0.9).toFixed(1)} ₺) anında senkronize edildi.`);
+        alert(`"${item.name.tr}" fiyatı ${newVal} ₺ olarak güncellendi! Masadaki QR Menü ve Mobil Uygulama anında senkronize edildi.`);
       }
+    }
+
+    function editExistingItem(itemId) {
+      const state = CokertmeStore.getState();
+      const item = state.items.find(i => i.id === itemId);
+      if (!item) return;
+
+      const f = document.getElementById("new-item-form");
+      f.style.display = "block";
+      document.getElementById("edit-item-id").value = item.id;
+      document.getElementById("item-form-title").textContent = `Ürünü Düzenle: ${item.name.tr}`;
+      document.getElementById("item-form-submit-btn").textContent = "✓ DEĞİŞİKLİKLERİ KAYDET VE YAYINLA";
+
+      document.getElementById("new-name").value = item.name.tr || "";
+      document.getElementById("new-cat").value = item.categoryId || "cokertmeler";
+      document.getElementById("new-price").value = item.price ?? 0;
+      document.getElementById("new-is-ikram").checked = (!item.price || Number(item.price) <= 0);
+      document.getElementById("new-desc").value = item.desc.tr || "";
+      const imgUrl = item.image || "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80";
+      document.getElementById("new-image").value = imgUrl;
+      document.getElementById("new-image-preview").src = imgUrl;
+
+      const accBox = document.getElementById("accompaniments-box");
+      if (item.categoryId === "ikramlar" || Number(item.price) <= 0) {
+        accBox.style.display = "none";
+      } else {
+        accBox.style.display = "block";
+        const activeSides = (item.sides && item.sides.length)
+          ? item.sides
+          : (item.categoryId === "cokertmeler" ? ["Ege Zeytini", "Acı Turşu", "Özel Soslu Salata", "Özel Tatlı", "Demleme Çay", "Türk Kahvesi"] : []);
+        document.querySelectorAll(".ikram-side-cb").forEach(cb => {
+          cb.checked = activeSides.includes(cb.value);
+        });
+      }
+
+      f.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function openNewItemForm() {
+      const f = document.getElementById("new-item-form");
+      f.reset();
+      document.getElementById("edit-item-id").value = "";
+      document.getElementById("item-form-title").textContent = "Yeni Menü Ürünü veya İkram Ekle";
+      document.getElementById("item-form-submit-btn").textContent = "✓ ÜRÜNÜ KAYDET VE YAYINLA";
+      document.getElementById("new-image").value = "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80";
+      document.getElementById("new-image-preview").src = "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80";
+      document.querySelectorAll(".ikram-side-cb").forEach(cb => { cb.checked = true; });
+      document.getElementById("accompaniments-box").style.display = "block";
+      f.style.display = "block";
+      f.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function cancelItemForm() {
+      const f = document.getElementById("new-item-form");
+      f.reset();
+      document.getElementById("edit-item-id").value = "";
+      f.style.display = "none";
     }
 
     function deleteItem(itemId) {
@@ -1286,11 +1461,6 @@
       item.available = !item.available;
       CokertmeStore.saveState(state);
       renderAdminAll();
-    }
-
-    function toggleNewItemForm() {
-      const f = document.getElementById("new-item-form");
-      f.style.display = f.style.display === "none" ? "block" : "none";
     }
 
     function toggleIkramPrice(isIkram) {
@@ -1367,37 +1537,49 @@
     document.getElementById("new-item-form").addEventListener("submit", function(e) {
       e.preventDefault();
       const state = CokertmeStore.getState();
+      const editId = document.getElementById("edit-item-id").value.trim();
       const nameTr = document.getElementById("new-name").value.trim();
       const descTr = document.getElementById("new-desc").value.trim();
       const isIkram = document.getElementById("new-is-ikram").checked;
       const priceVal = isIkram ? 0 : (parseFloat(document.getElementById("new-price").value) || 0);
       const catId = priceVal === 0 ? "ikramlar" : document.getElementById("new-cat").value;
+      const imgVal = document.getElementById("new-image").value.trim() || "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80";
 
       const selectedSides = [];
       if (catId !== "ikramlar" && !isIkram) {
         document.querySelectorAll(".ikram-side-cb:checked").forEach(cb => selectedSides.push(cb.value));
       }
 
-      state.items.unshift({
-        id: "item-" + Date.now(),
-        categoryId: catId,
-        name: { tr: nameTr },
-        desc: { tr: descTr },
-        price: priceVal,
-        isComplimentary: priceVal === 0,
-        sides: selectedSides,
-        calories: priceVal === 0 ? "İkram" : "680 kcal",
-        prepTime: priceVal === 0 ? "Hemen" : "12 dk",
-        badges: priceVal === 0 ? ["MASA İKRAMIMIZ"] : ["Yeni Lezzet"],
-        available: true,
-        image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
-      });
+      if (editId) {
+        const target = state.items.find(i => i.id === editId);
+        if (target) {
+          target.name = { tr: nameTr };
+          target.desc = { tr: descTr };
+          target.categoryId = catId;
+          target.price = priceVal;
+          target.isComplimentary = priceVal === 0;
+          target.sides = selectedSides;
+          target.image = imgVal;
+        }
+      } else {
+        state.items.unshift({
+          id: "item-" + Date.now(),
+          categoryId: catId,
+          name: { tr: nameTr },
+          desc: { tr: descTr },
+          price: priceVal,
+          isComplimentary: priceVal === 0,
+          sides: selectedSides,
+          calories: priceVal === 0 ? "İkram" : "680 kcal",
+          prepTime: priceVal === 0 ? "Hemen" : "12 dk",
+          badges: priceVal === 0 ? ["MASA İKRAMIMIZ"] : ["Yeni Lezzet"],
+          available: true,
+          image: imgVal
+        });
+      }
 
       CokertmeStore.saveState(state);
-      this.reset();
-      document.querySelectorAll(".ikram-side-cb").forEach(cb => { cb.checked = true; });
-      document.getElementById("accompaniments-box").style.display = "block";
-      this.style.display = "none";
+      cancelItemForm();
       renderAdminAll();
     });
 

@@ -1444,6 +1444,20 @@
     }
 
     // 5. PatioTime "Selected Menus" Alanını CokertmeStore'dan Doldur (Sadece İmza Çökertme Kebapları)
+    function normalizeIndexSideName(s) {
+      const map = {
+        "Zeytin": "Ege Zeytini",
+        "Turşu": "Acı Turşu",
+        "Ev Yapımı Turşu": "Acı Turşu",
+        "Salata": "Özel Soslu Salata",
+        "Mevsim Salata": "Özel Soslu Salata",
+        "Tatlı": "Özel Tatlı",
+        "Günün Tatlısı": "Özel Tatlı",
+        "Çay": "Demleme Çay"
+      };
+      return map[s] || s;
+    }
+
     function renderSelectedMenus() {
       const state = CokertmeStore.getState();
       const container = document.getElementById("pt-selected-menu-list");
@@ -1454,16 +1468,26 @@
         item.available !== false
       );
 
-      container.innerHTML = selected.map(item => `
-        <div class="pt-food-item">
-          <div class="pt-food-header">
-            <span class="pt-food-title">${item.name.tr}</span>
-            <span class="pt-food-line"></span>
-            <span class="pt-food-price">${item.price} ₺</span>
+      container.innerHTML = selected.map(item => {
+        const rawSides = (item.sides && item.sides.length > 0)
+          ? item.sides
+          : ["Ege Zeytini", "Acı Turşu", "Özel Soslu Salata", "Özel Tatlı", "Demleme Çay", "Türk Kahvesi"];
+        const sidesStr = rawSides.map(normalizeIndexSideName).join(" • ");
+        return `
+          <div class="pt-food-item">
+            <div class="pt-food-header">
+              <span class="pt-food-title">${item.name.tr}</span>
+              <span class="pt-food-line"></span>
+              <span class="pt-food-price">${item.price} ₺</span>
+            </div>
+            <div class="pt-food-desc">${item.desc.tr}</div>
+            <div style="margin-top:7px; display:inline-block; background:#F4F7F2; border:1px solid rgba(59,82,51,0.28); border-left:3px solid var(--pt-olive); padding:4px 10px; font-size:12.5px; font-weight:600; color:var(--pt-text);">
+              <span style="color:var(--pt-olive); font-weight:700; text-transform:uppercase; letter-spacing:0.06em; font-size:11px; margin-right:4px;">ÜCRETSİZ İKRAMLAR DAHİL:</span>
+              ${sidesStr}
+            </div>
           </div>
-          <div class="pt-food-desc">${item.desc.tr}</div>
-        </div>
-      `).join("");
+        `;
+      }).join("");
     }
 
     // 6. Bayilik Formu Gönderimi

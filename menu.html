@@ -1162,7 +1162,10 @@
         const sidesList = rawSides.map(normalizeSideName);
 
         const sidesHtml = sidesList.length > 0
-          ? `<div style="margin-top:6px; font-size:12.5px; font-weight:600; color:var(--pt-olive); letter-spacing:0.02em;">Yanında İkram: ${sidesList.join(" • ")}</div>`
+          ? `<div style="margin-top:8px; display:inline-block; background:#F4F7F2; border:1px solid rgba(59,82,51,0.3); border-left:3px solid var(--pt-olive); padding:5px 10px; font-size:12.5px; font-weight:600; color:var(--pt-text); line-height:1.4;">
+               <span style="color:var(--pt-olive); font-weight:700; text-transform:uppercase; letter-spacing:0.06em; font-size:11px; margin-right:4px;">ÜCRETSİZ İKRAMLAR DAHİL:</span>
+               ${sidesList.join(" • ")}
+             </div>`
           : "";
 
         return `

@@ -1,0 +1,11 @@
+{
+  "name": "Çökertme Dünyası Mobil Sipariş",
+  "short_name": "Çökertme Dünyası",
+  "description": "Çökertme Dünyası %10 İndirimli Online Sipariş Uygulaması (iOS & Android)",
+  "start_url": "/uygulama",
+  "display": "standalone",
+  "background_color": "#14314F",
+  "theme_color": "#14314F",
+  "orientation": "portrait",
+  "lang": "tr-TR"
+}

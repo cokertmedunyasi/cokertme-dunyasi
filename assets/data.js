@@ -460,10 +460,26 @@ const DEFAULT_COKERTME_DATA = {
     points: 145.0,
     stamps: 3, // 5 olunca 1 Çökertme Hediye!
     tier: "Gümüş Gurme"
+  },
+  appSettings: {
+    discountPercent: 10,
+    bannerHeadline: "LEZZET ÜSTÜNE LEZZET KAT",
+    bannerSub: "Tüm Çökertme Kebaplarının Yanında 6 Masa İkramı Bedava!",
+    ikramList: ["Ege Zeytini", "Acı Turşu", "Özel Soslu Salata", "Özel Tatlı", "Demleme Çay", "Türk Kahvesi"]
   }
 };
 
 const STORAGE_KEY = "cokertme_dunyasi_state_v1";
+
+function getCloudApiUrl() {
+  try {
+    const proto = window.location.protocol;
+    if (proto === "file:" || proto === "capacitor:" || proto === "ionic:") {
+      return "https://www.cokertmedunyasi.com/api/state";
+    }
+  } catch (e) {}
+  return "/api/state";
+}
 
 const CokertmeStore = {
   getState() {
@@ -474,11 +490,15 @@ const CokertmeStore = {
         return JSON.parse(JSON.stringify(DEFAULT_COKERTME_DATA));
       }
       const parsed = JSON.parse(raw);
-      const merged = { ...DEFAULT_COKERTME_DATA, ...parsed };
+      const merged = {
+        ...DEFAULT_COKERTME_DATA,
+        ...parsed,
+        appSettings: { ...DEFAULT_COKERTME_DATA.appSettings, ...(parsed.appSettings || {}) }
+      };
       if (merged.categories && !merged.categories.some(c => c.id === "ikramlar")) {
         merged.categories.push({
           id: "ikramlar",
-          icon: "🎁",
+          icon: "",
           name: { tr: "Masa İkramlarımız" }
         });
       }
@@ -491,8 +511,7 @@ const CokertmeStore = {
   saveState(newState) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-      // Eğer yerel Node.js sunucusu çalışıyorsa oraya da kaydet
-      fetch("/api/state", {
+      fetch(getCloudApiUrl(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newState)
@@ -504,16 +523,16 @@ const CokertmeStore = {
 
   async syncFromServer() {
     try {
-      const res = await fetch("/api/state", { cache: "no-store" });
+      const res = await fetch(getCloudApiUrl(), { cache: "no-store" });
       if (res.ok) {
         const serverData = await res.json();
-        if (serverData && serverData.items) {
+        if (serverData && serverData.items && serverData.items.length > 0) {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(serverData));
-          return serverData;
+          return this.getState();
         }
       }
     } catch (e) {
-      // Sunucu kapalıysa doğrudan localStorage ile çalışmaya devam eder
+      // Çevrimdışı veya yerel modda localStorage ile devam eder
     }
     return this.getState();
   },
@@ -533,3 +552,4 @@ const CokertmeStore = {
 };
 
 window.CokertmeStore = CokertmeStore;
+
