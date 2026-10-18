@@ -948,10 +948,13 @@
           <div class="pt-subtitle">ANLIK MENÜ &amp; FİYAT GÜNCELLEME</div>
           <h2 class="pt-title">Menü Fiyatları ve Ürün Durumu</h2>
           <p style="font-size:15.5px; color:var(--pt-text-muted);">
-            Fiyatı değiştirip <strong>"Fiyatı Kaydet"</strong> dediğiniz anda masadaki QR menüde ve mobil uygulamada (%10 indirimli haliyle) anında güncellenir.
+            Fiyatı değiştirip <strong>"Fiyatı Kaydet"</strong> dediğiniz anda veya <strong>"Sil"</strong> butonuyla kaldırdığınızda masadaki QR menüde ve mobil uygulamada anında güncellenir.
           </p>
         </div>
-        <button class="pt-btn-olive" onclick="toggleNewItemForm()">+ YENİ ÜRÜN EKLE</button>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button type="button" class="pt-btn-navy" style="background:#b93829; border-color:#b93829;" onclick="deleteUnavailableItems()">🗑️ TÜKENDİ (KAPALI) OLANLARI SİL</button>
+          <button type="button" class="pt-btn-olive" onclick="toggleNewItemForm()">+ YENİ ÜRÜN EKLE</button>
+        </div>
       </div>
 
       <!-- Yeni Ürün Ekleme Formu -->
@@ -1171,9 +1174,14 @@
             </button>
           </td>
           <td>
-            <button type="button" onclick="saveItemPrice('${item.id}')" class="pt-btn-fill" style="padding:8px 14px; font-size:11px;">
-              💾 FİYATI KAYDET
-            </button>
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:nowrap;">
+              <button type="button" onclick="saveItemPrice('${item.id}')" class="pt-btn-fill" style="padding:8px 14px; font-size:11px; white-space:nowrap;">
+                💾 FİYATI KAYDET
+              </button>
+              <button type="button" onclick="deleteItem('${item.id}')" class="pt-btn-navy" style="padding:8px 12px; font-size:11px; background:#b93829; border-color:#b93829; white-space:nowrap;" title="Ürünü Menüden Tamamen Sil">
+                🗑️ SİL
+              </button>
+            </div>
           </td>
         </tr>
       `).join("");
@@ -1190,6 +1198,34 @@
       CokertmeStore.saveState(state);
       renderAdminAll();
       alert(`✅ "${item.name.tr}" fiyatı ${newVal} ₺ olarak güncellendi! Masadaki QR Menü ve Mobil Uygulama (%10 indirimli: ${(newVal * 0.9).toFixed(1)} ₺) anında senkronize edildi.`);
+    }
+
+    function deleteItem(itemId) {
+      const state = CokertmeStore.getState();
+      const item = state.items.find(i => i.id === itemId);
+      if (!item) return;
+      const itemName = item.name.tr || item.name;
+      if (!confirm(`"${itemName}" adlı ürünü menüden tamamen silmek istediğinize emin misiniz?`)) {
+        return;
+      }
+      state.items = state.items.filter(i => i.id !== itemId);
+      CokertmeStore.saveState(state);
+      renderAdminAll();
+    }
+
+    function deleteUnavailableItems() {
+      const state = CokertmeStore.getState();
+      const closedItems = state.items.filter(i => !i.available);
+      if (closedItems.length === 0) {
+        alert("Şu anda 'Tükendi (Kapalı)' durumunda olan bir ürün bulunmuyor. Silmek istediğiniz ürünün yanındaki '🗑️ SİL' butonunu doğrudan kullanabilirsiniz.");
+        return;
+      }
+      if (!confirm(`'Tükendi (Kapalı)' durumundaki ${closedItems.length} adet ürünü menüden tamamen silmek istediğinize emin misiniz?`)) {
+        return;
+      }
+      state.items = state.items.filter(i => i.available);
+      CokertmeStore.saveState(state);
+      renderAdminAll();
     }
 
     function toggleAvailability(itemId) {
