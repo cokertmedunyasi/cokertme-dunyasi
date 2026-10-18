@@ -1075,14 +1075,14 @@
       </div>
     </section>
 
-    <!-- 2.5. MOBİL UYGULAMA (ANDROID & iOS) KAMPANYA VE İNDİRİM YÖNETİMİ -->
+    <!-- 2.5. MOBİL UYGULAMA (ANDROID & iOS) KAMPANYA, İNDİRİM VE SADAKAT PROGRAMI YÖNETİMİ -->
     <section class="admin-panel-box no-print">
-      <div class="pt-subtitle">ANDROID • iOS • MOBİL WEB UYGULAMA PANELİ</div>
-      <h2 class="pt-title">Mobil Uygulama Kampanya &amp; İndirim Ayarları</h2>
+      <div class="pt-subtitle">ANDROID • iOS • MOBİL WEB UYGULAMA &amp; SADAKAT PANELİ</div>
+      <h2 class="pt-title">Mobil Uygulama İndirim &amp; Korumalı Sadakat Programı Ayarları</h2>
       <p style="font-size:15px; color:var(--pt-text-muted); margin-bottom:20px;">
-        Android ve iOS mobil uygulamanızın en üstünde yer alan kampanya afişini ve uygulama indirim oranını buradan anında güncelleyebilirsiniz.
+        Android ve iOS mobil uygulamanızın kampanya indirim oranını ve <strong>Korumalı Sadakat Programını (Son 30 Günde + 24 Saatte En Fazla 1 Damga + 5 Ayrı Günde 5 Siparişe 1 Adet %50 İndirimli Çökertme)</strong> buradan yönetebilirsiniz.
       </p>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; align-items:end;">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; align-items:end; margin-bottom:18px;">
         <div>
           <label class="pt-form-label">Uygulama İndirim Oranı (%)</label>
           <input type="number" id="app-discount-Input" class="pt-form-input" min="0" max="50" value="10" />
@@ -1095,9 +1095,41 @@
           <label class="pt-form-label">Kampanya Alt Açıklaması</label>
           <input type="text" id="app-sub-input" class="pt-form-input" value="Tüm Çökertme Kebaplarının Yanında 6 Masa İkramı Bedava!" />
         </div>
-        <div>
-          <button type="button" class="pt-btn-olive" style="width:100%;" onclick="saveAppSettings()">UYGULAMA AYARLARINI KAYDET</button>
+      </div>
+
+      <!-- Sadakat Programı Kuralları (Hastane/Grup Korumalı %0 Zarar Modeli) -->
+      <div style="background:#fff; border:1.5px solid var(--pt-gold); padding:18px; margin-bottom:18px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+          <strong style="font-family:var(--font-serif); font-size:22px; color:var(--pt-navy);">
+            Sadakat Programı Kuralları (Son 30 Gün • 24 Saat Korumalı • %50 Hediye)
+          </strong>
+          <label style="display:inline-flex; align-items:center; gap:8px; font-size:13.5px; font-weight:700; color:var(--pt-olive); cursor:pointer;">
+            <input type="checkbox" id="loyalty-enabled-cb" checked />
+            <span>Sadakat Programı Aktif</span>
+          </label>
         </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); gap:14px;">
+          <div>
+            <label class="pt-form-label">Hedef Damga Sayısı (Ayrı Gün)</label>
+            <input type="number" id="loyalty-stamps-input" class="pt-form-input" min="2" max="20" value="5" />
+          </div>
+          <div>
+            <label class="pt-form-label">Geçerlilik Süresi (Son X Gün)</label>
+            <input type="number" id="loyalty-window-input" class="pt-form-input" min="7" max="90" value="30" />
+          </div>
+          <div>
+            <label class="pt-form-label">Grup/Hastane Kilidi (X Saatte 1 Damga)</label>
+            <input type="number" id="loyalty-cooldown-input" class="pt-form-input" min="1" max="72" value="24" />
+          </div>
+          <div>
+            <label class="pt-form-label">Hediye Çökertme İndirimi (%)</label>
+            <input type="number" id="loyalty-reward-pct-input" class="pt-form-input" min="10" max="100" value="50" />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" class="pt-btn-olive" onclick="saveAppSettings()">✓ UYGULAMA &amp; SADAKAT PROGRAMI AYARLARINI KAYDET</button>
       </div>
     </section>
 
@@ -1330,6 +1362,12 @@
         document.getElementById("app-discount-Input").value = state.appSettings.discountPercent ?? 10;
         document.getElementById("app-headline-input").value = state.appSettings.bannerHeadline || "LEZZET ÜSTÜNE LEZZET KAT";
         document.getElementById("app-sub-input").value = state.appSettings.bannerSub || "Tüm Çökertme Kebaplarının Yanında 6 Masa İkramı Bedava!";
+        const loy = state.appSettings.loyalty || {};
+        document.getElementById("loyalty-enabled-cb").checked = loy.enabled !== false;
+        document.getElementById("loyalty-stamps-input").value = loy.requiredStamps ?? 5;
+        document.getElementById("loyalty-window-input").value = loy.windowDays ?? 30;
+        document.getElementById("loyalty-cooldown-input").value = loy.cooldownHours ?? 24;
+        document.getElementById("loyalty-reward-pct-input").value = loy.rewardDiscountPercent ?? 50;
       }
 
       renderTableQRCards();
@@ -1342,13 +1380,21 @@
     function saveAppSettings() {
       const state = CokertmeStore.getState();
       state.appSettings = {
+        ...(state.appSettings || {}),
         discountPercent: parseFloat(document.getElementById("app-discount-Input").value) || 10,
         bannerHeadline: document.getElementById("app-headline-input").value.trim() || "LEZZET ÜSTÜNE LEZZET KAT",
-        bannerSub: document.getElementById("app-sub-input").value.trim() || "Tüm Çökertme Kebaplarının Yanında 6 Masa İkramı Bedava!"
+        bannerSub: document.getElementById("app-sub-input").value.trim() || "Tüm Çökertme Kebaplarının Yanında 6 Masa İkramı Bedava!",
+        loyalty: {
+          enabled: document.getElementById("loyalty-enabled-cb").checked,
+          requiredStamps: parseInt(document.getElementById("loyalty-stamps-input").value, 10) || 5,
+          windowDays: parseInt(document.getElementById("loyalty-window-input").value, 10) || 30,
+          cooldownHours: parseInt(document.getElementById("loyalty-cooldown-input").value, 10) || 24,
+          rewardDiscountPercent: parseInt(document.getElementById("loyalty-reward-pct-input").value, 10) || 50
+        }
       };
       CokertmeStore.saveState(state);
       renderAdminAll();
-      alert("Mobil Uygulama (Android & iOS) kampanya ve indirim ayarları kaydedildi ve canlıya yayınlandı!");
+      alert("Mobil Uygulama İndirim ve Korumalı Sadakat Programı ayarları kaydedildi ve canlıya yayınlandı!");
     }
 
     function selectPresetImage(url) {
@@ -1994,6 +2040,7 @@
 
           <div style="background:var(--pt-cream); border:1px solid var(--pt-border); padding:10px 12px; margin-bottom:10px; font-size:12.5px; display:grid; gap:5px;">
             <div><strong style="color:var(--pt-olive);">Üyelik Durumu:</strong> ${o.membershipNote || 'Sipariş Bilgileriyle Otomatik Üyelik Açıldı'}</div>
+            ${o.loyaltyNote ? `<div><strong style="color:var(--pt-gold);">Sadakat Programı:</strong> <strong style="color:var(--pt-navy);">${o.loyaltyNote}</strong></div>` : ''}
             <div><strong style="color:var(--pt-terracotta);">Mutfak Sunum Kalıbı (Cinsiyet):</strong> <strong>${moldDisplay}</strong></div>
             <div><strong style="color:var(--pt-navy);">QNB / Beko Yazarkasa POS:</strong> ${o.paymentLabel || 'QNB Finansbank Online 3D (Beko POS Hesabına Aktarıldı)'}</div>
             <div><strong style="color:var(--pt-olive);">ResPOS &amp; Mutfak Yazıcısı:</strong> ${o.resposStatus || 'ResPOS API İletildi • Mutfak Fişi Basıldı'}</div>

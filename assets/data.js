@@ -465,7 +465,14 @@ const DEFAULT_COKERTME_DATA = {
     discountPercent: 10,
     bannerHeadline: "LEZZET ÜSTÜNE LEZZET KAT",
     bannerSub: "Tüm Çökertme Kebaplarının Yanında 6 Masa İkramı Bedava!",
-    ikramList: ["Ege Zeytini", "Acı Turşu", "Özel Soslu Salata", "Özel Tatlı", "Demleme Çay", "Türk Kahvesi"]
+    ikramList: ["Ege Zeytini", "Acı Turşu", "Özel Soslu Salata", "Özel Tatlı", "Demleme Çay", "Türk Kahvesi"],
+    loyalty: {
+      enabled: true,
+      requiredStamps: 5,
+      windowDays: 30,
+      cooldownHours: 24,
+      rewardDiscountPercent: 50
+    }
   },
   integrationSettings: {
     respos: {
@@ -547,7 +554,14 @@ const CokertmeStore = {
       const merged = {
         ...DEFAULT_COKERTME_DATA,
         ...parsed,
-        appSettings: { ...DEFAULT_COKERTME_DATA.appSettings, ...(parsed.appSettings || {}) },
+        appSettings: {
+          ...DEFAULT_COKERTME_DATA.appSettings,
+          ...(parsed.appSettings || {}),
+          loyalty: {
+            ...DEFAULT_COKERTME_DATA.appSettings.loyalty,
+            ...((parsed.appSettings && parsed.appSettings.loyalty) || {})
+          }
+        },
         integrationSettings: {
           respos: {
             ...DEFAULT_COKERTME_DATA.integrationSettings.respos,

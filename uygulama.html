@@ -1255,6 +1255,118 @@
       color: #fff;
     }
 
+    /* Sadakat Programı: Son 30 Günde 5 Ayrı Günde 5 Siparişe %50 Hediye Çökertme */
+    .loyalty-stamp-card {
+      margin: 14px 16px;
+      background: linear-gradient(135deg, var(--pt-navy-dark) 0%, var(--pt-navy) 100%);
+      border: 2px solid var(--pt-gold);
+      border-radius: 16px;
+      padding: 16px;
+      color: #fff;
+      box-shadow: 0 8px 22px rgba(2, 58, 88, 0.14);
+    }
+
+    .loyalty-stamp-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .loyalty-stamp-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--pt-gold-soft);
+      line-height: 1.25;
+    }
+
+    .loyalty-stamp-pill {
+      background: var(--pt-terracotta);
+      color: #fff;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .stamp-slots-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .stamp-slot-item {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1.5px dashed rgba(212, 155, 53, 0.45);
+      border-radius: 12px;
+      padding: 10px 4px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      min-height: 68px;
+    }
+
+    .stamp-slot-item.filled {
+      background: rgba(59, 82, 51, 0.88);
+      border: 2px solid var(--pt-gold);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .stamp-slot-item.goal {
+      border-color: var(--pt-terracotta);
+      background: rgba(221, 89, 3, 0.16);
+    }
+
+    .stamp-slot-item.goal.filled {
+      background: var(--pt-terracotta);
+      border-color: var(--pt-gold-soft);
+    }
+
+    .stamp-slot-num {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.78);
+    }
+
+    .stamp-slot-date {
+      font-size: 9.5px;
+      color: var(--pt-gold-soft);
+      font-weight: 600;
+    }
+
+    .btn-use-loyalty-reward {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 11px;
+      border: 2px solid var(--pt-gold-soft);
+      background: var(--pt-terracotta);
+      color: #fff;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-use-loyalty-reward.active {
+      background: var(--pt-olive);
+      border-color: #86efac;
+    }
+
     .cart-summary-footer {
       background: #fff;
       border-top: 1px solid var(--pt-border);
@@ -2721,6 +2833,285 @@
     }
 
     // =========================================================================
+    // SADAKAT PROGRAMI MOTORU:
+    // SON 30 GÜNDE + 24 SAATTE EN FAZLA 1 DAMGA (HASTANE/GRUP KORUMALI)
+    // + 5 AYRI GÜNDE 5 SİPARİŞE -> 1 ADET %50 İNDİRİMLİ ÇÖKERTME HEDİYESİ
+    // =========================================================================
+    const LOYALTY_STORAGE_KEY = "cokertme_loyalty_wallets_v1";
+    let useLoyaltyHalfPriceReward = false;
+
+    function normalizeLoyaltyPhone(phoneStr) {
+      const digits = String(phoneStr || "").replace(/\D/g, "");
+      if (digits.length >= 10) return digits.slice(-10);
+      return digits;
+    }
+
+    function getLoyaltyConfig(state) {
+      const lCfg = (state && state.appSettings && state.appSettings.loyalty) || {};
+      return {
+        enabled: lCfg.enabled !== false,
+        requiredStamps: Number(lCfg.requiredStamps) || 5,
+        windowDays: Number(lCfg.windowDays) || 30,
+        cooldownHours: Number(lCfg.cooldownHours) || 24,
+        rewardDiscountPercent: Number(lCfg.rewardDiscountPercent) || 50
+      };
+    }
+
+    function loadAllLoyaltyWallets() {
+      try {
+        return JSON.parse(localStorage.getItem(LOYALTY_STORAGE_KEY) || "{}");
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveAllLoyaltyWallets(wallets) {
+      try {
+        localStorage.setItem(LOYALTY_STORAGE_KEY, JSON.stringify(wallets));
+      } catch (e) {}
+    }
+
+    function getUserLoyaltyStatus(phoneStr, state) {
+      const cfg = getLoyaltyConfig(state);
+      const normPhone = normalizeLoyaltyPhone(phoneStr);
+      const wallets = loadAllLoyaltyWallets();
+      const rawRecord = (normPhone && wallets[normPhone]) ? wallets[normPhone] : { stampTimestamps: [], redeemedCount: 0 };
+
+      const nowMs = Date.now();
+      const windowMs = cfg.windowDays * 24 * 60 * 60 * 1000;
+      const cooldownMs = cfg.cooldownHours * 60 * 60 * 1000;
+
+      // Sadece son 30 gün (windowDays) içindeki damgaları geçerli say
+      const validStamps = (rawRecord.stampTimestamps || [])
+        .map(Number)
+        .filter(ts => ts > 0 && (nowMs - ts) <= windowMs)
+        .sort((a, b) => a - b);
+
+      // Eğer süresi dolan damga varsa temizle
+      if (normPhone && wallets[normPhone] && validStamps.length !== (rawRecord.stampTimestamps || []).length) {
+        wallets[normPhone].stampTimestamps = validStamps;
+        saveAllLoyaltyWallets(wallets);
+      }
+
+      const lastStampTs = validStamps.length > 0 ? validStamps[validStamps.length - 1] : 0;
+      const msSinceLastStamp = lastStampTs ? (nowMs - lastStampTs) : Infinity;
+      const canEarnToday = msSinceLastStamp >= cooldownMs;
+      const hoursUntilNextStamp = canEarnToday
+        ? 0
+        : Math.max(1, Math.ceil((cooldownMs - msSinceLastStamp) / (60 * 60 * 1000)));
+
+      const oldestStampTs = validStamps.length > 0 ? validStamps[0] : 0;
+      const daysUntilWindowExpire = oldestStampTs
+        ? Math.max(1, Math.ceil(((oldestStampTs + windowMs) - nowMs) / (24 * 60 * 60 * 1000)))
+        : cfg.windowDays;
+
+      const hasRewardReady = cfg.enabled && validStamps.length >= cfg.requiredStamps;
+
+      return {
+        cfg,
+        normPhone,
+        validStamps,
+        stampCount: validStamps.length,
+        requiredStamps: cfg.requiredStamps,
+        canEarnToday,
+        hoursUntilNextStamp,
+        daysUntilWindowExpire,
+        hasRewardReady,
+        redeemedCount: Number(rawRecord.redeemedCount) || 0
+      };
+    }
+
+    function recordOrderLoyaltyOutcome(phoneStr, state, didUseReward, orderHasCokertme) {
+      const cfg = getLoyaltyConfig(state);
+      if (!cfg.enabled) return { earnedStamp: false, usedReward: false, statusText: "" };
+
+      const normPhone = normalizeLoyaltyPhone(phoneStr);
+      if (!normPhone) return { earnedStamp: false, usedReward: false, statusText: "" };
+
+      const wallets = loadAllLoyaltyWallets();
+      const status = getUserLoyaltyStatus(normPhone, state);
+      let validStamps = [...status.validStamps];
+      let redeemedCount = status.redeemedCount;
+      let earnedStamp = false;
+      let usedReward = false;
+      let statusText = "";
+
+      if (didUseReward && status.hasRewardReady && orderHasCokertme) {
+        // 5 damgayı harca ve %50 ödülü uygula
+        validStamps.splice(0, cfg.requiredStamps);
+        redeemedCount += 1;
+        usedReward = true;
+        statusText = `Sadakat Ödülü Kullanıldı (1 Adet Çökertme %${cfg.rewardDiscountPercent} İndirimli • Kalan Damga: ${validStamps.length}/${cfg.requiredStamps})`;
+      } else if (orderHasCokertme) {
+        // 24 Saatte En Fazla 1 Damga Kuralı (Hastane/Grup Toplu Sipariş Koruması)
+        if (status.canEarnToday) {
+          validStamps.push(Date.now());
+          earnedStamp = true;
+          statusText = `+1 Sadakat Damgası Kazanıldı (${validStamps.length}/${cfg.requiredStamps} Damga • Son ${cfg.windowDays} Gün)`;
+        } else {
+          statusText = `24 Saat Koruma Kuralı: Bugünkü 1 damga hakkınız daha önce işlendi (${validStamps.length}/${cfg.requiredStamps} Damga • Yeni damga ${status.hoursUntilNextStamp} saat sonra)`;
+        }
+      }
+
+      wallets[normPhone] = {
+        stampTimestamps: validStamps,
+        redeemedCount
+      };
+      saveAllLoyaltyWallets(wallets);
+
+      return { earnedStamp, usedReward, statusText, newStampCount: validStamps.length };
+    }
+
+    function calculateCartPricing(state, phoneForLoyalty) {
+      const appCfg = state.appSettings || {};
+      const discountPct = Number(appCfg.discountPercent) || 10;
+      const loyaltyStatus = getUserLoyaltyStatus(phoneForLoyalty, state);
+      const rewardPct = loyaltyStatus.cfg.rewardDiscountPercent || 50;
+
+      let subtotal = 0;
+      let rewardTargetItem = null;
+
+      appCart.forEach(entry => {
+        const item = state.items.find(i => i.id === entry.itemId);
+        if (!item) return;
+        const unitPrice = getCartEntryUnitPrice(state, entry);
+        subtotal += unitPrice * entry.qty;
+        if (item.categoryId === "cokertmeler" && !rewardTargetItem) {
+          rewardTargetItem = item;
+        }
+      });
+
+      const cartHasCokertme = Boolean(rewardTargetItem);
+      const canApplyLoyaltyReward = loyaltyStatus.hasRewardReady && cartHasCokertme;
+
+      if (!canApplyLoyaltyReward && useLoyaltyHalfPriceReward) {
+        useLoyaltyHalfPriceReward = false;
+      }
+
+      let loyaltyRewardDiscount = 0;
+      let appDiscountBase = subtotal;
+      let rewardedItemName = "";
+
+      // ÖNEMLİ KÂR KORUMA KALKANI:
+      // %50 Hediye kullanılan 1 adet Çökertme porsiyonuna ayrıca %10 uygulama indirimi UYGULANMAZ!
+      // Böylece işletme o üründe mutfak maliyetini (%50) tam olarak tahsil eder ve 0 TL zarar yazar.
+      if (canApplyLoyaltyReward && useLoyaltyHalfPriceReward && rewardTargetItem) {
+        const oneCokertmeBasePrice = Number(rewardTargetItem.price) || 0;
+        loyaltyRewardDiscount = Number((oneCokertmeBasePrice * (rewardPct / 100)).toFixed(2));
+        appDiscountBase = Math.max(0, subtotal - oneCokertmeBasePrice);
+        rewardedItemName = rewardTargetItem.name.tr;
+      }
+
+      const appDiscountAmount = Number((appDiscountBase * (discountPct / 100)).toFixed(2));
+      const totalDiscount = Number((loyaltyRewardDiscount + appDiscountAmount).toFixed(2));
+      const finalTotal = Number(Math.max(0, subtotal - totalDiscount).toFixed(2));
+
+      return {
+        subtotal,
+        discountPct,
+        appDiscountAmount,
+        loyaltyRewardDiscount,
+        totalDiscount,
+        finalTotal,
+        cartHasCokertme,
+        canApplyLoyaltyReward,
+        rewardedItemName,
+        loyaltyStatus
+      };
+    }
+
+    function toggleUseLoyaltyReward() {
+      captureCartCheckoutDraft();
+      useLoyaltyHalfPriceReward = !useLoyaltyHalfPriceReward;
+      renderCurrentView();
+    }
+
+    function onCheckoutPhoneBlur(val) {
+      captureCartCheckoutDraft();
+      if (cartCheckoutDraft) {
+        cartCheckoutDraft.phone = val;
+      }
+      renderCurrentView();
+    }
+
+    function renderLoyaltyStampCardWidgetHtml(state, phoneStr, contextMode, pricingInfo) {
+      const loyaltyStatus = pricingInfo ? pricingInfo.loyaltyStatus : getUserLoyaltyStatus(phoneStr, state);
+      const cfg = loyaltyStatus.cfg;
+      if (!cfg.enabled) return "";
+
+      const slotsHtml = [];
+      for (let i = 0; i < cfg.requiredStamps; i++) {
+        const ts = loyaltyStatus.validStamps[i];
+        const isFilled = Boolean(ts);
+        const isGoalSlot = (i === cfg.requiredStamps - 1);
+        const dateLbl = isFilled
+          ? new Date(ts).toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit" })
+          : (isGoalSlot ? `%${cfg.rewardDiscountPercent} HEDİYE` : `${i + 1}. Gün`);
+
+        slotsHtml.push(`
+          <div class="stamp-slot-item ${isFilled ? 'filled' : ''} ${isGoalSlot ? 'goal' : ''}">
+            ${isFilled ? `
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--pt-gold-soft)" stroke="var(--pt-gold-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            ` : (isGoalSlot ? `
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--pt-gold-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+            ` : `
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>
+            `)}
+            <div class="stamp-slot-num">${isFilled ? `${i + 1}. Damga` : `${i + 1}. Sipariş`}</div>
+            <div class="stamp-slot-date">${dateLbl}</div>
+          </div>
+        `);
+      }
+
+      const remainingStamps = Math.max(0, cfg.requiredStamps - loyaltyStatus.stampCount);
+
+      return `
+        <div class="loyalty-stamp-card" style="${contextMode === 'account' ? 'margin:14px 18px;' : ''}">
+          <div class="loyalty-stamp-top">
+            <div class="loyalty-stamp-title">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--pt-gold-soft)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+              <span>Sadakat Programı: ${cfg.requiredStamps} Ayrı Günde Siparişe 1 Çökertme %${cfg.rewardDiscountPercent} Hediye!</span>
+            </div>
+            <span class="loyalty-stamp-pill">${loyaltyStatus.stampCount} / ${cfg.requiredStamps} Damga</span>
+          </div>
+
+          <div style="font-size:12px; color:rgba(255,255,255,0.88); line-height:1.4;">
+            Son <strong>${cfg.windowDays} gün (1 ay)</strong> içinde <strong>${cfg.requiredStamps} farklı günde</strong> Çökertme siparişi verdiğinizde, sonraki siparişinizde <strong>1 adet Çökertme %${cfg.rewardDiscountPercent} indirimli (yarı fiyatına)</strong> hediye edilir!
+          </div>
+
+          <div class="stamp-slots-grid">
+            ${slotsHtml.join("")}
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; background:rgba(255,255,255,0.08); border-radius:9px; padding:8px 10px; font-size:11.5px;">
+            <div style="display:flex; align-items:center; gap:6px; color:var(--pt-gold-soft); font-weight:600;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>${cfg.cooldownHours} Saatte En Fazla 1 Damga (Grup/Çoklu Sipariş Korumalı)</span>
+            </div>
+            <div style="color:#fff; font-weight:700;">
+              ${loyaltyStatus.hasRewardReady
+                ? '✓ %50 Hediye Çökertme Hakkınız Hazır!'
+                : (loyaltyStatus.canEarnToday
+                    ? `Bu siparişte +1 Damga kazanabilirsiniz (${remainingStamps} gün kaldı)`
+                    : `Bugünkü damga alındı (${loyaltyStatus.hoursUntilNextStamp} saat sonra yeni damga)`)}
+            </div>
+          </div>
+
+          ${contextMode === 'cart' && pricingInfo && pricingInfo.canApplyLoyaltyReward ? `
+            <button type="button" class="btn-use-loyalty-reward ${useLoyaltyHalfPriceReward ? 'active' : ''}" onclick="toggleUseLoyaltyReward()">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>
+                ${useLoyaltyHalfPriceReward
+                  ? `✓ 1 Adet Çökertme %${cfg.rewardDiscountPercent} Hediyeniz Uygulandı (-${pricingInfo.loyaltyRewardDiscount.toFixed(2).replace('.', ',')} TL)`
+                  : `5 Damganız Tamam! 1 Adet Çökertme İçin %${cfg.rewardDiscountPercent} Hediye Hakkımı Kullan`}
+              </span>
+            </button>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    // =========================================================================
     // 3. SEPET EKRANI (EKRAN GÖRÜNTÜSÜ 5 BİREBİR)
     // =========================================================================
     function renderCartHtml() {
@@ -2749,14 +3140,25 @@
         `;
       }
 
-      let subtotal = 0;
+      const draftMode = cartCheckoutDraft ? cartCheckoutDraft.mode : "Eve Paket Servis";
+      const draftName = cartCheckoutDraft ? cartCheckoutDraft.name : (appUser && appUser.fullName ? appUser.fullName : "");
+      const draftPhone = cartCheckoutDraft ? cartCheckoutDraft.phone : (appUser && appUser.phone ? appUser.phone : "");
+      const draftAddr = cartCheckoutDraft ? cartCheckoutDraft.address : (appUser && appUser.address ? appUser.address : "");
+      const draftGender = cartCheckoutDraft ? cartCheckoutDraft.gender : (appUser && appUser.gender ? appUser.gender : "");
+      const draftCardHolder = cartCheckoutDraft ? cartCheckoutDraft.cardHolder : (appUser && appUser.fullName ? appUser.fullName.toUpperCase() : "");
+      const draftCardNum = cartCheckoutDraft ? cartCheckoutDraft.cardNumber : "";
+      const draftCardExp = cartCheckoutDraft ? cartCheckoutDraft.cardExp : "";
+      const draftCardCvv = cartCheckoutDraft ? cartCheckoutDraft.cardCvv : "";
+
+      const pricingInfo = calculateCartPricing(state, draftPhone);
+      const { subtotal, appDiscountAmount, loyaltyRewardDiscount, finalTotal } = pricingInfo;
+
       const drinkSvgIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M8 22h8"/><path d="M12 15v7"/><path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"/><line x1="7.5" y1="7" x2="16.5" y2="7"/></svg>`;
       const cardsHtml = appCart.map((entry, idx) => {
         const item = state.items.find(i => i.id === entry.itemId);
         if (!item) return "";
         const unitPrice = getCartEntryUnitPrice(state, entry);
         const linePrice = unitPrice * entry.qty;
-        subtotal += linePrice;
         const cartSides = item.categoryId === "cokertmeler" ? getItemComplimentaryList(item) : [];
         const promoDrinksList = entry.promoDrinks || [];
         const promoDrinkHtml = item.categoryId === "cokertmeler"
@@ -2804,19 +3206,6 @@
         `;
       }).join("");
 
-      const discount = subtotal * (discountPct / 100);
-      const finalTotal = subtotal - discount;
-
-      const draftMode = cartCheckoutDraft ? cartCheckoutDraft.mode : "Eve Paket Servis";
-      const draftName = cartCheckoutDraft ? cartCheckoutDraft.name : (appUser && appUser.fullName ? appUser.fullName : "");
-      const draftPhone = cartCheckoutDraft ? cartCheckoutDraft.phone : (appUser && appUser.phone ? appUser.phone : "");
-      const draftAddr = cartCheckoutDraft ? cartCheckoutDraft.address : (appUser && appUser.address ? appUser.address : "");
-      const draftGender = cartCheckoutDraft ? cartCheckoutDraft.gender : (appUser && appUser.gender ? appUser.gender : "");
-      const draftCardHolder = cartCheckoutDraft ? cartCheckoutDraft.cardHolder : (appUser && appUser.fullName ? appUser.fullName.toUpperCase() : "");
-      const draftCardNum = cartCheckoutDraft ? cartCheckoutDraft.cardNumber : "";
-      const draftCardExp = cartCheckoutDraft ? cartCheckoutDraft.cardExp : "";
-      const draftCardCvv = cartCheckoutDraft ? cartCheckoutDraft.cardCvv : "";
-
       return `
         <div class="cart-header-bar">
           <div class="cart-header-title">
@@ -2834,8 +3223,11 @@
 
         ${cardsHtml}
 
-        <!-- KIRMIZI İLE İŞARETLENEN ALAN: SEPETE EKLENMEMİŞ DİĞER ÇÖKERTME MENÜLERİMİZ (HIZLI 2. / 3. ÇÖKERTME EKLEME) -->
+        <!-- SEPETE EKLENMEMİŞ DİĞER ÇÖKERTME MENÜLERİMİZ (HIZLI 2. / 3. ÇÖKERTME EKLEME) -->
         ${renderCartQuickCokertmeBoxHtml()}
+
+        <!-- SADAKAT PROGRAMI KARTI (SON 30 GÜNDE + 24 SAAT KORUMALI + 5 AYRI GÜNDE 5 SİPARİŞE 1 ADET %50 HEDİYE ÇÖKERTME) -->
+        ${renderLoyaltyStampCardWidgetHtml(state, draftPhone, 'cart', pricingInfo)}
 
         <!-- Teslimat ve Hızlı Sipariş Bilgisi (Üye Olma Zorunluluğu Yok - Sipariş Bilgileriyle Otomatik Üyelik Açılır) -->
         <div class="cart-card" style="background:var(--pt-cream);">
@@ -2848,7 +3240,7 @@
 
           ${!appUser ? `
           <div style="background:#F4F7F2; border:1px solid rgba(59,82,51,0.3); border-left:3px solid var(--pt-olive); border-radius:8px; padding:8px 10px; font-size:12px; color:var(--pt-text); margin-bottom:10px; font-weight:600;">
-            Önceden üye olmanıza gerek yoktur. Aşağıdaki teslimat bilgilerinizi girip ödemenizi tamamladığınızda sistem <strong>bu bilgilerinizle üyeliğinizi otomatik olarak açar</strong>.
+            Önceden üye olmanıza gerek yoktur. Aşağıdaki teslimat bilgilerinizi girip ödemenizi tamamladığınızda sistem <strong>bu bilgilerinizle üyeliğinizi ve sadakat damga kartınızı otomatik olarak açar</strong>.
           </div>
           ` : ''}
 
@@ -2858,7 +3250,7 @@
               <option value="Şubeden Gel-Al" ${draftMode === 'Şubeden Gel-Al' ? 'selected' : ''}>Şubeden Gel-Al (Beklemeden Teslim)</option>
             </select>
             <input type="text" id="checkout-name" placeholder="Adınız Soyadınız *" value="${draftName}" style="padding:11px 12px; border:1px solid var(--pt-border); border-radius:10px; font-size:14px;" />
-            <input type="tel" id="checkout-phone" placeholder="Telefon Numaranız (05XX...) *" value="${draftPhone}" style="padding:11px 12px; border:1px solid var(--pt-border); border-radius:10px; font-size:14px;" />
+            <input type="tel" id="checkout-phone" placeholder="Telefon Numaranız (05XX...) *" value="${draftPhone}" onblur="onCheckoutPhoneBlur(this.value)" style="padding:11px 12px; border:1px solid var(--pt-border); border-radius:10px; font-size:14px;" />
 
             <!-- Cinsiyet & Çökertme Kalıbı Seçimi (Zorunlu: Kalpli Kalıp veya Çember Kalıp) -->
             <div style="background:#fff; border:1.5px solid var(--pt-gold); border-radius:10px; padding:10px 12px;">
@@ -2921,10 +3313,18 @@
             <span>Ara Toplam (KDV Dahil)</span>
             <span>${subtotal.toFixed(2).replace('.', ',')} TL</span>
           </div>
-          <div class="cart-summary-row" style="color:var(--pt-olive); font-weight:600;">
-            <span>%${discountPct} Mobil Uygulama İndirimi</span>
-            <span>-${discount.toFixed(2).replace('.', ',')} TL</span>
+          ${loyaltyRewardDiscount > 0 ? `
+          <div class="cart-summary-row" style="color:var(--pt-terracotta); font-weight:700;">
+            <span>Sadakat Hediyesi (1 Adet Çökertme %${pricingInfo.loyaltyStatus.cfg.rewardDiscountPercent} İndirimli — %10 İndirim Birleşmez)</span>
+            <span>-${loyaltyRewardDiscount.toFixed(2).replace('.', ',')} TL</span>
           </div>
+          ` : ''}
+          ${appDiscountAmount > 0 ? `
+          <div class="cart-summary-row" style="color:var(--pt-olive); font-weight:600;">
+            <span>%${discountPct} Mobil Uygulama İndirimi ${loyaltyRewardDiscount > 0 ? '(Diğer Ürünler)' : ''}</span>
+            <span>-${appDiscountAmount.toFixed(2).replace('.', ',')} TL</span>
+          </div>
+          ` : ''}
           <div class="cart-summary-total">
             <span>Ödenecek Tutar</span>
             <span>${finalTotal.toFixed(2).replace('.', ',')} TL</span>
@@ -3007,6 +3407,7 @@
       if (confirm("Sepetinizdeki tüm ürünleri temizlemek istiyor musunuz?")) {
         appCart = [];
         cartQuickItemId = null;
+        useLoyaltyHalfPriceReward = false;
         saveCart();
         renderCurrentView();
       }
@@ -3049,15 +3450,8 @@
       }
 
       const state = CokertmeStore.getState();
-      const appCfg = state.appSettings || {};
-      const discountPct = Number(appCfg.discountPercent) || 10;
-      let subtotal = 0;
-      appCart.forEach(entry => {
-        const unitPrice = getCartEntryUnitPrice(state, entry);
-        subtotal += unitPrice * entry.qty;
-      });
-      const discount = Number((subtotal * (discountPct / 100)).toFixed(2));
-      const finalTotal = Number((subtotal - discount).toFixed(2));
+      const pricingInfo = calculateCartPricing(state, phoneVal);
+      const { finalTotal } = pricingInfo;
 
       const last4 = cardNumberRaw.slice(-4);
       pendingCheckoutData = {
@@ -3067,7 +3461,8 @@
         modeVal,
         genderVal,
         cardHolder,
-        cardLast4: last4
+        cardLast4: last4,
+        usedLoyaltyReward: Boolean(pricingInfo.loyaltyRewardDiscount > 0)
       };
 
       document.getElementById("qnb-3d-amount-lbl").textContent = finalTotal.toFixed(2).replace(".", ",") + " TL";
@@ -3085,24 +3480,21 @@
 
       closeQnb3dModal();
 
-      const { nameVal, phoneVal, addrVal, modeVal, genderVal, cardLast4 } = pendingCheckoutData;
+      const { nameVal, phoneVal, addrVal, modeVal, genderVal, cardLast4, usedLoyaltyReward } = pendingCheckoutData;
       const moldType = genderVal === "Kadın"
         ? "Kalpli Çökertme Kalıbı (Kadın Sunumu)"
         : "Çember Çökertme Kalıbı (Erkek Sunumu)";
 
       const state = CokertmeStore.getState();
-      const appCfg = state.appSettings || {};
       const intCfg = state.integrationSettings || {};
       const courierCfg = intCfg.courier || {};
-      const discountPct = Number(appCfg.discountPercent) || 10;
-      let subtotal = 0;
+      const pricingInfo = calculateCartPricing(state, phoneVal);
+      const { subtotal, totalDiscount, loyaltyRewardDiscount, finalTotal, cartHasCokertme, rewardedItemName } = pricingInfo;
       const summaryItems = [];
 
       appCart.forEach(entry => {
         const item = state.items.find(i => i.id === entry.itemId);
         if (item) {
-          const unitPrice = getCartEntryUnitPrice(state, entry);
-          subtotal += unitPrice * entry.qty;
           const promoDrinks = entry.promoDrinks || [];
           const drinkSuffix = promoDrinks.length > 0
             ? ` + İçecek: ${promoDrinks.map(d => d.name).join(", ")}`
@@ -3112,8 +3504,14 @@
         }
       });
 
-      const discount = Number((subtotal * (discountPct / 100)).toFixed(2));
-      const finalTotal = Number((subtotal - discount).toFixed(2));
+      if (usedLoyaltyReward && loyaltyRewardDiscount > 0) {
+        summaryItems.push(`[SADAKAT HEDİYESİ: 1 Adet ${rewardedItemName} %50 İndirimli (-${loyaltyRewardDiscount} TL)]`);
+      }
+
+      // Sadakat Programı Damga / Ödül Güncellemesi (Son 30 Gün + 24 Saatte Maks 1 Damga)
+      const loyaltyOutcome = recordOrderLoyaltyOutcome(phoneVal, state, usedLoyaltyReward, cartHasCokertme);
+      useLoyaltyHalfPriceReward = false;
+      const discount = totalDiscount;
 
       // Aktif kurye firması ve kaç dakika sonra hazır olacağı hesaplaması (0. Saniye Bildirimi)
       const activeCourier = (courierCfg.companies || []).find(c => c.id === courierCfg.activeCourierId) ||
@@ -3168,6 +3566,7 @@
         customerGender: genderVal,
         moldType: moldType,
         membershipNote: wasAlreadyMember ? "Kayıtlı Üye" : "Sipariş Bilgileriyle Otomatik Üyelik Açıldı",
+        loyaltyNote: loyaltyOutcome.statusText || "",
         phone: phoneVal,
         address: addrVal,
         deliveryType: modeVal,
@@ -3177,7 +3576,7 @@
         subtotal: subtotal,
         discount: discount,
         total: finalTotal,
-        pointsEarned: Number((finalTotal * 0.05).toFixed(2)),
+        pointsEarned: loyaltyOutcome.earnedStamp ? 1 : 0,
         paymentMethod: "QNB_ONLINE_3D",
         paymentLabel: `QNB Finansbank 3D Secure Ödendi (Kart: **** ${cardLast4} -> Beko POS Hesabına Aktarıldı)`,
         isPaidOnline: true,
@@ -3200,12 +3599,14 @@
       CokertmeStore.dispatchOrder(newOrder);
 
       appCart = [];
+      cartCheckoutDraft = null;
       saveCart();
       pendingCheckoutData = null;
 
       alert(
         `✓ QNB Finansbank 3D Secure Ödemeniz Onaylandı ve Siparişiniz (#${newOrder.id}) Alındı!\n\n` +
         `• Otomatik Üyelik: Sipariş bilgilerinizle (${nameVal} - ${phoneVal}) üyeliğiniz otomatik tanımlandı.\n` +
+        (loyaltyOutcome.statusText ? `• Sadakat Programı: ${loyaltyOutcome.statusText}\n` : "") +
         `• Sunum Kalıbı: ${moldType}\n` +
         `• ResPOS & Mutfak: Sipariş fişiniz (${moldType}) mutfak yazıcısından otomatik yazdırıldı ve Beko Yazarkasa QNB POS'a işlendi.\n` +
         `• Kurye Bildirimi: ${activeCourier.name} sistemine siparişin ${prepMinutes} dk sonra (${estimatedReadyAtStr}) hazır olacağı anında iletildi!`
@@ -3394,6 +3795,8 @@
           </button>
         </div>
 
+        ${renderLoyaltyStampCardWidgetHtml(state, appUser.phone, 'account', null)}
+
         ${accountSubTab === 'profil' ? `
           <div class="acc-banner-header">
             <h3>Hesap Bilgilerim</h3>
@@ -3461,13 +3864,14 @@
 
               <div style="background:#F4F7F2; border:1px solid rgba(59,82,51,0.25); border-left:3px solid var(--pt-olive); border-radius:8px; padding:8px 10px; margin-bottom:10px; font-size:12px; display:grid; gap:4px;">
                 <div><strong style="color:var(--pt-navy);">Çökertme Sunum Kalıbı:</strong> ${o.moldType || (o.customerGender === 'Kadın' ? 'Kalpli Çökertme Kalıbı (Kadın)' : 'Çember Çökertme Kalıbı (Erkek)')}</div>
+                ${o.loyaltyNote ? `<div><strong style="color:var(--pt-terracotta);">Sadakat Programı:</strong> ${o.loyaltyNote}</div>` : ''}
                 <div><strong style="color:var(--pt-navy);">Ödeme (QNB / Beko POS):</strong> ${o.paymentLabel || 'QNB Finansbank Online 3D'}</div>
                 <div><strong style="color:var(--pt-olive);">ResPOS &amp; Mutfak:</strong> ${o.resposStatus || 'ResPOS API İletildi • Mutfak Fişi Yazdırıldı'}</div>
                 <div><strong style="color:var(--pt-terracotta);">Kurye &amp; Hazırlık Süresi:</strong> ${o.courierStatus || `Kurye Firmasına Anında Atandı (${o.prepTimeMinutes || 15} dk sonra hazır)`}</div>
               </div>
 
               <div style="display:flex; justify-content:space-between; padding-top:8px; border-top:1px dashed var(--pt-border); font-size:14px;">
-                <span style="color:var(--pt-olive); font-weight:600;">App İndirimi: -${o.discount} TL</span>
+                <span style="color:var(--pt-olive); font-weight:600;">Toplam İndirim: -${o.discount} TL</span>
                 <strong style="color:var(--pt-terracotta);">Toplam: ${o.total} TL</strong>
               </div>
             </div>
