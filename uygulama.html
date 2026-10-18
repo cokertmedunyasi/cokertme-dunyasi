@@ -355,39 +355,62 @@
       color: #fff;
     }
 
-    .home-loyalty-mini-slots {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
+    .stamp-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       gap: 6px;
-      margin: 9px 0 8px;
+      margin: 10px 0 8px;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(243, 217, 153, 0.25);
+      padding: 9px 11px;
+      border-radius: 14px;
     }
 
-    .home-loyalty-slot {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px dashed rgba(243, 217, 153, 0.45);
-      border-radius: 9px;
-      padding: 6px 4px;
-      text-align: center;
+    .stamp-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 2px;
+      font-size: 13px;
+      font-weight: 800;
+      border: 1.5px dashed rgba(243, 217, 153, 0.55);
+      color: rgba(255, 255, 255, 0.78);
+      background: rgba(255, 255, 255, 0.05);
+      flex-shrink: 0;
+      transition: all 0.2s ease;
     }
 
-    .home-loyalty-slot.filled {
-      background: rgba(59, 82, 51, 0.92);
-      border: 1.5px solid var(--pt-gold);
+    .stamp-circle.filled {
+      background: var(--pt-gold);
+      color: var(--pt-navy-dark);
+      border: 2px solid #fff;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.28);
     }
 
-    .home-loyalty-slot.goal {
-      border-color: var(--pt-terracotta);
-      background: rgba(221, 89, 3, 0.22);
+    .stamp-reward-pill {
+      height: 36px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1.5px dashed var(--pt-gold-soft);
+      background: rgba(221, 89, 3, 0.24);
+      color: var(--pt-gold-soft);
+      font-size: 11px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
-    .home-loyalty-slot.goal.filled {
+    .stamp-reward-pill.ready {
       background: var(--pt-terracotta);
-      border-color: var(--pt-gold-soft);
+      border: 2px solid #fff;
+      color: #fff;
+      box-shadow: 0 3px 10px rgba(221, 89, 3, 0.45);
     }
 
     .promo-strip-note {
@@ -2951,110 +2974,81 @@
 
     function renderHomePromoAndLoyaltyBannerHtml(state, discountPct, bannerHeadline, bannerSub) {
       const cfg = getLoyaltyConfig(state);
+      const isLogged = Boolean(appUser && appUser.phone);
+      const lStat = isLogged ? getUserLoyaltyStatus(appUser.phone, state) : {
+        stampCount: 0,
+        requiredStamps: cfg.requiredStamps,
+        hasRewardReady: false,
+        canEarnToday: true,
+        hoursUntilNextStamp: 0
+      };
+      const userName = isLogged ? (appUser.fullName || appUser.phone).split(" ")[0] : "";
 
-      // Eğer kullanıcı kendi hesabıyla giriş yapmışsa: Ana sayfada doğrudan kendi Sadakat Puan/Damga durumunu canlı göster
-      if (appUser && appUser.phone && cfg.enabled) {
-        const lStat = getUserLoyaltyStatus(appUser.phone, state);
-        const userName = (appUser.fullName || appUser.phone).split(" ")[0];
-
-        let slotsHtml = "";
-        for (let i = 1; i <= lStat.requiredStamps; i++) {
-          const isFilled = i <= lStat.currentStamps;
-          const isGoal = i === lStat.requiredStamps;
-          slotsHtml += `
-            <div class="home-loyalty-slot ${isFilled ? 'filled' : ''} ${isGoal ? 'goal' : ''}">
-              <div style="color:${isFilled ? 'var(--pt-gold-soft)' : 'rgba(255,255,255,0.55)'}; display:flex; align-items:center; justify-content:center;">
-                ${isFilled
-                  ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
-                  : (isGoal
-                      ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--pt-gold-soft)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
-                      : `<span style="font-size:11px; font-weight:800;">${i}</span>`)}
-              </div>
-              <div style="font-size:9.5px; font-weight:700; color:${isFilled ? '#fff' : 'rgba(255,255,255,0.75)'}; white-space:nowrap;">
-                ${isGoal ? `%${lStat.rewardDiscountPercent} Hediye` : `${i}. Gün`}
-              </div>
-            </div>
-          `;
-        }
-
-        let statusText = "";
-        if (lStat.isRewardReady) {
-          statusText = `Tebrikler! ${lStat.requiredStamps} damganız tamamlandı. Sepette 1 adet Çökertme'yi %${lStat.rewardDiscountPercent} indirimli alabilirsiniz.`;
-        } else if (lStat.currentStamps === 0) {
-          statusText = `Her gün ilk Çökertme siparişinize 1 damga işlenir. ${lStat.requiredStamps} damgada 1 Çökertme %${lStat.rewardDiscountPercent} hediye!`;
-        } else if (!lStat.canEarnNow) {
-          statusText = `Bugünkü damganız işlendi. Yeni damga için ${lStat.hoursRemainingForNextStamp} saat kaldı (${lStat.remainingStamps} damga sonra %${lStat.rewardDiscountPercent} hediye).`;
-        } else {
-          statusText = `Bugün vereceğiniz Çökertme siparişiyle ${lStat.currentStamps + 1}. damganızı kazanabilirsiniz! (${lStat.remainingStamps} damga kaldı)`;
-        }
-
-        return `
-          <div class="promo-banner-wrap">
-            <div class="promo-slide" style="flex-direction:column; align-items:stretch; padding:14px 16px;">
-              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-                <div>
-                  <span class="promo-tag" style="margin-bottom:3px;">HOŞ GELDİNİZ, ${userName.toUpperCase()} • SADAKAT DURUMUNUZ</span>
-                  <div style="font-family:var(--font-serif); font-size:19px; font-weight:700; color:#fff; line-height:1.15;">
-                    ${lStat.isRewardReady ? `%${lStat.rewardDiscountPercent} İndirimli Çökertme Ödülünüz Hazır!` : `Sadakat Kartınız: ${lStat.currentStamps} / ${lStat.requiredStamps} Damga`}
-                  </div>
-                </div>
-                <div style="background:${lStat.isRewardReady ? 'var(--pt-terracotta)' : 'rgba(212,155,53,0.22)'}; border:1.5px solid var(--pt-gold); border-radius:12px; padding:6px 10px; text-align:center; flex-shrink:0;">
-                  <div style="font-size:9px; font-weight:800; color:var(--pt-gold-soft); letter-spacing:0.05em;">ANINDA</div>
-                  <div style="font-family:var(--font-serif); font-size:18px; font-weight:700; color:#fff; line-height:1;">%${discountPct}</div>
-                  <div style="font-size:8.5px; font-weight:700; color:var(--pt-gold-soft);">İNDİRİM</div>
-                </div>
-              </div>
-
-              <div class="home-loyalty-mini-slots">
-                ${slotsHtml}
-              </div>
-
-              <div style="font-size:11.5px; color:rgba(255,255,255,0.9); line-height:1.35;">
-                ${statusText}
-              </div>
-
-              <div class="promo-loyalty-links" style="justify-content:space-between; margin-top:8px;">
-                <button type="button" class="btn-loyalty-terms-link" onclick="openLoyaltyTermsModal()">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                  Sadakat Programı Şartları ›
-                </button>
-                ${lStat.isRewardReady ? `
-                  <button type="button" class="btn-loyalty-terms-link" style="background:var(--pt-terracotta); border-color:var(--pt-gold-soft); color:#fff;" onclick="switchTab('cart')">
-                    Sepette Ödülü Kullan ›
-                  </button>
-                ` : `
-                  <button type="button" class="btn-loyalty-terms-link" style="background:rgba(255,255,255,0.08);" onclick="switchTab('account')">
-                    Detaylı Kartım ›
-                  </button>
-                `}
-              </div>
-            </div>
+      let stampsHtml = "";
+      for (let i = 1; i <= lStat.requiredStamps; i++) {
+        const filled = i <= lStat.stampCount;
+        stampsHtml += `
+          <div class="stamp-circle ${filled ? 'filled' : ''}" title="${i}. Çökertme Damgası">
+            ${filled
+              ? `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
+              : i}
           </div>
         `;
       }
 
-      // Misafir Kullanıcı (Giriş Yapmamış): Sadakat sistemini kısaca anlatan ve şartlar linki sunan sade yapı
+      stampsHtml += `
+        <div class="stamp-reward-pill ${lStat.hasRewardReady ? 'ready' : ''}">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+          <span>%${cfg.rewardDiscountPercent} Hediye!</span>
+        </div>
+      `;
+
       return `
         <div class="promo-banner-wrap">
-          <div class="promo-slide">
-            <div class="promo-left">
-              <span class="promo-tag">MOBİL İNDİRİM &amp; SADAKAT PROGRAMI</span>
-              <div class="promo-headline">${bannerHeadline}</div>
-              <div class="promo-sub">${bannerSub} Ayrıca <strong>${cfg.requiredStamps} ayrı günde Çökertme siparişinize 1 Çökertme %${cfg.rewardDiscountPercent} İndirimli!</strong></div>
-              <div class="promo-loyalty-links">
-                <button type="button" class="btn-loyalty-terms-link" onclick="openLoyaltyTermsModal()">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                  Sadakat Programı Şartları ›
-                </button>
-                <button type="button" class="btn-loyalty-terms-link" style="background:rgba(221, 89, 3, 0.28); border-color:var(--pt-gold-soft); color:#fff;" onclick="switchTab('account')">
-                  Giriş Yap &amp; Puan Durumunu Gör ›
-                </button>
+          <div class="promo-slide" style="flex-direction:column; align-items:stretch; padding:13px 15px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+              <div>
+                <span class="promo-tag" style="margin-bottom:3px;">
+                  ${isLogged ? `MERHABA ${userName.toUpperCase()} • SADAKAT KARTINIZ` : `ÇÖKERTME SADAKAT KARTI`}
+                </span>
+                <div style="font-family:var(--font-serif); font-size:19px; font-weight:700; color:#fff; line-height:1.15;">
+                  ${lStat.hasRewardReady
+                    ? `%${cfg.rewardDiscountPercent} Hediye Çökertme Hakkınız Hazır!`
+                    : `${cfg.requiredStamps} Damgada 1 Çökertme %${cfg.rewardDiscountPercent} Hediye!`}
+                </div>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0;">
+                <span style="background:var(--pt-terracotta); color:#fff; padding:3px 8px; border-radius:6px; font-size:10px; font-weight:800; letter-spacing:0.04em;">
+                  +%${discountPct} İNDİRİM
+                </span>
+                <span style="font-size:12px; font-weight:800; color:var(--pt-gold-soft);">
+                  ${lStat.stampCount} / ${lStat.requiredStamps} Damga
+                </span>
               </div>
             </div>
-            <div class="promo-circle-badge">
-              <span class="small">ANINDA</span>
-              <span class="big">%${discountPct}</span>
-              <span class="small">İNDİRİM</span>
+
+            <div class="stamp-row">
+              ${stampsHtml}
+            </div>
+
+            <div class="promo-loyalty-links" style="justify-content:space-between; margin-top:2px;">
+              <button type="button" class="btn-loyalty-terms-link" onclick="openLoyaltyTermsModal()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Sadakat Şartları ›
+              </button>
+              ${!isLogged ? `
+                <button type="button" class="btn-loyalty-terms-link" style="background:rgba(221, 89, 3, 0.32); border-color:var(--pt-gold-soft); color:#fff;" onclick="switchTab('account')">
+                  Giriş Yap &amp; Durumunu Gör ›
+                </button>
+              ` : (lStat.hasRewardReady ? `
+                <button type="button" class="btn-loyalty-terms-link" style="background:var(--pt-terracotta); border-color:#fff; color:#fff;" onclick="switchTab('cart')">
+                  Sepette Hediyeyi Kullan ›
+                </button>
+              ` : `
+                <span style="font-size:11px; font-weight:700; color:var(--pt-gold-soft);">
+                  ${lStat.canEarnToday ? '✓ Bugün +1 Damga Aktif' : `Yeni Damga: ${lStat.hoursUntilNextStamp} Saat`}
+                </span>
+              `)}
             </div>
           </div>
         </div>
@@ -3260,62 +3254,51 @@
       const cfg = loyaltyStatus.cfg;
       if (!cfg.enabled) return "";
 
-      const slotsHtml = [];
-      for (let i = 0; i < cfg.requiredStamps; i++) {
-        const ts = loyaltyStatus.validStamps[i];
-        const isFilled = Boolean(ts);
-        const isGoalSlot = (i === cfg.requiredStamps - 1);
-        const dateLbl = isFilled
-          ? new Date(ts).toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit" })
-          : (isGoalSlot ? `%${cfg.rewardDiscountPercent} HEDİYE` : `${i + 1}. Gün`);
-
-        slotsHtml.push(`
-          <div class="stamp-slot-item ${isFilled ? 'filled' : ''} ${isGoalSlot ? 'goal' : ''}">
-            ${isFilled ? `
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--pt-gold-soft)" stroke="var(--pt-gold-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            ` : (isGoalSlot ? `
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--pt-gold-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-            ` : `
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>
-            `)}
-            <div class="stamp-slot-num">${isFilled ? `${i + 1}. Damga` : `${i + 1}. Sipariş`}</div>
-            <div class="stamp-slot-date">${dateLbl}</div>
+      let stampsHtml = "";
+      for (let i = 1; i <= cfg.requiredStamps; i++) {
+        const isFilled = i <= loyaltyStatus.stampCount;
+        stampsHtml += `
+          <div class="stamp-circle ${isFilled ? 'filled' : ''}" title="${i}. Çökertme Damgası">
+            ${isFilled
+              ? `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
+              : i}
           </div>
-        `);
+        `;
       }
 
-      const remainingStamps = Math.max(0, cfg.requiredStamps - loyaltyStatus.stampCount);
+      stampsHtml += `
+        <div class="stamp-reward-pill ${loyaltyStatus.hasRewardReady ? 'ready' : ''}">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+          <span>%${cfg.rewardDiscountPercent} Hediye!</span>
+        </div>
+      `;
 
       return `
         <div class="loyalty-stamp-card" style="${contextMode === 'account' ? 'margin:14px 18px;' : ''}">
           <div class="loyalty-stamp-top">
             <div class="loyalty-stamp-title">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--pt-gold-soft)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
-              <span>Sadakat Programı: ${cfg.requiredStamps} Ayrı Günde Siparişe 1 Çökertme %${cfg.rewardDiscountPercent} Hediye!</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--pt-gold-soft)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+              <span>${cfg.requiredStamps} Damgada 1 Çökertme %${cfg.rewardDiscountPercent} Hediye!</span>
             </div>
             <span class="loyalty-stamp-pill">${loyaltyStatus.stampCount} / ${cfg.requiredStamps} Damga</span>
           </div>
 
-          <div style="font-size:12px; color:rgba(255,255,255,0.88); line-height:1.4;">
-            Son <strong>${cfg.windowDays} gün (1 ay)</strong> içinde <strong>${cfg.requiredStamps} farklı günde</strong> Çökertme siparişi verdiğinizde, sonraki siparişinizde <strong>1 adet Çökertme %${cfg.rewardDiscountPercent} indirimli (yarı fiyatına)</strong> hediye edilir!
+          <div class="stamp-row" style="margin:4px 0;">
+            ${stampsHtml}
           </div>
 
-          <div class="stamp-slots-grid">
-            ${slotsHtml.join("")}
-          </div>
-
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; background:rgba(255,255,255,0.08); border-radius:9px; padding:8px 10px; font-size:11.5px;">
-            <div style="display:flex; align-items:center; gap:6px; color:var(--pt-gold-soft); font-weight:600;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              <span>${cfg.cooldownHours} Saatte En Fazla 1 Damga (Grup/Çoklu Sipariş Korumalı)</span>
-            </div>
-            <div style="color:#fff; font-weight:700;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; font-size:11.5px; margin-top:2px;">
+            <button type="button" class="btn-loyalty-terms-link" onclick="openLoyaltyTermsModal()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Sadakat Şartları ›
+            </button>
+            <span style="color:var(--pt-gold-soft); font-weight:700;">
               ${loyaltyStatus.hasRewardReady
-                ? '✓ %50 Hediye Çökertme Hakkınız Hazır!'
+                ? '✓ %50 Hediye Hakkınız Hazır!'
                 : (loyaltyStatus.canEarnToday
-                    ? `Bu siparişte +1 Damga kazanabilirsiniz (${remainingStamps} gün kaldı)`
-                    : `Bugünkü damga alındı (${loyaltyStatus.hoursUntilNextStamp} saat sonra yeni damga)`)}
-            </div>
+                    ? '✓ Bugün +1 Damga Aktif'
+                    : `Yeni Damga: ${loyaltyStatus.hoursUntilNextStamp} Saat`)}
+            </span>
           </div>
 
           ${contextMode === 'cart' && pricingInfo && pricingInfo.canApplyLoyaltyReward ? `
