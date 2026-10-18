@@ -775,6 +775,109 @@
       border: 1px solid var(--pt-border);
     }
 
+    /* Çökertme Menülerinde Zorunlu İçecek / Promosyon Seçim Bölümü (Ekran Görüntüsü 2 Stili) */
+    .promo-drink-box {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--pt-border);
+    }
+
+    .promo-drink-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+
+    .promo-drink-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--pt-text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .promo-drink-status {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--pt-terracotta);
+    }
+
+    .promo-drink-badge {
+      font-size: 11px;
+      color: var(--pt-text-muted);
+      background: #f4f6f8;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    .promo-drink-sub {
+      font-size: 11.5px;
+      color: var(--pt-text-muted);
+      margin-bottom: 12px;
+    }
+
+    .promo-drink-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .promo-drink-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 11px 12px;
+      border: 1.5px solid var(--pt-border);
+      border-radius: 10px;
+      background: #fff;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+      min-height: 48px;
+    }
+
+    .promo-drink-card:hover {
+      border-color: var(--pt-gold);
+    }
+
+    .promo-drink-card.active-no-drink {
+      border: 2px solid var(--pt-terracotta);
+      background: #FFF6F0;
+      box-shadow: 0 2px 8px rgba(221, 89, 3, 0.12);
+    }
+
+    .promo-drink-card.active-drink {
+      border: 2px solid var(--pt-olive);
+      background: #F4F7F2;
+      box-shadow: 0 2px 8px rgba(59, 82, 51, 0.14);
+    }
+
+    .promo-drink-name {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--pt-text);
+      line-height: 1.25;
+    }
+
+    .promo-drink-price {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--pt-text-muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .promo-drink-card.active-drink .promo-drink-price {
+      color: var(--pt-olive);
+    }
+
     .detail-sticky-action {
       position: fixed;
       bottom: 64px;
@@ -1893,11 +1996,41 @@
     // =========================================================================
     // 2. ÜRÜN DETAY EKRANI (EKRAN GÖRÜNTÜSÜ 6 BİREBİR)
     // =========================================================================
+    let currentDetailNoDrink = false;
+    let currentDetailDrinkIds = [];
+
     function openProductDetail(itemId) {
       currentDetailItemId = itemId;
       currentDetailQty = 1;
       currentDetailPortion = "1 Porsiyon (Standart)";
+      currentDetailNoDrink = false;
+      currentDetailDrinkIds = [];
       switchTab("detail");
+    }
+
+    function getDetailDrinkSum() {
+      const allItems = getOrderableItems();
+      return currentDetailDrinkIds.reduce((acc, dId) => {
+        const d = allItems.find(i => i.id === dId);
+        return acc + (d ? Number(d.price) : 0);
+      }, 0);
+    }
+
+    function selectPromoNoDrink() {
+      currentDetailNoDrink = true;
+      currentDetailDrinkIds = [];
+      renderCurrentView();
+    }
+
+    function togglePromoDrink(drinkId) {
+      currentDetailNoDrink = false;
+      const idx = currentDetailDrinkIds.indexOf(drinkId);
+      if (idx > -1) {
+        currentDetailDrinkIds.splice(idx, 1);
+      } else {
+        currentDetailDrinkIds.push(drinkId);
+      }
+      renderCurrentView();
     }
 
     function renderProductDetailHtml() {
@@ -1925,8 +2058,32 @@
         `;
       }).join("");
 
-      const totalVal = Math.round(item.price * currentDetailQty);
+      const drinkItems = allItems.filter(i => i.categoryId === "icecekler");
+      const drinkExtraSum = item.categoryId === "cokertmeler" ? getDetailDrinkSum() : 0;
+      const unitWithDrinks = Math.round(Number(item.price) + drinkExtraSum);
+      const totalVal = Math.round((Number(item.price) + drinkExtraSum) * currentDetailQty);
       const detailSidesList = item.categoryId === "cokertmeler" ? getItemComplimentaryList(item) : [];
+
+      let promoStatusText = "Lütfen Seçim Yapın (Zorunlu)";
+      if (currentDetailNoDrink) {
+        promoStatusText = "İçecek İstemiyorum";
+      } else if (currentDetailDrinkIds.length > 0) {
+        const selectedNames = currentDetailDrinkIds.map(id => {
+          const d = drinkItems.find(x => x.id === id);
+          return d ? d.name.tr : "";
+        }).filter(Boolean);
+        promoStatusText = selectedNames.join(", ");
+      }
+
+      const drinkCardsHtml = drinkItems.map(d => {
+        const isSel = currentDetailDrinkIds.includes(d.id);
+        return `
+          <button type="button" class="promo-drink-card ${isSel ? 'active-drink' : ''}" onclick="togglePromoDrink('${d.id}')">
+            <span class="promo-drink-name">${d.name.tr}</span>
+            <span class="promo-drink-price">+${Math.round(d.price)} TL</span>
+          </button>
+        `;
+      }).join("");
 
       return `
         <!-- Breadcrumb -->
@@ -1959,16 +2116,33 @@
           <img src="${item.image}" alt="${item.name.tr}" />
         </div>
 
-        <!-- Ürün Bilgisi ve Porsiyon Seçimi -->
+        <!-- Ürün Bilgisi, Porsiyon Seçimi (Üstte) ve İçecek Promosyon Seçimi -->
         <div class="detail-info-box">
+          <!-- 1. PORSİYON / TERCİH SEÇİMİ: Yemek Başlığının Hemen Üzerinde Müşteri Direkt Görsün -->
+          <div style="background:var(--pt-cream); border:1.5px solid var(--pt-gold); border-radius:12px; padding:11px 14px; margin-bottom:16px;">
+            <div style="margin-bottom:6px; font-size:13.5px; font-weight:700; color:var(--pt-navy); display:flex; justify-content:space-between; align-items:center;">
+              <span>Porsiyon / Tercih Seçimi:</span>
+              <span style="font-size:11px; color:var(--pt-terracotta); font-weight:700;">ÖNCE PORSİYON SEÇİN</span>
+            </div>
+            <select class="phone-input-group" style="width:100%; margin:0; background:#fff; border-width:1.5px; border-color:var(--pt-border); padding:11px 14px; font-size:14.5px; font-weight:700; color:var(--pt-navy);" onchange="currentDetailPortion=this.value">
+              <option value="1 Porsiyon (Standart)" ${currentDetailPortion === '1 Porsiyon (Standart)' ? 'selected' : ''}>1 Porsiyon (Standart)</option>
+              <option value="1.5 Porsiyon" ${currentDetailPortion === '1.5 Porsiyon' ? 'selected' : ''}>1.5 Porsiyon</option>
+              <option value="Sarımsaksız Yoğurtlu" ${currentDetailPortion === 'Sarımsaksız Yoğurtlu' ? 'selected' : ''}>Sarımsaksız Yoğurtlu</option>
+            </select>
+          </div>
+
+          <!-- 2. YEMEK BAŞLIĞI VE FİYATI -->
           <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:8px;">
             <h1 style="font-size:22px; font-weight:700; color:var(--pt-text);">${item.name.tr}</h1>
-            <span style="font-size:20px; font-weight:700; color:var(--pt-terracotta); white-space:nowrap;">${Math.round(item.price)} TL</span>
+            <div style="text-align:right;">
+              <span style="font-size:20px; font-weight:700; color:var(--pt-terracotta); white-space:nowrap;" id="detail-unit-price-lbl">${unitWithDrinks} TL</span>
+              ${drinkExtraSum > 0 ? `<div style="font-size:11px; color:var(--pt-text-muted); font-weight:600;">Seçenekler dahil fiyat</div>` : ''}
+            </div>
           </div>
           <p style="font-size:14px; color:var(--pt-text-muted); margin-bottom:16px;">${item.desc.tr}</p>
 
           ${item.categoryId === "cokertmeler" ? `
-          <div style="background:#F4F7F2; border:1.5px solid rgba(59,82,51,0.35); border-left:4px solid var(--pt-olive); border-radius:12px; padding:12px 14px; margin-bottom:16px;">
+          <div style="background:#F4F7F2; border:1.5px solid rgba(59,82,51,0.35); border-left:4px solid var(--pt-olive); border-radius:12px; padding:12px 14px; margin-bottom:8px;">
             <div style="font-size:11.5px; font-weight:700; color:var(--pt-olive); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px;">
               YANINDA ÜCRETSİZ İKRAMLARIMIZ (${detailSidesList.length} ÇEŞİT)
             </div>
@@ -1976,14 +2150,27 @@
               ${detailSidesList.join(" • ")}
             </div>
           </div>
-          ` : ''}
 
-          <div style="margin-bottom:8px; font-size:13.5px; font-weight:700; color:var(--pt-text);">Porsiyon / Tercih Seçimi:</div>
-          <select class="phone-input-group" style="width:100%; border-width:1.5px; border-color:var(--pt-border); padding:11px 14px; font-size:14.5px; font-weight:600;" onchange="currentDetailPortion=this.value">
-            <option value="1 Porsiyon (Standart)">1 Porsiyon (Standart)</option>
-            <option value="1.5 Porsiyon">1.5 Porsiyon</option>
-            <option value="Sarımsaksız Yoğurtlu">Sarımsaksız Yoğurtlu</option>
-          </select>
+          <!-- 3. PROMOSYON İÇECEK EKLEME BÖLÜMÜ (Sadece İçecekler + İçecek İstemiyorum Zorunlu Seçim) -->
+          <div class="promo-drink-box" id="promo-drinks-box">
+            <div class="promo-drink-header">
+              <div class="promo-drink-title">
+                <span>İçecekler (Promosyon Seçimi) <span style="color:var(--pt-terracotta);">*</span></span>
+                <span class="promo-drink-status">${promoStatusText}</span>
+              </div>
+              <span class="promo-drink-badge">Çoklu seçim ⌃</span>
+            </div>
+            <div class="promo-drink-sub">Seçim: 1+ (İçecek seçin veya "İçecek İstemiyorum" işaretleyin)</div>
+
+            <div class="promo-drink-grid">
+              <button type="button" class="promo-drink-card ${currentDetailNoDrink ? 'active-no-drink' : ''}" onclick="selectPromoNoDrink()">
+                <span class="promo-drink-name">İçecek İstemiyorum</span>
+                <span class="promo-drink-price">-</span>
+              </button>
+              ${drinkCardsHtml}
+            </div>
+          </div>
+          ` : ''}
         </div>
 
         <!-- Alt Sabit Sepete Ekle Çubuğu (Ekran Görüntüsü 6 Birebir) -->
@@ -2000,7 +2187,7 @@
           </div>
 
           <button type="button" class="btn-sepete-ekle-main" onclick="confirmAddToCart('${item.id}')">
-            Sepete Ekle
+            Sepete Ekle - ${totalVal} TL
           </button>
         </div>
       `;
@@ -2008,27 +2195,62 @@
 
     function changeDetailQty(delta) {
       currentDetailQty = Math.max(1, currentDetailQty + delta);
-      const allItems = getOrderableItems();
-      const item = allItems.find(i => i.id === currentDetailItemId);
-      if (item) {
-        document.getElementById("detail-live-qty").textContent = currentDetailQty;
-        document.getElementById("detail-live-total").textContent = Math.round(item.price * currentDetailQty) + " TL";
-      }
+      renderCurrentView();
     }
 
     function confirmAddToCart(itemId) {
-      const existing = appCart.find(c => c.itemId === itemId && c.portion === currentDetailPortion);
+      const allItems = getOrderableItems();
+      const item = allItems.find(i => i.id === itemId);
+      if (!item) return;
+
+      // Çökertme menülerinde içecek veya "İçecek İstemiyorum" seçimi yapılmadan devam edilemez!
+      if (item.categoryId === "cokertmeler" && !currentDetailNoDrink && currentDetailDrinkIds.length === 0) {
+        alert("Lütfen devam edebilmek için içecek seçiminizi yapın veya 'İçecek İstemiyorum' seçeneğini işaretleyin.");
+        const promoBox = document.getElementById("promo-drinks-box");
+        if (promoBox) {
+          promoBox.style.border = "2px solid var(--pt-terracotta)";
+          promoBox.style.padding = "12px";
+          promoBox.style.borderRadius = "12px";
+          promoBox.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        return;
+      }
+
+      const selectedPromoDrinks = (item.categoryId === "cokertmeler" && !currentDetailNoDrink)
+        ? currentDetailDrinkIds.map(dId => {
+            const d = allItems.find(i => i.id === dId);
+            return d ? { id: d.id, name: d.name.tr, price: Number(d.price) } : null;
+          }).filter(Boolean)
+        : [];
+
+      const drinkKey = currentDetailNoDrink
+        ? "NO_DRINK"
+        : selectedPromoDrinks.map(d => d.id).sort().join(",");
+
+      const existing = appCart.find(
+        c => c.itemId === itemId && c.portion === currentDetailPortion && (c.drinkKey || "") === drinkKey
+      );
       if (existing) {
         existing.qty += currentDetailQty;
       } else {
         appCart.push({
           itemId,
           qty: currentDetailQty,
-          portion: currentDetailPortion
+          portion: currentDetailPortion,
+          drinkKey,
+          noDrinkSelected: currentDetailNoDrink,
+          promoDrinks: selectedPromoDrinks
         });
       }
       saveCart();
       switchTab("cart");
+    }
+
+    function getCartEntryUnitPrice(state, entry) {
+      const item = state.items.find(i => i.id === entry.itemId);
+      if (!item) return 0;
+      const drinksExtra = (entry.promoDrinks || []).reduce((acc, d) => acc + (Number(d.price) || 0), 0);
+      return Number(item.price) + drinksExtra;
     }
 
     // =========================================================================
@@ -2059,9 +2281,16 @@
       const cardsHtml = appCart.map((entry, idx) => {
         const item = state.items.find(i => i.id === entry.itemId);
         if (!item) return "";
-        const linePrice = item.price * entry.qty;
+        const unitPrice = getCartEntryUnitPrice(state, entry);
+        const linePrice = unitPrice * entry.qty;
         subtotal += linePrice;
         const cartSides = item.categoryId === "cokertmeler" ? getItemComplimentaryList(item) : [];
+        const promoDrinksList = entry.promoDrinks || [];
+        const promoDrinkHtml = item.categoryId === "cokertmeler"
+          ? (promoDrinksList.length > 0
+              ? `<div style="font-size:12px; color:var(--pt-terracotta); font-weight:700; margin-bottom:4px;">🥤 Seçilen İçecek: ${promoDrinksList.map(d => `${d.name} (+${Math.round(d.price)} TL)`).join(", ")}</div>`
+              : `<div style="font-size:11.5px; color:var(--pt-text-muted); font-weight:600; margin-bottom:4px;">🥤 İçecek Tercihi: İçecek İstemiyorum</div>`)
+          : "";
 
         return `
           <div class="cart-card">
@@ -2070,6 +2299,7 @@
               <div class="cart-card-info">
                 <h4>${item.name.tr}</h4>
                 <p>Porsiyon Seçimi: ${entry.portion || '1 Porsiyon'}</p>
+                ${promoDrinkHtml}
                 ${cartSides.length > 0 ? `
                 <div style="font-size:11.5px; color:var(--pt-olive); font-weight:700; margin-bottom:6px; background:#F4F7F2; padding:4px 8px; border-radius:6px; border-left:2px solid var(--pt-olive);">
                   Ücretsiz İkramlar: ${cartSides.join(" • ")}
@@ -2330,8 +2560,8 @@
       const discountPct = Number(appCfg.discountPercent) || 10;
       let subtotal = 0;
       appCart.forEach(entry => {
-        const item = state.items.find(i => i.id === entry.itemId);
-        if (item) subtotal += item.price * entry.qty;
+        const unitPrice = getCartEntryUnitPrice(state, entry);
+        subtotal += unitPrice * entry.qty;
       });
       const discount = Number((subtotal * (discountPct / 100)).toFixed(2));
       const finalTotal = Number((subtotal - discount).toFixed(2));
@@ -2378,8 +2608,13 @@
       appCart.forEach(entry => {
         const item = state.items.find(i => i.id === entry.itemId);
         if (item) {
-          subtotal += item.price * entry.qty;
-          summaryItems.push(`${entry.qty}x ${item.name.tr} (${entry.portion || '1 Porsiyon'})`);
+          const unitPrice = getCartEntryUnitPrice(state, entry);
+          subtotal += unitPrice * entry.qty;
+          const promoDrinks = entry.promoDrinks || [];
+          const drinkSuffix = promoDrinks.length > 0
+            ? ` + İçecek: ${promoDrinks.map(d => d.name).join(", ")}`
+            : (item.categoryId === "cokertmeler" ? " (İçecek İstemiyorum)" : "");
+          summaryItems.push(`${entry.qty}x ${item.name.tr} (${entry.portion || '1 Porsiyon'})${drinkSuffix}`);
         }
       });
 
