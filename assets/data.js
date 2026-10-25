@@ -914,42 +914,17 @@ const CokertmeStore = {
 
 window.CokertmeStore = CokertmeStore;
 
-// Online Sipariş Alt Domain (https://onlinesiparis.cokertmedunyasi.com/) Akıllı Yönlendirici
+// Online Sipariş Alt Domain (https://onlinesiparis.cokertmedunyasi.com/) Yönlendirici
 window.openOnlineOrderPortal = function(ev, authMode) {
   if (ev && typeof ev.preventDefault === "function") {
     ev.preventDefault();
   }
   const query = authMode ? `?auth=${encodeURIComponent(authMode)}` : "";
-  const targetSubdomainUrl = `https://onlinesiparis.cokertmedunyasi.com/${query}`;
-  const fallbackLocalUrl = `/onlinesiparis${query}`;
-
-  // Eğer zaten localhost veya file:// üzerinde test ediliyorsa yerel /uygulama.html'e yönlendir
   const host = (window.location && window.location.hostname) || "";
   if (host === "localhost" || host === "127.0.0.1" || window.location.protocol === "file:") {
     window.location.href = `uygulama.html${query}`;
     return false;
   }
-
-  // Alt domain DNS'i aktif mi hızlıca kontrol et (750ms zaman aşımı), aktifse alt domaine, DNS henüz yayılmadıysa /onlinesiparis'e yönlendir
-  let navigated = false;
-  const go = (url) => {
-    if (navigated) return;
-    navigated = true;
-    window.location.href = url;
-  };
-  const timer = setTimeout(() => go(fallbackLocalUrl), 750);
-  fetch("https://onlinesiparis.cokertmedunyasi.com/api/state", { method: "GET", cache: "no-store" })
-    .then((res) => {
-      clearTimeout(timer);
-      if (res && res.ok) {
-        go(targetSubdomainUrl);
-      } else {
-        go(fallbackLocalUrl);
-      }
-    })
-    .catch(() => {
-      clearTimeout(timer);
-      go(fallbackLocalUrl);
-    });
+  window.location.href = `https://onlinesiparis.cokertmedunyasi.com/${query}`;
   return false;
 };
