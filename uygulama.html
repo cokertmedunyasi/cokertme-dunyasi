@@ -1954,6 +1954,413 @@
       color: var(--pt-text);
       vertical-align: top;
     }
+
+    /* ==========================================================================
+       12. MASAÜSTÜ (WEB) ONLINE SİPARİŞ PORTALI TASARIMI (≥ 960px — TAVUK DÜNYASI DÜZENİ)
+       Mobilde (< 960px) %100 Mobil Uygulama görünümü korunur;
+       Bilgisayarda (≥ 960px) 3 Sütunlu Geniş Web Sipariş Sitesine dönüşür.
+       ========================================================================== */
+    .desktop-only {
+      display: none !important;
+    }
+
+    .desktop-cat-sidebar,
+    .desktop-cart-sidebar {
+      display: none;
+    }
+
+    @media (min-width: 960px) {
+      .desktop-only {
+        display: flex !important;
+      }
+      .mobile-only {
+        display: none !important;
+      }
+
+      body {
+        background-color: var(--pt-cream);
+      }
+
+      .app-shell {
+        max-width: 100%;
+        padding-bottom: 0;
+        background: var(--pt-cream);
+        box-shadow: none;
+      }
+
+      .bottom-tab-bar {
+        display: none !important;
+      }
+
+      /* Üst Kurumsal Bilgi Bandı */
+      .desktop-top-strip {
+        background: var(--pt-olive-dark);
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 12.5px;
+        border-bottom: 1px solid rgba(212, 155, 53, 0.35);
+      }
+
+      .desktop-top-strip-inner {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 8px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        width: 100%;
+      }
+
+      .desktop-top-links {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        font-weight: 600;
+      }
+
+      .desktop-top-links a:hover {
+        color: var(--pt-gold-soft);
+      }
+
+      /* Masaüstü Ana Sticky Header */
+      .app-header {
+        padding: 14px 28px;
+        background: var(--pt-navy-dark);
+        border-bottom: 3px solid var(--pt-gold);
+      }
+
+      .app-header-inner-wrap {
+        max-width: 1400px;
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .app-brand-emblem {
+        width: 44px;
+        height: 44px;
+        font-size: 25px;
+      }
+
+      .app-brand-title {
+        font-size: 23px;
+        letter-spacing: 0.06em;
+      }
+
+      .desktop-header-center {
+        flex: 1;
+        max-width: 620px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .desktop-search-bar {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.96);
+        border: 1.5px solid var(--pt-gold);
+        border-radius: 999px;
+        padding: 8px 16px;
+        color: var(--pt-navy-dark);
+      }
+
+      .desktop-search-bar input {
+        border: none;
+        outline: none;
+        background: transparent;
+        width: 100%;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--pt-navy-dark);
+      }
+
+      .desktop-nav-pills {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .desktop-nav-btn {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(243, 217, 153, 0.35);
+        color: #fff;
+        padding: 8px 14px;
+        border-radius: 999px;
+        font-size: 12.5px;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.15s ease;
+      }
+
+      .desktop-nav-btn:hover,
+      .desktop-nav-btn.active {
+        background: var(--pt-olive);
+        border-color: var(--pt-gold);
+        color: var(--pt-gold-soft);
+      }
+
+      .hdr-btn-login,
+      .hdr-btn-register {
+        padding: 8px 16px;
+        font-size: 13px;
+      }
+
+      /* 3 Sütunlu Masaüstü Sipariş Grid Mimarisi (Sol Kategori | Orta Vitrin | Sağ Canlı Sepet) */
+      .storefront-layout-grid {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 24px 28px 60px;
+        display: grid;
+        grid-template-columns: 255px minmax(0, 1fr) 365px;
+        gap: 24px;
+        align-items: start;
+      }
+
+      /* Sol Sabit Dikey Kategori Menüsü */
+      .desktop-cat-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        position: sticky;
+        top: 92px;
+      }
+
+      .desktop-cat-box {
+        background: #fff;
+        border: 1px solid var(--pt-border);
+        border-top: 4px solid var(--pt-gold);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(2, 58, 88, 0.06);
+      }
+
+      .desktop-cat-box-header {
+        background: var(--pt-navy-dark);
+        color: #fff;
+        padding: 13px 16px;
+        font-family: var(--font-serif);
+        font-size: 19px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 2px solid var(--pt-gold);
+      }
+
+      .desktop-cat-vlist {
+        display: flex;
+        flex-direction: column;
+        padding: 8px;
+        gap: 4px;
+      }
+
+      .desktop-cat-vitem {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 9px 10px;
+        border-radius: 11px;
+        border: 1.5px solid transparent;
+        background: transparent;
+        cursor: pointer;
+        text-align: left;
+        transition: all 0.15s ease;
+      }
+
+      .desktop-cat-vitem:hover {
+        background: var(--pt-cream);
+        border-color: rgba(212, 155, 53, 0.45);
+      }
+
+      .desktop-cat-vitem.active {
+        background: #FDF8EE;
+        border-color: var(--pt-gold);
+        box-shadow: 0 3px 10px rgba(212, 155, 53, 0.16);
+      }
+
+      .desktop-cat-vitem img {
+        width: 42px;
+        height: 42px;
+        border-radius: 9px;
+        object-fit: cover;
+        border: 1.5px solid var(--pt-gold);
+        flex-shrink: 0;
+      }
+
+      .desktop-cat-vitem-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--pt-navy);
+        line-height: 1.2;
+      }
+
+      .desktop-cat-vitem-sub {
+        font-size: 11px;
+        color: var(--pt-text-muted);
+        font-weight: 600;
+      }
+
+      /* Orta Sütun & Kampanya Banner */
+      .storefront-center-col .search-box-wrap,
+      .storefront-center-col .cat-showcase-section {
+        display: none;
+      }
+
+      .storefront-center-col .promo-banner-wrap {
+        border-radius: 18px;
+        margin-bottom: 22px;
+        box-shadow: 0 10px 28px rgba(2, 58, 88, 0.14);
+        border: 2px solid var(--pt-gold);
+      }
+
+      .storefront-center-col .menu-category-block {
+        margin: 0 0 28px;
+        background: #fff;
+        border: 1px solid var(--pt-border);
+        border-top: 4px solid var(--pt-olive);
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 6px 20px rgba(2, 58, 88, 0.05);
+      }
+
+      .storefront-center-col .products-grid-2col {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+
+      .storefront-center-col .product-card-img-wrap {
+        height: 175px;
+      }
+
+      .storefront-center-col .product-card-name {
+        font-size: 16.5px;
+      }
+
+      .storefront-center-col .product-card-price {
+        font-size: 18px;
+      }
+
+      .storefront-center-col .btn-secenekler {
+        padding: 8px 14px;
+        font-size: 12.5px;
+        background: var(--pt-terracotta);
+      }
+
+      .storefront-center-col .btn-secenekler:hover {
+        background: var(--pt-olive);
+      }
+
+      /* Sağ Sütun: Sabit Canlı Sepet & Hızlı Sipariş Kulesi */
+      .desktop-cart-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        position: sticky;
+        top: 92px;
+        max-height: calc(100vh - 108px);
+        overflow-y: auto;
+        scrollbar-width: thin;
+      }
+
+      .desktop-cart-box {
+        background: #fff;
+        border: 1.5px solid var(--pt-gold);
+        border-top: 5px solid var(--pt-terracotta);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(2, 58, 88, 0.1);
+      }
+
+      .desktop-cart-box-header {
+        background: linear-gradient(135deg, var(--pt-navy-dark) 0%, var(--pt-navy) 100%);
+        color: #fff;
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 2px solid var(--pt-gold);
+      }
+
+      /* Masaüstünde Sepet/Ödeme, Hesabım, Şubeler ve Kurumsal Sayfaları İçin Genişlik */
+      .desktop-subpage-container {
+        max-width: 980px;
+        margin: 24px auto 60px;
+        padding: 0 24px;
+      }
+
+      /* Masaüstü PatioTime Demo 4 3-Katmanlı Dalgalı SVG Footer */
+      .pt-desktop-footer {
+        display: block !important;
+        position: relative;
+        background: #14314F;
+        color: rgba(255, 255, 255, 0.85);
+        padding: 115px 28px 44px;
+        overflow: hidden;
+        margin-top: 40px;
+      }
+
+      .pt-desktop-footer-wave {
+        position: absolute;
+        top: -1px;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+        z-index: 5;
+      }
+
+      .pt-desktop-footer-wave svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 60px;
+      }
+
+      .pt-desktop-footer-wave .shape-fill {
+        fill: var(--pt-cream);
+      }
+
+      .pt-desktop-footer-grid {
+        max-width: 1360px;
+        margin: 0 auto 36px;
+        display: grid;
+        grid-template-columns: 1.4fr 1fr 1fr 1fr;
+        gap: 36px;
+      }
+
+      .pt-desktop-footer h4 {
+        font-family: var(--font-serif);
+        font-size: 22px;
+        color: var(--pt-gold-soft);
+        margin-bottom: 12px;
+      }
+
+      .pt-desktop-footer-bottom {
+        max-width: 1360px;
+        margin: 0 auto;
+        padding-top: 24px;
+        border-top: 1px solid rgba(255, 255, 255, 0.14);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.65);
+      }
+    }
+
+    @media (min-width: 1280px) {
+      .storefront-center-col .products-grid-2col {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
   </style>
 </head>
 <body>
@@ -1961,31 +2368,69 @@
   <div class="app-shell">
 
     <!-- ======================================================================
-         ÜST UYGULAMA BARI (LOGO + KULLANICI + SEPET + MENÜ)
+         MASAÜSTÜ (WEB) ÜST KURUMSAL BİLGİ ÇUBUĞU (SADECE BİLGİSAYARDA GÖRÜNÜR)
          ====================================================================== -->
-    <header class="app-header">
-      <div class="app-brand" onclick="switchTab('home')">
-        <div class="app-brand-emblem">Ç</div>
-        <div class="app-brand-text">
-          <span class="app-brand-stars">★ ★ ★ ★ ★</span>
-          <span class="app-brand-title">ÇÖKERTME DÜNYASI</span>
+    <div class="desktop-top-strip desktop-only">
+      <div class="desktop-top-strip-inner">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span style="color:var(--pt-gold-soft); letter-spacing:2px; font-size:11px;">★ ★ ★ ★ ★</span>
+          <span><strong>ÇÖKERTME DÜNYASI ONLINE SİPARİŞ PORTALI</strong> — %10 Online İndirim &amp; 5 Damgada 1 Çökertme %50 Hediye</span>
+        </div>
+        <div class="desktop-top-links">
+          <a href="index.html">Kurumsal Web Sitesi</a>
+          <span>•</span>
+          <a href="menu.html">Masadaki QR Menü</a>
+          <span>•</span>
+          <a href="javascript:void(0)" onclick="switchTab('branches')">Şubelerimiz</a>
+          <span>•</span>
+          <a href="javascript:void(0)" onclick="switchTab('kurumsal')">KVKK &amp; Kurumsal</a>
+          <span>•</span>
+          <a href="tel:+905469180701" style="color:var(--pt-gold-soft);">Tel: 0 (546) 918 07 01</a>
         </div>
       </div>
+    </div>
 
-      <div class="app-header-actions">
-        <div id="hdr-auth-area" class="hdr-auth-pills">
-          <button type="button" class="hdr-btn-login" onclick="openAuthPage('login')">Giriş Yap</button>
-          <button type="button" class="hdr-btn-register" onclick="openAuthPage('register')">Üye Ol</button>
+    <!-- ======================================================================
+         ÜST UYGULAMA & WEB SİPARİŞ BARI (LOGO + ARAMA + KULLANICI + SEPET + MENÜ)
+         ====================================================================== -->
+    <header class="app-header">
+      <div class="app-header-inner-wrap" style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+        <div class="app-brand" onclick="switchTab('home')">
+          <div class="app-brand-emblem">Ç</div>
+          <div class="app-brand-text">
+            <span class="app-brand-stars">★ ★ ★ ★ ★</span>
+            <span class="app-brand-title">ÇÖKERTME DÜNYASI</span>
+          </div>
         </div>
 
-        <button class="hdr-circle-btn hdr-cart-btn" onclick="switchTab('cart')" title="Sepetim">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
-          <span class="hdr-badge" id="hdr-cart-count" style="display:none;">0</span>
-        </button>
+        <!-- Masaüstü Arama Çubuğu ve Hızlı Sekmeler (Sadece Bilgisayarda Görünür) -->
+        <div class="desktop-header-center desktop-only">
+          <div class="desktop-search-bar">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--pt-navy)" stroke-width="2.3"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="desktop-top-search-input" placeholder="İmza Çökertme, salata, tatlı veya içecek ara..." oninput="handleSearchInput(this.value)" />
+          </div>
+          <div class="desktop-nav-pills">
+            <button type="button" class="desktop-nav-btn" onclick="switchTab('home')">Menü &amp; Sipariş</button>
+            <button type="button" class="desktop-nav-btn" onclick="switchTab('branches')">Şubeler</button>
+            <button type="button" class="desktop-nav-btn" onclick="openAccountSubTab('siparislerim')">Sipariş Takibi</button>
+          </div>
+        </div>
 
-        <button class="hdr-menu-btn" onclick="toggleAppDrawer(true)" title="Menü">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        </button>
+        <div class="app-header-actions">
+          <div id="hdr-auth-area" class="hdr-auth-pills">
+            <button type="button" class="hdr-btn-login" onclick="openAuthPage('login')">Giriş Yap</button>
+            <button type="button" class="hdr-btn-register" onclick="openAuthPage('register')">Üye Ol</button>
+          </div>
+
+          <button class="hdr-circle-btn hdr-cart-btn" onclick="switchTab('cart')" title="Sepetim">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+            <span class="hdr-badge" id="hdr-cart-count" style="display:none;">0</span>
+          </button>
+
+          <button class="hdr-menu-btn" onclick="toggleAppDrawer(true)" title="Menü">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+        </div>
       </div>
     </header>
 
@@ -2137,6 +2582,69 @@
         </div>
       </div>
     </div>
+
+    <!-- ======================================================================
+         MASAÜSTÜ (WEB) HIZLI ÜRÜN SEÇENEKLERİ & İÇECEK SEÇİM MODALI
+         ====================================================================== -->
+    <div id="desktop-product-modal" onclick="if(event.target===this) closeDesktopProductModal()" style="display:none; position:fixed; inset:0; z-index:2200; background:rgba(10, 30, 48, 0.75); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:20px;">
+      <div id="desktop-product-modal-body" style="background:#fff; width:100%; max-width:680px; max-height:90vh; overflow-y:auto; border-radius:20px; border:2px solid var(--pt-gold); border-top:6px solid var(--pt-olive); box-shadow:0 24px 60px rgba(0,0,0,0.45);"></div>
+    </div>
+
+    <!-- ======================================================================
+         MASAÜSTÜ (WEB) PATIOTIME DEMO 4 3-KATMANLI DALGALI FOOTER (#14314F)
+         ====================================================================== -->
+    <footer class="pt-desktop-footer" style="display:none;">
+      <div class="pt-desktop-footer-wave" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" preserveAspectRatio="none">
+          <path class="shape-fill" opacity="0.33" d="M473,67.3c-203.9,88.3-263.1-34-320.3,0C66,119.1,0,59.7,0,59.7V0h1000v59.7 c0,0-62.1,26.1-94.9,29.3c-32.8,3.3-62.8-12.3-75.8-22.1C806,49.6,745.3,8.7,694.9,4.7S492.4,59,473,67.3z"></path>
+          <path class="shape-fill" opacity="0.66" d="M734,67.3c-45.5,0-77.2-23.2-129.1-39.1c-28.6-8.7-150.3-10.1-254,39.1 s-91.7-34.4-149.2,0C115.7,118.3,0,39.8,0,39.8V0h1000v36.5c0,0-28.2-18.5-92.1-18.5C810.2,18.1,775.7,67.3,734,67.3z"></path>
+          <path class="shape-fill" d="M766.1,28.9c-200-57.5-266,65.5-395.1,19.5C242,1.8,242,5.4,184.8,20.6C128,35.8,132.3,44.9,89.9,52.5C28.6,63.7,0,0,0,0 h1000c0,0-9.9,40.9-83.6,48.1S829.6,47,766.1,28.9z"></path>
+        </svg>
+      </div>
+
+      <div class="pt-desktop-footer-grid">
+        <div>
+          <div style="font-size:11px; letter-spacing:4px; color:var(--pt-gold-soft); margin-bottom:4px;">★ ★ ★ ★ ★</div>
+          <div style="font-family:var(--font-serif); font-size:26px; font-weight:700; color:#fff; margin-bottom:10px;">ÇÖKERTME DÜNYASI</div>
+          <p style="font-size:13.5px; line-height:1.6; color:rgba(255,255,255,0.8);">
+            Muğla'nın asırlık Çökertme Kebabı geleneğini soğuk sıkım Ege zeytinyağı ve Adana'nın ustalık ateşiyle buluşturuyoruz. Online siparişlerinizde anında %10 indirim ve 5 Damgada 1 Çökertme %50 Hediye ayrıcalığı!
+          </p>
+        </div>
+
+        <div>
+          <h4>Adana Merkez Şube</h4>
+          <p style="font-size:13.5px; line-height:1.6;">
+            Yenibaraj Mahallesi, Bülent Angın Blv.<br />
+            No: 66/D, Seyhan/Adana<br /><br />
+            Telefon: <a href="tel:+905469180701" style="color:var(--pt-gold-soft); font-weight:700;">0 (546) 918 07 01</a>
+          </p>
+        </div>
+
+        <div>
+          <h4>Online Sipariş Saatleri</h4>
+          <p style="font-size:13.5px; line-height:1.6;">
+            <strong style="color:var(--pt-gold-soft);">HER GÜN AÇIK</strong><br />
+            Eve Paket Servis &amp; Gel-Al<br />
+            11:00 – 23:30
+          </p>
+        </div>
+
+        <div>
+          <h4>Hızlı Erişim</h4>
+          <div style="display:grid; gap:8px; font-size:13.5px;">
+            <a href="index.html">→ Kurumsal Web Sitesi (cokertmedunyasi.com)</a>
+            <a href="menu.html">→ Masadaki Dijital QR Menü</a>
+            <a href="javascript:void(0)" onclick="openLoyaltyTermsModal()">→ Sadakat Programı Şartları</a>
+            <a href="javascript:void(0)" onclick="switchTab('kurumsal')">→ KVKK &amp; Aydınlatma Metni</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-desktop-footer-bottom">
+        <div>© 2026 Çökertme Dünyası Restoran Zincirleri. Tüm Fiyatlarımıza KDV Dahildir.</div>
+        <div>onlinesiparis.cokertmedunyasi.com • Güvenli 3D Secure Online Sipariş</div>
+      </div>
+    </footer>
 
   </div>
 
@@ -2322,22 +2830,39 @@
     // =========================================================================
     // ANA RENDER FONKSİYONU
     // =========================================================================
+    function wrapDesktopSubpage(innerHtml, pageTitle) {
+      return `
+        <div class="desktop-subpage-container">
+          <div class="desktop-only" style="justify-content:space-between; align-items:center; background:#fff; border:1px solid var(--pt-border); border-left:4px solid var(--pt-gold); border-radius:12px; padding:12px 18px; margin:0 16px 16px;">
+            <button type="button" onclick="switchTab('home')" style="background:var(--pt-navy-dark); color:#fff; border:none; border-radius:8px; padding:8px 14px; font-size:13px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+              <span>← Online Sipariş Vitrinine Dön</span>
+            </button>
+            <span style="font-family:var(--font-serif); font-size:20px; font-weight:700; color:var(--pt-navy);">${pageTitle || 'Çökertme Dünyası Online Sipariş'}</span>
+          </div>
+          ${innerHtml}
+        </div>
+      `;
+    }
+
     function renderCurrentView() {
       const main = document.getElementById("app-main-view");
       if (activeTab === "home" || activeTab === "menu") {
-        main.innerHTML = renderStorefrontHtml(activeTab === "home");
+        main.innerHTML = renderStorefrontHtml(true);
       } else if (activeTab === "detail") {
-        main.innerHTML = renderProductDetailHtml();
+        main.innerHTML = wrapDesktopSubpage(renderProductDetailHtml(), "Ürün Seçenekleri");
       } else if (activeTab === "cart") {
-        main.innerHTML = renderCartHtml();
+        main.innerHTML = wrapDesktopSubpage(renderCartHtml(), "Sepetim & Güvenli Online Ödeme");
       } else if (activeTab === "branches") {
-        main.innerHTML = renderBranchesHtml();
+        main.innerHTML = wrapDesktopSubpage(renderBranchesHtml(), "Şubelerimiz & Gel-Al Noktaları");
       } else if (activeTab === "account") {
-        main.innerHTML = renderAccountHtml();
+        main.innerHTML = wrapDesktopSubpage(renderAccountHtml(), "Üyelik & Sadakat Hesabım");
       } else if (activeTab === "kurumsal") {
-        main.innerHTML = renderKurumsalKvkkHtml();
+        main.innerHTML = wrapDesktopSubpage(renderKurumsalKvkkHtml(), "Kurumsal & KVKK Aydınlatma Metni");
       } else if (activeTab === "alerjenler") {
-        main.innerHTML = renderAlerjenlerHtml();
+        main.innerHTML = wrapDesktopSubpage(renderAlerjenlerHtml(), "Alerjen Bilgilendirmesi");
+      }
+      if (desktopModalOpen && currentDetailItemId) {
+        renderDesktopProductModalContent();
       }
     }
 
@@ -2365,7 +2890,125 @@
     }
 
     // =========================================================================
-    // 1. ANA SAYFA VE MENÜ VİTRİNİ (KÖFTECİ YUSUF DÜZENİ BİREBİR)
+    // MASAÜSTÜ SAĞ SÜTUN: SABİT CANLI SEPET & HIZLI SİPARİŞ KULESİ
+    // =========================================================================
+    function renderDesktopCartSidebarHtml(state, discountPct) {
+      const totalCount = appCart.reduce((acc, i) => acc + i.qty, 0);
+      const userPhone = (appUser && appUser.phone) ? appUser.phone : (cartCheckoutDraft && cartCheckoutDraft.phone ? cartCheckoutDraft.phone : "");
+      const pricingInfo = calculateCartPricing(state, userPhone);
+      const { subtotal, appDiscountAmount, loyaltyRewardDiscount, finalTotal } = pricingInfo;
+
+      if (appCart.length === 0) {
+        return `
+          <div class="desktop-cart-box">
+            <div class="desktop-cart-box-header">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--pt-gold-soft)" stroke-width="2.2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                <span style="font-family:var(--font-serif); font-size:20px; font-weight:700;">Canlı Sepetim</span>
+              </div>
+              <span style="background:rgba(255,255,255,0.14); color:var(--pt-gold-soft); font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px;">0 Ürün</span>
+            </div>
+
+            <div style="padding:26px 18px; text-align:center;">
+              <div style="width:58px; height:58px; border-radius:50%; background:var(--pt-cream); border:1.5px dashed var(--pt-gold); color:var(--pt-navy); display:flex; align-items:center; justify-content:center; margin:0 auto 12px;">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              </div>
+              <div style="font-size:16px; font-weight:700; color:var(--pt-navy); margin-bottom:6px;">Sepetiniz Henüz Boş</div>
+              <p style="font-size:12.5px; color:var(--pt-text-muted); margin-bottom:14px;">
+                Orta vitrindeki lezzetlerimizden dilediğinizi seçerek sepetinize ekleyebilir, anında <strong>%${discountPct} online indirim</strong> kazanabilirsiniz.
+              </p>
+              <div style="background:#F4F7F2; border:1px solid rgba(59,82,51,0.28); border-left:3px solid var(--pt-olive); border-radius:10px; padding:10px 12px; font-size:12px; color:var(--pt-navy); text-align:left; font-weight:600;">
+                ✓ Üye olarak veya <strong>üye olmadan (misafir olarak)</strong> hızlıca sipariş verebilirsiniz.
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      const itemsListHtml = appCart.map((entry, idx) => {
+        const item = state.items.find(i => i.id === entry.itemId);
+        if (!item) return "";
+        const unitPrice = getCartEntryUnitPrice(state, entry);
+        const linePrice = unitPrice * entry.qty;
+        const promoDrinksList = entry.promoDrinks || [];
+        const drinkInfo = item.categoryId === "cokertmeler"
+          ? (promoDrinksList.length > 0
+              ? `İçecek: ${promoDrinksList.map(d => d.name).join(", ")}`
+              : `İçecek İstemiyorum`)
+          : "";
+
+        return `
+          <div style="padding:12px 14px; border-bottom:1px solid var(--pt-border); display:flex; flex-direction:column; gap:6px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+              <div>
+                <div style="font-size:13.5px; font-weight:700; color:var(--pt-navy); line-height:1.25;">${item.name.tr}</div>
+                <div style="font-size:11px; color:var(--pt-text-muted); font-weight:600;">${entry.portion || '1 Porsiyon'}</div>
+                ${drinkInfo ? `<div style="font-size:11px; color:var(--pt-terracotta); font-weight:700;">${drinkInfo}</div>` : ''}
+              </div>
+              <strong style="font-size:14px; color:var(--pt-terracotta); white-space:nowrap;">${linePrice.toFixed(0)} TL</strong>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2px;">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <button type="button" class="circle-icon-btn" style="width:26px; height:26px; font-size:14px;" onclick="updateCartItemQty(${idx}, -1)">−</button>
+                <strong style="font-size:13.5px; min-width:16px; text-align:center;">${entry.qty}</strong>
+                <button type="button" class="circle-icon-btn" style="width:26px; height:26px; font-size:14px;" onclick="updateCartItemQty(${idx}, 1)">+</button>
+              </div>
+              <button type="button" onclick="removeCartItem(${idx})" style="background:none; border:none; color:#c93b2b; font-size:11.5px; font-weight:700; cursor:pointer;">Kaldır</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      return `
+        <div class="desktop-cart-box">
+          <div class="desktop-cart-box-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--pt-gold-soft)" stroke-width="2.2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+              <span style="font-family:var(--font-serif); font-size:20px; font-weight:700;">Canlı Sepetim (${totalCount})</span>
+            </div>
+            <button type="button" onclick="clearAllCart()" style="background:rgba(255,255,255,0.14); border:none; color:#fff; font-size:11px; font-weight:700; padding:4px 9px; border-radius:6px; cursor:pointer;">Temizle</button>
+          </div>
+
+          <div style="max-height:310px; overflow-y:auto;">
+            ${itemsListHtml}
+          </div>
+
+          <div style="padding:14px 16px; background:var(--pt-cream); border-top:1px solid var(--pt-border);">
+            <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--pt-text-muted); margin-bottom:5px;">
+              <span>Ara Toplam</span>
+              <span>${subtotal.toFixed(2).replace('.', ',')} TL</span>
+            </div>
+            ${loyaltyRewardDiscount > 0 ? `
+              <div style="display:flex; justify-content:space-between; font-size:12.5px; color:var(--pt-terracotta); font-weight:700; margin-bottom:5px;">
+                <span>Sadakat %50 Hediye Çökertme</span>
+                <span>-${loyaltyRewardDiscount.toFixed(2).replace('.', ',')} TL</span>
+              </div>
+            ` : ''}
+            ${appDiscountAmount > 0 ? `
+              <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--pt-olive); font-weight:700; margin-bottom:8px;">
+                <span>%${discountPct} Online Sipariş İndirimi</span>
+                <span>-${appDiscountAmount.toFixed(2).replace('.', ',')} TL</span>
+              </div>
+            ` : ''}
+            <div style="display:flex; justify-content:space-between; align-items:baseline; padding-top:8px; border-top:1px dashed var(--pt-border); margin-bottom:12px;">
+              <strong style="font-size:15px; color:var(--pt-navy);">Ödenecek Tutar</strong>
+              <strong style="font-size:20px; color:var(--pt-terracotta);">${finalTotal.toFixed(2).replace('.', ',')} TL</strong>
+            </div>
+
+            <button type="button" class="btn-approve-cart" style="margin-top:0; padding:13px; font-size:14.5px;" onclick="switchTab('cart')">
+              <span>Siparişi Tamamla &amp; Ödemeye Geç →</span>
+            </button>
+            <div style="text-align:center; font-size:11px; color:var(--pt-olive); font-weight:700; margin-top:8px;">
+              ✓ Üye Olmadan veya Giriş Yaparak Hızlı Teslimat
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // 1. ANA SAYFA VE MENÜ VİTRİNİ (MOBİLDE UYGULAMA, MASAÜSTÜNDE 3 SÜTUNLU WEB SİTESİ)
     // =========================================================================
     function renderStorefrontHtml(showBanner) {
       const state = CokertmeStore.getState();
@@ -2378,7 +3021,7 @@
       const allItems = getOrderableItems();
       const catOrder = ["cokertmeler", "baslangiclar", "salatalar", "tatlilar", "icecekler"];
 
-      // Yatay "Ürünlerimiz" Kategori Kartları
+      // Yatay "Ürünlerimiz" Kategori Kartları (Mobil İçin)
       const catCardsHtml = catOrder.map(catId => {
         const meta = CATEGORY_META[catId];
         const catList = allItems.filter(i => i.categoryId === catId);
@@ -2395,6 +3038,25 @@
               <div class="cat-card-count">${count} ürün</div>
             </div>
           </div>
+        `;
+      }).join("");
+
+      // Sol Dikey Kategori Menüsü (Masaüstü Web İçin — Tavuk Dünyası Düzeni)
+      const desktopVerticalCatsHtml = catOrder.map(catId => {
+        const meta = CATEGORY_META[catId];
+        const catList = allItems.filter(i => i.categoryId === catId);
+        const count = catList.length;
+        if (count === 0) return "";
+        const catThumbImg = (catList[0] && catList[0].image) ? catList[0].image : meta.img;
+        const isActive = selectedCategoryFilter === catId;
+        return `
+          <button type="button" class="desktop-cat-vitem ${isActive ? 'active' : ''}" onclick="selectCategoryCard('${catId}')">
+            <img src="${catThumbImg}" alt="${meta.shortTitle}" />
+            <div>
+              <div class="desktop-cat-vitem-title">${meta.shortTitle}</div>
+              <div class="desktop-cat-vitem-sub">${count} ürün • ${meta.sub}</div>
+            </div>
+          </button>
         `;
       }).join("");
 
@@ -2431,11 +3093,12 @@
             <div class="product-card" onclick="openProductDetail('${item.id}')">
               <div class="product-card-img-wrap">
                 <img src="${item.image}" alt="${item.name.tr}" loading="lazy" />
-                <span class="product-discount-tag">%${discountPct} APP İNDİRİM</span>
+                <span class="product-discount-tag">%${discountPct} İNDİRİM</span>
               </div>
               <div class="product-card-body">
                 <div>
                   <div class="product-card-name">${item.name.tr}</div>
+                  <div class="desktop-only" style="font-size:12px; color:var(--pt-text-muted); margin-bottom:6px; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${item.desc.tr || ''}</div>
                   ${ikramOrMetaHtml}
                 </div>
                 <div class="product-card-footer">
@@ -2472,41 +3135,86 @@
       }).join("");
 
       return `
-        ${showBanner ? renderHomePromoAndLoyaltyBannerHtml(state, discountPct, bannerHeadline, bannerSub) : ''}
-
-        <!-- Arama Çubuğu -->
-        <div class="search-box-wrap">
-          <div class="search-input-container">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#95a3b3" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" placeholder="Menüde ara..." value="${searchQuery}" oninput="handleSearchInput(this.value)" />
-            ${searchQuery ? `<button onclick="handleSearchInput('')" style="background:none;border:none;color:#95a3b3;cursor:pointer;font-size:15px;">✕</button>` : ''}
-          </div>
-        </div>
-
-        <!-- Yatay Ürünlerimiz Kategori Kartları -->
-        <div class="cat-showcase-section">
-          <div class="sec-top-bar">
-            <h2 class="sec-heading">Ürünlerimiz</h2>
-            <div class="scroll-arrows">
-              <button type="button" class="arrow-circle-btn" onclick="scrollCatTrack(-180)">‹</button>
-              <button type="button" class="arrow-circle-btn" onclick="scrollCatTrack(180)">›</button>
-            </div>
-          </div>
-          <div class="cat-cards-track" id="cat-cards-track">
-            <div class="cat-card-item ${selectedCategoryFilter === 'all' ? 'active' : ''}" onclick="selectCategoryCard('all')">
-              <div class="cat-card-check">✓</div>
-              <img class="cat-card-img" src="${(allItems[0] && allItems[0].image) || 'assets/uploads/item-1792324381559.jpg?v=1'}" alt="Tüm Ürünler" />
-              <div class="cat-card-body">
-                <div class="cat-card-title">TÜM ÜRÜNLERİMİZ</div>
-                <div class="cat-card-count">${allItems.length} ürün</div>
+        <div class="storefront-layout-grid">
+          <!-- SOL SÜTUN: MASAÜSTÜ SABİT DİKEY KATEGORİ MENÜSÜ -->
+          <aside class="desktop-cat-sidebar">
+            <div class="desktop-cat-box">
+              <div class="desktop-cat-box-header">
+                <span>Menü Kategorileri</span>
+                <span style="font-size:11px; color:var(--pt-gold-soft); font-family:var(--font-sans);">${allItems.length} Lezzet</span>
+              </div>
+              <div class="desktop-cat-vlist">
+                <button type="button" class="desktop-cat-vitem ${selectedCategoryFilter === 'all' ? 'active' : ''}" onclick="selectCategoryCard('all')">
+                  <img src="${(allItems[0] && allItems[0].image) || 'assets/uploads/item-1792324381559.jpg?v=1'}" alt="Tüm Ürünlerimiz" />
+                  <div>
+                    <div class="desktop-cat-vitem-title">TÜM ÜRÜNLERİMİZ</div>
+                    <div class="desktop-cat-vitem-sub">${allItems.length} ürün • %${discountPct} İndirim</div>
+                  </div>
+                </button>
+                ${desktopVerticalCatsHtml}
               </div>
             </div>
-            ${catCardsHtml}
-          </div>
-        </div>
 
-        <!-- Kategori Listeleri ve 2 Sütunlu Ürün Kartları -->
-        ${sectionsHtml || `<div style="padding:40px 20px; text-align:center; color:var(--pt-text-muted);">Aradığınız kriterlere uygun ürün bulunamadı.</div>`}
+            <!-- Masaüstü Sol İkram & İletişim Kutusu -->
+            <div class="desktop-cat-box" style="padding:16px; background:linear-gradient(145deg, var(--pt-olive-dark) 0%, var(--pt-olive) 100%); color:#fff; border-top-color:var(--pt-gold);">
+              <div style="font-size:10.5px; font-weight:800; letter-spacing:0.12em; color:var(--pt-gold-soft); text-transform:uppercase; margin-bottom:4px;">PAKET İKRAM SÖZÜMÜZ</div>
+              <div style="font-family:var(--font-serif); font-size:19px; font-weight:700; margin-bottom:8px; line-height:1.15;">Tüm Çökertmelerde 4 İkram Bedava!</div>
+              <div style="font-size:12px; color:rgba(255,255,255,0.92); line-height:1.5; margin-bottom:12px;">
+                • Ege Zeytini<br/>
+                • Acı Turşu<br/>
+                • Özel Soslu Salata<br/>
+                • Özel Tatlı
+              </div>
+              <a href="tel:+905469180701" style="display:flex; align-items:center; justify-content:center; gap:6px; background:rgba(255,255,255,0.14); border:1px solid var(--pt-gold-soft); color:#fff; padding:8px 10px; border-radius:9px; font-size:12.5px; font-weight:700;">
+                <span>Tel: 0 (546) 918 07 01</span>
+              </a>
+            </div>
+          </aside>
+
+          <!-- ORTA SÜTUN: KAMPANYA BANNER + KATEGORİ VE ÜRÜN KARTLARI -->
+          <div class="storefront-center-col">
+            ${showBanner ? renderHomePromoAndLoyaltyBannerHtml(state, discountPct, bannerHeadline, bannerSub) : ''}
+
+            <!-- Mobil Arama Çubuğu -->
+            <div class="search-box-wrap">
+              <div class="search-input-container">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#95a3b3" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" placeholder="Menüde ara..." value="${searchQuery}" oninput="handleSearchInput(this.value)" />
+                ${searchQuery ? `<button onclick="handleSearchInput('')" style="background:none;border:none;color:#95a3b3;cursor:pointer;font-size:15px;">✕</button>` : ''}
+              </div>
+            </div>
+
+            <!-- Mobil Yatay Ürünlerimiz Kategori Kartları -->
+            <div class="cat-showcase-section">
+              <div class="sec-top-bar">
+                <h2 class="sec-heading">Ürünlerimiz</h2>
+                <div class="scroll-arrows">
+                  <button type="button" class="arrow-circle-btn" onclick="scrollCatTrack(-180)">‹</button>
+                  <button type="button" class="arrow-circle-btn" onclick="scrollCatTrack(180)">›</button>
+                </div>
+              </div>
+              <div class="cat-cards-track" id="cat-cards-track">
+                <div class="cat-card-item ${selectedCategoryFilter === 'all' ? 'active' : ''}" onclick="selectCategoryCard('all')">
+                  <div class="cat-card-check">✓</div>
+                  <img class="cat-card-img" src="${(allItems[0] && allItems[0].image) || 'assets/uploads/item-1792324381559.jpg?v=1'}" alt="Tüm Ürünler" />
+                  <div class="cat-card-body">
+                    <div class="cat-card-title">TÜM ÜRÜNLERİMİZ</div>
+                    <div class="cat-card-count">${allItems.length} ürün</div>
+                  </div>
+                </div>
+                ${catCardsHtml}
+              </div>
+            </div>
+
+            <!-- Kategori Listeleri ve Ürün Kartları -->
+            ${sectionsHtml || `<div style="padding:40px 20px; text-align:center; color:var(--pt-text-muted); background:#fff; border-radius:16px;">Aradığınız kriterlere uygun ürün bulunamadı.</div>`}
+          </div>
+
+          <!-- SAĞ SÜTUN: MASAÜSTÜ SABİT CANLI SEPET & HIZLI SİPARİŞ KULESİ -->
+          <aside class="desktop-cart-sidebar">
+            ${renderDesktopCartSidebarHtml(state, discountPct)}
+          </aside>
+        </div>
       `;
     }
 
@@ -2522,19 +3230,27 @@
 
     function handleSearchInput(val) {
       searchQuery = val;
+      if (activeTab !== "home" && activeTab !== "menu") {
+        activeTab = "home";
+      }
       renderCurrentView();
-      const input = document.querySelector(".search-input-container input");
-      if (input) {
-        input.focus();
-        input.setSelectionRange(input.value.length, input.value.length);
+      const topInp = document.getElementById("desktop-top-search-input");
+      if (topInp && topInp.value !== val) {
+        topInp.value = val;
+      }
+      const mobInp = document.querySelector(".search-input-container input");
+      if (mobInp && document.activeElement !== topInp) {
+        mobInp.focus();
+        mobInp.setSelectionRange(mobInp.value.length, mobInp.value.length);
       }
     }
 
     // =========================================================================
-    // 2. ÜRÜN DETAY EKRANI (EKRAN GÖRÜNTÜSÜ 6 BİREBİR)
+    // 2. ÜRÜN DETAY EKRANI VE MASAÜSTÜ HIZLI SEÇENEKLER MODALI
     // =========================================================================
     let currentDetailNoDrink = false;
     let currentDetailDrinkIds = [];
+    let desktopModalOpen = false;
 
     function openProductDetail(itemId) {
       currentDetailItemId = itemId;
@@ -2542,7 +3258,145 @@
       currentDetailPortion = "1 Porsiyon (Standart)";
       currentDetailNoDrink = false;
       currentDetailDrinkIds = [];
+
+      // Bilgisayarda (≥ 960px) sayfadan kopmadan şık Popup Modal açılır; Mobilde (< 960px) Detay ekranına geçer
+      if (window.innerWidth >= 960 && (activeTab === "home" || activeTab === "menu")) {
+        desktopModalOpen = true;
+        const modal = document.getElementById("desktop-product-modal");
+        if (modal) {
+          modal.style.display = "flex";
+          renderDesktopProductModalContent();
+        }
+        return;
+      }
       switchTab("detail");
+    }
+
+    function closeDesktopProductModal() {
+      desktopModalOpen = false;
+      const modal = document.getElementById("desktop-product-modal");
+      if (modal) modal.style.display = "none";
+    }
+
+    function confirmDesktopModalAdd(itemId, goToCheckout) {
+      if (!addCurrentDetailItemToCartArray(itemId)) return;
+      closeDesktopProductModal();
+      if (goToCheckout) {
+        switchTab("cart");
+      } else {
+        renderCurrentView();
+      }
+    }
+
+    function renderDesktopProductModalContent() {
+      const body = document.getElementById("desktop-product-modal-body");
+      if (!body) return;
+      const allItems = getOrderableItems();
+      const item = allItems.find(i => i.id === currentDetailItemId) || allItems[0];
+      if (!item) return;
+
+      const drinkItems = allItems.filter(i => i.categoryId === "icecekler");
+      const drinkExtraSum = item.categoryId === "cokertmeler" ? getDetailDrinkSum() : 0;
+      const unitWithDrinks = Math.round(Number(item.price) + drinkExtraSum);
+      const totalVal = Math.round((Number(item.price) + drinkExtraSum) * currentDetailQty);
+      const detailSidesList = item.categoryId === "cokertmeler" ? getItemComplimentaryList(item) : [];
+
+      let promoStatusText = "Lütfen Seçim Yapın (Zorunlu)";
+      if (currentDetailNoDrink) {
+        promoStatusText = "İçecek İstemiyorum";
+      } else if (currentDetailDrinkIds.length > 0) {
+        const selectedNames = currentDetailDrinkIds.map(id => {
+          const d = drinkItems.find(x => x.id === id);
+          return d ? d.name.tr : "";
+        }).filter(Boolean);
+        promoStatusText = selectedNames.join(", ");
+      }
+
+      const drinkCardsHtml = drinkItems.map(d => {
+        const isSel = currentDetailDrinkIds.includes(d.id);
+        return `
+          <button type="button" class="promo-drink-card ${isSel ? 'active-drink' : ''}" onclick="togglePromoDrink('${d.id}')">
+            <span class="promo-drink-name">${d.name.tr}</span>
+            <span class="promo-drink-price">+${Math.round(d.price)} TL</span>
+          </button>
+        `;
+      }).join("");
+
+      body.innerHTML = `
+        <div style="display:grid; grid-template-columns:240px 1fr; background:var(--pt-navy-dark); color:#fff; border-bottom:2px solid var(--pt-gold);">
+          <img src="${item.image}" alt="${item.name.tr}" style="width:100%; height:190px; object-fit:cover; display:block;" />
+          <div style="padding:18px 22px; display:flex; flex-direction:column; justify-content:space-between;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+              <div>
+                <div style="font-size:10.5px; font-weight:800; color:var(--pt-gold-soft); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:4px;">ÇÖKERTME DÜNYASI ONLINE SİPARİŞ</div>
+                <h3 style="font-family:var(--font-serif); font-size:26px; font-weight:700; line-height:1.15;">${item.name.tr}</h3>
+              </div>
+              <button type="button" onclick="closeDesktopProductModal()" style="background:rgba(255,255,255,0.14); border:none; color:#fff; width:34px; height:34px; border-radius:50%; font-size:16px; cursor:pointer;">✕</button>
+            </div>
+            <p style="font-size:13px; color:rgba(255,255,255,0.85); line-height:1.45;">${item.desc.tr}</p>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:21px; font-weight:800; color:var(--pt-gold-soft);">${unitWithDrinks} TL</span>
+              ${detailSidesList.length > 0 ? `<span style="background:var(--pt-olive); color:#fff; font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px;">✓ Yanında ${detailSidesList.length} İkram Bedava</span>` : ''}
+            </div>
+          </div>
+        </div>
+
+        <div style="padding:20px 24px;">
+          <!-- 1. Porsiyon Seçimi -->
+          <div style="background:var(--pt-cream); border:1.5px solid var(--pt-gold); border-radius:12px; padding:12px 14px; margin-bottom:14px;">
+            <div style="margin-bottom:6px; font-size:13px; font-weight:700; color:var(--pt-navy); display:flex; justify-content:space-between;">
+              <span>1. Porsiyon / Tercih Seçimi:</span>
+              <span style="color:var(--pt-terracotta); font-size:11.5px;">${currentDetailPortion}</span>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;">
+              <button type="button" class="quick-pill-btn ${currentDetailPortion === '1 Porsiyon (Standart)' ? 'active' : ''}" onclick="currentDetailPortion='1 Porsiyon (Standart)'; renderDesktopProductModalContent();">1 Porsiyon (Standart)</button>
+              <button type="button" class="quick-pill-btn ${currentDetailPortion === '1.5 Porsiyon' ? 'active' : ''}" onclick="currentDetailPortion='1.5 Porsiyon'; renderDesktopProductModalContent();">1.5 Porsiyon</button>
+              <button type="button" class="quick-pill-btn ${currentDetailPortion === 'Sarımsaksız Yoğurtlu' ? 'active' : ''}" onclick="currentDetailPortion='Sarımsaksız Yoğurtlu'; renderDesktopProductModalContent();">Sarımsaksız Yoğurtlu</button>
+            </div>
+          </div>
+
+          ${item.categoryId === "cokertmeler" ? `
+            <div style="background:#F4F7F2; border:1px solid rgba(59,82,51,0.3); border-left:4px solid var(--pt-olive); border-radius:10px; padding:10px 14px; margin-bottom:14px; font-size:12.5px; color:var(--pt-navy);">
+              <strong style="color:var(--pt-olive);">ÜCRETSİZ PAKET İKRAMLARIMIZ:</strong> ${detailSidesList.join(" • ")}
+            </div>
+
+            <div class="promo-drink-box" id="promo-drinks-box" style="margin-top:0; padding-top:10px;">
+              <div class="promo-drink-header">
+                <div class="promo-drink-title">
+                  <span>2. İçecek Seçimi (Zorunlu) <span style="color:var(--pt-terracotta);">*</span></span>
+                  <span class="promo-drink-status">${promoStatusText}</span>
+                </div>
+                <span class="promo-drink-badge">Çoklu seçim</span>
+              </div>
+              <div class="promo-drink-sub">İçecek seçin veya "İçecek İstemiyorum" işaretleyin</div>
+              <div class="promo-drink-grid">
+                <button type="button" class="promo-drink-card ${currentDetailNoDrink ? 'active-no-drink' : ''}" onclick="selectPromoNoDrink()">
+                  <span class="promo-drink-name">İçecek İstemiyorum</span>
+                  <span class="promo-drink-price">-</span>
+                </button>
+                ${drinkCardsHtml}
+              </div>
+            </div>
+          ` : ''}
+
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:18px; padding-top:16px; border-top:1px solid var(--pt-border);">
+            <div style="display:flex; align-items:center; gap:10px; background:#f4f6f8; padding:6px 12px; border-radius:999px;">
+              <button type="button" class="qty-btn-round" onclick="changeDetailQty(-1)">−</button>
+              <strong style="font-size:16px; min-width:20px; text-align:center;">${currentDetailQty}</strong>
+              <button type="button" class="qty-btn-round" onclick="changeDetailQty(1)">+</button>
+            </div>
+
+            <div style="display:flex; gap:10px; flex:1; justify-content:flex-end;">
+              <button type="button" onclick="confirmDesktopModalAdd('${item.id}', false)" style="background:var(--pt-olive); color:#fff; border:none; border-radius:12px; padding:13px 18px; font-size:14px; font-weight:700; cursor:pointer;">
+                + Sepete Ekle (${totalVal} TL)
+              </button>
+              <button type="button" onclick="confirmDesktopModalAdd('${item.id}', true)" style="background:var(--pt-terracotta); color:#fff; border:none; border-radius:12px; padding:13px 18px; font-size:14px; font-weight:700; cursor:pointer;">
+                Sepete Ekle &amp; Ödemeye Geç →
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     function getDetailDrinkSum() {
