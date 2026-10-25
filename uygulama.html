@@ -1921,12 +1921,12 @@
         <button onclick="toggleAppDrawer(false)" style="background:none; border:none; color:#95a3b3; font-size:22px; cursor:pointer;">✕</button>
       </div>
 
-      <a href="tel:+903224550148" class="drawer-callout-card phone">
+      <a href="tel:+905469180701" class="drawer-callout-card phone">
         <div style="width:38px; height:38px; border-radius:10px; background:var(--pt-olive); color:#fff; display:flex; align-items:center; justify-content:center;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         </div>
         <div>
-          <div style="font-weight:700; font-size:15px;">0322 455 01 48</div>
+          <div style="font-weight:700; font-size:15px;">0 (546) 918 07 01</div>
           <div style="font-size:12px; color:#86efac;">Online Sipariş &amp; Destek</div>
         </div>
       </a>
@@ -1937,7 +1937,7 @@
         </div>
         <div>
           <div style="font-weight:700; font-size:15px;">Şubelerimiz</div>
-          <div style="font-size:12px; color:var(--pt-gold-soft);">Tüm Şubeler &amp; Gel-Al Noktaları</div>
+          <div style="font-size:12px; color:var(--pt-gold-soft);">Yenibaraj Mah. Bülent Angın Blv. No: 66/D, Seyhan/Adana</div>
         </div>
       </div>
 
@@ -1958,7 +1958,7 @@
         <li><a href="javascript:void(0)" onclick="toggleAppDrawer(false); openAccountSubTab('siparislerim');">Siparişlerim</a></li>
         <li><a href="javascript:void(0)" onclick="toggleAppDrawer(false); openAccountSubTab('adreslerim');">Adreslerim</a></li>
         <li><a href="javascript:void(0)" onclick="toggleAppDrawer(false); openAccountSubTab('favorilerim');">Favorilerim</a></li>
-        <li><a href="tel:+903224550148">Canlı Destek</a></li>
+        <li><a href="tel:+905469180701">Canlı Destek: 0 (546) 918 07 01</a></li>
       </ul>
 
       <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:14px;">
@@ -2057,7 +2057,7 @@
 
   </div>
 
-  <script src="assets/data.js?v=4"></script>
+  <script src="assets/data.js?v=5"></script>
   <script>
     // =========================================================================
     // UYGULAMA DURUMU (STATE)
@@ -3778,7 +3778,7 @@
         address: addrVal,
         deliveryType: modeVal,
         mode: modeVal + (addrVal ? ` (${addrVal})` : ""),
-        branch: "Adana Çukurova Merkez Şube",
+        branch: "Adana Seyhan Merkez Şube",
         items: summaryItems,
         subtotal: subtotal,
         discount: discount,
@@ -4092,7 +4092,7 @@
           </div>
           <div class="login-card-box">
             <label style="font-size:13px; font-weight:700; display:block; margin-bottom:6px;">Kayıtlı Adresiniz</label>
-            <input type="text" id="saved-addr-input" placeholder="Örn: Güzelyalı Mah. Turgut Özal Blv. No:14 Çukurova/Adana" value="${appUser.address || ''}" style="width:100%; padding:12px; border:1px solid var(--pt-border); border-radius:10px; margin-bottom:12px; font-size:14px;" />
+            <input type="text" id="saved-addr-input" placeholder="Örn: Yenibaraj Mahallesi, Bülent Angın Blv. No: 66/D, Seyhan/Adana" value="${appUser.address || ''}" style="width:100%; padding:12px; border:1px solid var(--pt-border); border-radius:10px; margin-bottom:12px; font-size:14px;" />
             <button type="button" class="btn-primary-app" style="background:var(--pt-gold);" onclick="appUser.address=document.getElementById('saved-addr-input').value; saveAppUser(); alert('Adresiniz kaydedildi!');">
               + Adresi Kaydet / Güncelle
             </button>
@@ -4208,15 +4208,19 @@
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--pt-terracotta)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
               <span>${b.address}</span>
             </div>
+            <div style="font-size:13px; color:var(--pt-navy); font-weight:700; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--pt-olive)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <a href="tel:+905469180701" style="color:var(--pt-navy); text-decoration:none;">0 (546) 918 07 01</a>
+            </div>
             <div style="font-size:13px; color:var(--pt-olive); font-weight:600; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
               <span>Servis Saatleri: ${b.hours}</span>
             </div>
             <div style="display:flex; gap:10px;">
               <button class="btn-primary-app" style="padding:10px; font-size:13.5px;" onclick="switchTab('menu')">Bu Şubeden Sipariş Ver</button>
-              <a href="tel:+903224550148" style="border:1px solid var(--pt-border); border-radius:12px; padding:10px 14px; font-size:13.5px; font-weight:700; display:inline-flex; align-items:center; gap:6px; color:var(--pt-navy);">
+              <a href="tel:+905469180701" style="border:1px solid var(--pt-border); border-radius:12px; padding:10px 14px; font-size:13.5px; font-weight:700; display:inline-flex; align-items:center; gap:6px; color:var(--pt-navy); white-space:nowrap;">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                <span>Ara</span>
+                <span>0 (546) 918 07 01</span>
               </a>
             </div>
           </div>
@@ -4275,7 +4279,7 @@
           </table>
 
           <p style="font-size:13.5px; color:var(--pt-text-muted); margin-top:12px;">
-            <strong>Başvuru Yolu:</strong> Taleplerinizi Turgut Özal Bulvarı Çukurova / Adana merkez adresimize veya <strong>iletisim@cokertmedunyasi.com</strong> e-posta adresimize iletebilirsiniz.
+            <strong>Başvuru Yolu:</strong> Taleplerinizi Yenibaraj Mahallesi, Bülent Angın Blv. No: 66/D, Seyhan/Adana merkez adresimize veya <strong>iletisim@cokertmedunyasi.com</strong> e-posta adresimize iletebilirsiniz.
           </p>
         </div>
       `;

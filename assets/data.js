@@ -16,9 +16,9 @@ const DEFAULT_COKERTME_DATA = {
   brand: {
     name: "Çökertme Dünyası",
     slogan: "Muğla'nın Efsanesi, Adana'dan Dünyaya",
-    headquarters: "Çukurova / Adana, Türkiye",
-    phone: "+90 (322) 455 01 48",
-    whatsapp: "905320000148",
+    headquarters: "Yenibaraj Mahallesi, Bülent Angın Blv. No: 66/D, Seyhan/Adana",
+    phone: "0 (546) 918 07 01",
+    whatsapp: "905469180701",
     instagram: "@cokertmedunyasi",
     appDiscountPercent: 10,
     loyaltyEarnPercent: 5,
@@ -412,11 +412,12 @@ const DEFAULT_COKERTME_DATA = {
   branches: [
     {
       id: "adana-merkez",
-      name: "Adana Çukurova Merkez Şube (Amiral Mağaza)",
+      name: "Adana Seyhan Merkez Şube (Amiral Mağaza)",
       city: "Adana",
       country: "Türkiye",
       status: "Açık - Hizmetinizde",
-      address: "Turgut Özal Bulvarı, Çukurova / Adana",
+      address: "Yenibaraj Mahallesi, Bülent Angın Blv. No: 66/D, Seyhan/Adana",
+      phone: "0 (546) 918 07 01",
       hours: "11:00 - 23:30",
       isActive: true
     },
@@ -606,10 +607,32 @@ function sanitizeAndMergeState(parsed) {
     });
   }
 
+  const mergedBranches = Array.isArray(parsed.branches) && parsed.branches.length > 0
+    ? parsed.branches.map(b => {
+        if (b && (b.id === "adana-merkez" || (b.address && b.address.includes("Turgut Özal")))) {
+          return {
+            ...b,
+            name: "Adana Seyhan Merkez Şube (Amiral Mağaza)",
+            address: "Yenibaraj Mahallesi, Bülent Angın Blv. No: 66/D, Seyhan/Adana",
+            phone: "0 (546) 918 07 01"
+          };
+        }
+        return b;
+      })
+    : DEFAULT_COKERTME_DATA.branches;
+
   const merged = {
     ...DEFAULT_COKERTME_DATA,
     ...parsed,
     schemaVersion: 4,
+    brand: {
+      ...DEFAULT_COKERTME_DATA.brand,
+      ...(parsed.brand || {}),
+      headquarters: "Yenibaraj Mahallesi, Bülent Angın Blv. No: 66/D, Seyhan/Adana",
+      phone: "0 (546) 918 07 01",
+      whatsapp: "905469180701"
+    },
+    branches: mergedBranches,
     items: validItems,
     appSettings: {
       ...DEFAULT_COKERTME_DATA.appSettings,

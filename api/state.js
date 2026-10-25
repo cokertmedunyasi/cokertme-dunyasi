@@ -23,17 +23,38 @@ const UPLOADED_DEFAULT_IDS = new Set([
 ]);
 
 function normalizeItemsImages(stateObj) {
-  if (!stateObj || !Array.isArray(stateObj.items)) return stateObj;
-  stateObj.items = stateObj.items.map(item => {
-    if (!item) return item;
-    if (
-      UPLOADED_DEFAULT_IDS.has(item.id) &&
-      (!item.image || item.image.includes("photo-1544025162-d76694265947"))
-    ) {
-      return { ...item, image: `assets/uploads/${item.id}.jpg?v=1` };
-    }
-    return item;
-  });
+  if (!stateObj || typeof stateObj !== "object") return stateObj;
+  if (Array.isArray(stateObj.items)) {
+    stateObj.items = stateObj.items.map(item => {
+      if (!item) return item;
+      if (
+        UPLOADED_DEFAULT_IDS.has(item.id) &&
+        (!item.image || item.image.includes("photo-1544025162-d76694265947"))
+      ) {
+        return { ...item, image: `assets/uploads/${item.id}.jpg?v=1` };
+      }
+      return item;
+    });
+  }
+  stateObj.brand = {
+    ...(stateObj.brand || {}),
+    headquarters: "Yenibaraj Mahallesi, Bülent Angın Blv. No: 66/D, Seyhan/Adana",
+    phone: "0 (546) 918 07 01",
+    whatsapp: "905469180701"
+  };
+  if (Array.isArray(stateObj.branches)) {
+    stateObj.branches = stateObj.branches.map(b => {
+      if (b && (b.id === "adana-merkez" || (b.address && b.address.includes("Turgut Özal")))) {
+        return {
+          ...b,
+          name: "Adana Seyhan Merkez Şube (Amiral Mağaza)",
+          address: "Yenibaraj Mahallesi, Bülent Angın Blv. No: 66/D, Seyhan/Adana",
+          phone: "0 (546) 918 07 01"
+        };
+      }
+      return b;
+    });
+  }
   return stateObj;
 }
 
