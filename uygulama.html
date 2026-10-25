@@ -2057,7 +2057,7 @@
 
   </div>
 
-  <script src="assets/data.js?v=3"></script>
+  <script src="assets/data.js?v=4"></script>
   <script>
     // =========================================================================
     // UYGULAMA DURUMU (STATE)
@@ -2083,31 +2083,31 @@
         title: "İMZA ÇÖKERTME KEBAPLARI",
         shortTitle: "İMZA ÇÖKERTME KEBAPLARI",
         sub: "Yanında 4 İkram Bedava",
-        img: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80"
+        img: "assets/uploads/item-1792323465955.jpg?v=1"
       },
       baslangiclar: {
         title: "BAŞLANGIÇLAR & ARA SICAKLAR",
         shortTitle: "BAŞLANGIÇLAR",
         sub: "Sıcak & Soğuk Ege Seçkisi",
-        img: "https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&w=400&q=80"
+        img: "assets/uploads/item-1792324381559.jpg?v=1"
       },
       salatalar: {
         title: "FERAH SALATALAR & MEZELER",
         shortTitle: "SALATALAR & MEZELER",
         sub: "Sızma Zeytinyağlı & Taze",
-        img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=400&q=80"
+        img: "assets/uploads/item-1792325907483.jpg?v=1"
       },
       tatlilar: {
         title: "GELENEKSEL TATLILAR",
         shortTitle: "GELENEKSEL TATLILAR",
         sub: "Tahinli & Cevizli Lezzetler",
-        img: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=400&q=80"
+        img: "assets/uploads/item-1792325457108.jpg?v=1"
       },
       icecekler: {
         title: "FERAHLATICI İÇECEKLER",
         shortTitle: "İÇECEKLER",
         sub: "Yayık Ayranı & Bodrum Gazozu",
-        img: "https://images.unsplash.com/photo-1556881286-fc6915169721?auto=format&fit=crop&w=400&q=80"
+        img: "assets/uploads/item-1792325699063.jpg?v=1"
       }
     };
 
@@ -2254,13 +2254,15 @@
       // Yatay "Ürünlerimiz" Kategori Kartları
       const catCardsHtml = catOrder.map(catId => {
         const meta = CATEGORY_META[catId];
-        const count = allItems.filter(i => i.categoryId === catId).length;
+        const catList = allItems.filter(i => i.categoryId === catId);
+        const count = catList.length;
         if (count === 0) return "";
+        const catThumbImg = (catList[0] && catList[0].image) ? catList[0].image : meta.img;
         const isActive = selectedCategoryFilter === catId;
         return `
           <div class="cat-card-item ${isActive ? 'active' : ''}" onclick="selectCategoryCard('${catId}')">
             <div class="cat-card-check">✓</div>
-            <img class="cat-card-img" src="${meta.img}" alt="${meta.shortTitle}" />
+            <img class="cat-card-img" src="${catThumbImg}" alt="${meta.shortTitle}" />
             <div class="cat-card-body">
               <div class="cat-card-title">${meta.shortTitle}</div>
               <div class="cat-card-count">${count} ürün</div>
@@ -2285,6 +2287,7 @@
           );
         }
         if (catItems.length === 0) return "";
+        const catThumbImg = (catItems[0] && catItems[0].image) ? catItems[0].image : meta.img;
 
         const cardsHtml = catItems.map(item => {
           const isCokertme = item.categoryId === "cokertmeler";
@@ -2324,7 +2327,7 @@
           <section class="menu-category-block">
             <div class="category-block-header">
               <div class="category-block-left">
-                <img class="category-thumb" src="${meta.img}" alt="${meta.title}" />
+                <img class="category-thumb" src="${catThumbImg}" alt="${meta.title}" />
                 <div>
                   <div class="category-block-title">${meta.title}</div>
                   <div class="category-block-sub">${catItems.length} ürün • ${meta.sub}</div>
@@ -2365,7 +2368,7 @@
           <div class="cat-cards-track" id="cat-cards-track">
             <div class="cat-card-item ${selectedCategoryFilter === 'all' ? 'active' : ''}" onclick="selectCategoryCard('all')">
               <div class="cat-card-check">✓</div>
-              <img class="cat-card-img" src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=400&q=80" alt="Tüm Ürünler" />
+              <img class="cat-card-img" src="${(allItems[0] && allItems[0].image) || 'assets/uploads/item-1792324381559.jpg?v=1'}" alt="Tüm Ürünler" />
               <div class="cat-card-body">
                 <div class="cat-card-title">TÜM ÜRÜNLERİMİZ</div>
                 <div class="cat-card-count">${allItems.length} ürün</div>

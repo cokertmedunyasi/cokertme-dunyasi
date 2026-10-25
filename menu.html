@@ -399,19 +399,76 @@
       padding-left: 50px;
     }
 
-    /* Orijinal PatioTime .pt-food-menu.food-menu-style-3 */
+    /* Orijinal PatioTime .pt-food-menu.food-menu-style-3 + Lüks Ürün Görseli Vitrin Tasarımı */
     .pt-food-menu-item {
-      margin-bottom: 34px;
+      margin-bottom: 30px;
       cursor: pointer;
-      padding: 8px 10px;
-      margin-left: -10px;
-      margin-right: -10px;
-      border-radius: 6px;
-      transition: background-color 0.22s ease;
+      padding: 12px 12px;
+      margin-left: -12px;
+      margin-right: -12px;
+      border-radius: 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      border: 1px solid transparent;
+      transition: background-color 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease;
     }
 
     .pt-food-menu-item:hover {
       background-color: var(--pt-mist-bottom);
+      border-color: rgba(212, 155, 53, 0.35);
+      box-shadow: 0 6px 20px rgba(2, 58, 88, 0.05);
+    }
+
+    .pt-food-menu-thumb-wrap {
+      width: 82px;
+      height: 82px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1.5px solid var(--pt-gold);
+      background: var(--pt-mist-bottom);
+      position: relative;
+      box-shadow: 0 4px 12px rgba(2, 58, 88, 0.1);
+    }
+
+    .pt-food-menu-thumb-wrap.is-signature {
+      width: 96px;
+      height: 96px;
+      border-width: 2px;
+    }
+
+    .pt-food-menu-thumb-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.38s ease;
+    }
+
+    .pt-food-menu-item:hover .pt-food-menu-thumb-wrap img {
+      transform: scale(1.07);
+    }
+
+    .pt-food-thumb-zoom {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: rgba(2, 58, 88, 0.82);
+      color: var(--pt-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      backdrop-filter: blur(2px);
+    }
+
+    .pt-food-menu-main {
+      flex: 1;
+      min-width: 0;
     }
 
     .pt-food-menu-header {
@@ -750,6 +807,20 @@
         min-width: 14px;
         margin: 0 6px;
       }
+      .pt-food-menu-item {
+        gap: 12px;
+        padding: 10px 8px;
+        margin-left: -8px;
+        margin-right: -8px;
+      }
+      .pt-food-menu-thumb-wrap {
+        width: 68px;
+        height: 68px;
+      }
+      .pt-food-menu-thumb-wrap.is-signature {
+        width: 78px;
+        height: 78px;
+      }
     }
 
     @media (max-width: 480px) {
@@ -852,8 +923,9 @@
       <div class="pt-menu-hero-meta" id="hero-meta-note">
         MASADA SADECE GÖRÜNTÜLEME • SİPARİŞİNİZİ SERVİS PERSONELİMİZE İLETEBİLİRSİNİZ
       </div>
-      <div style="font-size:13px; color:rgba(255,255,255,0.82);">
-        💡 Ürün fotoğrafını ve detaylarını görmek için herhangi bir lezzetin üzerine dokunabilirsiniz.
+      <div style="font-size:13px; color:rgba(255,255,255,0.86); display:inline-flex; align-items:center; gap:7px; justify-content:center;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--pt-gold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        <span>Ürün fotoğrafını büyük görmek ve detaylarını incelemek için lezzetin üzerine dokunabilirsiniz.</span>
       </div>
     </div>
   </section>
@@ -1018,9 +1090,18 @@
         <div>
           <h4>Bağlantılar</h4>
           <p style="display:grid; gap:8px;">
-            <a href="index.html">🏛️ Kurumsal Web Sitesi</a>
-            <a href="uygulama.html">🛍️ %10 İndirimli Uygulama</a>
-            <a href="yonetim.html">⚙️ Yönetim &amp; Fiyat Güncelle</a>
+            <a href="index.html" style="display:inline-flex; align-items:center; gap:8px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--pt-gold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              <span>Kurumsal Web Sitesi</span>
+            </a>
+            <a href="uygulama.html" style="display:inline-flex; align-items:center; gap:8px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--pt-gold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              <span>%10 İndirimli Uygulama</span>
+            </a>
+            <a href="yonetim.html" style="display:inline-flex; align-items:center; gap:8px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--pt-gold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              <span>Yönetim &amp; Fiyat Güncelle</span>
+            </a>
           </p>
         </div>
       </div>
@@ -1043,7 +1124,7 @@
     <div class="pt-modal-card" id="dish-modal-content"></div>
   </div>
 
-  <script src="assets/data.js?v=3"></script>
+  <script src="assets/data.js?v=4"></script>
   <script>
     const DEFAULT_COMPLIMENTARY_SHOWCASE = [
       {
@@ -1055,7 +1136,7 @@
         isComplimentary: true,
         available: true,
         badges: ["MASA İKRAMIMIZ"],
-        image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=900&q=80"
+        image: "assets/uploads/item-1792325967068.jpg?v=1"
       },
       {
         id: "default-ikram-2",
@@ -1066,7 +1147,7 @@
         isComplimentary: true,
         available: true,
         badges: ["MASA İKRAMIMIZ"],
-        image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=900&q=80"
+        image: "assets/uploads/item-1792325979932.jpg?v=1"
       },
       {
         id: "default-ikram-3",
@@ -1077,7 +1158,7 @@
         isComplimentary: true,
         available: true,
         badges: ["MASA İKRAMIMIZ"],
-        image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80"
+        image: "assets/uploads/item-1792324445703.jpg?v=1"
       },
       {
         id: "default-ikram-4",
@@ -1088,7 +1169,7 @@
         isComplimentary: true,
         available: true,
         badges: ["MASA İKRAMIMIZ"],
-        image: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=900&q=80"
+        image: "assets/uploads/item-1792324524519.jpg?v=1"
       },
       {
         id: "default-ikram-5",
@@ -1099,7 +1180,7 @@
         isComplimentary: true,
         available: true,
         badges: ["MASA İKRAMIMIZ"],
-        image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=900&q=80"
+        image: "assets/uploads/item-1792324555395.jpg?v=1"
       },
       {
         id: "default-ikram-6",
@@ -1110,7 +1191,7 @@
         isComplimentary: true,
         available: true,
         badges: ["MASA İKRAMIMIZ"],
-        image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=900&q=80"
+        image: "assets/uploads/item-1792324580399.jpg?v=1"
       }
     ];
 
@@ -1154,6 +1235,7 @@
         const title = item.name.tr || item.name;
         const desc = item.desc.tr || item.desc;
         const isIkram = !item.price || Number(item.price) <= 0 || item.isComplimentary;
+        const isSignature = item.categoryId === "cokertmeler" && !isIkram;
         const priceStr = isIkram ? "İKRAM" : `${Math.round(item.price)} ₺`;
         const priceStyle = isIkram
           ? "color:var(--pt-olive); font-size:18px; letter-spacing:0.1em; background:rgba(59,82,51,0.1); padding:2px 10px;"
@@ -1175,8 +1257,16 @@
              </div>`
           : "";
 
+        const imgUrl = item.image || "assets/uploads/item-1792323465955.jpg?v=1";
+
         return `
           <div class="pt-food-menu-item" onclick="openDishModal('${item.id}')" style="${!item.available ? 'opacity:0.55;' : ''}">
+            <div class="pt-food-menu-thumb-wrap ${isSignature ? 'is-signature' : ''}">
+              <img src="${imgUrl}" alt="${title}" loading="lazy" />
+              <div class="pt-food-thumb-zoom" title="Fotoğrafı Büyüt">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              </div>
+            </div>
             <div class="pt-food-menu-main">
               <div class="pt-food-menu-header">
                 <h6 class="pt-food-menu-title">
@@ -1244,9 +1334,9 @@
         : "";
 
       document.getElementById("dish-modal-content").innerHTML = `
-        <div style="position:relative; height:250px;">
+        <div style="position:relative; height:310px; background:#023A58;">
           <img src="${item.image}" alt="${title}" style="width:100%; height:100%; object-fit:cover;" />
-          <button onclick="closeDishModal()" style="position:absolute; top:14px; right:14px; background:rgba(10,37,62,0.8); color:#fff; border:none; width:36px; height:36px; cursor:pointer; font-size:15px;">✕</button>
+          <button onclick="closeDishModal()" style="position:absolute; top:14px; right:14px; background:rgba(10,37,62,0.85); color:#fff; border:1px solid var(--pt-gold); border-radius:8px; width:36px; height:36px; cursor:pointer; font-size:15px;">✕</button>
         </div>
         <div style="padding:32px;">
           <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:10px;">

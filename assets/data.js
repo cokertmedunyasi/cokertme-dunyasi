@@ -11,8 +11,8 @@ const LEGACY_DEMO_ITEM_IDS = new Set([
 ]);
 
 const DEFAULT_COKERTME_DATA = {
-  schemaVersion: 3,
-  updatedAt: 1792943500000,
+  schemaVersion: 4,
+  updatedAt: 1792953600000,
   brand: {
     name: "Çökertme Dünyası",
     slogan: "Muğla'nın Efsanesi, Adana'dan Dünyaya",
@@ -84,7 +84,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "12 dk",
       badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792324381559.jpg?v=1"
     },
     {
       id: "item-1792323465955",
@@ -98,7 +98,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "12 dk",
       badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792323465955.jpg?v=1"
     },
     {
       id: "item-1792323418352",
@@ -112,7 +112,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "12 dk",
       badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792323418352.jpg?v=1"
     },
     {
       id: "item-1792325907483",
@@ -126,7 +126,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "6 dk",
       badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792325907483.jpg?v=1"
     },
     {
       id: "item-1792326012633",
@@ -140,7 +140,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "5 dk",
       badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792326012633.jpg?v=1"
     },
     {
       id: "item-1792326025883",
@@ -154,7 +154,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "5 dk",
       badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792326025883.jpg?v=1"
     },
     {
       id: "item-1792325457108",
@@ -168,7 +168,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "5 dk",
       badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792325457108.jpg?v=1"
     },
     {
       id: "item-1792325787051",
@@ -182,7 +182,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "2 dk",
       badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792325787051.jpg?v=1"
     },
     {
       id: "item-1792325758628",
@@ -196,7 +196,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "2 dk",
       badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792325758628.jpg?v=1"
     },
     {
       id: "item-1792325574260",
@@ -210,7 +210,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "2 dk",
       badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792325574260.jpg?v=1"
     },
     {
       id: "item-1792325591012",
@@ -224,7 +224,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "2 dk",
       badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792325591012.jpg?v=1"
     },
     {
       id: "item-1792325619455",
@@ -238,7 +238,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "2 dk",
       badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792325619455.jpg?v=1"
     },
     {
       id: "item-1792325631972",
@@ -252,7 +252,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "2 dk",
       badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792325631972.jpg?v=1"
     },
     {
       id: "item-1792325660083",
@@ -266,7 +266,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "2 dk",
       badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792325660083.jpg?v=1"
     },
     {
       id: "item-1792325674127",
@@ -280,7 +280,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "2 dk",
       badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792325674127.jpg?v=1"
     },
     {
       id: "item-1792325699063",
@@ -294,7 +294,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "2 dk",
       badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792325699063.jpg?v=1"
     },
     {
       id: "item-1792325711075",
@@ -308,7 +308,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "2 dk",
       badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792325711075.jpg?v=1"
     },
     {
       id: "item-1792325730491",
@@ -322,7 +322,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "1 dk",
       badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792325730491.jpg?v=1"
     },
     {
       id: "item-1792325967068",
@@ -336,7 +336,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "Hemen",
       badges: ["MASA İKRAMIMIZ"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792325967068.jpg?v=1"
     },
     {
       id: "item-1792325979932",
@@ -350,7 +350,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "Hemen",
       badges: ["MASA İKRAMIMIZ"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792325979932.jpg?v=1"
     },
     {
       id: "item-1792324445703",
@@ -364,7 +364,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "Hemen",
       badges: ["MASA İKRAMIMIZ"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792324445703.jpg?v=1"
     },
     {
       id: "item-1792324524519",
@@ -378,7 +378,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "Hemen",
       badges: ["MASA İKRAMIMIZ"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792324524519.jpg?v=1"
     },
     {
       id: "item-1792324555395",
@@ -392,7 +392,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "Hemen",
       badges: ["MASA İKRAMIMIZ"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792324555395.jpg?v=1"
     },
     {
       id: "item-1792324580399",
@@ -406,7 +406,7 @@ const DEFAULT_COKERTME_DATA = {
       prepTime: "Hemen",
       badges: ["MASA İKRAMIMIZ"],
       available: true,
-      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+      image: "assets/uploads/item-1792324580399.jpg?v=1"
     }
   ],
   branches: [
@@ -555,8 +555,13 @@ const DEFAULT_COKERTME_DATA = {
   }
 };
 
-const STORAGE_KEY = "cokertme_dunyasi_state_v3";
-const OLD_STORAGE_KEYS = ["cokertme_dunyasi_state_v1", "cokertme_dunyasi_state_v2"];
+const STORAGE_KEY = "cokertme_dunyasi_state_v4";
+const OLD_STORAGE_KEYS = ["cokertme_dunyasi_state_v1", "cokertme_dunyasi_state_v2", "cokertme_dunyasi_state_v3"];
+
+const DEFAULT_ITEM_IMAGE_MAP = {};
+DEFAULT_COKERTME_DATA.items.forEach(item => {
+  DEFAULT_ITEM_IMAGE_MAP[item.id] = item.image;
+});
 
 function getCloudApiUrl(path = "/api/state") {
   try {
@@ -573,6 +578,11 @@ function hasLegacyDemoItems(items) {
   return items.some(i => i && LEGACY_DEMO_ITEM_IDS.has(i.id));
 }
 
+function isPlaceholderImage(imgStr) {
+  if (!imgStr || typeof imgStr !== "string") return true;
+  return imgStr.includes("photo-1544025162-d76694265947");
+}
+
 function sanitizeAndMergeState(parsed) {
   if (!parsed || typeof parsed !== "object") {
     return JSON.parse(JSON.stringify(DEFAULT_COKERTME_DATA));
@@ -585,12 +595,21 @@ function sanitizeAndMergeState(parsed) {
 
   if (validItems.length < 3) {
     validItems = JSON.parse(JSON.stringify(DEFAULT_COKERTME_DATA.items));
+  } else {
+    // Varsayılan Unsplash yer tutucu görsellerini gerçek yüklenen ürün fotoğraflarına yükselt
+    validItems = validItems.map(item => {
+      const fallbackImg = DEFAULT_ITEM_IMAGE_MAP[item.id];
+      if (isPlaceholderImage(item.image) && fallbackImg) {
+        return { ...item, image: fallbackImg };
+      }
+      return item;
+    });
   }
 
   const merged = {
     ...DEFAULT_COKERTME_DATA,
     ...parsed,
-    schemaVersion: 3,
+    schemaVersion: 4,
     items: validItems,
     appSettings: {
       ...DEFAULT_COKERTME_DATA.appSettings,
@@ -632,12 +651,20 @@ function sanitizeAndMergeState(parsed) {
 const CokertmeStore = {
   getState() {
     try {
+      let raw = localStorage.getItem(STORAGE_KEY);
+      // Eğer v4 yoksa ancak v3 varsa, v3'teki güncel veriyi v4'e taşı ve temizle
+      if (!raw) {
+        const v3Raw = localStorage.getItem("cokertme_dunyasi_state_v3");
+        if (v3Raw) {
+          raw = v3Raw;
+        }
+      }
+
       // Eski anahtarları temizle
       OLD_STORAGE_KEYS.forEach(k => {
         try { localStorage.removeItem(k); } catch (e) {}
       });
 
-      const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) {
         const initial = JSON.parse(JSON.stringify(DEFAULT_COKERTME_DATA));
         localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
@@ -645,6 +672,7 @@ const CokertmeStore = {
       }
       const parsed = JSON.parse(raw);
       const merged = sanitizeAndMergeState(parsed);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
       return merged;
     } catch (e) {
       return JSON.parse(JSON.stringify(DEFAULT_COKERTME_DATA));
@@ -653,19 +681,20 @@ const CokertmeStore = {
 
   saveState(newState) {
     try {
-      newState.schemaVersion = 3;
+      newState.schemaVersion = 4;
       newState.updatedAt = Date.now();
       const cleaned = sanitizeAndMergeState(newState);
       const payload = JSON.stringify(cleaned);
       localStorage.setItem(STORAGE_KEY, payload);
-      fetch(getCloudApiUrl("/api/state"), {
+      // NOT: keepalive:true 64KB sınırına takıldığı için kullanılmaz!
+      return fetch(getCloudApiUrl("/api/state"), {
         method: "POST",
-        keepalive: true,
         headers: { "Content-Type": "application/json" },
         body: payload
       }).catch(() => {});
     } catch (e) {
       console.error("Kaydetme hatası:", e);
+      return Promise.resolve();
     }
   },
 
@@ -675,7 +704,6 @@ const CokertmeStore = {
     try {
       const res = await fetch(getCloudApiUrl("/api/order-dispatch"), {
         method: "POST",
-        keepalive: true,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           order,
@@ -690,22 +718,32 @@ const CokertmeStore = {
   },
 
   async syncFromServer() {
+    const localState = this.getState();
     try {
-      OLD_STORAGE_KEYS.forEach(k => {
-        try { localStorage.removeItem(k); } catch (e) {}
-      });
-
       const res = await fetch(getCloudApiUrl(`/api/state?t=${Date.now()}`), { cache: "no-store" });
       if (res.ok) {
         const serverData = await res.json();
         if (serverData && Array.isArray(serverData.items) && serverData.items.length > 0 && !hasLegacyDemoItems(serverData.items)) {
           const cleanedServer = sanitizeAndMergeState(serverData);
+          const localTime = Number(localState && localState.updatedAt) || 0;
+          const serverTime = Number(cleanedServer && cleanedServer.updatedAt) || 0;
+
+          // Eğer tarayıcıdaki veri sunucudan daha yeniyse (ör. yönetici az önce kaydettiyse), sunucuyu güncelle
+          if (localTime > serverTime) {
+            fetch(getCloudApiUrl("/api/state"), {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(localState)
+            }).catch(() => {});
+            return localState;
+          }
+
           localStorage.setItem(STORAGE_KEY, JSON.stringify(cleanedServer));
           return cleanedServer;
         }
       }
     } catch (e) {}
-    return this.getState();
+    return localState;
   },
 
   resetToDefaults() {

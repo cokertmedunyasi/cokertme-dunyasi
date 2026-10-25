@@ -589,13 +589,107 @@
 
     .pt-floating-menu-box {
       background: var(--pt-card-glass);
-      padding: 11% 11%;
+      padding: 9% 9%;
       box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);
       border-top: 4px solid var(--pt-olive);
     }
 
-    .pt-food-item {
+    .pt-home-menu-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
       margin-bottom: 24px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(3, 58, 88, 0.12);
+    }
+
+    .pt-home-menu-tab {
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: 1px solid rgba(3, 58, 88, 0.18);
+      background: #fff;
+      color: var(--pt-sea-darker);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .pt-home-menu-tab:hover {
+      border-color: var(--pt-olive);
+      color: var(--pt-olive);
+    }
+
+    .pt-home-menu-tab.active {
+      background: var(--pt-olive);
+      border-color: var(--pt-olive);
+      color: #fff;
+    }
+
+    .pt-food-item {
+      margin-bottom: 22px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 10px;
+      margin-left: -10px;
+      margin-right: -10px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background-color 0.22s ease, border-color 0.22s ease;
+    }
+
+    .pt-food-item:hover {
+      background: rgba(250, 247, 242, 0.9);
+      border-color: rgba(212, 155, 53, 0.4);
+    }
+
+    .pt-food-thumb-wrap {
+      width: 80px;
+      height: 80px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1.5px solid #D49B35;
+      flex-shrink: 0;
+      position: relative;
+      background: #FAF7F2;
+      box-shadow: 0 4px 12px rgba(2, 58, 88, 0.1);
+    }
+
+    .pt-food-thumb-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.35s ease;
+    }
+
+    .pt-food-item:hover .pt-food-thumb-wrap img {
+      transform: scale(1.07);
+    }
+
+    .pt-food-thumb-zoom {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      background: rgba(2, 58, 88, 0.82);
+      color: #F3D999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .pt-food-body {
+      flex: 1;
+      min-width: 0;
     }
 
     .pt-food-header {
@@ -986,6 +1080,16 @@
       .pt-floating-menu-box {
         padding: 32px 20px;
       }
+      .pt-food-item {
+        gap: 12px;
+        padding: 8px;
+        margin-left: -8px;
+        margin-right: -8px;
+      }
+      .pt-food-thumb-wrap {
+        width: 64px;
+        height: 64px;
+      }
       .pt-food-title {
         font-size: 19.5px;
       }
@@ -1194,11 +1298,18 @@
       <div></div>
       <div class="pt-floating-menu-box">
         <span class="pt-subtitle">ŞEFİN TAVSİYELERİ</span>
-        <h2 class="pt-section-title" style="font-size:44px; margin-bottom:32px;">Seçilmiş Menüler</h2>
+        <h2 class="pt-section-title" style="font-size:44px; margin-bottom:20px;">Seçilmiş Menüler</h2>
+
+        <div class="pt-home-menu-tabs" id="pt-home-menu-tabs">
+          <button type="button" class="pt-home-menu-tab active" onclick="switchHomeMenuTab('cokertmeler', this)">İmza Çökertmeler</button>
+          <button type="button" class="pt-home-menu-tab" onclick="switchHomeMenuTab('salatalar', this)">Salatalar &amp; Mezeler</button>
+          <button type="button" class="pt-home-menu-tab" onclick="switchHomeMenuTab('tatlilar_icecekler', this)">Tatlı &amp; İçecekler</button>
+          <button type="button" class="pt-home-menu-tab" onclick="switchHomeMenuTab('ikramlar', this)">Masa İkramlarımız</button>
+        </div>
 
         <div id="pt-selected-menu-list"></div>
 
-        <div style="display:flex; gap:14px; flex-wrap:wrap; margin-top:32px;">
+        <div style="display:flex; gap:14px; flex-wrap:wrap; margin-top:28px;">
           <a href="menu.html" class="pt-btn pt-btn-solid-olive">TÜM QR MENÜYÜ AÇ</a>
           <a href="uygulama.html" class="pt-btn pt-btn-solid-accent">%10 İNDİRİMLİ SİPARİŞ VER</a>
         </div>
@@ -1417,7 +1528,14 @@
     </div>
   </div>
 
-  <script src="assets/data.js?v=3"></script>
+  <!-- ========================================================================
+       ÜRÜN FOTOĞRAFI VE İÇERİĞİ MODALI (ANA SAYFA HIZLI İNCELEME)
+       ======================================================================== -->
+  <div class="pt-modal-backdrop" id="home-dish-modal" onclick="if(event.target===this) closeHomeDishModal()">
+    <div class="pt-modal-box" id="home-dish-modal-content" style="max-width:560px; padding:0; overflow:hidden; border-top:4px solid var(--pt-olive);"></div>
+  </div>
+
+  <script src="assets/data.js?v=4"></script>
   <script>
     // 1. Sticky Header Scroll Efekti
     window.addEventListener("scroll", () => {
@@ -1452,7 +1570,16 @@
       document.getElementById("franchise-modal").classList.remove("open");
     }
 
-    // 5. PatioTime "Selected Menus" Alanını CokertmeStore'dan Doldur (Sadece İmza Çökertme Kebapları)
+    // 5. PatioTime "Selected Menus" Alanını CokertmeStore'dan Doldur (Ürün Görselli & Kategori Seçmeli)
+    let activeHomeMenuTab = "cokertmeler";
+
+    function switchHomeMenuTab(tabKey, btnEl) {
+      activeHomeMenuTab = tabKey;
+      document.querySelectorAll("#pt-home-menu-tabs .pt-home-menu-tab").forEach(b => b.classList.remove("active"));
+      if (btnEl) btnEl.classList.add("active");
+      renderSelectedMenus();
+    }
+
     function normalizeIndexSideName(s) {
       const map = {
         "Zeytin": "Ege Zeytini",
@@ -1470,33 +1597,103 @@
     function renderSelectedMenus() {
       const state = CokertmeStore.getState();
       const container = document.getElementById("pt-selected-menu-list");
-      const selected = state.items.filter(item =>
-        item.categoryId === "cokertmeler" &&
-        Number(item.price) > 0 &&
-        !item.isComplimentary &&
-        item.available !== false
-      );
+      const allAvailable = state.items.filter(item => item.available !== false);
+
+      let selected = [];
+      if (activeHomeMenuTab === "cokertmeler") {
+        selected = allAvailable.filter(i => i.categoryId === "cokertmeler" && Number(i.price) > 0 && !i.isComplimentary);
+      } else if (activeHomeMenuTab === "salatalar") {
+        selected = allAvailable.filter(i => (i.categoryId === "salatalar" || i.categoryId === "baslangiclar") && Number(i.price) > 0);
+      } else if (activeHomeMenuTab === "tatlilar_icecekler") {
+        selected = allAvailable.filter(i => (i.categoryId === "tatlilar" || i.categoryId === "icecekler") && Number(i.price) > 0).slice(0, 6);
+      } else if (activeHomeMenuTab === "ikramlar") {
+        selected = allAvailable.filter(i => i.categoryId === "ikramlar" || Number(i.price) <= 0 || i.isComplimentary);
+      }
 
       container.innerHTML = selected.map(item => {
+        const isIkram = !item.price || Number(item.price) <= 0 || item.isComplimentary;
+        const priceStr = isIkram ? "İKRAM" : `${Math.round(item.price)} ₺`;
+        const priceStyle = isIkram
+          ? "color:var(--pt-olive); font-size:17px; letter-spacing:0.1em; background:rgba(59,82,51,0.1); padding:2px 9px;"
+          : "";
+
         const rawSides = (item.sides && item.sides.length > 0)
           ? item.sides
-          : ["Ege Zeytini", "Acı Turşu", "Özel Soslu Salata", "Özel Tatlı", "Demleme Çay", "Türk Kahvesi"];
+          : (item.categoryId === "cokertmeler" && !isIkram ? ["Ege Zeytini", "Acı Turşu", "Özel Soslu Salata", "Özel Tatlı", "Demleme Çay", "Türk Kahvesi"] : []);
         const sidesStr = rawSides.map(normalizeIndexSideName).join(" • ");
+
+        const sidesBadgeHtml = sidesStr
+          ? `<div style="margin-top:7px; display:inline-block; background:#F4F7F2; border:1px solid rgba(59,82,51,0.28); border-left:3px solid var(--pt-olive); padding:4px 10px; font-size:12.5px; font-weight:600; color:var(--pt-text);">
+               <span style="color:var(--pt-olive); font-weight:700; text-transform:uppercase; letter-spacing:0.06em; font-size:11px; margin-right:4px;">ÜCRETSİZ İKRAMLAR DAHİL:</span>
+               ${sidesStr}
+             </div>`
+          : "";
+
+        const imgUrl = item.image || "assets/uploads/item-1792323465955.jpg?v=1";
+
         return `
-          <div class="pt-food-item">
-            <div class="pt-food-header">
-              <span class="pt-food-title">${item.name.tr}</span>
-              <span class="pt-food-line"></span>
-              <span class="pt-food-price">${item.price} ₺</span>
+          <div class="pt-food-item" onclick="openHomeDishModal('${item.id}')">
+            <div class="pt-food-thumb-wrap">
+              <img src="${imgUrl}" alt="${item.name.tr}" loading="lazy" />
+              <div class="pt-food-thumb-zoom" title="Fotoğrafı Büyüt">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              </div>
             </div>
-            <div class="pt-food-desc">${item.desc.tr}</div>
-            <div style="margin-top:7px; display:inline-block; background:#F4F7F2; border:1px solid rgba(59,82,51,0.28); border-left:3px solid var(--pt-olive); padding:4px 10px; font-size:12.5px; font-weight:600; color:var(--pt-text);">
-              <span style="color:var(--pt-olive); font-weight:700; text-transform:uppercase; letter-spacing:0.06em; font-size:11px; margin-right:4px;">ÜCRETSİZ İKRAMLAR DAHİL:</span>
-              ${sidesStr}
+            <div class="pt-food-body">
+              <div class="pt-food-header">
+                <span class="pt-food-title">${item.name.tr}</span>
+                <span class="pt-food-line"></span>
+                <span class="pt-food-price" style="${priceStyle}">${priceStr}</span>
+              </div>
+              <div class="pt-food-desc">${item.desc.tr}</div>
+              ${sidesBadgeHtml}
             </div>
           </div>
         `;
       }).join("");
+    }
+
+    function openHomeDishModal(itemId) {
+      const state = CokertmeStore.getState();
+      const item = state.items.find(i => i.id === itemId);
+      if (!item) return;
+
+      const isIkram = !item.price || Number(item.price) <= 0 || item.isComplimentary;
+      const priceStr = isIkram ? "İKRAMIMIZDIR" : `${Math.round(item.price)} ₺`;
+      const rawSides = (item.sides && item.sides.length > 0)
+        ? item.sides
+        : (item.categoryId === "cokertmeler" && !isIkram ? ["Ege Zeytini", "Acı Turşu", "Özel Soslu Salata", "Özel Tatlı", "Demleme Çay", "Türk Kahvesi"] : []);
+      const sidesStr = rawSides.map(normalizeIndexSideName).join(" • ");
+
+      const sidesBox = sidesStr
+        ? `<div style="background:rgba(59,82,51,0.08); border:1px solid rgba(59,82,51,0.24); padding:10px 14px; font-size:13px; color:var(--pt-olive); font-weight:600; margin-bottom:16px;">
+             <strong>Yanında Ücretsiz İkramlarımız:</strong> ${sidesStr}
+           </div>`
+        : "";
+
+      document.getElementById("home-dish-modal-content").innerHTML = `
+        <div style="position:relative; height:300px; background:#023A58;">
+          <img src="${item.image}" alt="${item.name.tr}" style="width:100%; height:100%; object-fit:cover;" />
+          <button type="button" onclick="closeHomeDishModal()" style="position:absolute; top:14px; right:14px; background:rgba(10,37,62,0.85); color:#fff; border:1px solid #D49B35; border-radius:8px; width:36px; height:36px; cursor:pointer; font-size:15px;">✕</button>
+        </div>
+        <div style="padding:28px;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:10px;">
+            <h3 style="font-family:var(--font-display); font-size:28px; color:var(--pt-sea-darker);">${item.name.tr}</h3>
+            <span style="font-family:var(--font-display); font-size:25px; font-weight:700; color:var(--pt-accent); white-space:nowrap;">${priceStr}</span>
+          </div>
+          <p style="color:var(--pt-text-muted); font-size:15px; margin-bottom:16px;">${item.desc.tr}</p>
+          ${sidesBox}
+          <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:18px;">
+            <a href="menu.html" class="pt-btn pt-btn-solid-olive" style="flex:1; justify-content:center; padding:12px 16px;">TÜM QR MENÜ</a>
+            <a href="uygulama.html" class="pt-btn pt-btn-solid-accent" style="flex:1; justify-content:center; padding:12px 16px;">%10 İNDİRİMLİ SİPARİŞ</a>
+          </div>
+        </div>
+      `;
+      document.getElementById("home-dish-modal").classList.add("open");
+    }
+
+    function closeHomeDishModal() {
+      document.getElementById("home-dish-modal").classList.remove("open");
     }
 
     // 6. Bayilik Formu Gönderimi

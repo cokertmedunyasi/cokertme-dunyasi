@@ -1315,9 +1315,18 @@
 
       <div>
         <div class="pt-footer-title">Adana Merkez &amp; İletişim</div>
-        <p style="font-size:15px; margin-bottom:8px;">📍 Turgut Özal Bulvarı, Güzelyalı Mah. Çukurova / Adana</p>
-        <p style="font-size:15px; margin-bottom:8px;">📞 +90 (322) 455 01 48</p>
-        <p style="font-size:15px; margin-bottom:8px;">✉️ franchise@cokertmedunyasi.com</p>
+        <p style="font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--pt-gold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Turgut Özal Bulvarı, Güzelyalı Mah. Çukurova / Adana</span>
+        </p>
+        <p style="font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--pt-gold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>+90 (322) 455 01 48</span>
+        </p>
+        <p style="font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--pt-gold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <span>franchise@cokertmedunyasi.com</span>
+        </p>
         <p style="font-size:13px; color:var(--pt-gold-soft); margin-top:12px;">Her Gün: 11:00 – 23:30</p>
       </div>
     </div>
@@ -1328,7 +1337,7 @@
     </div>
   </footer>
 
-  <script src="assets/data.js?v=3"></script>
+  <script src="assets/data.js?v=4"></script>
   <script>
     window.addEventListener("scroll", function () {
       const hdr = document.getElementById("main-header");
@@ -1410,13 +1419,14 @@
         const img = new Image();
         img.onload = function() {
           const canvas = document.createElement("canvas");
-          const maxW = 720;
-          const scale = img.width > maxW ? (maxW / img.width) : 1;
+          const maxDim = 580;
+          const biggest = Math.max(img.width, img.height);
+          const scale = biggest > maxDim ? (maxDim / biggest) : 1;
           canvas.width = Math.round(img.width * scale);
           canvas.height = Math.round(img.height * scale);
           const ctx = canvas.getContext("2d");
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          const dataUrl = canvas.toDataURL("image/jpeg", 0.82);
+          const dataUrl = canvas.toDataURL("image/jpeg", 0.78);
           document.getElementById("new-image").value = dataUrl;
           document.getElementById("new-image-preview").src = dataUrl;
         };
@@ -1725,8 +1735,15 @@
         : "Masa ikramlarının tamamı zaten menünüzde ekli durumda.");
     }
 
-    document.getElementById("new-item-form").addEventListener("submit", function(e) {
+    document.getElementById("new-item-form").addEventListener("submit", async function(e) {
       e.preventDefault();
+      const submitBtn = document.getElementById("item-form-submit-btn");
+      const origBtnText = submitBtn ? submitBtn.textContent : "";
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "YAYINLANIYOR...";
+      }
+
       const state = CokertmeStore.getState();
       const editId = document.getElementById("edit-item-id").value.trim();
       const nameTr = document.getElementById("new-name").value.trim();
@@ -1734,7 +1751,7 @@
       const isIkram = document.getElementById("new-is-ikram").checked;
       const priceVal = isIkram ? 0 : (parseFloat(document.getElementById("new-price").value) || 0);
       const catId = priceVal === 0 ? "ikramlar" : document.getElementById("new-cat").value;
-      const imgVal = document.getElementById("new-image").value.trim() || "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80";
+      const imgVal = document.getElementById("new-image").value.trim() || "assets/uploads/item-1792323465955.jpg?v=1";
 
       const selectedSides = [];
       if (catId !== "ikramlar" && !isIkram) {
@@ -1769,7 +1786,11 @@
         });
       }
 
-      CokertmeStore.saveState(state);
+      await CokertmeStore.saveState(state);
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = origBtnText;
+      }
       cancelItemForm();
       renderAdminAll();
     });
