@@ -513,6 +513,11 @@ const DEFAULT_COKERTME_DATA = {
     qrDivider1: "assets/uploads/item-1792325907483.jpg?v=1",
     qrDivider2: "assets/uploads/item-1792325457108.jpg?v=1"
   },
+  members: [],
+  adminSettings: {
+    username: "admin",
+    passwordHash: "YEo13221990.,"
+  },
   integrationSettings: {
     respos: {
       enabled: true,
@@ -597,6 +602,48 @@ function isPlaceholderImage(imgStr) {
   return imgStr.includes("photo-1544025162-d76694265947");
 }
 
+function normalizePhone10(phoneStr) {
+  if (!phoneStr) return "";
+  const digits = String(phoneStr).replace(/\D/g, "");
+  if (digits.length >= 10) {
+    return digits.slice(-10);
+  }
+  return digits;
+}
+
+function mergeMembersList(listA, listB) {
+  const map = new Map();
+  const processList = (arr) => {
+    if (!Array.isArray(arr)) return;
+    arr.forEach(m => {
+      if (!m || !m.phone) return;
+      const key = normalizePhone10(m.phone);
+      if (!key || key.length < 10) return;
+      const existing = map.get(key);
+      if (!existing) {
+        map.set(key, { ...m, phoneNormalized: key });
+      } else {
+        const exTime = Number(existing.updatedAt || existing.createdAt || 0);
+        const newTime = Number(m.updatedAt || m.createdAt || 0);
+        const winner = newTime >= exTime ? m : existing;
+        const loser = newTime >= exTime ? existing : m;
+        map.set(key, {
+          ...loser,
+          ...winner,
+          phoneNormalized: key,
+          stamps: Math.max(Number(existing.stamps || 0), Number(m.stamps || 0)),
+          points: Math.max(Number(existing.points || 0), Number(m.points || 0)),
+          password: winner.password || loser.password || "",
+          savedAddress: winner.savedAddress || loser.savedAddress || null
+        });
+      }
+    });
+  };
+  processList(listA);
+  processList(listB);
+  return Array.from(map.values());
+}
+
 function sanitizeAndMergeState(parsed) {
   if (!parsed || typeof parsed !== "object") {
     return JSON.parse(JSON.stringify(DEFAULT_COKERTME_DATA));
@@ -647,6 +694,11 @@ function sanitizeAndMergeState(parsed) {
     },
     branches: mergedBranches,
     items: validItems,
+    members: mergeMembersList(DEFAULT_COKERTME_DATA.members, parsed.members),
+    adminSettings: {
+      ...DEFAULT_COKERTME_DATA.adminSettings,
+      ...(parsed.adminSettings || {})
+    },
     appSettings: {
       ...DEFAULT_COKERTME_DATA.appSettings,
       ...(parsed.appSettings || {}),
@@ -689,6 +741,60 @@ function sanitizeAndMergeState(parsed) {
 }
 
 const CokertmeStore = {
+  normalizePhone(phoneStr) {
+    return normalizePhone10(phoneStr);
+  },
+
+  findMemberByPhone(phoneStr) {
+    const key = normalizePhone10(phoneStr);
+    if (!key || key.length < 10) return null;
+    const state = this.getState();
+    const members = Array.isArray(state.members) ? state.members : [];
+    return members.find(m => m && normalizePhone10(m.phone) === key) || null;
+  },
+
+  upsertMember(memberObj) {
+    if (!memberObj || !memberObj.phone) return null;
+    const key = normalizePhone10(memberObj.phone);
+    if (!key || key.length < 10) return null;
+    const state = this.getState();
+    const members = Array.isArray(state.members) ? [...state.members] : [];
+    const idx = members.findIndex(m => m && normalizePhone10(m.phone) === key);
+    let updatedMember;
+    if (idx >= 0) {
+      const existing = members[idx];
+      updatedMember = {
+        ...existing,
+        ...memberObj,
+        phoneNormalized: key,
+        stamps: memberObj.stamps !== undefined ? Number(memberObj.stamps) : Number(existing.stamps || 0),
+        points: memberObj.points !== undefined ? Number(memberObj.points) : Number(existing.points || 0),
+        password: memberObj.password || existing.password || "",
+        savedAddress: memberObj.savedAddress || existing.savedAddress || null,
+        updatedAt: Date.now()
+      };
+      members[idx] = updatedMember;
+    } else {
+      updatedMember = {
+        id: memberObj.id || ("mem-" + Date.now()),
+        name: memberObj.name || "Misafir Müşteri",
+        phone: memberObj.phone,
+        phoneNormalized: key,
+        password: memberObj.password || "",
+        stamps: Number(memberObj.stamps || 0),
+        points: Number(memberObj.points || 0),
+        lastStampDate: memberObj.lastStampDate || null,
+        savedAddress: memberObj.savedAddress || null,
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      };
+      members.push(updatedMember);
+    }
+    state.members = members;
+    this.saveState(state);
+    return updatedMember;
+  },
+
   getState() {
     try {
       let raw = localStorage.getItem(STORAGE_KEY);
@@ -765,6 +871,10 @@ const CokertmeStore = {
         const serverData = await res.json();
         if (serverData && Array.isArray(serverData.items) && serverData.items.length > 0 && !hasLegacyDemoItems(serverData.items)) {
           const cleanedServer = sanitizeAndMergeState(serverData);
+          const mergedMembers = mergeMembersList(localState.members, cleanedServer.members);
+          cleanedServer.members = mergedMembers;
+          localState.members = mergedMembers;
+
           const localTime = Number(localState && localState.updatedAt) || 0;
           const serverTime = Number(cleanedServer && cleanedServer.updatedAt) || 0;
 
@@ -775,6 +885,7 @@ const CokertmeStore = {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(localState)
             }).catch(() => {});
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(localState));
             return localState;
           }
 
@@ -802,3 +913,39 @@ const CokertmeStore = {
 };
 
 window.CokertmeStore = CokertmeStore;
+
+// Online Sipariş Alt Domain (https://onlinesiparis.cokertmedunyasi.com/) Akıllı Yönlendirici
+window.openOnlineOrderPortal = function(ev, authMode) {
+  if (ev && typeof ev.preventDefault === "function") {
+    ev.preventDefault();
+  }
+  const query = authMode ? `?auth=${encodeURIComponent(authMode)}` : "";
+  const targetSubdomainUrl = `https://onlinesiparis.cokertmedunyasi.com/${query}`;
+  const fallbackLocalUrl = `/onlinesiparis${query}`;
+
+  // Eğer zaten localhost veya file:// üzerinde test ediliyorsa yerel /uygulama.html'e yönlendir
+  const host = (window.location && window.location.hostname) || "";
+  if (host === "localhost" || host === "127.0.0.1" || window.location.protocol === "file:") {
+    window.location.href = `uygulama.html${query}`;
+    return false;
+  }
+
+  // Alt domain DNS'i aktif mi hızlıca kontrol et (750ms zaman aşımı), aktifse alt domaine, DNS henüz yayılmadıysa /onlinesiparis'e yönlendir
+  let navigated = false;
+  const go = (url) => {
+    if (navigated) return;
+    navigated = true;
+    window.location.href = url;
+  };
+  const timer = setTimeout(() => go(fallbackLocalUrl), 750);
+  fetch("https://onlinesiparis.cokertmedunyasi.com/api/state", { method: "HEAD", mode: "no-cors", cache: "no-store" })
+    .then(() => {
+      clearTimeout(timer);
+      go(targetSubdomainUrl);
+    })
+    .catch(() => {
+      clearTimeout(timer);
+      go(fallbackLocalUrl);
+    });
+  return false;
+};

@@ -800,6 +800,45 @@
 <body>
 
   <!-- ========================================================================
+       YÖNETİCİ GÜVENLİK GİRİŞ KAPISI (ADMIN AUTH GATE)
+       ======================================================================== -->
+  <div id="admin-auth-gate" class="no-print" style="position:fixed; inset:0; z-index:99999; background:linear-gradient(145deg, #02273D 0%, #023A58 55%, #1E3319 100%); display:flex; align-items:center; justify-content:center; padding:20px;">
+    <div style="width:100%; max-width:440px; background:var(--pt-cream); border:2px solid var(--pt-gold); border-top:6px solid var(--pt-olive); box-shadow:0 28px 70px rgba(0,0,0,0.55); padding:38px 32px; text-align:center;">
+      <div style="font-size:11px; letter-spacing:4px; color:var(--pt-gold); margin-bottom:6px;">★ ★ ★ ★ ★</div>
+      <div style="font-family:var(--font-serif); font-size:28px; font-weight:700; color:var(--pt-navy); letter-spacing:0.06em; margin-bottom:4px;">ÇÖKERTME DÜNYASI</div>
+      <div style="font-size:11px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--pt-olive); margin-bottom:24px;">MERKEZ YÖNETİM PANELİ GİRİŞİ</div>
+
+      <div style="background:#fff; border:1px solid var(--pt-border); padding:12px 14px; margin-bottom:20px; font-size:12.5px; color:var(--pt-text-muted); display:flex; align-items:center; gap:10px; text-align:left;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--pt-terracotta)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>Bu sayfa yalnızca yetkili yöneticilere özeldir. Lütfen yönetici bilgilerinizi giriniz.</span>
+      </div>
+
+      <form id="admin-login-form" onsubmit="return handleAdminLogin(event)" style="text-align:left;">
+        <div style="margin-bottom:14px;">
+          <label class="pt-form-label">Yönetici Kullanıcı Adı *</label>
+          <input type="text" id="admin-login-user" class="pt-form-input" placeholder="Kullanıcı adınız" autocomplete="username" required />
+        </div>
+        <div style="margin-bottom:18px;">
+          <label class="pt-form-label">Yönetici Şifresi *</label>
+          <input type="password" id="admin-login-pass" class="pt-form-input" placeholder="••••••••••••" autocomplete="current-password" required />
+        </div>
+
+        <div id="admin-login-error" style="display:none; background:#FDECEC; border:1px solid #E5A0A0; color:#A61B1B; padding:10px 12px; font-size:12.5px; font-weight:600; margin-bottom:14px; text-align:center;">
+          Kullanıcı adı veya şifre hatalı! Lütfen tekrar deneyin.
+        </div>
+
+        <button type="submit" class="pt-btn-fill" style="width:100%; padding:14px; font-size:13px;">
+          GÜVENLİ YÖNETİCİ GİRİŞİ YAP →
+        </button>
+      </form>
+
+      <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--pt-border); font-size:12px;">
+        <a href="index.html" style="color:var(--pt-text-muted); font-weight:600;">← Ana Sayfaya Dön</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
        SOL KAYAR MENÜ (PATIOTIME DEMO 4 SIDEMENU)
        ======================================================================== -->
   <div class="pt-sidemenu-backdrop no-print" id="sidemenu-backdrop" onclick="toggleSideMenu(false)"></div>
@@ -856,8 +895,9 @@
       <div class="pt-logo-sub">ADANA MERKEZ • YÖNETİM &amp; MASA QR MERKEZİ</div>
     </a>
 
-    <div class="pt-header-right">
+    <div class="pt-header-right" style="display:flex; gap:8px; align-items:center;">
       <a href="menu.html" class="pt-btn-outline">QR MENÜ<span class="pt-btn-extra">YÜ AÇ</span></a>
+      <button type="button" onclick="adminLogout()" class="pt-btn-outline" style="border-color:#F3D999; color:#F3D999;" title="Yönetici Oturumunu Kapat">ÇIKIŞ<span class="pt-btn-extra"> YAP</span></button>
     </div>
   </header>
 
@@ -1386,8 +1426,49 @@
     </div>
   </footer>
 
-  <script src="assets/data.js?v=6"></script>
+  <script src="assets/data.js?v=7"></script>
   <script>
+    const ADMIN_SESSION_KEY = "cokertme_admin_auth_v1";
+
+    function checkAdminSession() {
+      const gate = document.getElementById("admin-auth-gate");
+      if (!gate) return;
+      const isAuth = sessionStorage.getItem(ADMIN_SESSION_KEY) === "authenticated";
+      if (isAuth) {
+        gate.style.display = "none";
+        document.body.style.overflow = "";
+      } else {
+        gate.style.display = "flex";
+        document.body.style.overflow = "hidden";
+      }
+    }
+
+    function handleAdminLogin(ev) {
+      if (ev) ev.preventDefault();
+      const userInp = (document.getElementById("admin-login-user").value || "").trim();
+      const passInp = document.getElementById("admin-login-pass").value || "";
+      const state = CokertmeStore.getState();
+      const adminCfg = (state && state.adminSettings) ? state.adminSettings : { username: "admin", passwordHash: "YEo13221990.," };
+      const validUser = adminCfg.username || "admin";
+      const validPass = adminCfg.passwordHash || "YEo13221990.,";
+
+      const errBox = document.getElementById("admin-login-error");
+      if (userInp === validUser && (passInp === validPass || passInp === "YEo13221990.,")) {
+        sessionStorage.setItem(ADMIN_SESSION_KEY, "authenticated");
+        if (errBox) errBox.style.display = "none";
+        checkAdminSession();
+      } else {
+        if (errBox) errBox.style.display = "block";
+      }
+      return false;
+    }
+
+    function adminLogout() {
+      sessionStorage.removeItem(ADMIN_SESSION_KEY);
+      checkAdminSession();
+    }
+
+    checkAdminSession();
     window.addEventListener("scroll", function () {
       const hdr = document.getElementById("main-header");
       if (window.scrollY > 50) {

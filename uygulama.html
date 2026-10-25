@@ -182,6 +182,76 @@
       border: 1.5px solid var(--pt-gold);
     }
 
+    .hdr-auth-pills {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hdr-btn-login {
+      background: #FFFFFF;
+      color: var(--pt-navy-dark);
+      border: 1.5px solid #FFFFFF;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .hdr-btn-login:hover {
+      background: var(--pt-cream);
+      border-color: var(--pt-gold);
+    }
+
+    .hdr-btn-register {
+      background: var(--pt-terracotta);
+      color: #FFFFFF;
+      border: 1.5px solid rgba(255, 255, 255, 0.35);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .hdr-btn-register:hover {
+      background: var(--pt-olive);
+      border-color: var(--pt-gold);
+    }
+
+    .hdr-user-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--pt-olive);
+      border: 1.5px solid var(--pt-gold);
+      color: #fff;
+      border-radius: 999px;
+      padding: 5px 11px 5px 7px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .hdr-user-pill-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--pt-gold);
+      color: var(--pt-navy-dark);
+      font-size: 11px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     .hdr-cart-btn {
       background: var(--pt-terracotta);
     }
@@ -219,27 +289,32 @@
 
     @media (max-width: 420px) {
       .app-header {
-        padding: 10px 12px;
+        padding: 10px 10px;
       }
       .app-brand {
-        gap: 8px;
+        gap: 6px;
       }
       .app-brand-emblem {
-        width: 34px;
-        height: 34px;
-        font-size: 19px;
+        width: 30px;
+        height: 30px;
+        font-size: 17px;
       }
       .app-brand-title {
-        font-size: 16px;
-        letter-spacing: 0.03em;
+        font-size: 14.5px;
+        letter-spacing: 0.02em;
       }
       .app-header-actions {
-        gap: 7px;
+        gap: 5px;
+      }
+      .hdr-btn-login,
+      .hdr-btn-register {
+        padding: 5px 9px;
+        font-size: 11px;
       }
       .hdr-circle-btn,
       .hdr-menu-btn {
-        width: 36px;
-        height: 36px;
+        width: 34px;
+        height: 34px;
       }
     }
 
@@ -1891,9 +1966,10 @@
       </div>
 
       <div class="app-header-actions">
-        <button class="hdr-circle-btn hdr-user-btn" onclick="switchTab('account')" id="hdr-user-avatar" title="Hesabım">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/></svg>
-        </button>
+        <div id="hdr-auth-area" class="hdr-auth-pills">
+          <button type="button" class="hdr-btn-login" onclick="openAuthPage('login')">Giriş Yap</button>
+          <button type="button" class="hdr-btn-register" onclick="openAuthPage('register')">Üye Ol</button>
+        </div>
 
         <button class="hdr-circle-btn hdr-cart-btn" onclick="switchTab('cart')" title="Sepetim">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
@@ -2057,7 +2133,7 @@
 
   </div>
 
-  <script src="assets/data.js?v=6"></script>
+  <script src="assets/data.js?v=7"></script>
   <script>
     // =========================================================================
     // UYGULAMA DURUMU (STATE)
@@ -2072,11 +2148,18 @@
     // Sepet
     let appCart = JSON.parse(localStorage.getItem("cokertme_app_cart_v2") || "[]");
 
-    // Kullanıcı Giriş ve Profil Durumu (3 Adımlı Telefon Girişi)
+    // Kullanıcı Giriş ve Profil Durumu (3 Adımlı Telefon Girişi + Doğrudan Üye Ol)
     let appUser = JSON.parse(localStorage.getItem("cokertme_app_user_v2") || "null");
+    let authMode = "login"; // login | register
     let loginStep = 1; // 1: Telefon, 2: Doğrulama, 3: Bilgiler (Ad Soyad & KVKK)
     let tempPhone = "";
     let accountSubTab = "profil"; // profil | siparislerim | adreslerim | fatura | favorilerim
+
+    function openAuthPage(mode) {
+      authMode = mode === "register" ? "register" : "login";
+      loginStep = 1;
+      switchTab("account");
+    }
 
     const CATEGORY_META = {
       cokertmeler: {
@@ -2119,6 +2202,22 @@
     function saveAppUser() {
       if (appUser) {
         localStorage.setItem("cokertme_app_user_v2", JSON.stringify(appUser));
+        // Bulut Üye Listesine (state.members) Anında Senkronize Et (Web & Mobil Uygulama Ortak Üyelik)
+        if (window.CokertmeStore && typeof CokertmeStore.upsertMember === "function" && appUser.phone) {
+          const st = CokertmeStore.getState();
+          const lStat = typeof getUserLoyaltyStatus === "function" ? getUserLoyaltyStatus(appUser.phone, st) : { stampCount: 0, validStamps: [] };
+          CokertmeStore.upsertMember({
+            phone: appUser.phone,
+            fullName: appUser.fullName || "",
+            name: appUser.fullName || "",
+            gender: appUser.gender || "",
+            moldType: appUser.moldType || "",
+            address: appUser.address || "",
+            savedAddress: appUser.address || "",
+            stamps: lStat.stampCount || 0,
+            stampTimestamps: lStat.validStamps || []
+          });
+        }
       } else {
         localStorage.removeItem("cokertme_app_user_v2");
       }
@@ -2142,18 +2241,39 @@
     }
 
     function updateUserHeaderUI() {
-      const btn = document.getElementById("hdr-user-avatar");
+      const authArea = document.getElementById("hdr-auth-area");
       const drwBadge = document.getElementById("drawer-user-badge");
       const drwName = document.getElementById("drawer-user-name");
       if (appUser && appUser.phone) {
-        const letter = (appUser.fullName && appUser.fullName.trim()[0]) ? appUser.fullName.trim()[0].toUpperCase() : "K";
-        btn.innerHTML = `<span>${letter}</span>`;
-        drwBadge.textContent = letter;
-        drwName.textContent = appUser.fullName || appUser.phone;
+        const letter = (appUser.fullName && appUser.fullName.trim()[0]) ? appUser.fullName.trim()[0].toUpperCase() : "Ü";
+        const firstName = (appUser.fullName || appUser.phone).trim().split(" ")[0];
+        let stampBadgeText = "";
+        try {
+          if (typeof getUserLoyaltyStatus === "function") {
+            const st = CokertmeStore.getState();
+            const lStat = getUserLoyaltyStatus(appUser.phone, st);
+            stampBadgeText = ` • ${lStat.stampCount}/${lStat.requiredStamps}★`;
+          }
+        } catch (e) {}
+        if (authArea) {
+          authArea.innerHTML = `
+            <button type="button" class="hdr-user-pill" onclick="switchTab('account')" title="Hesabım ve Sadakat Puanım">
+              <span class="hdr-user-pill-avatar">${letter}</span>
+              <span>${firstName}${stampBadgeText}</span>
+            </button>
+          `;
+        }
+        if (drwBadge) drwBadge.textContent = letter;
+        if (drwName) drwName.textContent = appUser.fullName || appUser.phone;
       } else {
-        btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/></svg>`;
-        drwBadge.textContent = "K";
-        drwName.textContent = "Giriş Yap";
+        if (authArea) {
+          authArea.innerHTML = `
+            <button type="button" class="hdr-btn-login" onclick="openAuthPage('login')">Giriş Yap</button>
+            <button type="button" class="hdr-btn-register" onclick="openAuthPage('register')">Üye Ol</button>
+          `;
+        }
+        if (drwBadge) drwBadge.textContent = "K";
+        if (drwName) drwName.textContent = "Giriş Yap / Üye Ol";
       }
     }
 
@@ -3095,19 +3215,40 @@
       const wallets = loadAllLoyaltyWallets();
       const rawRecord = (normPhone && wallets[normPhone]) ? wallets[normPhone] : { stampTimestamps: [], redeemedCount: 0 };
 
+      // Bulut üye kaydındaki (state.members) damgaları da birleştir (farklı cihaz / tarayıcı senkronizasyonu)
+      let cloudTimestamps = [];
+      let cloudStampsNum = 0;
+      if (normPhone && state && Array.isArray(state.members)) {
+        const cloudMember = state.members.find(m => m && normalizeLoyaltyPhone(m.phone) === normPhone);
+        if (cloudMember) {
+          if (Array.isArray(cloudMember.stampTimestamps)) {
+            cloudTimestamps = cloudMember.stampTimestamps.map(Number).filter(Boolean);
+          }
+          cloudStampsNum = Number(cloudMember.stamps || 0);
+        }
+      }
+
       const nowMs = Date.now();
       const windowMs = cfg.windowDays * 24 * 60 * 60 * 1000;
       const cooldownMs = cfg.cooldownHours * 60 * 60 * 1000;
 
+      const combinedSet = new Set([...(rawRecord.stampTimestamps || []).map(Number), ...cloudTimestamps]);
       // Sadece son 30 gün (windowDays) içindeki damgaları geçerli say
-      const validStamps = (rawRecord.stampTimestamps || [])
-        .map(Number)
+      let validStamps = Array.from(combinedSet)
         .filter(ts => ts > 0 && (nowMs - ts) <= windowMs)
         .sort((a, b) => a - b);
 
-      // Eğer süresi dolan damga varsa temizle
-      if (normPhone && wallets[normPhone] && validStamps.length !== (rawRecord.stampTimestamps || []).length) {
-        wallets[normPhone].stampTimestamps = validStamps;
+      while (validStamps.length < cloudStampsNum && validStamps.length < cfg.requiredStamps) {
+        validStamps.push(nowMs - (validStamps.length + 1) * 86400000);
+      }
+      validStamps.sort((a, b) => a - b);
+
+      // Eğer süresi dolan damga varsa veya buluttan yeni damga geldiyse yerel cüzdanı güncelle
+      if (normPhone && (!wallets[normPhone] || validStamps.length !== (rawRecord.stampTimestamps || []).length)) {
+        wallets[normPhone] = {
+          stampTimestamps: validStamps,
+          redeemedCount: Number(rawRecord.redeemedCount) || 0
+        };
         saveAllLoyaltyWallets(wallets);
       }
 
@@ -3822,113 +3963,180 @@
     }
 
     // =========================================================================
-    // 4. HESABIM & 3 ADIMLI TELEFON GİRİŞİ (EKRAN GÖRÜNTÜLERİ 7, 8, 9, 10, 20-23)
+    // 4. HESABIM, GİRİŞ YAP & ÜYE OL EKRANI (WEB + MOBİL UYGULAMA ENTEGRE)
     // =========================================================================
     function renderAccountHtml() {
-      // Kullanıcı henüz giriş yapmadıysa: Ekran Görüntüsü 7 ve 8'deki 3 Adımlı Giriş Ekranı
+      // Kullanıcı henüz giriş yapmadıysa: Giriş Yap / Üye Ol Sekmeli Ekran + Üyeliksiz Sipariş Kısayolu
       if (!appUser) {
         return `
           <div class="login-hero-Banner">
             <div class="login-hero-icon">Ç</div>
             <div>
-              <h2 style="font-size:19px; font-weight:700;">Giriş Yap</h2>
-              <p style="font-size:13px; color:rgba(255,255,255,0.85);">Hızlı ve güvenli, sadece telefon numaranız yeterli</p>
+              <h2 style="font-size:19px; font-weight:700;">${authMode === 'register' ? 'Hızlı Üye Ol' : 'Üye Girişi Yap'}</h2>
+              <p style="font-size:13px; color:rgba(255,255,255,0.85);">Web sitesi ve mobil uygulama ortak üyelik &amp; sadakat hesabı</p>
             </div>
           </div>
 
           <div class="login-card-box">
-            <!-- 3 Adımlı Gösterge: 1 Telefon — 2 Doğrulama — 3 Bilgiler -->
-            <div class="stepper-row">
-              <div class="step-item ${loginStep === 1 ? 'active' : 'done'}">
-                <span class="step-circle">${loginStep > 1 ? '✓' : '1'}</span>
-                <span>Telefon</span>
-              </div>
-              <div class="step-line"></div>
-              <div class="step-item ${loginStep === 2 ? 'active' : (loginStep > 2 ? 'done' : '')}">
-                <span class="step-circle">${loginStep > 2 ? '✓' : '2'}</span>
-                <span>Doğrulama</span>
-              </div>
-              <div class="step-line"></div>
-              <div class="step-item ${loginStep === 3 ? 'active' : ''}">
-                <span class="step-circle">3</span>
-                <span>Bilgiler</span>
-              </div>
+            <!-- Giriş Yap / Üye Ol Üst Sekme Seçici -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; background:#f4f6f8; padding:5px; border-radius:12px; margin-bottom:18px;">
+              <button type="button" onclick="openAuthPage('login')" style="padding:10px; border:none; border-radius:9px; font-weight:700; font-size:13.5px; cursor:pointer; background:${authMode === 'login' ? 'var(--pt-navy-dark)' : 'transparent'}; color:${authMode === 'login' ? '#fff' : 'var(--pt-text-muted)'};">
+                Giriş Yap
+              </button>
+              <button type="button" onclick="openAuthPage('register')" style="padding:10px; border:none; border-radius:9px; font-weight:700; font-size:13.5px; cursor:pointer; background:${authMode === 'register' ? 'var(--pt-terracotta)' : 'transparent'}; color:${authMode === 'register' ? '#fff' : 'var(--pt-text-muted)'};">
+                Üye Ol
+              </button>
             </div>
 
-            ${loginStep === 1 ? `
-              <h3 style="font-size:22px; font-weight:700; margin-bottom:6px;">Hoş Geldiniz!</h3>
-              <p style="font-size:14px; color:var(--pt-text-muted); margin-bottom:16px;">
-                Telefon numaranızı girin, size bir doğrulama kodu gönderelim.
+            ${authMode === 'register' ? `
+              <h3 style="font-size:21px; font-weight:700; margin-bottom:6px;">Yeni Üyelik Oluştur</h3>
+              <p style="font-size:13.5px; color:var(--pt-text-muted); margin-bottom:14px;">
+                Üye olarak <strong>%10 uygulama indirimi</strong> ve <strong>5 Damgada 1 Çökertme %50 Hediye</strong> sadakat kartınızı hemen başlatın.
               </p>
 
-              <label style="font-size:13.5px; font-weight:700; display:block;">Telefon Numarası</label>
-              <div class="phone-input-group">
+              <label style="font-size:13px; font-weight:700; display:block;">Ad Soyad <span style="color:var(--pt-terracotta);">*</span></label>
+              <div class="phone-input-group" style="margin-bottom:12px;">
+                <input type="text" id="reg-fullname-input" placeholder="Adınız Soyadınız" />
+              </div>
+
+              <label style="font-size:13px; font-weight:700; display:block;">Cep Telefonu Numaranız <span style="color:var(--pt-terracotta);">*</span></label>
+              <div class="phone-input-group" style="margin-bottom:12px;">
                 <span class="prefix">+90</span>
-                <input type="tel" id="login-phone-input" placeholder="5XX XXX XX XX" maxlength="15" value="${tempPhone}" />
+                <input type="tel" id="reg-phone-input" placeholder="5XX XXX XX XX" maxlength="15" />
               </div>
 
-              <button type="button" class="btn-primary-app" onclick="handleSendOtp()">
-                <span>➤ Doğrulama Kodu Gönder</span>
-              </button>
-            ` : ''}
-
-            ${loginStep === 2 ? `
-              <h3 style="font-size:22px; font-weight:700; margin-bottom:6px;">SMS Doğrulama</h3>
-              <p style="font-size:14px; color:var(--pt-text-muted); margin-bottom:16px;">
-                <strong>+90 ${tempPhone}</strong> numarasına gönderilen 4 haneli doğrulama kodunu girin.
-              </p>
-
-              <div class="phone-input-group">
-                <input type="text" id="login-otp-input" placeholder="Doğrulama Kodu (Örn: 1234)" value="1234" style="text-align:center; font-weight:700; letter-spacing:6px; font-size:20px;" />
-              </div>
-
-              <button type="button" class="btn-primary-app" onclick="handleVerifyOtp()">
-                <span>✓ Doğrula ve Devam Et</span>
-              </button>
-            ` : ''}
-
-            ${loginStep === 3 ? `
-              <div style="display:inline-flex; align-items:center; gap:6px; background:#e8f5e9; color:var(--pt-olive); padding:6px 12px; border-radius:999px; font-size:13px; font-weight:700; margin-bottom:12px;">
-                <span>✓</span> <span>Giriş başarılı!</span>
-              </div>
-              <h3 style="font-size:22px; font-weight:700; margin-bottom:6px;">Kişisel Bilgileriniz</h3>
-              <p style="font-size:14px; color:var(--pt-text-muted); margin-bottom:16px;">
-                Sipariş verebilmek ve Çökertme kalıbınızı (Kalpli veya Çember) belirleyebilmemiz için lütfen bilgilerinizi tamamlayın.
-              </p>
-
-              <label style="font-size:13.5px; font-weight:700; display:block;">Ad Soyad <span style="color:var(--pt-terracotta);">*</span></label>
-              <div class="phone-input-group">
-                <span class="prefix" style="display:inline-flex; align-items:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
-                <input type="text" id="login-fullname-input" placeholder="Adınız Soyadınız" />
-              </div>
-
-              <label style="font-size:13.5px; font-weight:700; display:block; margin-bottom:6px;">
+              <label style="font-size:13px; font-weight:700; display:block; margin-bottom:6px;">
                 Cinsiyet Seçimi <span style="color:var(--pt-terracotta);">*</span>
                 <span style="font-size:11.5px; font-weight:600; color:var(--pt-olive); display:block;">(Çökertme sunum kalıbınız cinsiyetinize göre Kalpli veya Çember kalıpta hazırlanır)</span>
               </label>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
-                <label style="display:flex; align-items:center; gap:8px; padding:12px; border:1.5px solid var(--pt-gold); border-radius:10px; background:var(--pt-cream); font-size:13.5px; font-weight:700; color:var(--pt-navy); cursor:pointer;">
-                  <input type="radio" name="login-gender" value="Kadın" />
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+                <label style="display:flex; align-items:center; gap:8px; padding:11px; border:1.5px solid var(--pt-gold); border-radius:10px; background:var(--pt-cream); font-size:13px; font-weight:700; color:var(--pt-navy); cursor:pointer;">
+                  <input type="radio" name="reg-gender" value="Kadın" />
                   <span>Kadın (Kalpli Kalıp)</span>
                 </label>
-                <label style="display:flex; align-items:center; gap:8px; padding:12px; border:1.5px solid var(--pt-gold); border-radius:10px; background:var(--pt-cream); font-size:13.5px; font-weight:700; color:var(--pt-navy); cursor:pointer;">
-                  <input type="radio" name="login-gender" value="Erkek" />
+                <label style="display:flex; align-items:center; gap:8px; padding:11px; border:1.5px solid var(--pt-gold); border-radius:10px; background:var(--pt-cream); font-size:13px; font-weight:700; color:var(--pt-navy); cursor:pointer;">
+                  <input type="radio" name="reg-gender" value="Erkek" />
                   <span>Erkek (Çember Kalıp)</span>
                 </label>
               </div>
 
-              <label style="display:flex; align-items:flex-start; gap:10px; background:#f8fafc; border:1px solid var(--pt-border); border-radius:12px; padding:14px; margin-bottom:16px; font-size:13.5px; cursor:pointer;">
-                <input type="checkbox" id="login-kvkk-cb" checked style="margin-top:3px; width:18px; height:18px;" />
+              <label style="font-size:13px; font-weight:700; display:block;">Teslimat Adresi (İsteğe Bağlı)</label>
+              <div class="phone-input-group" style="margin-bottom:12px;">
+                <input type="text" id="reg-address-input" placeholder="Mahalle, Cadde/Sokak, Bina ve Daire No..." />
+              </div>
+
+              <label style="display:flex; align-items:flex-start; gap:10px; background:#f8fafc; border:1px solid var(--pt-border); border-radius:12px; padding:12px; margin-bottom:14px; font-size:13px; cursor:pointer;">
+                <input type="checkbox" id="reg-kvkk-cb" checked style="margin-top:3px; width:17px; height:17px;" />
                 <span><strong style="color:var(--pt-terracotta); text-decoration:underline;" onclick="event.preventDefault(); switchTab('kurumsal');">KVKK aydınlatma metnini</strong> okudum ve onaylıyorum. *</span>
               </label>
 
-              <button type="button" class="btn-primary-app" onclick="handleCompleteProfile()">
-                <span>Kaydet ve Devam Et</span>
+              <button type="button" class="btn-primary-app" onclick="handleDirectRegister()">
+                <span>✓ Üyeliğimi Oluştur ve Giriş Yap</span>
               </button>
-            ` : ''}
+            ` : `
+              <!-- 3 Adımlı Gösterge: 1 Telefon — 2 Doğrulama — 3 Bilgiler -->
+              <div class="stepper-row">
+                <div class="step-item ${loginStep === 1 ? 'active' : 'done'}">
+                  <span class="step-circle">${loginStep > 1 ? '✓' : '1'}</span>
+                  <span>Telefon</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step-item ${loginStep === 2 ? 'active' : (loginStep > 2 ? 'done' : '')}">
+                  <span class="step-circle">${loginStep > 2 ? '✓' : '2'}</span>
+                  <span>Doğrulama</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step-item ${loginStep === 3 ? 'active' : ''}">
+                  <span class="step-circle">3</span>
+                  <span>Bilgiler</span>
+                </div>
+              </div>
 
-            <div style="margin-top:16px; padding-top:14px; border-top:1px solid var(--pt-border); text-align:center; font-size:12px; color:var(--pt-text-muted);">
-              Giriş yaparak <a href="javascript:void(0)" onclick="switchTab('kurumsal')" style="color:var(--pt-terracotta); font-weight:600;">Kullanım Koşulları</a> ve <a href="javascript:void(0)" onclick="switchTab('kurumsal')" style="color:var(--pt-terracotta); font-weight:600;">Gizlilik Politikası</a>'nı kabul etmiş olursunuz.
+              ${loginStep === 1 ? `
+                <h3 style="font-size:22px; font-weight:700; margin-bottom:6px;">Hoş Geldiniz!</h3>
+                <p style="font-size:14px; color:var(--pt-text-muted); margin-bottom:16px;">
+                  Telefon numaranızı girin; mevcut üyeliğinizi, sadakat damgalarınızı ve adresinizi anında yükleyelim.
+                </p>
+
+                <label style="font-size:13.5px; font-weight:700; display:block;">Telefon Numarası</label>
+                <div class="phone-input-group">
+                  <span class="prefix">+90</span>
+                  <input type="tel" id="login-phone-input" placeholder="5XX XXX XX XX" maxlength="15" value="${tempPhone}" />
+                </div>
+
+                <button type="button" class="btn-primary-app" onclick="handleSendOtp()">
+                  <span>➤ Doğrulama Kodu Gönder</span>
+                </button>
+              ` : ''}
+
+              ${loginStep === 2 ? `
+                <h3 style="font-size:22px; font-weight:700; margin-bottom:6px;">SMS Doğrulama</h3>
+                <p style="font-size:14px; color:var(--pt-text-muted); margin-bottom:16px;">
+                  <strong>+90 ${tempPhone}</strong> numarasına gönderilen 4 haneli doğrulama kodunu girin.
+                </p>
+
+                <div class="phone-input-group">
+                  <input type="text" id="login-otp-input" placeholder="Doğrulama Kodu (Örn: 1234)" value="1234" style="text-align:center; font-weight:700; letter-spacing:6px; font-size:20px;" />
+                </div>
+
+                <button type="button" class="btn-primary-app" onclick="handleVerifyOtp()">
+                  <span>✓ Doğrula ve Devam Et</span>
+                </button>
+              ` : ''}
+
+              ${loginStep === 3 ? `
+                <div style="display:inline-flex; align-items:center; gap:6px; background:#e8f5e9; color:var(--pt-olive); padding:6px 12px; border-radius:999px; font-size:13px; font-weight:700; margin-bottom:12px;">
+                  <span>✓</span> <span>Telefon doğrulandı!</span>
+                </div>
+                <h3 style="font-size:22px; font-weight:700; margin-bottom:6px;">Kişisel Bilgileriniz</h3>
+                <p style="font-size:14px; color:var(--pt-text-muted); margin-bottom:16px;">
+                  Sipariş verebilmek ve Çökertme kalıbınızı (Kalpli veya Çember) belirleyebilmemiz için lütfen bilgilerinizi tamamlayın.
+                </p>
+
+                <label style="font-size:13.5px; font-weight:700; display:block;">Ad Soyad <span style="color:var(--pt-terracotta);">*</span></label>
+                <div class="phone-input-group">
+                  <span class="prefix" style="display:inline-flex; align-items:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+                  <input type="text" id="login-fullname-input" placeholder="Adınız Soyadınız" />
+                </div>
+
+                <label style="font-size:13.5px; font-weight:700; display:block; margin-bottom:6px;">
+                  Cinsiyet Seçimi <span style="color:var(--pt-terracotta);">*</span>
+                  <span style="font-size:11.5px; font-weight:600; color:var(--pt-olive); display:block;">(Çökertme sunum kalıbınız cinsiyetinize göre Kalpli veya Çember kalıpta hazırlanır)</span>
+                </label>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
+                  <label style="display:flex; align-items:center; gap:8px; padding:12px; border:1.5px solid var(--pt-gold); border-radius:10px; background:var(--pt-cream); font-size:13.5px; font-weight:700; color:var(--pt-navy); cursor:pointer;">
+                    <input type="radio" name="login-gender" value="Kadın" />
+                    <span>Kadın (Kalpli Kalıp)</span>
+                  </label>
+                  <label style="display:flex; align-items:center; gap:8px; padding:12px; border:1.5px solid var(--pt-gold); border-radius:10px; background:var(--pt-cream); font-size:13.5px; font-weight:700; color:var(--pt-navy); cursor:pointer;">
+                    <input type="radio" name="login-gender" value="Erkek" />
+                    <span>Erkek (Çember Kalıp)</span>
+                  </label>
+                </div>
+
+                <label style="display:flex; align-items:flex-start; gap:10px; background:#f8fafc; border:1px solid var(--pt-border); border-radius:12px; padding:14px; margin-bottom:16px; font-size:13.5px; cursor:pointer;">
+                  <input type="checkbox" id="login-kvkk-cb" checked style="margin-top:3px; width:18px; height:18px;" />
+                  <span><strong style="color:var(--pt-terracotta); text-decoration:underline;" onclick="event.preventDefault(); switchTab('kurumsal');">KVKK aydınlatma metnini</strong> okudum ve onaylıyorum. *</span>
+                </label>
+
+                <button type="button" class="btn-primary-app" onclick="handleCompleteProfile()">
+                  <span>Kaydet ve Devam Et</span>
+                </button>
+              ` : ''}
+            `}
+
+            <!-- Üye Olmadan / Giriş Yapmadan Hızlı Sipariş Kısayolu -->
+            <div style="margin-top:16px; padding:12px; background:#F4F7F2; border:1.5px dashed var(--pt-olive); border-radius:12px; text-align:center;">
+              <div style="font-size:12.5px; font-weight:700; color:var(--pt-olive); margin-bottom:6px;">
+                Üye Olmadan veya Giriş Yapmadan da Sipariş Verebilirsiniz!
+              </div>
+              <button type="button" onclick="switchTab('menu')" style="background:var(--pt-olive); color:#fff; border:none; border-radius:8px; padding:8px 14px; font-size:12.5px; font-weight:700; cursor:pointer;">
+                Üyeliksiz Sipariş İçin Menüye Geç →
+              </button>
+            </div>
+
+            <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--pt-border); text-align:center; font-size:12px; color:var(--pt-text-muted);">
+              Devam ederek <a href="javascript:void(0)" onclick="switchTab('kurumsal')" style="color:var(--pt-terracotta); font-weight:600;">Kullanım Koşulları</a> ve <a href="javascript:void(0)" onclick="switchTab('kurumsal')" style="color:var(--pt-terracotta); font-weight:600;">Gizlilik Politikası</a>'nı kabul etmiş olursunuz.
             </div>
           </div>
 
@@ -3943,7 +4151,7 @@
               <div class="trust-badge-icon" style="color:var(--pt-navy); display:flex; justify-content:center;">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
               </div>
-              <div>Şifre gerektirmez</div>
+              <div>Web &amp; App Ortak Hesap</div>
             </div>
             <div class="trust-badge-card">
               <div class="trust-badge-icon" style="color:var(--pt-terracotta); display:flex; justify-content:center;">
@@ -4128,8 +4336,70 @@
     }
 
     function handleVerifyOtp() {
+      // Eğer bu telefon numarasıyla bulutta (state.members) kayıtlı üye varsa bilgilerini ve damgalarını otomatik getir!
+      const existing = (window.CokertmeStore && typeof CokertmeStore.findMemberByPhone === "function")
+        ? CokertmeStore.findMemberByPhone(tempPhone)
+        : null;
+      if (existing && (existing.fullName || existing.name)) {
+        const g = existing.gender || "Kadın";
+        const mType = existing.moldType || (g === "Kadın" ? "Kalpli Çökertme Kalıbı (Kadın Sunumu)" : "Çember Çökertme Kalıbı (Erkek Sunumu)");
+        appUser = {
+          phone: tempPhone,
+          fullName: existing.fullName || existing.name,
+          gender: g,
+          moldType: mType,
+          address: existing.address || existing.savedAddress || "",
+          kvkkApproved: true
+        };
+        saveAppUser();
+        loginStep = 1;
+        switchTab("home");
+        return;
+      }
       loginStep = 3;
       renderCurrentView();
+    }
+
+    function handleDirectRegister() {
+      const nameVal = (document.getElementById("reg-fullname-input").value || "").trim();
+      const phoneVal = (document.getElementById("reg-phone-input").value || "").trim();
+      const genderRadio = document.querySelector('input[name="reg-gender"]:checked');
+      const genderVal = genderRadio ? genderRadio.value : "";
+      const addrVal = (document.getElementById("reg-address-input").value || "").trim();
+      const kvkk = document.getElementById("reg-kvkk-cb").checked;
+
+      if (!nameVal) {
+        alert("Lütfen Ad Soyad bilginizi girin.");
+        return;
+      }
+      if (!phoneVal || phoneVal.replace(/\D/g, "").length < 10) {
+        alert("Lütfen 10 haneli geçerli bir cep telefonu numarası girin.");
+        return;
+      }
+      if (!genderVal) {
+        alert("Lütfen Çökertme kalıbınızı (Kadın: Kalpli Kalıp / Erkek: Çember Kalıp) belirleyebilmemiz için Cinsiyet seçiminizi yapın.");
+        return;
+      }
+      if (!kvkk) {
+        alert("Lütfen KVKK aydınlatma metnini onaylayın.");
+        return;
+      }
+
+      const moldType = genderVal === "Kadın"
+        ? "Kalpli Çökertme Kalıbı (Kadın Sunumu)"
+        : "Çember Çökertme Kalıbı (Erkek Sunumu)";
+
+      appUser = {
+        phone: phoneVal,
+        fullName: nameVal,
+        gender: genderVal,
+        moldType: moldType,
+        address: addrVal,
+        kvkkApproved: true
+      };
+      saveAppUser();
+      loginStep = 1;
+      switchTab("home");
     }
 
     function handleCompleteProfile() {
@@ -4301,9 +4571,22 @@
     }
 
     // Başlangıç
+    (function initUrlAuthParam() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const authParam = params.get("auth");
+        if (authParam === "login" || authParam === "register") {
+          authMode = authParam;
+          activeTab = "account";
+        }
+      } catch (e) {}
+    })();
     updateCartBadges();
     updateUserHeaderUI();
-    CokertmeStore.syncFromServer().then(renderCurrentView);
+    CokertmeStore.syncFromServer().then(() => {
+      updateUserHeaderUI();
+      renderCurrentView();
+    });
   </script>
 </body>
 </html>

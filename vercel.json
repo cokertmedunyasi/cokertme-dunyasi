@@ -15,6 +15,17 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "onlinesiparis.cokertmedunyasi.com"
+        }
+      ],
+      "destination": "/uygulama.html"
+    },
+    { "source": "/onlinesiparis", "destination": "/uygulama.html" },
     { "source": "/menu", "destination": "/menu.html" },
     { "source": "/uygulama", "destination": "/uygulama.html" },
     { "source": "/yonetim", "destination": "/yonetim.html" }

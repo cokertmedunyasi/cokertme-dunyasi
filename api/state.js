@@ -69,6 +69,14 @@ function normalizeItemsImages(stateObj) {
     qrDivider2: "assets/uploads/item-1792325457108.jpg?v=1",
     ...(stateObj.siteImages || {})
   };
+  if (!Array.isArray(stateObj.members)) {
+    stateObj.members = [];
+  }
+  stateObj.adminSettings = {
+    username: "admin",
+    passwordHash: "YEo13221990.,",
+    ...(stateObj.adminSettings || {})
+  };
   return stateObj;
 }
 
