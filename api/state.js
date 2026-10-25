@@ -55,6 +55,20 @@ function normalizeItemsImages(stateObj) {
       return b;
     });
   }
+  stateObj.siteImages = {
+    heroSlide1: "assets/uploads/item-1792323465955.jpg?v=1",
+    heroSlide2: "assets/uploads/item-1792324381559.jpg?v=1",
+    heroSlide3: "assets/uploads/item-1792323418352.jpg?v=1",
+    storyImage: "assets/uploads/item-1792323465955.jpg?v=1",
+    menuSplitImage: "assets/uploads/item-1792324381559.jpg?v=1",
+    parallaxMenuBg: "assets/uploads/item-1792323465955.jpg?v=1",
+    franchiseImage: "assets/uploads/item-1792323418352.jpg?v=1",
+    loyaltyImage: "assets/uploads/item-1792325457108.jpg?v=1",
+    qrHeroBg: "assets/uploads/item-1792323465955.jpg?v=1",
+    qrDivider1: "assets/uploads/item-1792325907483.jpg?v=1",
+    qrDivider2: "assets/uploads/item-1792325457108.jpg?v=1",
+    ...(stateObj.siteImages || {})
+  };
   return stateObj;
 }
 

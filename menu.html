@@ -262,7 +262,7 @@
       position: relative;
       min-height: 560px;
       background-color: var(--pt-navy);
-      background-image: url("https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1920&q=85");
+      background-image: url("assets/uploads/item-1792323465955.jpg?v=1");
       background-position: center center;
       background-size: cover;
       display: flex;
@@ -916,7 +916,7 @@
   <!-- ========================================================================
        HERO BANNER (PatioTime Demo 4 Menu Hero - min-height: 560px)
        ======================================================================== -->
-  <section class="pt-menu-hero">
+  <section class="pt-menu-hero" id="site-img-qrHeroBg">
     <div class="pt-menu-hero-overlay"></div>
     <div class="pt-menu-hero-content">
       <h1 class="pt-menu-hero-title" id="hero-main-title">ÇÖKERTME MENÜ</h1>
@@ -994,7 +994,7 @@
   <!-- ========================================================================
        PARALLAX GÖRSEL AYIRICI 1 (PatioTime min-height: 560px)
        ======================================================================== -->
-  <div class="pt-parallax-divider" style="background-image:url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1920&q=85');"></div>
+  <div class="pt-parallax-divider" id="site-img-qrDivider1" style="background-image:url('assets/uploads/item-1792325907483.jpg?v=1');"></div>
 
   <!-- ========================================================================
        BÖLÜM 3: EGE & AKDENİZ BAŞLANGIÇLAR VE SALATALAR (2 SÜTUN)
@@ -1011,7 +1011,7 @@
   <!-- ========================================================================
        PARALLAX GÖRSEL AYIRICI 2 (PatioTime min-height: 560px)
        ======================================================================== -->
-  <div class="pt-parallax-divider" style="background-image:url('https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1920&q=85');"></div>
+  <div class="pt-parallax-divider" id="site-img-qrDivider2" style="background-image:url('assets/uploads/item-1792325457108.jpg?v=1');"></div>
 
   <!-- ========================================================================
        BÖLÜM 4: GELENEKSEL TATLILAR & FERAHLATICI İÇECEKLER (2 SÜTUN)
@@ -1124,7 +1124,7 @@
     <div class="pt-modal-card" id="dish-modal-content"></div>
   </div>
 
-  <script src="assets/data.js?v=5"></script>
+  <script src="assets/data.js?v=6"></script>
   <script>
     const DEFAULT_COMPLIMENTARY_SHOWCASE = [
       {
@@ -1299,6 +1299,19 @@
 
     function renderPatioMenu() {
       const state = CokertmeStore.getState();
+      const si = (state && state.siteImages) ? state.siteImages : {};
+      const imgMap = {
+        "site-img-qrHeroBg": si.qrHeroBg,
+        "site-img-qrDivider1": si.qrDivider1,
+        "site-img-qrDivider2": si.qrDivider2
+      };
+      Object.keys(imgMap).forEach(elId => {
+        const val = imgMap[elId];
+        const el = document.getElementById(elId);
+        if (el && val) {
+          el.style.backgroundImage = `url("${val}")`;
+        }
+      });
 
       const cokertmeler = state.items.filter(i => i.categoryId === "cokertmeler" && Number(i.price) > 0 && !i.isComplimentary);
       const customIkramlar = state.items.filter(i => i.categoryId === "ikramlar" || (!i.price || Number(i.price) <= 0));

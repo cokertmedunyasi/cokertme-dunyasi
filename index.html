@@ -560,7 +560,7 @@
        ========================================================================== */
     .pt-parallax-menu {
       min-height: 100vh;
-      background-image: url("https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1800&q=85");
+      background-image: url("assets/uploads/item-1792323465955.jpg?v=1");
       background-size: cover;
       background-position: center center;
       background-attachment: fixed;
@@ -1196,9 +1196,9 @@
        ======================================================================== -->
   <section class="pt-hero">
     <div class="pt-hero-slides">
-      <div class="pt-hero-slide active" style="background-image:url('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1920&q=85');"></div>
-      <div class="pt-hero-slide" style="background-image:url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1920&q=85');"></div>
-      <div class="pt-hero-slide" style="background-image:url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920&q=85');"></div>
+      <div class="pt-hero-slide active" id="site-img-heroSlide1" style="background-image:url('assets/uploads/item-1792323465955.jpg?v=1');"></div>
+      <div class="pt-hero-slide" id="site-img-heroSlide2" style="background-image:url('assets/uploads/item-1792324381559.jpg?v=1');"></div>
+      <div class="pt-hero-slide" id="site-img-heroSlide3" style="background-image:url('assets/uploads/item-1792323418352.jpg?v=1');"></div>
     </div>
     <div class="pt-hero-overlay"></div>
 
@@ -1239,7 +1239,7 @@
        SECTION 3: 50/50 SPLIT — HİKAYEMİZ (Sol Görsel / Sağ Metin)
        ======================================================================== -->
   <section id="hikayemiz" class="pt-split-section bg-mist">
-    <div class="pt-split-image" style="background-image:url('https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=1200&q=85');"></div>
+    <div class="pt-split-image" id="site-img-storyImage" style="background-image:url('assets/uploads/item-1792323465955.jpg?v=1');"></div>
     <div class="pt-split-content">
       <span class="pt-subtitle">ÇÖKERTME DÜNYASI HAKKINDA</span>
       <h2 class="pt-section-title">Hikayemiz</h2>
@@ -1287,7 +1287,7 @@
         </li>
       </ul>
     </div>
-    <div class="pt-split-image" style="background-image:url('https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=1200&q=85');"></div>
+    <div class="pt-split-image" id="site-img-menuSplitImage" style="background-image:url('assets/uploads/item-1792324381559.jpg?v=1');"></div>
   </section>
 
   <!-- ========================================================================
@@ -1349,14 +1349,14 @@
         </li>
       </ul>
     </div>
-    <div class="pt-split-image" style="background-image:url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=85');"></div>
+    <div class="pt-split-image" id="site-img-franchiseImage" style="background-image:url('assets/uploads/item-1792323418352.jpg?v=1');"></div>
   </section>
 
   <!-- ========================================================================
        SECTION 7: 50/50 SPLIT — DENEYİM & SADAKAT PROGRAMI (Sol Görsel / Sağ Metin)
        ======================================================================== -->
   <section class="pt-split-section">
-    <div class="pt-split-image" style="background-image:url('https://images.unsplash.com/photo-1529042410759-befb1204b468?auto=format&fit=crop&w=1200&q=85');"></div>
+    <div class="pt-split-image" id="site-img-loyaltyImage" style="background-image:url('assets/uploads/item-1792325457108.jpg?v=1');"></div>
     <div class="pt-split-content">
       <span class="pt-subtitle">ÇÖKERTME CLUB AYRICALIĞI</span>
       <h2 class="pt-section-title">Deneyim &amp; Sadakat</h2>
@@ -1534,7 +1534,7 @@
     <div class="pt-modal-box" id="home-dish-modal-content" style="max-width:560px; padding:0; overflow:hidden; border-top:4px solid var(--pt-olive);"></div>
   </div>
 
-  <script src="assets/data.js?v=5"></script>
+  <script src="assets/data.js?v=6"></script>
   <script>
     // 1. Sticky Header Scroll Efekti
     window.addEventListener("scroll", () => {
@@ -1717,7 +1717,34 @@
       this.reset();
     });
 
-    CokertmeStore.syncFromServer().then(renderSelectedMenus);
+    function applySiteImages() {
+      const state = CokertmeStore.getState();
+      const si = (state && state.siteImages) ? state.siteImages : {};
+      const map = {
+        "site-img-heroSlide1": si.heroSlide1,
+        "site-img-heroSlide2": si.heroSlide2,
+        "site-img-heroSlide3": si.heroSlide3,
+        "site-img-storyImage": si.storyImage,
+        "site-img-menuSplitImage": si.menuSplitImage,
+        "secilmis-menuler": si.parallaxMenuBg,
+        "site-img-franchiseImage": si.franchiseImage,
+        "site-img-loyaltyImage": si.loyaltyImage
+      };
+      Object.keys(map).forEach(elId => {
+        const val = map[elId];
+        const el = document.getElementById(elId);
+        if (el && val) {
+          el.style.backgroundImage = `url("${val}")`;
+        }
+      });
+    }
+
+    applySiteImages();
+    renderSelectedMenus();
+    CokertmeStore.syncFromServer().then(() => {
+      applySiteImages();
+      renderSelectedMenus();
+    });
   </script>
 </body>
 </html>

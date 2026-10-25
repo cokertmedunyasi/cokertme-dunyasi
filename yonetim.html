@@ -873,7 +873,8 @@
         Buradan değiştirdiğiniz fiyatlar ve stok durumları, masalardaki QR kodları yeniden basmaya gerek kalmadan <strong>À la Carte QR Menüde</strong> ve <strong>%10 İndirimli Mobil Uygulamada</strong> anında güncellenir.
       </p>
       <div style="display:flex; justify-content:center; gap:14px; flex-wrap:wrap;">
-        <a href="menu.html" class="pt-btn-fill">CANLI QR MENÜYÜ GÖRÜNTÜLE →</a>
+        <a href="#site-gorselleri-section" class="pt-btn-fill">WEB SİTESİ GÖRSELLERİNİ YÖNET ↓</a>
+        <a href="menu.html" class="pt-btn-olive">CANLI QR MENÜYÜ GÖRÜNTÜLE →</a>
         <button onclick="resetAllData()" class="pt-btn-outline" style="display:inline-flex; align-items:center; gap:8px;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
           <span>VARSAYILAN VERİLERE SIFIRLA</span>
@@ -1133,6 +1134,54 @@
       </div>
     </section>
 
+    <!-- 2.6. WEB SİTESİ & QR MENÜ BÖLÜM GÖRSELLERİ YÖNETİM PANELİ -->
+    <section class="admin-panel-box no-print" id="site-gorselleri-section">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px; margin-bottom:18px;">
+        <div>
+          <div class="pt-subtitle">ANA SAYFA • HİKAYEMİZ • SEÇİLMİŞ MENÜLER • BAYİLİK • QR MENÜ GÖRSELLERİ</div>
+          <h2 class="pt-title">Web Sitesi Görsel &amp; Banner Yönetimi</h2>
+          <p style="font-size:15px; color:var(--pt-text-muted); margin-top:4px;">
+            Ana sayfa (<a href="index.html" target="_blank" style="color:var(--pt-terracotta); font-weight:700; text-decoration:underline;">cokertmedunyasi.com</a>) ve QR Menü (<a href="menu.html" target="_blank" style="color:var(--pt-olive); font-weight:700; text-decoration:underline;">cokertmedunyasi.com/menu</a>) üzerindeki tüm arka plan, slayt ve yarı ekran bölüm fotoğraflarını buradan değiştirebilirsiniz.
+          </p>
+        </div>
+        <button type="button" class="pt-btn-fill" id="btn-save-all-site-images" onclick="saveAllSiteImages()">
+          ✓ TÜM WEB SİTESİ GÖRSELLERİNİ KAYDET VE YAYINLA
+        </button>
+      </div>
+
+      <!-- Bölüm Bazlı İdeal Görsel Boyutları Rehberi -->
+      <div style="background:#fff; border:1.5px solid var(--pt-gold); padding:18px 22px; margin-bottom:24px;">
+        <div style="font-size:12px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:var(--pt-olive); margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--pt-terracotta)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>HANGİ BÖLÜM İÇİN HANGİ BOYUTTA FOTOĞRAF YÜKLEMELİSİNİZ? (İDEAL ÖLÇÜ REHBERİ)</span>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); gap:12px; font-size:13.5px;">
+          <div style="background:var(--pt-cream); padding:10px 14px; border-left:3px solid var(--pt-terracotta);">
+            <strong style="color:var(--pt-navy); display:block;">1. Ana Sayfa Üst Slaytlar (1, 2, 3) &amp; Parallax:</strong>
+            <span style="color:var(--pt-terracotta); font-weight:700;">1920 × 1080 px (16:9 Yatay - Full HD)</span>
+            <div style="font-size:12px; color:var(--pt-text-muted); margin-top:2px;">Geniş ekranlarda tam ekran göründüğü için yatay çekim olmalıdır.</div>
+          </div>
+          <div style="background:var(--pt-cream); padding:10px 14px; border-left:3px solid var(--pt-olive);">
+            <strong style="color:var(--pt-navy); display:block;">2. Yarı Ekran (50/50) Bölümler:</strong>
+            <span style="color:var(--pt-olive); font-weight:700;">1200 × 900 px (4:3 Yatay / Kareye Yakın)</span>
+            <div style="font-size:12px; color:var(--pt-text-muted); margin-top:2px;">Hikayemiz, Menümüz, Bayilik ve Deneyim bölümlerinin yan görselleri.</div>
+          </div>
+          <div style="background:var(--pt-cream); padding:10px 14px; border-left:3px solid var(--pt-gold);">
+            <strong style="color:var(--pt-navy); display:block;">3. QR Menü Üst Başlık &amp; Ara Geçişler:</strong>
+            <span style="color:#b07a19; font-weight:700;">1920 × 900 px (16:9 Yatay Geniş)</span>
+            <div style="font-size:12px; color:var(--pt-text-muted); margin-top:2px;">QR Menü üst vitrini ve kategoriler arası geniş geçiş bantları.</div>
+          </div>
+          <div style="background:var(--pt-cream); padding:10px 14px; border-left:3px solid var(--pt-navy);">
+            <strong style="color:var(--pt-navy); display:block;">4. Menü Ürün Fotoğrafları (Yemek &amp; İçecek):</strong>
+            <span style="color:var(--pt-navy); font-weight:700;">800 × 800 px (1:1 Kare) veya 800 × 600 px</span>
+            <div style="font-size:12px; color:var(--pt-text-muted); margin-top:2px;">Ürünün tam ortada yer aldığı yakın plan net yemek çekimleri.</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="site-images-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(330px, 1fr)); gap:20px;"></div>
+    </section>
+
     <!-- 2.8. RESPOS ADİSYON API + BEKO YAZARKASA + QNB FİNANSBANK POS + ANINDA KURYE API MERKEZİ -->
     <section class="admin-panel-box no-print" id="integrations-hub-section">
       <div class="pt-subtitle">OTOMATİK ADİSYON • MUTFAK FİŞİ • BEKO ÖKC • QNB BANKA • ANINDA KURYE API</div>
@@ -1337,7 +1386,7 @@
     </div>
   </footer>
 
-  <script src="assets/data.js?v=5"></script>
+  <script src="assets/data.js?v=6"></script>
   <script>
     window.addEventListener("scroll", function () {
       const hdr = document.getElementById("main-header");
@@ -1381,9 +1430,234 @@
 
       renderTableQRCards();
       renderMenuTable(state);
+      renderSiteImagesManager(state);
       renderIntegrationSettings(state);
       renderOrders(state);
       renderFranchise(state);
+    }
+
+    const SITE_IMAGE_SLOTS = [
+      {
+        key: "heroSlide1",
+        pageBadge: "ANA SAYFA",
+        title: "1. Ana Sayfa Üst Manşet — Slayt 1",
+        sizeBadge: "1920 × 1080 px (16:9 Yatay - Full HD)",
+        desc: "Ana sayfa açıldığında ilk görünen tam ekran vitrin fotoğrafı.",
+        defaultUrl: "assets/uploads/item-1792323465955.jpg?v=1"
+      },
+      {
+        key: "heroSlide2",
+        pageBadge: "ANA SAYFA",
+        title: "2. Ana Sayfa Üst Manşet — Slayt 2",
+        sizeBadge: "1920 × 1080 px (16:9 Yatay - Full HD)",
+        desc: "5 saniyede bir otomatik geçiş yapan 2. tam ekran vitrin fotoğrafı.",
+        defaultUrl: "assets/uploads/item-1792324381559.jpg?v=1"
+      },
+      {
+        key: "heroSlide3",
+        pageBadge: "ANA SAYFA",
+        title: "3. Ana Sayfa Üst Manşet — Slayt 3",
+        sizeBadge: "1920 × 1080 px (16:9 Yatay - Full HD)",
+        desc: "5 saniyede bir otomatik geçiş yapan 3. tam ekran vitrin fotoğrafı.",
+        defaultUrl: "assets/uploads/item-1792323418352.jpg?v=1"
+      },
+      {
+        key: "storyImage",
+        pageBadge: "ANA SAYFA",
+        title: "4. 'Hikayemiz' Bölümü (Sol Yarı Görsel)",
+        sizeBadge: "1200 × 900 px (4:3 Yatay / Kareye Yakın)",
+        desc: "Ana sayfadaki Hikayemiz bölümünün sol tarafındaki yarı ekran görsel.",
+        defaultUrl: "assets/uploads/item-1792323465955.jpg?v=1"
+      },
+      {
+        key: "menuSplitImage",
+        pageBadge: "ANA SAYFA",
+        title: "5. 'Menümüz' Bölümü (Sağ Yarı Görsel)",
+        sizeBadge: "1200 × 900 px (4:3 Yatay / Kareye Yakın)",
+        desc: "Ana sayfadaki Menümüz (01, 02, 03) bölümünün sağ tarafındaki yarı ekran görsel.",
+        defaultUrl: "assets/uploads/item-1792324381559.jpg?v=1"
+      },
+      {
+        key: "parallaxMenuBg",
+        pageBadge: "ANA SAYFA",
+        title: "6. 'Seçilmiş Menüler' Arka Planı (Parallax)",
+        sizeBadge: "1920 × 1080 px (16:9 Yatay - Full HD)",
+        desc: "Seçilmiş Menüler kutusunun arkasında sabit duran geniş arka plan fotoğrafı.",
+        defaultUrl: "assets/uploads/item-1792323465955.jpg?v=1"
+      },
+      {
+        key: "franchiseImage",
+        pageBadge: "ANA SAYFA",
+        title: "7. 'Bayilik & Franchise' Bölümü (Sağ Yarı Görsel)",
+        sizeBadge: "1200 × 900 px (4:3 Yatay / Kareye Yakın)",
+        desc: "Bayilik & Franchise tanıtım bölümünün sağ tarafındaki yarı ekran görsel.",
+        defaultUrl: "assets/uploads/item-1792323418352.jpg?v=1"
+      },
+      {
+        key: "loyaltyImage",
+        pageBadge: "ANA SAYFA",
+        title: "8. 'Deneyim & Sadakat' Bölümü (Sol Yarı Görsel)",
+        sizeBadge: "1200 × 900 px (4:3 Yatay / Kareye Yakın)",
+        desc: "Deneyim & Sadakat Programı bölümünün sol tarafındaki yarı ekran görsel.",
+        defaultUrl: "assets/uploads/item-1792325457108.jpg?v=1"
+      },
+      {
+        key: "qrHeroBg",
+        pageBadge: "QR MENÜ",
+        title: "9. QR Menü Üst Başlık Arka Planı",
+        sizeBadge: "1920 × 900 px (16:9 Yatay Geniş)",
+        desc: "menu.html sayfasının en üstündeki 'ÇÖKERTME MENÜ' başlık arka planı.",
+        defaultUrl: "assets/uploads/item-1792323465955.jpg?v=1"
+      },
+      {
+        key: "qrDivider1",
+        pageBadge: "QR MENÜ",
+        title: "10. QR Menü Ara Geçiş Görseli 1 (Salatalar Üstü)",
+        sizeBadge: "1920 × 900 px (16:9 Yatay Geniş)",
+        desc: "QR Menüde Masa İkramları ile Salatalar arasındaki tam genişlikli görsel bant.",
+        defaultUrl: "assets/uploads/item-1792325907483.jpg?v=1"
+      },
+      {
+        key: "qrDivider2",
+        pageBadge: "QR MENÜ",
+        title: "11. QR Menü Ara Geçiş Görseli 2 (Tatlılar Üstü)",
+        sizeBadge: "1920 × 900 px (16:9 Yatay Geniş)",
+        desc: "QR Menüde Salatalar ile Tatlılar & İçecekler arasındaki tam genişlikli görsel bant.",
+        defaultUrl: "assets/uploads/item-1792325457108.jpg?v=1"
+      }
+    ];
+
+    function renderSiteImagesManager(state) {
+      const grid = document.getElementById("site-images-grid");
+      if (!grid) return;
+      const si = (state && state.siteImages) ? state.siteImages : {};
+
+      grid.innerHTML = SITE_IMAGE_SLOTS.map(slot => {
+        const currentUrl = si[slot.key] || slot.defaultUrl;
+        const badgeClass = slot.pageBadge === "ANA SAYFA" ? "pt-badge" : "pt-badge pt-badge-gold";
+        return `
+          <div style="background:#fff; border:1px solid var(--pt-border); border-top:4px solid var(--pt-olive); padding:18px; display:flex; flex-direction:column; justify-content:space-between; gap:12px;">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:6px;">
+                <span class="${badgeClass}" style="font-size:10px;">${slot.pageBadge}</span>
+                <span style="font-size:11px; font-weight:700; color:var(--pt-terracotta); background:#FDF3E7; padding:3px 8px; border-radius:4px;">Ölçü: ${slot.sizeBadge}</span>
+              </div>
+              <strong style="font-family:var(--font-serif); font-size:21px; color:var(--pt-navy); display:block; line-height:1.2; margin-bottom:4px;">${slot.title}</strong>
+              <p style="font-size:12.5px; color:var(--pt-text-muted); margin-bottom:10px;">${slot.desc}</p>
+
+              <!-- Canlı Önizleme -->
+              <div style="position:relative; width:100%; height:155px; background:var(--pt-navy); border:1.5px solid var(--pt-gold); overflow:hidden; margin-bottom:10px;">
+                <img id="site-slot-preview-${slot.key}" src="${currentUrl}" alt="${slot.title}" style="width:100%; height:100%; object-fit:cover; display:block;" />
+              </div>
+
+              <!-- Cihazdan Fotoğraf Seç -->
+              <label style="display:flex; align-items:center; justify-content:center; gap:8px; background:var(--pt-cream); border:1.5px dashed var(--pt-olive); padding:9px 12px; cursor:pointer; font-size:12px; font-weight:700; color:var(--pt-olive); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.06em;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span>Cihazdan Yeni Fotoğraf Yükle</span>
+                <input type="file" accept="image/*" style="display:none;" onchange="handleSiteSlotUpload('${slot.key}', this)" />
+              </label>
+
+              <!-- Hızlı Hazır Ürün Görseli Seçimi -->
+              <div style="display:flex; gap:5px; flex-wrap:wrap; margin-bottom:8px;">
+                <button type="button" onclick="selectSiteSlotPreset('${slot.key}', 'assets/uploads/item-1792323465955.jpg?v=1')" style="font-size:10.5px; padding:3px 7px; border:1px solid var(--pt-border); background:#FAF7F2; cursor:pointer; font-weight:600; color:var(--pt-navy);">Bonfile Çökertme</button>
+                <button type="button" onclick="selectSiteSlotPreset('${slot.key}', 'assets/uploads/item-1792324381559.jpg?v=1')" style="font-size:10.5px; padding:3px 7px; border:1px solid var(--pt-border); background:#FAF7F2; cursor:pointer; font-weight:600; color:var(--pt-navy);">Karides Çökertme</button>
+                <button type="button" onclick="selectSiteSlotPreset('${slot.key}', 'assets/uploads/item-1792323418352.jpg?v=1')" style="font-size:10.5px; padding:3px 7px; border:1px solid var(--pt-border); background:#FAF7F2; cursor:pointer; font-weight:600; color:var(--pt-navy);">Tavuk Çökertme</button>
+                <button type="button" onclick="selectSiteSlotPreset('${slot.key}', 'assets/uploads/item-1792325907483.jpg?v=1')" style="font-size:10.5px; padding:3px 7px; border:1px solid var(--pt-border); background:#FAF7F2; cursor:pointer; font-weight:600; color:var(--pt-navy);">Özel Salata</button>
+                <button type="button" onclick="selectSiteSlotPreset('${slot.key}', 'assets/uploads/item-1792325457108.jpg?v=1')" style="font-size:10.5px; padding:3px 7px; border:1px solid var(--pt-border); background:#FAF7F2; cursor:pointer; font-weight:600; color:var(--pt-navy);">Kabak Tatlısı</button>
+              </div>
+
+              <input type="text" id="site-slot-input-${slot.key}" class="pt-form-input" value="${currentUrl}" placeholder="Görsel URL veya yüklenen veri..." style="font-size:12px; padding:8px 10px;" oninput="document.getElementById('site-slot-preview-${slot.key}').src = this.value" />
+            </div>
+
+            <div style="display:flex; gap:8px;">
+              <button type="button" class="pt-btn-fill" id="btn-save-slot-${slot.key}" style="flex:1; padding:10px 12px; font-size:11.5px;" onclick="saveSingleSiteImage('${slot.key}')">
+                ✓ BU GÖRSELİ KAYDET VE YAYINLA
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function selectSiteSlotPreset(slotKey, url) {
+      const inp = document.getElementById("site-slot-input-" + slotKey);
+      const prev = document.getElementById("site-slot-preview-" + slotKey);
+      if (inp) inp.value = url;
+      if (prev) prev.src = url;
+    }
+
+    function handleSiteSlotUpload(slotKey, inputEl) {
+      const file = inputEl.files && inputEl.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement("canvas");
+          const maxDim = 1280;
+          const biggest = Math.max(img.width, img.height);
+          const scale = biggest > maxDim ? (maxDim / biggest) : 1;
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const dataUrl = canvas.toDataURL("image/jpeg", 0.78);
+          const inp = document.getElementById("site-slot-input-" + slotKey);
+          const prev = document.getElementById("site-slot-preview-" + slotKey);
+          if (inp) inp.value = dataUrl;
+          if (prev) prev.src = dataUrl;
+          saveSingleSiteImage(slotKey, true);
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function saveSingleSiteImage(slotKey, isAutoUpload = false) {
+      const btn = document.getElementById("btn-save-slot-" + slotKey);
+      const origText = btn ? btn.textContent : "";
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "YAYINLANIYOR...";
+      }
+      const state = CokertmeStore.getState();
+      state.siteImages = state.siteImages || {};
+      const inp = document.getElementById("site-slot-input-" + slotKey);
+      if (inp && inp.value.trim()) {
+        state.siteImages[slotKey] = inp.value.trim();
+      }
+      await CokertmeStore.saveState(state);
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "✓ KAYDEDİLDİ VE YAYINLANDI!";
+        setTimeout(() => { btn.textContent = origText; }, 2200);
+      }
+      if (!isAutoUpload) {
+        alert("Seçtiğiniz bölüm görseli başarıyla kaydedildi ve web sitesinde canlıya alındı!");
+      }
+    }
+
+    async function saveAllSiteImages() {
+      const btn = document.getElementById("btn-save-all-site-images");
+      const origText = btn ? btn.textContent : "";
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "TÜM GÖRSELLER YAYINLANIYOR...";
+      }
+      const state = CokertmeStore.getState();
+      state.siteImages = state.siteImages || {};
+      SITE_IMAGE_SLOTS.forEach(slot => {
+        const inp = document.getElementById("site-slot-input-" + slot.key);
+        if (inp && inp.value.trim()) {
+          state.siteImages[slot.key] = inp.value.trim();
+        }
+      });
+      await CokertmeStore.saveState(state);
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = origText;
+      }
+      alert("Tüm web sitesi ve QR menü görselleri kaydedildi ve anında canlıya alındı!");
     }
 
     function saveAppSettings() {
