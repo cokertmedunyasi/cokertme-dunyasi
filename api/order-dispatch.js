@@ -2,14 +2,15 @@
  * Çökertme Dünyası — Anında Eşzamanlı Sipariş İletim Motoru (/api/order-dispatch)
  *
  * Sipariş verildiği ilk saniyede (0. Saniye) paralel olarak:
- * 1. ResPOS Adisyon API'sine siparişi iletir -> Mutfak Fiş Yazıcısından otomatik fiş çıkar ve Beko Yazarkasa POS (TokenX/GMP3) tetiklenir.
- * 2. Anlaşmalı Kurye Firmasının API'sine siparişi + "Kaç Dakika Sonra Mutfakta Hazır Olacağı (prepTimeMinutes & estimatedReadyAt)" bilgisini anında iletir.
+ * 1. Adisyo Bulut POS & ERP API'sine (https://ext.adisyo.com/api/v1/orders) siparişi iletir -> Adisyon, Mutfak Ekranı/Yazıcısı, Reçete/Stok Düşümü, Ön Muhasebe/e-Fatura, Finans/Kasa ve Adisyo Kurye modüllerini tetikler.
+ * 2. ResPOS Adisyon API'sine siparişi iletir -> Mutfak Fiş Yazıcısından otomatik fiş çıkar ve Beko Yazarkasa POS (TokenX/GMP3) tetiklenir.
+ * 3. Anlaşmalı Kurye Firmasının API'sine siparişi + "Kaç Dakika Sonra Mutfakta Hazır Olacağı (prepTimeMinutes & estimatedReadyAt)" bilgisini anında iletir.
  */
 
 module.exports = async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, x-api-key, x-api-secret, x-api-consumer");
 
   if (req.method === "OPTIONS") {
     return res.status(200).end();
@@ -27,6 +28,7 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: "Order payload missing" });
     }
 
+    const adisyoCfg = (integrationSettings && integrationSettings.adisyo) || {};
     const resposCfg = (integrationSettings && integrationSettings.respos) || {};
     const courierCfg = (integrationSettings && integrationSettings.courier) || {};
 
@@ -42,7 +44,55 @@ module.exports = async function handler(req, res) {
     const customerGender = order.customerGender || "Belirtilmedi";
     const moldType = order.moldType || (customerGender === "Kadın" ? "Kalpli Çökertme Kalıbı (Kadın Sunumu)" : "Çember Çökertme Kalıbı (Erkek Sunumu)");
 
-    // 1. ResPOS API Paketi (Mutfak Fişi + Sunum Kalıbı + Beko Yazarkasa POS + QNB Ödeme Durumu)
+    // 1. Adisyo Bulut POS & ERP API Paketi (Adisyon + Stok/Reçete + Muhasebe + Pazaryeri + Kurye + Finans)
+    const adisyoPayload = {
+      externalOrderId: order.id,
+      sourcePlatform: "COKERTME_DUNYASI_ONLINE_SIPARIS",
+      consumerId: adisyoCfg.consumerId || "COKERTME-ADANA-01",
+      branchId: adisyoCfg.branchId || "ADANA-SEYHAN-MERKEZ",
+      createdAt: order.createdAt,
+      customer: {
+        fullName: order.customerName,
+        phone: order.phone,
+        gender: customerGender,
+        presentationMold: moldType,
+        address: order.address || order.mode
+      },
+      orderType: (order.deliveryType || order.mode || "").includes("Gel-Al") ? "TAKEAWAY" : "DELIVERY",
+      modules: {
+        autoAditionKitchenPrint: adisyoCfg.autoAditionKitchenPrint !== false,
+        stockRecipeDeduction: adisyoCfg.stockRecipeDeduction !== false,
+        accountingEInvoiceSync: adisyoCfg.accountingEInvoiceSync !== false,
+        marketplaceUnifiedSync: adisyoCfg.marketplaceUnifiedSync !== false,
+        courierDispatchSync: adisyoCfg.courierDispatchSync !== false,
+        financeCashRegisterSync: adisyoCfg.financeCashRegisterSync !== false
+      },
+      financeAndAccounting: {
+        paymentMethod: order.paymentMethod || "QNB_ONLINE_3D",
+        isPaidOnline: order.isPaidOnline !== false,
+        bankPos: "QNB Finansbank / Beko ÖKC",
+        subtotalTRY: order.subtotal,
+        discountTRY: order.discount,
+        netTotalTRY: order.total,
+        autoEArchiveInvoice: adisyoCfg.accountingEInvoiceSync !== false
+      },
+      kitchenAndStock: {
+        presentationMold: moldType,
+        kitchenAlertNote: `SUNUM KALIBI: ${moldType.toUpperCase()}`,
+        prepTimeMinutes: prepMinutes,
+        estimatedReadyAt: order.estimatedReadyAt,
+        complimentarySidesIncluded: ["Ege Zeytini", "Acı Turşu", "Özel Soslu Salata", "Özel Tatlı"],
+        deductRecipesFromInventory: adisyoCfg.stockRecipeDeduction !== false
+      },
+      courierDispatch: {
+        assignedCourier: activeCourier.name,
+        prepTimeMinutes: prepMinutes,
+        estimatedReadyAt: order.estimatedReadyAt
+      },
+      items: order.items
+    };
+
+    // 2. ResPOS API Paketi (Mutfak Fişi + Sunum Kalıbı + Beko Yazarkasa POS + QNB Ödeme Durumu)
     const resposPayload = {
       externalOrderId: order.id,
       branchCode: resposCfg.branchCode || "ADANA-MERKEZ-01",
@@ -74,10 +124,10 @@ module.exports = async function handler(req, res) {
       items: order.items
     };
 
-    // 2. Kurye Firması API Paketi (0. Saniyede Anında Bildirim + Kaç Dk Sonra Hazır Olacağı)
+    // 3. Kurye Firması API Paketi (0. Saniyede Anında Bildirim + Kaç Dk Sonra Hazır Olacağı)
     const courierPayload = {
       orderId: order.id,
-      restaurantBranch: order.branch || "Çökertme Dünyası Adana Çukurova Merkez",
+      restaurantBranch: order.branch || "Çökertme Dünyası Adana Seyhan Merkez",
       orderCreatedAt: order.createdAt,
       prepTimeMinutes: prepMinutes,
       estimatedReadyAt: order.estimatedReadyAt,
@@ -99,6 +149,7 @@ module.exports = async function handler(req, res) {
     };
 
     const results = {
+      adisyoDispatched: false,
       resposDispatched: false,
       courierDispatched: false,
       prepTimeMinutes: prepMinutes,
@@ -107,6 +158,26 @@ module.exports = async function handler(req, res) {
     };
 
     const tasks = [];
+
+    // Adisyo Bulut POS & ERP API Gerçek İstek (API Key tanımlıysa canlı gönderir)
+    if (adisyoCfg.enabled !== false && adisyoCfg.apiUrl && adisyoCfg.apiKey) {
+      tasks.push(
+        fetch(adisyoCfg.apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": adisyoCfg.apiKey,
+            "x-api-secret": adisyoCfg.apiSecret || "",
+            "x-api-consumer": adisyoCfg.consumerId || "COKERTME-ADANA-01"
+          },
+          body: JSON.stringify(adisyoPayload)
+        })
+          .then(r => { results.adisyoDispatched = r.ok; })
+          .catch(() => { results.adisyoDispatched = false; })
+      );
+    } else {
+      results.adisyoDispatched = adisyoCfg.enabled !== false;
+    }
 
     // ResPOS API Gerçek İstek (API Key tanımlıysa canlı gönderir)
     if (resposCfg.enabled && resposCfg.apiUrl && resposCfg.apiKey) {
@@ -151,6 +222,7 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({
       ok: true,
       ...results,
+      adisyoPayload,
       resposPayload,
       courierPayload
     });

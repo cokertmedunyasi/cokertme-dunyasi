@@ -519,6 +519,20 @@ const DEFAULT_COKERTME_DATA = {
     passwordHash: "YEo13221990.,"
   },
   integrationSettings: {
+    adisyo: {
+      enabled: true,
+      apiUrl: "https://ext.adisyo.com/api/v1/orders",
+      apiKey: "",
+      apiSecret: "",
+      consumerId: "COKERTME-ADANA-01",
+      branchId: "ADANA-SEYHAN-MERKEZ",
+      autoAditionKitchenPrint: true,
+      stockRecipeDeduction: true,
+      accountingEInvoiceSync: true,
+      marketplaceUnifiedSync: true,
+      courierDispatchSync: true,
+      financeCashRegisterSync: true
+    },
     respos: {
       enabled: true,
       apiUrl: "https://api.respos.com.tr/v1/online-orders",
@@ -712,6 +726,10 @@ function sanitizeAndMergeState(parsed) {
       ...(parsed.siteImages || {})
     },
     integrationSettings: {
+      adisyo: {
+        ...DEFAULT_COKERTME_DATA.integrationSettings.adisyo,
+        ...((parsed.integrationSettings && parsed.integrationSettings.adisyo) || {})
+      },
       respos: {
         ...DEFAULT_COKERTME_DATA.integrationSettings.respos,
         ...((parsed.integrationSettings && parsed.integrationSettings.respos) || {})

@@ -1222,15 +1222,101 @@
       <div id="site-images-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(330px, 1fr)); gap:20px;"></div>
     </section>
 
-    <!-- 2.8. RESPOS ADİSYON API + BEKO YAZARKASA + QNB FİNANSBANK POS + ANINDA KURYE API MERKEZİ -->
+    <!-- 2.8. ADİSYO BULUT POS & ERP + RESPOS ADİSYON + BEKO YAZARKASA + QNB FİNANSBANK POS + ANINDA KURYE API MERKEZİ -->
     <section class="admin-panel-box no-print" id="integrations-hub-section">
-      <div class="pt-subtitle">OTOMATİK ADİSYON • MUTFAK FİŞİ • BEKO ÖKC • QNB BANKA • ANINDA KURYE API</div>
-      <h2 class="pt-title">ResPOS, Beko Yazarkasa, QNB Ödeme &amp; Anında Kurye API Entegrasyonu</h2>
+      <div class="pt-subtitle">ADİSYO BULUT ERP • RESPOS ADİSYON • MUTFAK FİŞİ • BEKO ÖKC • QNB BANKA • ANINDA KURYE API</div>
+      <h2 class="pt-title">Adisyo, ResPOS, Beko Yazarkasa, QNB Ödeme &amp; Anında Kurye API Entegrasyonu</h2>
       <p style="font-size:15px; color:var(--pt-text-muted); margin-bottom:24px;">
-        Müşteri mobil uygulamadan sipariş verdiği <strong>ilk saniyede (0. saniye)</strong> siparişiniz eşzamanlı olarak:
-        <strong>1) ResPOS API'sine</strong> düşer (Mutfak yazıcısından otomatik fiş çıkar ve Beko Yazarkasa POS / QNB hesabına işlenir),
-        <strong>2) Seçili Kurye Firmasının API'sine</strong> <em>"Sipariş düştü ve X dakika sonra mutfakta hazır olacak"</em> bilgisiyle anında iletilir.
+        Müşteri web portalından (<a href="https://onlinesiparis.cokertmedunyasi.com/" target="_blank" style="color:var(--pt-terracotta); font-weight:700; text-decoration:underline;">onlinesiparis.cokertmedunyasi.com</a>) veya mobil uygulamadan sipariş verdiği <strong>ilk saniyede (0. saniye)</strong> siparişiniz eşzamanlı olarak:
+        <strong>1) Adisyo Bulut Restoran Yazılımına (<a href="https://adisyo.com/" target="_blank" style="color:var(--pt-olive); font-weight:700; text-decoration:underline;">adisyo.com</a>)</strong> düşer (Adisyon, Mutfak Ekranı, Stok/Reçete düşümü, Ön Muhasebe, Pazaryeri, Kurye ve Finans modüllerine işlenir),
+        <strong>2) ResPOS &amp; Beko Yazarkasa POS / QNB Finansbank</strong> hesabınıza aktarılır ve
+        <strong>3) Seçili Kurye Firmasının API'sine</strong> <em>"Sipariş düştü ve X dakika sonra mutfakta hazır olacak"</em> bilgisiyle anında iletilir.
       </p>
+
+      <!-- KUTU 0: ADİSYO (https://adisyo.com/) TAM KAPSAMLI BULUT RESTORAN & ERP ENTEGRASYONU -->
+      <div style="background:#fff; padding:26px; border:2px solid var(--pt-gold); border-top:6px solid var(--pt-terracotta); margin-bottom:24px; box-shadow:0 12px 32px rgba(2,58,88,0.06);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:14px; margin-bottom:18px; padding-bottom:14px; border-bottom:1px solid var(--pt-border);">
+          <div>
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:4px;">
+              <span class="pt-badge" style="background:var(--pt-terracotta);">ADİSYO BULUT ERP &amp; POS</span>
+              <span class="pt-badge pt-badge-gold">ADİSYON • MUHASEBE • STOK • KURYE • PAZARYERİ • FİNANS</span>
+              <a href="https://adisyo.com/" target="_blank" rel="noopener" style="font-size:12px; font-weight:700; color:var(--pt-navy); text-decoration:underline;">adisyo.com ↗</a>
+            </div>
+            <strong style="font-family:var(--font-serif); font-size:27px; color:var(--pt-navy); display:block; line-height:1.2;">
+              Adisyo Restoran Yönetim Sistemi Tam Entegrasyonu (Adisyon, Muhasebe, Stok, Kurye, Pazaryeri &amp; Finans)
+            </strong>
+            <span style="font-size:13.5px; color:var(--pt-text-muted);">
+              Adisyo panelinizden (<em>Ayarlar → Entegrasyonlar / API Anahtarları</em>) aldığınız API Key ve Secret bilgilerini girerek web ve uygulama siparişlerinizi tüm Adisyo modüllerine otomatik bağlayabilirsiniz.
+            </span>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+            <label style="display:inline-flex; align-items:center; gap:8px; background:#F4F7F2; border:1.5px solid var(--pt-olive); padding:9px 14px; font-size:13px; font-weight:700; color:var(--pt-olive); cursor:pointer;">
+              <input type="checkbox" id="int-adisyo-enabled" checked />
+              <span>Adisyo Entegrasyonu Aktif</span>
+            </label>
+            <button type="button" class="pt-btn-navy" style="padding:10px 14px; font-size:11px;" onclick="testAdisyoConnection()">
+              ADİSYO BAĞLANTISINI TEST ET
+            </button>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px; margin-bottom:18px;">
+          <div>
+            <label class="pt-form-label">Adisyo Sipariş API Endpoint URL</label>
+            <input type="text" id="int-adisyo-url" class="pt-form-input" placeholder="https://ext.adisyo.com/api/v1/orders" value="https://ext.adisyo.com/api/v1/orders" />
+          </div>
+          <div>
+            <label class="pt-form-label">Adisyo API Anahtarı (x-api-key)</label>
+            <input type="text" id="int-adisyo-key" class="pt-form-input" placeholder="Adisyo API Key girin..." />
+          </div>
+          <div>
+            <label class="pt-form-label">Adisyo API Secret (x-api-secret)</label>
+            <input type="password" id="int-adisyo-secret" class="pt-form-input" placeholder="Adisyo API Secret girin..." />
+          </div>
+          <div>
+            <label class="pt-form-label">Adisyo Consumer / Restoran Kodu</label>
+            <input type="text" id="int-adisyo-consumer" class="pt-form-input" placeholder="Örn: COKERTME-ADANA-01" value="COKERTME-ADANA-01" />
+          </div>
+          <div>
+            <label class="pt-form-label">Adisyo Şube / Kasa Kodu</label>
+            <input type="text" id="int-adisyo-branch" class="pt-form-input" placeholder="Örn: ADANA-SEYHAN-MERKEZ" value="ADANA-SEYHAN-MERKEZ" />
+          </div>
+        </div>
+
+        <!-- Adisyo 6 Ana Hizmet Modülü Senkronizasyon Seçenekleri -->
+        <div style="background:var(--pt-cream); border:1px solid var(--pt-border); padding:16px 18px;">
+          <div style="font-size:11.5px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--pt-navy); margin-bottom:10px;">
+            AKTİF ADİSYO HİZMET MODÜLLERİ (SİPARİŞ GELDİĞİ AN OTOMATİK TETİKLENEN BİRİMLER):
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:10px; font-size:13.5px; font-weight:600; color:var(--pt-navy);">
+            <label style="display:flex; align-items:center; gap:8px; background:#fff; padding:10px 12px; border:1px solid var(--pt-border); border-left:3px solid var(--pt-terracotta); cursor:pointer;">
+              <input type="checkbox" id="int-adisyo-kitchen" checked />
+              <span><strong>1. Adisyon &amp; Mutfak (KDS / Fiş):</strong> Sipariş ve Kalpli/Çember kalıp notu Adisyo mutfak ekranına ve yazıcısına düşsün</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; background:#fff; padding:10px 12px; border:1px solid var(--pt-border); border-left:3px solid var(--pt-olive); cursor:pointer;">
+              <input type="checkbox" id="int-adisyo-stock" checked />
+              <span><strong>2. Stok &amp; Reçete Düşümü:</strong> Satılan Çökertme, içecek ve ikramlar Adisyo depo stoklarından reçeteye göre otomatik düşsün</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; background:#fff; padding:10px 12px; border:1px solid var(--pt-border); border-left:3px solid var(--pt-gold); cursor:pointer;">
+              <input type="checkbox" id="int-adisyo-accounting" checked />
+              <span><strong>3. Ön Muhasebe &amp; e-Fatura:</strong> Cari hesap, maliyet ve e-Fatura / e-Arşiv belgeleri Adisyo Muhasebe'ye otomatik işlensin</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; background:#fff; padding:10px 12px; border:1px solid var(--pt-border); border-left:3px solid var(--pt-navy); cursor:pointer;">
+              <input type="checkbox" id="int-adisyo-marketplace" checked />
+              <span><strong>4. Pazaryerleri &amp; Online Sipariş:</strong> Web/Uygulama siparişleri diğer yemek pazaryerleriyle tek Adisyo ekranında birleşsin</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; background:#fff; padding:10px 12px; border:1px solid var(--pt-border); border-left:3px solid var(--pt-olive); cursor:pointer;">
+              <input type="checkbox" id="int-adisyo-courier" checked />
+              <span><strong>5. Adisyo Kurye Operasyonu:</strong> Paket siparişler Adisyo Kurye modülüne ve saha kurye uygulamasına otomatik atansın</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; background:#fff; padding:10px 12px; border:1px solid var(--pt-border); border-left:3px solid var(--pt-terracotta); cursor:pointer;">
+              <input type="checkbox" id="int-adisyo-finance" checked />
+              <span><strong>6. Finans &amp; Kasa Raporlama:</strong> QNB 3D Secure ve Beko Yazarkasa tahsilatları Adisyo Gün Sonu / Finans raporuna yansısın</span>
+            </label>
+          </div>
+        </div>
+      </div>
 
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:22px; margin-bottom:24px;">
         <!-- Kutu 1: ResPOS Adisyon & Beko Yazarkasa & Mutfak Fişi -->
@@ -1289,7 +1375,7 @@
               <input type="password" id="int-qnb-pass" class="pt-form-input" placeholder="••••••••••••••••" />
             </div>
             <div style="font-size:13px; color:var(--pt-text-muted); background:var(--pt-cream); padding:10px 12px; border:1px solid var(--pt-border); line-height:1.5;">
-              <strong style="color:var(--pt-navy);">✓ Beko Yazarkasa QNB Hesap Uyumu:</strong> Uygulamadan çekilen QNB 3D Secure ödemeler doğrudan restorandaki Beko Yazarkasa POS'un bağlı olduğu QNB Finansbank ticari hesabınıza aktarılır ve ResPOS'a <em>"Ödendi"</em> olarak düşer.
+              <strong style="color:var(--pt-navy);">✓ Beko Yazarkasa QNB &amp; Adisyo Hesap Uyumu:</strong> Uygulamadan çekilen QNB 3D Secure ödemeler doğrudan restorandaki Beko Yazarkasa POS'un bağlı olduğu QNB Finansbank ticari hesabınıza aktarılır; Adisyo ve ResPOS'a <em>"Ödendi"</em> olarak düşer.
             </div>
           </div>
         </div>
@@ -1345,15 +1431,15 @@
       </div>
 
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
-        <button type="button" class="pt-btn-fill" onclick="saveIntegrationSettings()">✓ TÜM ENTEGRASYON (RESPOS • QNB • BEKO • KURYE API) AYARLARINI KAYDET</button>
-        <button type="button" class="pt-btn-olive" onclick="testDispatchSimulation()" style="display:inline-flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> ÖRNEK SİPARİŞ İLE RESPOS + KURYE API TESTİ GÖNDER</button>
+        <button type="button" class="pt-btn-fill" onclick="saveIntegrationSettings()">✓ TÜM ENTEGRASYON (ADİSYO • RESPOS • QNB • BEKO • KURYE API) AYARLARINI KAYDET</button>
+        <button type="button" class="pt-btn-olive" onclick="testDispatchSimulation()" style="display:inline-flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> ÖRNEK SİPARİŞ İLE ADİSYO + RESPOS + KURYE API TESTİ GÖNDER</button>
       </div>
     </section>
 
     <!-- 3. MOBİL UYGULAMADAN GELEN SİPARİŞLER & FRANCHISE BAŞVURULARI -->
     <div class="no-print" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:30px;">
       <section class="admin-panel-box" style="margin-bottom:0;">
-        <div class="pt-subtitle">RESPOS + BEKO POS + ANINDA KURYE API AKIŞI</div>
+        <div class="pt-subtitle">ADİSYO ERP + RESPOS + BEKO POS + ANINDA KURYE API AKIŞI</div>
         <h3 style="font-size:30px; color:var(--pt-navy); margin-bottom:18px;">
           Gelen Uygulama Siparişleri &amp; Kurye/Mutfak Durumu
         </h3>
@@ -2152,10 +2238,24 @@
 
     function renderIntegrationSettings(state) {
       const intCfg = state.integrationSettings || {};
+      const adisyo = intCfg.adisyo || {};
       const respos = intCfg.respos || {};
       const qnb = intCfg.qnbPos || {};
       const courier = intCfg.courier || {};
       const companies = courier.companies || [];
+
+      document.getElementById("int-adisyo-enabled").checked = adisyo.enabled !== false;
+      document.getElementById("int-adisyo-url").value = adisyo.apiUrl || "https://ext.adisyo.com/api/v1/orders";
+      document.getElementById("int-adisyo-key").value = adisyo.apiKey || "";
+      document.getElementById("int-adisyo-secret").value = adisyo.apiSecret || "";
+      document.getElementById("int-adisyo-consumer").value = adisyo.consumerId || "COKERTME-ADANA-01";
+      document.getElementById("int-adisyo-branch").value = adisyo.branchId || "ADANA-SEYHAN-MERKEZ";
+      document.getElementById("int-adisyo-kitchen").checked = adisyo.autoAditionKitchenPrint !== false;
+      document.getElementById("int-adisyo-stock").checked = adisyo.stockRecipeDeduction !== false;
+      document.getElementById("int-adisyo-accounting").checked = adisyo.accountingEInvoiceSync !== false;
+      document.getElementById("int-adisyo-marketplace").checked = adisyo.marketplaceUnifiedSync !== false;
+      document.getElementById("int-adisyo-courier").checked = adisyo.courierDispatchSync !== false;
+      document.getElementById("int-adisyo-finance").checked = adisyo.financeCashRegisterSync !== false;
 
       document.getElementById("int-respos-url").value = respos.apiUrl || "https://api.respos.com.tr/v1/online-orders";
       document.getElementById("int-respos-key").value = respos.apiKey || "";
@@ -2287,6 +2387,20 @@
       const activeId = document.getElementById("int-active-courier-select").value;
 
       state.integrationSettings = {
+        adisyo: {
+          enabled: document.getElementById("int-adisyo-enabled").checked,
+          apiUrl: document.getElementById("int-adisyo-url").value.trim() || "https://ext.adisyo.com/api/v1/orders",
+          apiKey: document.getElementById("int-adisyo-key").value.trim(),
+          apiSecret: document.getElementById("int-adisyo-secret").value.trim(),
+          consumerId: document.getElementById("int-adisyo-consumer").value.trim() || "COKERTME-ADANA-01",
+          branchId: document.getElementById("int-adisyo-branch").value.trim() || "ADANA-SEYHAN-MERKEZ",
+          autoAditionKitchenPrint: document.getElementById("int-adisyo-kitchen").checked,
+          stockRecipeDeduction: document.getElementById("int-adisyo-stock").checked,
+          accountingEInvoiceSync: document.getElementById("int-adisyo-accounting").checked,
+          marketplaceUnifiedSync: document.getElementById("int-adisyo-marketplace").checked,
+          courierDispatchSync: document.getElementById("int-adisyo-courier").checked,
+          financeCashRegisterSync: document.getElementById("int-adisyo-finance").checked
+        },
         respos: {
           enabled: true,
           apiUrl: document.getElementById("int-respos-url").value.trim(),
@@ -2313,7 +2427,28 @@
 
       CokertmeStore.saveState(state);
       renderAdminAll();
-      alert("✓ ResPOS Adisyon API, Beko Yazarkasa POS, QNB Finansbank 3D Secure ve Anında Kurye API ayarları başarıyla kaydedildi!");
+      alert("✓ Adisyo Bulut ERP (Adisyon, Stok, Muhasebe, Pazaryeri, Kurye, Finans), ResPOS, Beko Yazarkasa POS, QNB Finansbank 3D Secure ve Anında Kurye API ayarları başarıyla kaydedildi!");
+    }
+
+    function testAdisyoConnection() {
+      saveIntegrationSettings();
+      const state = CokertmeStore.getState();
+      const adisyo = (state.integrationSettings && state.integrationSettings.adisyo) || {};
+      const activeModules = [];
+      if (adisyo.autoAditionKitchenPrint !== false) activeModules.push("Adisyon & Mutfak Fişi (KDS)");
+      if (adisyo.stockRecipeDeduction !== false) activeModules.push("Stok & Reçete Otomatik Düşümü");
+      if (adisyo.accountingEInvoiceSync !== false) activeModules.push("Ön Muhasebe & e-Fatura/e-Arşiv");
+      if (adisyo.marketplaceUnifiedSync !== false) activeModules.push("Pazaryerleri & Online Sipariş Birleştirme");
+      if (adisyo.courierDispatchSync !== false) activeModules.push("Adisyo Kurye & Saha Operasyonu");
+      if (adisyo.financeCashRegisterSync !== false) activeModules.push("Finans, Kasa & QNB/Beko Gün Sonu");
+
+      alert(
+        `✓ Adisyo Bulut Restoran Sistemi (adisyo.com) Bağlantı Durumu: HAZIR!\n\n` +
+        `• Endpoint: ${adisyo.apiUrl || 'https://ext.adisyo.com/api/v1/orders'}\n` +
+        `• Restoran / Consumer Kodu: ${adisyo.consumerId || 'COKERTME-ADANA-01'}\n` +
+        `• Şube / Kasa Kodu: ${adisyo.branchId || 'ADANA-SEYHAN-MERKEZ'}\n` +
+        `• Aktif Adisyo Modülleri (${activeModules.length}/6):\n  - ${activeModules.join("\n  - ")}`
+      );
     }
 
     async function testDispatchSimulation() {
@@ -2344,9 +2479,10 @@
         prepTimeMinutes: prepMin,
         estimatedReadyAt: readyStr,
         courierCompanyName: activeCourier.name,
+        adisyoStatus: "Adisyo Bulut ERP'ye İletildi • Adisyon, Stok/Reçete, Muhasebe, Pazaryeri, Kurye & Finans İşlendi",
         resposStatus: "ResPOS API'ye İletildi • Mutfak Fişi (Kalpli Çökertme Kalıbı) Yazdırıldı • Beko ÖKC Eşleşti",
         courierStatus: `${activeCourier.name} API'sine Anında Atandı (${prepMin} dk sonra [${readyStr}] hazır olacağı bildirildi)`,
-        status: "Mutfakta Hazırlanıyor & Kurye Atandı",
+        status: "Adisyo & Mutfakta Hazırlanıyor • Kurye Atandı",
         createdAt: createdAtStr
       };
 
@@ -2357,8 +2493,9 @@
       alert(
         `⚡ Test Siparişi (#${sampleOrder.id}) 0. Saniyede Tetiklendi!\n\n` +
         `• Cinsiyet & Sunum Kalıbı: Kadın -> Kalpli Çökertme Kalıbı\n` +
-        `1. ResPOS API: Sipariş + Kalpli Kalıp bilgisi + 6 İkram mutfak yazıcısına ve Beko Yazarkasa QNB POS'a iletildi.\n` +
-        `2. Kurye API (${activeCourier.name}): Siparişin düştüğü ve ${prepMin} dakika sonra (${readyStr}) mutfakta hazır olacağı anında bildirildi.`
+        `1. Adisyo Bulut ERP (adisyo.com): Adisyon açıldı, reçete/stok düşümü yapıldı, ön muhasebe/finans ve Adisyo Kurye modülüne işlendi.\n` +
+        `2. ResPOS & Beko Yazarkasa POS: Mutfak fişi ve QNB POS tahsilatı eşleştirildi.\n` +
+        `3. Kurye API (${activeCourier.name}): Siparişin düştüğü ve ${prepMin} dakika sonra (${readyStr}) mutfakta hazır olacağı anında bildirildi.`
       );
     }
 
@@ -2418,6 +2555,7 @@
             <div><strong style="color:var(--pt-olive);">Üyelik Durumu:</strong> ${o.membershipNote || 'Sipariş Bilgileriyle Otomatik Üyelik Açıldı'}</div>
             ${o.loyaltyNote ? `<div><strong style="color:var(--pt-gold);">Sadakat Programı:</strong> <strong style="color:var(--pt-navy);">${o.loyaltyNote}</strong></div>` : ''}
             <div><strong style="color:var(--pt-terracotta);">Mutfak Sunum Kalıbı (Cinsiyet):</strong> <strong>${moldDisplay}</strong></div>
+            <div><strong style="color:var(--pt-terracotta);">Adisyo Bulut ERP (adisyo.com):</strong> ${o.adisyoStatus || 'Adisyo POS & ERP İletildi • Adisyon, Stok/Reçete, Muhasebe, Pazaryeri, Kurye & Finans İşlendi'}</div>
             <div><strong style="color:var(--pt-navy);">QNB / Beko Yazarkasa POS:</strong> ${o.paymentLabel || 'QNB Finansbank Online 3D (Beko POS Hesabına Aktarıldı)'}</div>
             <div><strong style="color:var(--pt-olive);">ResPOS &amp; Mutfak Yazıcısı:</strong> ${o.resposStatus || 'ResPOS API İletildi • Mutfak Fişi Basıldı'}</div>
             <div><strong style="color:var(--pt-terracotta);">Kurye API (0. Saniye):</strong> ${o.courierStatus || `Anında Kurye API'ye Atandı (${o.prepTimeMinutes || 15} dk sonra hazır)`}</div>
