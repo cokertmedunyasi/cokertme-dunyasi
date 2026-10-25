@@ -1,9 +1,18 @@
 /**
- * ÇÖKERTME DÜNYASI - Merkezi Veri ve Durum Yönetimi (Multi-Tenant & Çoklu Dil/Para Birimi)
- * Hem yerel sunucu (API) hem de tarayıcı (localStorage) ile çift yönlü senkronize çalışır.
+ * ÇÖKERTME DÜNYASI - Merkezi Veri ve Durum Yönetimi
+ * Hem bulut sunucu (/api/state) hem de tarayıcı (localStorage) ile çift yönlü senkronize çalışır.
+ * Tüm telefonlarda, tarayıcılarda ve cihazlarda aynı güncel menüyü garanti eder.
  */
 
+const LEGACY_DEMO_ITEM_IDS = new Set([
+  "item-1", "item-2", "item-3", "item-4", "item-5",
+  "item-6", "item-7", "item-8", "item-9", "item-10",
+  "item-11", "item-12", "item-13", "item-14"
+]);
+
 const DEFAULT_COKERTME_DATA = {
+  schemaVersion: 3,
+  updatedAt: 1792943500000,
   brand: {
     name: "Çökertme Dünyası",
     slogan: "Muğla'nın Efsanesi, Adana'dan Dünyaya",
@@ -21,54 +30,42 @@ const DEFAULT_COKERTME_DATA = {
   categories: [
     {
       id: "cokertmeler",
-      icon: "🥘",
+      icon: "",
       name: {
-        tr: "İmza Çökertme Kebapları",
-        en: "Signature Çökertme Kebabs",
-        de: "Signature Çökertme Kebabs",
-        ar: "كباب تشوكيرتمي المميز"
+        tr: "İmza Çökertme Kebapları"
       }
     },
     {
       id: "baslangiclar",
-      icon: "🫒",
+      icon: "",
       name: {
-        tr: "Ege & Akdeniz Başlangıçlar",
-        en: "Aegean & Med Starters",
-        de: "Ägäische Vorspeisen",
-        ar: "مقبلات بحر إيجة والمتوسط"
+        tr: "Ege & Akdeniz Başlangıçlar"
       }
     },
     {
       id: "salatalar",
-      icon: "🥗",
+      icon: "",
       name: {
-        tr: "Ferah Salatalar & Mezeler",
-        en: "Fresh Salads & Mezes",
-        de: "Frische Salate & Meze",
-        ar: "سلطات ومقبلات طازجة"
+        tr: "Ferah Salatalar & Mezeler"
       }
     },
     {
       id: "tatlilar",
-      icon: "🍯",
+      icon: "",
       name: {
-        tr: "Geleneksel Tatlılar",
-        en: "Traditional Desserts",
-        de: "Traditionelle Desserts",
-        ar: "حلويات تقليدية"
+        tr: "Geleneksel Tatlılar"
       }
     },
     {
       id: "icecekler",
-      icon: "🍋",
+      icon: "",
       name: {
         tr: "Ferahlatıcı İçecekler"
       }
     },
     {
       id: "ikramlar",
-      icon: "🎁",
+      icon: "",
       name: {
         tr: "Masa İkramlarımız"
       }
@@ -76,312 +73,340 @@ const DEFAULT_COKERTME_DATA = {
   ],
   items: [
     {
-      id: "item-1",
+      id: "item-1792324381559",
       categoryId: "cokertmeler",
-      name: {
-        tr: "Bodrum Klasik Dana Bonfile Çökertme",
-        en: "Bodrum Classic Beef Tenderloin Çökertme",
-        de: "Bodrum Klassik Rinderfilet Çökertme",
-        ar: "تشوكيرتمي لحم بقري كلاسيك على طريقة بودروم"
-      },
-      desc: {
-        tr: "Altında altın sarısı çıtır kibrit patates, süzme yoğurt, kekik ve zeytinyağı ile marine edilmiş jülyen dana bonfile, üzerinde halis tereyağlı köz domates sosu.",
-        en: "Crispy matchstick potatoes topped with strained garlic yogurt, olive-oil marinated beef tenderloin strips, and sizzling butter tomato sauce.",
-        de: "Knusprige Streichholz-Kartoffeln mit Joghurt, mariniertem Rinderfilet und heißer Tomaten-Butter-Sauce.",
-        ar: "بطاطس مقرمشة مع لبن زبادي، شرائح لحم بقري متبلة بزيت الزيتون وصلصة الطماطم بالزبدة."
-      },
-      price: 440,
-      calories: "720 kcal",
-      prepTime: "14 dk",
-      badges: ["Şefin İmza Tabağı", "En Çok Satan"],
+      name: { tr: "KARİDES ÇÖKERTME" },
+      desc: { tr: "Bodrum’un imza lezzetine ferah bir deniz esintisi: Altın sarısı çıtır kibrit patateslerin üzerinde ipeksi yoğurt" },
+      price: 590,
+      isComplimentary: false,
+      sides: ["Ege Zeytini", "Acı Turşu", "Özel Soslu Salata", "Özel Tatlı", "Demleme Çay", "Türk Kahvesi"],
+      calories: "680 kcal",
+      prepTime: "12 dk",
+      badges: ["Yeni Lezzet"],
       available: true,
       image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
     },
     {
-      id: "item-2",
+      id: "item-1792323465955",
       categoryId: "cokertmeler",
-      name: {
-        tr: "Adana Ateşi Acılı Bonfile Çökertme",
-        en: "Adana Fire Spicy Tenderloin Çökertme",
-        de: "Adana Feuer Pikantes Rinderfilet Çökertme",
-        ar: "تشوكيرتمي أضنة الحار بلحم الفيليه"
-      },
-      desc: {
-        tr: "Muğla ile Adana'nın muhteşem buluşması! Çıtır kibrit patates ve sarımsaklı süzme yoğurt üzerinde közlenmiş kapya biberli, hafif acılı zırh soslu dana bonfile.",
-        en: "Where Muğla meets Adana! Crispy matchstick potatoes and yogurt topped with spicy roasted red pepper & tenderloin.",
-        de: "Wo Muğla auf Adana trifft! Knusprige Kartoffeln und Joghurt mit pikantem Rinderfilet und gerösteter Paprika.",
-        ar: "لقاء موغلا وأضنة! بطاطس مقرمشة ولبن مع لحم بقري متبل بالفلفل الأحمر المشوي الحار."
-      },
-      price: 460,
-      calories: "750 kcal",
-      prepTime: "15 dk",
-      badges: ["Adana Özel", "Hafif Acılı 🌶️"],
-      available: true,
-      image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      id: "item-3",
-      categoryId: "cokertmeler",
-      name: {
-        tr: "Ege Zeytinyağlı & Dağ Kekikli Tavuk Çökertme",
-        en: "Aegean Olive Oil & Thyme Chicken Çökertme",
-        de: "Ägäis Olivenöl & Thymian Hähnchen Çökertme",
-        ar: "تشوكيرتمي الدجاج بزيت الزيتون والزعتر البري"
-      },
-      desc: {
-        tr: "Soğuk sıkım Milas zeytinyağı ve dağ kekiği ile dinlendirilmiş ızgara tavuk bonfile dilimleri, çıtır kibrit patates, süzme yoğurt ve fesleğenli domates sos.",
-        en: "Grilled chicken tenderloin marinated in cold-pressed Milas olive oil and mountain thyme over crispy potatoes and yogurt.",
-        de: "Gegrilltes Hähnchenfilet in kaltgepresstem Olivenöl und Bergthymian auf knusprigen Kartoffeln und Joghurt.",
-        ar: "شرائح دجاج مشوية متبلة بزيت زيتون ميلاس والزعتر الجبلي فوق البطاطس المقرمشة واللبن."
-      },
-      price: 330,
-      calories: "590 kcal",
-      prepTime: "12 dk",
-      badges: ["Ferah & Hafif", "Popüler"],
-      available: true,
-      image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      id: "item-4",
-      categoryId: "cokertmeler",
-      name: {
-        tr: "Gurme Kasap Köfteli Çökertme",
-        en: "Gourmet Butcher Meatball Çökertme",
-        de: "Gourmet Köfte Çökertme",
-        ar: "تشوكيرتمي كفتة الجزار الفاخرة"
-      },
-      desc: {
-        tr: "Odun ateşinde ızgara edilmiş özel baharatlı dana-kuzu kasap köfteleri, altında altın sarısı çıtır patates yatağı, süzme yoğurt ve köpüklü tereyağı.",
-        en: "Charcoal-grilled artisan butcher meatballs served over golden crispy matchstick potatoes, strained yogurt, and browned butter.",
-        de: "Holzkohlegegrillte Köfte auf goldenen knusprigen Kartoffeln, Joghurt und gebräunter Butter.",
-        ar: "كفتة مشوية على الفحم تقدم فوق البطاطس المقرمشة الذهبية واللبن والزبدة."
-      },
-      price: 380,
+      name: { tr: "BONFİLE ÇÖKERTME" },
+      desc: { tr: "Döküm tavada mühürlenmiş lokum kıvamında marine dana bonfile şeritleri; altın sarısı çıtır kibrit patatesler, ipeksi yoğurt" },
+      price: 790,
+      isComplimentary: false,
+      sides: ["Ege Zeytini", "Acı Turşu", "Özel Soslu Salata", "Özel Tatlı", "Demleme Çay", "Türk Kahvesi"],
       calories: "680 kcal",
-      prepTime: "14 dk",
-      badges: ["Çocukların Favorisi"],
+      prepTime: "12 dk",
+      badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1529042410759-befb1204b468?auto=format&fit=crop&w=900&q=80"
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
     },
     {
-      id: "item-5",
+      id: "item-1792323418352",
       categoryId: "cokertmeler",
-      name: {
-        tr: "Çökertme Dünyası Duble Karışık Sultan Tabağı",
-        en: "Çökertme World Double Mixed Royal Platter",
-        de: "Çökertme Welt Doppel-Mix Platte",
-        ar: "طبق عالم تشوكيرتمي الملكي المشكل دبل"
-      },
-      desc: {
-        tr: "Hem jülyen dana bonfile, hem ızgara kasap köfte, hem de kekikli tavuk dilimleri! Bol çıtır patates, manda süzme yoğurdu, köz biber ve domates ile.",
-        en: "The ultimate feast combining beef tenderloin, butcher meatballs, and thyme chicken over extra crispy potatoes and buffalo yogurt.",
-        de: "Rinderfilet, Köfte und Thymian-Hähnchen kombiniert auf extra knusprigen Kartoffeln und Joghurt.",
-        ar: "مزيج رائع من لحم الفيليه والكفتة والدجاج بالزعتر فوق البطاطس المقرمشة واللبن."
-      },
-      price: 560,
-      calories: "940 kcal",
-      prepTime: "16 dk",
-      badges: ["Duble Porsiyon", "Gurme Seçim"],
+      name: { tr: "TAVUK ÇÖKERTME" },
+      desc: { tr: "Özel baharatlar ve marinasyonlu lokum gibi yumuşatılmış jülyen tavuk dilimleri; altın sarısı çıtır kibrit patatesler, ipeksi yoğurt" },
+      price: 435,
+      isComplimentary: false,
+      sides: ["Ege Zeytini", "Acı Turşu", "Özel Soslu Salata", "Özel Tatlı", "Demleme Çay", "Türk Kahvesi"],
+      calories: "680 kcal",
+      prepTime: "12 dk",
+      badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=900&q=80"
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
     },
     {
-      id: "item-6",
-      categoryId: "baslangiclar",
-      name: {
-        tr: "Bodrum Usulü Zeytinyağlı Kabak Çiçeği Dolması",
-        en: "Bodrum Style Stuffed Zucchini Blossoms",
-        de: "Gefüllte Zucchiniblüten nach Bodrum-Art",
-        ar: "محشي زهور الكوسا بزيت الزيتون على طريقة بودروم"
-      },
-      desc: {
-        tr: "Sabah erken toplanmış taze kabak çiçekleri içerisinde dereotlu, naneli, kuş üzümlü pirinç harcı ve sızma zeytinyağı.",
-        en: "Morning-picked zucchini blossoms stuffed with herbed rice, currants, dill, and extra virgin olive oil.",
-        de: "Frische Zucchiniblüten gefüllt mit Kräuterreis und kaltgepresstem Olivenöl.",
-        ar: "زهور الكوسا الطازجة المحشوة بالأرز والأعشاب وزيت الزيتون البكر."
-      },
-      price: 165,
+      id: "item-1792325907483",
+      categoryId: "salatalar",
+      name: { tr: "Göbek Marul Özel Salata" },
+      desc: { tr: "Göbek Marul Özel Salata" },
+      price: 50,
+      isComplimentary: false,
+      sides: [],
       calories: "240 kcal",
+      prepTime: "6 dk",
+      badges: ["Yeni Lezzet"],
+      available: true,
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      id: "item-1792326012633",
+      categoryId: "salatalar",
+      name: { tr: "Acı Turşu" },
+      desc: { tr: "Acı Turşu" },
+      price: 20,
+      isComplimentary: false,
+      sides: [],
+      calories: "80 kcal",
       prepTime: "5 dk",
-      badges: ["Ege Klasik", "Vejetaryen"],
+      badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=900&q=80"
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
     },
     {
-      id: "item-7",
-      categoryId: "baslangiclar",
-      name: {
-        tr: "Adana Usulü Çıtır İçli Köfte (Adet)",
-        en: "Adana Style Crispy Kibbeh (Per Piece)",
-        de: "Knusprige İçli Köfte nach Adana-Art",
-        ar: "كبة مقلية مقرمشة على طريقة أضنة (للقطعة)"
-      },
-      desc: {
-        tr: "İncecik bulgur dışı, bol cevizli ve zırh kıymalı iç harcıyla sıcak servis edilen geleneksel lezzet.",
-        en: "Thin bulgur shell filled with minced meat, walnuts, and warm spices.",
-        de: "Dünne Bulgurhülle gefüllt mit Hackfleisch, Walnüssen und Gewürzen.",
-        ar: "كبة برغل رقيقة محشوة باللحم المفروم والجوز والتوابل."
-      },
-      price: 85,
-      calories: "210 kcal",
-      prepTime: "6 dk",
-      badges: ["Sıcak Başlangıç"],
-      available: true,
-      image: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      id: "item-8",
-      categoryId: "baslangiclar",
-      name: {
-        tr: "Baharatlı Çıtır Kibrit Patates Sepeti",
-        en: "Spiced Crispy Matchstick Potato Basket",
-        de: "Knuspriger Streichholz-Kartoffelkorb",
-        ar: "سلة البطاطس المقرمشة المتبلة"
-      },
-      desc: {
-        tr: "Çökertme kebabımızın meşhur altın sarısı kibrit patatesleri; kekikli süzme yoğurt dip sos ile.",
-        en: "Our famous golden crispy matchstick potatoes served with a side of thyme strained yogurt dip.",
-        de: "Unsere berühmten goldenen Streichholz-Kartoffeln mit Thymian-Joghurt-Dip.",
-        ar: "بطاطس تشوكيرتمي الذهبية الشهيرة تقدم مع صلصة اللبن بالزعتر."
-      },
-      price: 130,
-      calories: "360 kcal",
-      prepTime: "8 dk",
-      badges: ["Paylaşımlık"],
-      available: true,
-      image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      id: "item-9",
+      id: "item-1792326025883",
       categoryId: "salatalar",
-      name: {
-        tr: "Bergama Tulumlu & Kırma Zeytinli Akdeniz Salatası",
-        en: "Mediterranean Salad with Bergama Tulum Cheese & Olives",
-        de: "Mediterraner Salat mit Tulum-Käse & Oliven",
-        ar: "سلطة البحر المتوسط مع جبنة تولوم والزيتون الأخضر"
-      },
-      desc: {
-        tr: "Yedikule marulu, roka, yeşil kırma zeytin, Bergama tulum peyniri, çeri domates ve nar ekşili sızma zeytinyağı sosu.",
-        en: "Artisan greens, crushed green olives, aged Bergama tulum cheese, cherry tomatoes, and pomegranate olive oil dressing.",
-        de: "Frischer Salat mit grünen Oliven, Tulum-Käse, Kirschtomaten und Granatapfel-Olivenöl-Dressing.",
-        ar: "خضروات طازجة مع الزيتون الأخضر وجبنة تولوم وصلصة دبس الرمان وزيت الزيتون."
-      },
-      price: 175,
-      calories: "280 kcal",
-      prepTime: "6 dk",
-      badges: ["Ferah Seçim"],
+      name: { tr: "Ege Zeytini" },
+      desc: { tr: "Ege Zeytini" },
+      price: 20,
+      isComplimentary: false,
+      sides: [],
+      calories: "120 kcal",
+      prepTime: "5 dk",
+      badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80"
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
     },
     {
-      id: "item-10",
-      categoryId: "salatalar",
-      name: {
-        tr: "Bol Cevizli Gavurdağı Salatası",
-        en: "Walnut Gavurdagi Salad",
-        de: "Gavurdağı-Salat mit Walnüssen",
-        ar: "سلطة غافورداغ بالجوز ودبس الرمان"
-      },
-      desc: {
-        tr: "İnce kıyım domates, salatalık, kırmızı soğan, bol kelebek ceviz ve hakiki sumaklı nar ekşisi sosu.",
-        en: "Finely diced tomatoes, cucumber, red onion, generous walnuts, sumac, and artisan pomegranate molasses.",
-        de: "Fein gewürfelte Tomaten, Gurken, Walnüsse, Sumach und Granatapfelsirup.",
-        ar: "طماطم مفرومة ناعماً مع الجوز والسماق ودبس الرمان الأصلي."
-      },
-      price: 160,
-      calories: "260 kcal",
-      prepTime: "6 dk",
-      badges: ["Klasik"],
-      available: true,
-      image: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      id: "item-11",
+      id: "item-1792325457108",
       categoryId: "tatlilar",
-      name: {
-        tr: "Tahinli & Cevizli Çıtır Kabak Tatlısı",
-        en: "Crispy Pumpkin Dessert with Tahini & Walnuts",
-        de: "Kürbis-Dessert mit Tahini & Walnüssen",
-        ar: "حلوى اليقطين بالطحينة والجوز"
-      },
-      desc: {
-        tr: "Kireçte bekletilmiş çıtır bal kabağı, üzerinde çifte kavrulmuş Bozkır tahini ve bol ceviz.",
-        en: "Traditional candied crispy pumpkin topped with double-roasted tahini and crushed walnuts.",
-        de: "Traditioneller knuspriger Kürbis mit doppelt geröstetem Tahini und Walnüssen.",
-        ar: "حلوى اليقطين المقرمشة مع الطحينة المحمصة والجوز."
-      },
-      price: 165,
+      name: { tr: "Özel Yöresel Kabak Tatlısı" },
+      desc: { tr: "Kabak tatlısı üzerinde tahin ve ceviz" },
+      price: 110,
+      isComplimentary: false,
+      sides: [],
       calories: "380 kcal",
       prepTime: "5 dk",
-      badges: ["Şefin Tavsiyesi"],
+      badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=900&q=80"
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
     },
     {
-      id: "item-12",
-      categoryId: "tatlilar",
-      name: {
-        tr: "Dondurmalı Sıcak İrmik Helvası",
-        en: "Warm Semolina Halva with Maraş Ice Cream",
-        de: "Warmes Grieß-Halva mit Eis",
-        ar: "حلاوة السميد الدافئة مع الآيس كريم"
-      },
-      desc: {
-        tr: "Tereyağı ve çam fıstığı ile kavrulmuş sıcak irmik helvası, ortasında hakiki keçi sütlü dondurma.",
-        en: "Warm semolina halva roasted with pine nuts and butter, filled with traditional goat's milk ice cream.",
-        de: "Warmes Grieß-Halva mit Pinienkernen, gefüllt mit traditionellem Eis.",
-        ar: "حلاوة السميد الدافئة بالصنوبر والزبدة محشوة بالآيس كريم التقليدي."
-      },
-      price: 175,
-      calories: "420 kcal",
-      prepTime: "7 dk",
-      badges: ["En Çok Satan Tatlı"],
-      available: true,
-      image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      id: "item-13",
+      id: "item-1792325787051",
       categoryId: "icecekler",
-      name: {
-        tr: "Bakır Maşrapada Bol Köpüklü Yayık Ayranı",
-        en: "Foamy Churned Buttermilk (Ayran) in Copper Mug",
-        de: "Schaumiger Yayık Ayran im Kupferbecher",
-        ar: "عيران رغوي تقليدي في كوب نحاسي"
-      },
-      desc: {
-        tr: "Doğal süzme yoğurttan günlük çırpılmış, taze nane yaprağı dokunuşlu buz gibi yayık ayranı.",
-        en: "Daily churned artisan yogurt drink served ice-cold in a traditional copper mug with fresh mint.",
-        de: "Täglich frisch geschlagener Joghurt-Drink, eiskalt im Kupferbecher serviert.",
-        ar: "لبن عيران طازج مخفوق يومياً يقدم بارداً في كوب نحاسي تقليدي."
-      },
-      price: 65,
-      calories: "95 kcal",
+      name: { tr: "Pepsı" },
+      desc: { tr: "Kutu içecek" },
+      price: 100,
+      isComplimentary: false,
+      sides: [],
+      calories: "140 kcal",
       prepTime: "2 dk",
-      badges: ["Tam Uyum"],
+      badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1556881286-fc6915169721?auto=format&fit=crop&w=900&q=80"
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
     },
     {
-      id: "item-14",
+      id: "item-1792325758628",
       categoryId: "icecekler",
-      name: {
-        tr: "Bodrum Mandalina Gazozu / Ev Yapımı Naneli Limonata",
-        en: "Bodrum Tangerine Soda / Homemade Mint Lemonade",
-        de: "Bodrum Mandarinen-Limonade / Hausgemachte Minz-Limonade",
-        ar: "صودا يوسفي بودروم / ليموناضة بالنعناع منزلية الصنع"
-      },
-      desc: {
-        tr: "Ege'nin kokulu Bodrum mandalinası veya taze sıkım Çukurova limonlarından naneli ferahlatıcı lezzet.",
-        en: "Aromatic Bodrum tangerine soda or freshly squeezed Çukurova lemonade with garden mint.",
-        de: "Aromatische Bodrum-Mandarinenlimonade oder frisch gepresste Zitronenlimonade mit Minze.",
-        ar: "مشروب يوسفي بودروم المنعش أو عصير الليمون الطازج بالنعناع."
-      },
-      price: 80,
-      calories: "110 kcal",
+      name: { tr: "Sarıyer Cola" },
+      desc: { tr: "Kutu içecek" },
+      price: 100,
+      isComplimentary: false,
+      sides: [],
+      calories: "140 kcal",
       prepTime: "2 dk",
-      badges: ["Ege Esintisi"],
+      badges: ["Yeni Lezzet"],
       available: true,
-      image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=900&q=80"
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      id: "item-1792325574260",
+      categoryId: "icecekler",
+      name: { tr: "Coca Cola Normal" },
+      desc: { tr: "Kutu İçecek" },
+      price: 100,
+      isComplimentary: false,
+      sides: [],
+      calories: "140 kcal",
+      prepTime: "2 dk",
+      badges: ["Yeni Lezzet"],
+      available: true,
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      id: "item-1792325591012",
+      categoryId: "icecekler",
+      name: { tr: "Coca Cola Zero" },
+      desc: { tr: "Kutu İçecek" },
+      price: 100,
+      isComplimentary: false,
+      sides: [],
+      calories: "0 kcal",
+      prepTime: "2 dk",
+      badges: ["Yeni Lezzet"],
+      available: true,
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      id: "item-1792325619455",
+      categoryId: "icecekler",
+      name: { tr: "Fanta" },
+      desc: { tr: "Kutu İçecek" },
+      price: 100,
+      isComplimentary: false,
+      sides: [],
+      calories: "140 kcal",
+      prepTime: "2 dk",
+      badges: ["Yeni Lezzet"],
+      available: true,
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      id: "item-1792325631972",
+      categoryId: "icecekler",
+      name: { tr: "Sprite" },
+      desc: { tr: "Kutu İçecek" },
+      price: 100,
+      isComplimentary: false,
+      sides: [],
+      calories: "130 kcal",
+      prepTime: "2 dk",
+      badges: ["Yeni Lezzet"],
+      available: true,
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      id: "item-1792325660083",
+      categoryId: "icecekler",
+      name: { tr: "Fuse Tea Şeftali" },
+      desc: { tr: "Kutu İçecek" },
+      price: 100,
+      isComplimentary: false,
+      sides: [],
+      calories: "90 kcal",
+      prepTime: "2 dk",
+      badges: ["Yeni Lezzet"],
+      available: true,
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      id: "item-1792325674127",
+      categoryId: "icecekler",
+      name: { tr: "Fuse Tea Mango" },
+      desc: { tr: "Kutu İçecek" },
+      price: 100,
+      isComplimentary: false,
+      sides: [],
+      calories: "90 kcal",
+      prepTime: "2 dk",
+      badges: ["Yeni Lezzet"],
+      available: true,
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      id: "item-1792325699063",
+      categoryId: "icecekler",
+      name: { tr: "Ayran" },
+      desc: { tr: "Ayran İçecek" },
+      price: 50,
+      isComplimentary: false,
+      sides: [],
+      calories: "85 kcal",
+      prepTime: "2 dk",
+      badges: ["Yeni Lezzet"],
+      available: true,
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      id: "item-1792325711075",
+      categoryId: "icecekler",
+      name: { tr: "Şalgam" },
+      desc: { tr: "Şalgam İçecek" },
+      price: 50,
+      isComplimentary: false,
+      sides: [],
+      calories: "45 kcal",
+      prepTime: "2 dk",
+      badges: ["Yeni Lezzet"],
+      available: true,
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      id: "item-1792325730491",
+      categoryId: "icecekler",
+      name: { tr: "Su" },
+      desc: { tr: "33 ml su" },
+      price: 30,
+      isComplimentary: false,
+      sides: [],
+      calories: "0 kcal",
+      prepTime: "1 dk",
+      badges: ["Yeni Lezzet"],
+      available: true,
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      id: "item-1792325967068",
+      categoryId: "ikramlar",
+      name: { tr: "Ege Zeytini" },
+      desc: { tr: "Doğal lezzetli ege zeytini" },
+      price: 0,
+      isComplimentary: true,
+      sides: [],
+      calories: "İkram",
+      prepTime: "Hemen",
+      badges: ["MASA İKRAMIMIZ"],
+      available: true,
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      id: "item-1792325979932",
+      categoryId: "ikramlar",
+      name: { tr: "Acı Turşu" },
+      desc: { tr: "Acı Turşu" },
+      price: 0,
+      isComplimentary: true,
+      sides: [],
+      calories: "İkram",
+      prepTime: "Hemen",
+      badges: ["MASA İKRAMIMIZ"],
+      available: true,
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      id: "item-1792324445703",
+      categoryId: "ikramlar",
+      name: { tr: "Özel Soslu Salata İkramı" },
+      desc: { tr: "Göbek Marul ve pancar ile özel soslu salata" },
+      price: 0,
+      isComplimentary: true,
+      sides: [],
+      calories: "İkram",
+      prepTime: "Hemen",
+      badges: ["MASA İKRAMIMIZ"],
+      available: true,
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      id: "item-1792324524519",
+      categoryId: "ikramlar",
+      name: { tr: "Günün Geleneksel Özel Kabak Tatlı İkramı" },
+      desc: { tr: "Özel Kabak Tatlısı ve Üzerinde Tayin ve Ceviz" },
+      price: 0,
+      isComplimentary: true,
+      sides: [],
+      calories: "İkram",
+      prepTime: "Hemen",
+      badges: ["MASA İKRAMIMIZ"],
+      available: true,
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      id: "item-1792324555395",
+      categoryId: "ikramlar",
+      name: { tr: "Çay İkramı" },
+      desc: { tr: "Çay İkramlarımız" },
+      price: 0,
+      isComplimentary: true,
+      sides: [],
+      calories: "İkram",
+      prepTime: "Hemen",
+      badges: ["MASA İKRAMIMIZ"],
+      available: true,
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      id: "item-1792324580399",
+      categoryId: "ikramlar",
+      name: { tr: "Türk Kahvesi İkramı" },
+      desc: { tr: "Türk kahvesi ikramı" },
+      price: 0,
+      isComplimentary: true,
+      sides: [],
+      calories: "İkram",
+      prepTime: "Hemen",
+      badges: ["MASA İKRAMIMIZ"],
+      available: true,
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"
     }
   ],
   branches: [
@@ -433,11 +458,11 @@ const DEFAULT_COKERTME_DATA = {
       phone: "0532 *** ** 48",
       mode: "Eve Paket Servis",
       branch: "Adana Çukurova Merkez Şube",
-      items: ["1x Bodrum Klasik Dana Bonfile Çökertme", "1x Bakır Maşrapada Yayık Ayranı"],
-      subtotal: 505,
-      discount: 50.5,
-      total: 454.5,
-      pointsEarned: 22.7,
+      items: ["1x KARİDES ÇÖKERTME", "1x Ayran"],
+      subtotal: 640,
+      discount: 64,
+      total: 576,
+      pointsEarned: 1,
       status: "Hazırlanıyor",
       createdAt: "10 dk önce"
     }
@@ -458,7 +483,7 @@ const DEFAULT_COKERTME_DATA = {
     phone: "0532 000 01 01",
     memberCode: "CKR-ADANA-01",
     points: 145.0,
-    stamps: 3, // 5 olunca 1 Çökertme Hediye!
+    stamps: 3,
     tier: "Gümüş Gurme"
   },
   appSettings: {
@@ -530,7 +555,8 @@ const DEFAULT_COKERTME_DATA = {
   }
 };
 
-const STORAGE_KEY = "cokertme_dunyasi_state_v1";
+const STORAGE_KEY = "cokertme_dunyasi_state_v3";
+const OLD_STORAGE_KEYS = ["cokertme_dunyasi_state_v1", "cokertme_dunyasi_state_v2"];
 
 function getCloudApiUrl(path = "/api/state") {
   try {
@@ -542,51 +568,83 @@ function getCloudApiUrl(path = "/api/state") {
   return path;
 }
 
+function hasLegacyDemoItems(items) {
+  if (!Array.isArray(items) || items.length === 0) return true;
+  return items.some(i => i && LEGACY_DEMO_ITEM_IDS.has(i.id));
+}
+
+function sanitizeAndMergeState(parsed) {
+  if (!parsed || typeof parsed !== "object") {
+    return JSON.parse(JSON.stringify(DEFAULT_COKERTME_DATA));
+  }
+
+  // Eğer eski deneme ürünleri (item-1 .. item-14) kalmışsa onları tamamen temizle
+  let validItems = Array.isArray(parsed.items)
+    ? parsed.items.filter(i => i && !LEGACY_DEMO_ITEM_IDS.has(i.id))
+    : [];
+
+  if (validItems.length < 3) {
+    validItems = JSON.parse(JSON.stringify(DEFAULT_COKERTME_DATA.items));
+  }
+
+  const merged = {
+    ...DEFAULT_COKERTME_DATA,
+    ...parsed,
+    schemaVersion: 3,
+    items: validItems,
+    appSettings: {
+      ...DEFAULT_COKERTME_DATA.appSettings,
+      ...(parsed.appSettings || {}),
+      loyalty: {
+        ...DEFAULT_COKERTME_DATA.appSettings.loyalty,
+        ...((parsed.appSettings && parsed.appSettings.loyalty) || {})
+      }
+    },
+    integrationSettings: {
+      respos: {
+        ...DEFAULT_COKERTME_DATA.integrationSettings.respos,
+        ...((parsed.integrationSettings && parsed.integrationSettings.respos) || {})
+      },
+      qnbPos: {
+        ...DEFAULT_COKERTME_DATA.integrationSettings.qnbPos,
+        ...((parsed.integrationSettings && parsed.integrationSettings.qnbPos) || {})
+      },
+      courier: {
+        ...DEFAULT_COKERTME_DATA.integrationSettings.courier,
+        ...((parsed.integrationSettings && parsed.integrationSettings.courier) || {}),
+        companies: (parsed.integrationSettings && parsed.integrationSettings.courier && parsed.integrationSettings.courier.companies)
+          ? parsed.integrationSettings.courier.companies
+          : DEFAULT_COKERTME_DATA.integrationSettings.courier.companies
+      }
+    }
+  };
+
+  if (merged.categories && !merged.categories.some(c => c.id === "ikramlar")) {
+    merged.categories.push({
+      id: "ikramlar",
+      icon: "",
+      name: { tr: "Masa İkramlarımız" }
+    });
+  }
+  return merged;
+}
+
 const CokertmeStore = {
   getState() {
     try {
+      // Eski anahtarları temizle
+      OLD_STORAGE_KEYS.forEach(k => {
+        try { localStorage.removeItem(k); } catch (e) {}
+      });
+
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_COKERTME_DATA));
-        return JSON.parse(JSON.stringify(DEFAULT_COKERTME_DATA));
+        const initial = JSON.parse(JSON.stringify(DEFAULT_COKERTME_DATA));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
+        return initial;
       }
       const parsed = JSON.parse(raw);
-      const merged = {
-        ...DEFAULT_COKERTME_DATA,
-        ...parsed,
-        appSettings: {
-          ...DEFAULT_COKERTME_DATA.appSettings,
-          ...(parsed.appSettings || {}),
-          loyalty: {
-            ...DEFAULT_COKERTME_DATA.appSettings.loyalty,
-            ...((parsed.appSettings && parsed.appSettings.loyalty) || {})
-          }
-        },
-        integrationSettings: {
-          respos: {
-            ...DEFAULT_COKERTME_DATA.integrationSettings.respos,
-            ...((parsed.integrationSettings && parsed.integrationSettings.respos) || {})
-          },
-          qnbPos: {
-            ...DEFAULT_COKERTME_DATA.integrationSettings.qnbPos,
-            ...((parsed.integrationSettings && parsed.integrationSettings.qnbPos) || {})
-          },
-          courier: {
-            ...DEFAULT_COKERTME_DATA.integrationSettings.courier,
-            ...((parsed.integrationSettings && parsed.integrationSettings.courier) || {}),
-            companies: (parsed.integrationSettings && parsed.integrationSettings.courier && parsed.integrationSettings.courier.companies)
-              ? parsed.integrationSettings.courier.companies
-              : DEFAULT_COKERTME_DATA.integrationSettings.courier.companies
-          }
-        }
-      };
-      if (merged.categories && !merged.categories.some(c => c.id === "ikramlar")) {
-        merged.categories.push({
-          id: "ikramlar",
-          icon: "",
-          name: { tr: "Masa İkramlarımız" }
-        });
-      }
+      const merged = sanitizeAndMergeState(parsed);
       return merged;
     } catch (e) {
       return JSON.parse(JSON.stringify(DEFAULT_COKERTME_DATA));
@@ -595,11 +653,16 @@ const CokertmeStore = {
 
   saveState(newState) {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+      newState.schemaVersion = 3;
+      newState.updatedAt = Date.now();
+      const cleaned = sanitizeAndMergeState(newState);
+      const payload = JSON.stringify(cleaned);
+      localStorage.setItem(STORAGE_KEY, payload);
       fetch(getCloudApiUrl("/api/state"), {
         method: "POST",
+        keepalive: true,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newState)
+        body: payload
       }).catch(() => {});
     } catch (e) {
       console.error("Kaydetme hatası:", e);
@@ -612,6 +675,7 @@ const CokertmeStore = {
     try {
       const res = await fetch(getCloudApiUrl("/api/order-dispatch"), {
         method: "POST",
+        keepalive: true,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           order,
@@ -621,32 +685,34 @@ const CokertmeStore = {
       if (res.ok) {
         return await res.json();
       }
-    } catch (e) {
-      // Yerel/çevrimdışı çalışma durumunda simüle yanıt döner
-    }
+    } catch (e) {}
     return { ok: true, simulated: true };
   },
 
   async syncFromServer() {
     try {
-      const res = await fetch(getCloudApiUrl("/api/state"), { cache: "no-store" });
+      OLD_STORAGE_KEYS.forEach(k => {
+        try { localStorage.removeItem(k); } catch (e) {}
+      });
+
+      const res = await fetch(getCloudApiUrl(`/api/state?t=${Date.now()}`), { cache: "no-store" });
       if (res.ok) {
         const serverData = await res.json();
-        if (serverData && serverData.items && serverData.items.length > 0) {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(serverData));
-          return this.getState();
+        if (serverData && Array.isArray(serverData.items) && serverData.items.length > 0 && !hasLegacyDemoItems(serverData.items)) {
+          const cleanedServer = sanitizeAndMergeState(serverData);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(cleanedServer));
+          return cleanedServer;
         }
       }
-    } catch (e) {
-      // Çevrimdışı veya yerel modda localStorage ile devam eder
-    }
+    } catch (e) {}
     return this.getState();
   },
 
   resetToDefaults() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_COKERTME_DATA));
-    this.saveState(DEFAULT_COKERTME_DATA);
-    return DEFAULT_COKERTME_DATA;
+    const fresh = JSON.parse(JSON.stringify(DEFAULT_COKERTME_DATA));
+    fresh.updatedAt = Date.now();
+    this.saveState(fresh);
+    return fresh;
   },
 
   formatPrice(amountTRY) {
@@ -658,4 +724,3 @@ const CokertmeStore = {
 };
 
 window.CokertmeStore = CokertmeStore;
-
