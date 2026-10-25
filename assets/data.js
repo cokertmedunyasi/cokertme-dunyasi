@@ -938,10 +938,14 @@ window.openOnlineOrderPortal = function(ev, authMode) {
     window.location.href = url;
   };
   const timer = setTimeout(() => go(fallbackLocalUrl), 750);
-  fetch("https://onlinesiparis.cokertmedunyasi.com/api/state", { method: "HEAD", mode: "no-cors", cache: "no-store" })
-    .then(() => {
+  fetch("https://onlinesiparis.cokertmedunyasi.com/api/state", { method: "GET", cache: "no-store" })
+    .then((res) => {
       clearTimeout(timer);
-      go(targetSubdomainUrl);
+      if (res && res.ok) {
+        go(targetSubdomainUrl);
+      } else {
+        go(fallbackLocalUrl);
+      }
     })
     .catch(() => {
       clearTimeout(timer);
