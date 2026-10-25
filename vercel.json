@@ -23,14 +23,11 @@
           "value": "onlinesiparis.cokertmedunyasi.com"
         }
       ],
-      "destination": "/onlinesiparis",
+      "destination": "/uygulama",
       "permanent": false
     }
   ],
   "rewrites": [
-    { "source": "/onlinesiparis", "destination": "/uygulama.html" },
-    { "source": "/menu", "destination": "/menu.html" },
-    { "source": "/uygulama", "destination": "/uygulama.html" },
-    { "source": "/yonetim", "destination": "/yonetim.html" }
+    { "source": "/onlinesiparis", "destination": "/uygulama" }
   ]
 }
