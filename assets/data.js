@@ -452,22 +452,7 @@ const DEFAULT_COKERTME_DATA = {
       isActive: false
     }
   ],
-  orders: [
-    {
-      id: "CKR-1042",
-      customerName: "Emre K.",
-      phone: "0532 *** ** 48",
-      mode: "Eve Paket Servis",
-      branch: "Adana Çukurova Merkez Şube",
-      items: ["1x KARİDES ÇÖKERTME", "1x Ayran"],
-      subtotal: 640,
-      discount: 64,
-      total: 576,
-      pointsEarned: 1,
-      status: "Hazırlanıyor",
-      createdAt: "10 dk önce"
-    }
-  ],
+  orders: [],
   franchiseApplications: [
     {
       id: "FR-01",
@@ -625,6 +610,53 @@ function normalizePhone10(phoneStr) {
   return digits;
 }
 
+const ORDERS_BACKUP_KEY = "cokertme_orders_backup_v1";
+
+function loadOrdersBackup() {
+  try {
+    const raw = localStorage.getItem(ORDERS_BACKUP_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.filter(o => o && o.id && o.id !== "CKR-1042") : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveOrdersBackup(ordersArr) {
+  try {
+    if (!Array.isArray(ordersArr)) return;
+    const clean = ordersArr.filter(o => o && o.id && o.id !== "CKR-1042");
+    localStorage.setItem(ORDERS_BACKUP_KEY, JSON.stringify(clean));
+  } catch (e) {}
+}
+
+function mergeOrdersList(listA, listB) {
+  const map = new Map();
+  const processOrders = (arr) => {
+    if (!Array.isArray(arr)) return;
+    arr.forEach(o => {
+      if (!o || !o.id || o.id === "CKR-1042") return;
+      const prev = map.get(o.id);
+      const normPhone = normalizePhone10(o.phone || o.phoneNormalized);
+      if (!prev) {
+        map.set(o.id, { ...o, phoneNormalized: normPhone });
+      } else {
+        map.set(o.id, {
+          ...prev,
+          ...o,
+          phoneNormalized: normPhone || prev.phoneNormalized || ""
+        });
+      }
+    });
+  };
+  processOrders(listA);
+  processOrders(listB);
+  const merged = Array.from(map.values());
+  merged.sort((a, b) => (Number(b.createdAtMs || 0) - Number(a.createdAtMs || 0)));
+  return merged;
+}
+
 function mergeMembersList(listA, listB) {
   const map = new Map();
   const processList = (arr) => {
@@ -641,11 +673,16 @@ function mergeMembersList(listA, listB) {
         const newTime = Number(m.updatedAt || m.createdAt || 0);
         const winner = newTime >= exTime ? m : existing;
         const loser = newTime >= exTime ? existing : m;
+        const combinedStamps = Array.from(new Set([
+          ...(Array.isArray(existing.stampTimestamps) ? existing.stampTimestamps : []),
+          ...(Array.isArray(m.stampTimestamps) ? m.stampTimestamps : [])
+        ])).map(Number).filter(Boolean).sort((a, b) => a - b);
         map.set(key, {
           ...loser,
           ...winner,
           phoneNormalized: key,
-          stamps: Math.max(Number(existing.stamps || 0), Number(m.stamps || 0)),
+          stamps: Math.max(Number(existing.stamps || 0), Number(m.stamps || 0), combinedStamps.length),
+          stampTimestamps: combinedStamps,
           points: Math.max(Number(existing.points || 0), Number(m.points || 0)),
           password: winner.password || loser.password || "",
           savedAddress: winner.savedAddress || loser.savedAddress || null
@@ -695,6 +732,9 @@ function sanitizeAndMergeState(parsed) {
       })
     : DEFAULT_COKERTME_DATA.branches;
 
+  const backupOrders = loadOrdersBackup();
+  const mergedOrders = mergeOrdersList(backupOrders, parsed.orders);
+
   const merged = {
     ...DEFAULT_COKERTME_DATA,
     ...parsed,
@@ -708,6 +748,7 @@ function sanitizeAndMergeState(parsed) {
     },
     branches: mergedBranches,
     items: validItems,
+    orders: mergedOrders,
     members: mergeMembersList(DEFAULT_COKERTME_DATA.members, parsed.members),
     adminSettings: {
       ...DEFAULT_COKERTME_DATA.adminSettings,
@@ -848,6 +889,7 @@ const CokertmeStore = {
       newState.schemaVersion = 4;
       newState.updatedAt = Date.now();
       const cleaned = sanitizeAndMergeState(newState);
+      saveOrdersBackup(cleaned.orders);
       const payload = JSON.stringify(cleaned);
       localStorage.setItem(STORAGE_KEY, payload);
       // NOT: keepalive:true 64KB sınırına takıldığı için kullanılmaz!
@@ -890,21 +932,28 @@ const CokertmeStore = {
         if (serverData && Array.isArray(serverData.items) && serverData.items.length > 0 && !hasLegacyDemoItems(serverData.items)) {
           const cleanedServer = sanitizeAndMergeState(serverData);
           const mergedMembers = mergeMembersList(localState.members, cleanedServer.members);
+          const mergedOrders = mergeOrdersList(localState.orders, cleanedServer.orders);
+
           cleanedServer.members = mergedMembers;
           localState.members = mergedMembers;
+          cleanedServer.orders = mergedOrders;
+          localState.orders = mergedOrders;
+          saveOrdersBackup(mergedOrders);
 
           const localTime = Number(localState && localState.updatedAt) || 0;
           const serverTime = Number(cleanedServer && cleanedServer.updatedAt) || 0;
 
-          // Eğer tarayıcıdaki veri sunucudan daha yeniyse (ör. yönetici az önce kaydettiyse), sunucuyu güncelle
-          if (localTime > serverTime) {
+          // Eğer tarayıcıdaki veri sunucudan daha yeniyse veya sunucuda olmayan yeni sipariş varsa sunucuyu güncelle
+          if (localTime > serverTime || mergedOrders.length > (Array.isArray(serverData.orders) ? serverData.orders.length : 0)) {
             fetch(getCloudApiUrl("/api/state"), {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(localState)
+              body: JSON.stringify(localTime > serverTime ? localState : cleanedServer)
             }).catch(() => {});
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(localState));
-            return localState;
+            if (localTime > serverTime) {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(localState));
+              return localState;
+            }
           }
 
           localStorage.setItem(STORAGE_KEY, JSON.stringify(cleanedServer));
@@ -916,7 +965,9 @@ const CokertmeStore = {
   },
 
   resetToDefaults() {
+    try { localStorage.removeItem(ORDERS_BACKUP_KEY); } catch (e) {}
     const fresh = JSON.parse(JSON.stringify(DEFAULT_COKERTME_DATA));
+    fresh.forceResetOrders = true;
     fresh.updatedAt = Date.now();
     this.saveState(fresh);
     return fresh;

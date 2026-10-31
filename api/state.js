@@ -72,12 +72,77 @@ function normalizeItemsImages(stateObj) {
   if (!Array.isArray(stateObj.members)) {
     stateObj.members = [];
   }
+  if (Array.isArray(stateObj.orders)) {
+    stateObj.orders = stateObj.orders.filter(o => o && o.id && o.id !== "CKR-1042");
+  } else {
+    stateObj.orders = [];
+  }
   stateObj.adminSettings = {
     username: "admin",
     passwordHash: "YEo13221990.,",
     ...(stateObj.adminSettings || {})
   };
   return stateObj;
+}
+
+function normalizePhone10(phoneStr) {
+  if (!phoneStr) return "";
+  const digits = String(phoneStr).replace(/\D/g, "");
+  return digits.length >= 10 ? digits.slice(-10) : digits;
+}
+
+function mergeOrdersLists(existingOrders, incomingOrders) {
+  const map = new Map();
+  const addOrder = (o) => {
+    if (!o || !o.id || o.id === "CKR-1042") return;
+    const prev = map.get(o.id);
+    if (!prev) {
+      map.set(o.id, {
+        ...o,
+        phoneNormalized: normalizePhone10(o.phone || o.phoneNormalized)
+      });
+    } else {
+      map.set(o.id, {
+        ...prev,
+        ...o,
+        phoneNormalized: normalizePhone10(o.phone || prev.phone || o.phoneNormalized)
+      });
+    }
+  };
+  // Önce yeni gelen siparişleri, sonra buluttaki mevcut siparişleri ekle (hiçbir sipariş kaybolmasın)
+  if (Array.isArray(incomingOrders)) incomingOrders.forEach(addOrder);
+  if (Array.isArray(existingOrders)) existingOrders.forEach(addOrder);
+  const merged = Array.from(map.values());
+  merged.sort((a, b) => (Number(b.createdAtMs || 0) - Number(a.createdAtMs || 0)));
+  return merged;
+}
+
+function mergeMembersLists(existingMembers, incomingMembers) {
+  const map = new Map();
+  const addMember = (m) => {
+    if (!m || !m.phone) return;
+    const key = normalizePhone10(m.phone);
+    if (!key || key.length < 10) return;
+    const prev = map.get(key);
+    if (!prev) {
+      map.set(key, { ...m, phoneNormalized: key });
+    } else {
+      const combinedStamps = Array.from(new Set([
+        ...(Array.isArray(prev.stampTimestamps) ? prev.stampTimestamps : []),
+        ...(Array.isArray(m.stampTimestamps) ? m.stampTimestamps : [])
+      ])).map(Number).filter(Boolean).sort((a, b) => a - b);
+      map.set(key, {
+        ...prev,
+        ...m,
+        phoneNormalized: key,
+        stamps: Math.max(Number(prev.stamps || 0), Number(m.stamps || 0), combinedStamps.length),
+        stampTimestamps: combinedStamps
+      });
+    }
+  };
+  if (Array.isArray(existingMembers)) existingMembers.forEach(addMember);
+  if (Array.isArray(incomingMembers)) incomingMembers.forEach(addMember);
+  return Array.from(map.values());
 }
 
 function hasLegacyDemoItems(stateObj) {
@@ -242,6 +307,19 @@ async function writeCloudState(stateObj) {
   }
   if (!Array.isArray(stateObj.items) || stateObj.items.length === 0) {
     return false;
+  }
+
+  // Buluttaki mevcut siparişleri ve üyeleri oku ve yeni gelen veriyle birleştir (farklı cihazlardan sipariş geldiğinde önceki siparişlerin silinmesini önler)
+  if (!stateObj.forceResetOrders) {
+    try {
+      const existingCloud = await readCloudState();
+      if (existingCloud && typeof existingCloud === "object") {
+        stateObj.orders = mergeOrdersLists(existingCloud.orders, stateObj.orders);
+        stateObj.members = mergeMembersLists(existingCloud.members, stateObj.members);
+      }
+    } catch (e) {}
+  } else {
+    delete stateObj.forceResetOrders;
   }
 
   normalizeItemsImages(stateObj);

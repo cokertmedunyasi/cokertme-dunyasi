@@ -4817,11 +4817,14 @@
       const prepMinutes = Number(activeCourier.prepMinutesOverride) || Number(courierCfg.defaultPrepMinutes) || 15;
 
       const now = new Date();
-      const createdAtStr = now.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+      const createdAtDateStr = now.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
+      const createdAtTimeStr = now.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+      const createdAtStr = `${createdAtDateStr} • ${createdAtTimeStr}`;
       const readyDate = new Date(now.getTime() + prepMinutes * 60000);
       const estimatedReadyAtStr = readyDate.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
 
       const wasAlreadyMember = Boolean(appUser && appUser.phone);
+      const normPhoneVal = normalizeLoyaltyPhone(phoneVal);
 
       // Sipariş bilgileriyle OTOMATİK ÜYELİK açma / güncelleme
       appUser = {
@@ -4838,33 +4841,45 @@
       if (!Array.isArray(state.members)) {
         state.members = [];
       }
-      const existingMember = state.members.find(m => m.phone === phoneVal);
+      const latestLoyalty = getUserLoyaltyStatus(phoneVal, state);
+      const existingMember = state.members.find(m => m && normalizeLoyaltyPhone(m.phone) === normPhoneVal);
       if (existingMember) {
         existingMember.fullName = nameVal;
+        existingMember.name = nameVal;
         existingMember.gender = genderVal;
         existingMember.moldType = moldType;
         existingMember.address = addrVal;
+        existingMember.stamps = latestLoyalty.stampCount;
+        existingMember.stampTimestamps = latestLoyalty.validStamps;
+        existingMember.updatedAt = Date.now();
       } else {
         state.members.unshift({
           id: "MEM-" + Math.floor(1000 + Math.random() * 9000),
           fullName: nameVal,
+          name: nameVal,
           phone: phoneVal,
+          phoneNormalized: normPhoneVal,
           gender: genderVal,
           moldType: moldType,
           address: addrVal,
+          stamps: latestLoyalty.stampCount,
+          stampTimestamps: latestLoyalty.validStamps,
           registeredVia: wasAlreadyMember ? "Üye Kaydı" : "Sipariş Bilgileriyle Otomatik Üyelik",
-          createdAt: createdAtStr
+          createdAt: createdAtStr,
+          updatedAt: Date.now()
         });
       }
 
       const newOrder = {
         id: "CKR-" + Math.floor(1000 + Math.random() * 9000),
+        createdAtMs: Date.now(),
         customerName: nameVal,
         customerGender: genderVal,
         moldType: moldType,
         membershipNote: wasAlreadyMember ? "Kayıtlı Üye" : "Sipariş Bilgileriyle Otomatik Üyelik Açıldı",
         loyaltyNote: loyaltyOutcome.statusText || "",
         phone: phoneVal,
+        phoneNormalized: normPhoneVal,
         address: addrVal,
         deliveryType: modeVal,
         mode: modeVal + (addrVal ? ` (${addrVal})` : ""),
@@ -4890,6 +4905,10 @@
         createdAt: createdAtStr
       };
 
+      // Müşterinin kendi cihazındaki sipariş geçmişine de kalıcı olarak kaydet (hiçbir sipariş kaybolmasın)
+      saveOrderToMyLocalHistory(newOrder);
+
+      state.orders = (state.orders || []).filter(o => o && o.id && o.id !== "CKR-1042");
       state.orders.unshift(newOrder);
       CokertmeStore.saveState(state);
 
@@ -4910,6 +4929,59 @@
         `• Kurye Bildirimi: ${activeCourier.name} sistemine siparişin ${prepMinutes} dk sonra (${estimatedReadyAtStr}) hazır olacağı anında iletildi!`
       );
       openAccountSubTab("siparislerim");
+    }
+
+    const MY_LOCAL_ORDERS_KEY = "cokertme_my_orders_v1";
+
+    function loadMyLocalOrders() {
+      try {
+        const raw = localStorage.getItem(MY_LOCAL_ORDERS_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed.filter(o => o && o.id && o.id !== "CKR-1042") : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveOrderToMyLocalHistory(orderObj) {
+      if (!orderObj || !orderObj.id || orderObj.id === "CKR-1042") return;
+      try {
+        const current = loadMyLocalOrders();
+        const filtered = current.filter(o => o && o.id !== orderObj.id);
+        filtered.unshift(orderObj);
+        localStorage.setItem(MY_LOCAL_ORDERS_KEY, JSON.stringify(filtered));
+      } catch (e) {}
+    }
+
+    // Sadece giriş yapmış olan müşterinin KENDİ telefon numarasına ait siparişleri döndürür;
+    // farklı müşterilerin siparişleri veya demo sipariş (#CKR-1042) kesinlikle gösterilmez.
+    function getCustomerOwnOrders(state, customerPhone) {
+      const targetPhone = normalizeLoyaltyPhone(customerPhone);
+      if (!targetPhone || targetPhone.length < 10) return [];
+
+      const map = new Map();
+      const addIfMatches = (o) => {
+        if (!o || !o.id || o.id === "CKR-1042") return;
+        const orderPhone = normalizeLoyaltyPhone(o.phone || o.phoneNormalized);
+        if (orderPhone !== targetPhone) return;
+        const prev = map.get(o.id);
+        if (!prev) {
+          map.set(o.id, o);
+        } else {
+          map.set(o.id, { ...prev, ...o });
+        }
+      };
+
+      const localOrders = loadMyLocalOrders();
+      localOrders.forEach(addIfMatches);
+      if (state && Array.isArray(state.orders)) {
+        state.orders.forEach(addIfMatches);
+      }
+
+      const result = Array.from(map.values());
+      result.sort((a, b) => (Number(b.createdAtMs || 0) - Number(a.createdAtMs || 0)));
+      return result;
     }
 
     // =========================================================================
@@ -5204,12 +5276,14 @@
           </div>
         ` : ''}
 
-        ${accountSubTab === 'siparislerim' ? `
+        ${accountSubTab === 'siparislerim' ? (() => {
+          const myOrders = getCustomerOwnOrders(state, appUser.phone);
+          return `
           <div class="acc-banner-header">
             <h3>Siparişlerim &amp; Canlı Kurye Takibi</h3>
-            <p>ResPOS Mutfak, Beko POS ve Kurye Durumu</p>
+            <p>${appUser.fullName || appUser.phone} (+90 ${appUser.phone}) hesabınıza ait siparişleriniz</p>
           </div>
-          ${state.orders.length === 0 ? `
+          ${myOrders.length === 0 ? `
             <div class="login-card-box" style="text-align:center; padding:36px 20px;">
               <div style="width:60px; height:60px; border-radius:50%; background:#f4f6f8; color:var(--pt-navy); display:flex; align-items:center; justify-content:center; margin:0 auto 12px;">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
@@ -5218,14 +5292,14 @@
               <p style="font-size:13.5px; color:var(--pt-text-muted); margin-bottom:18px;">Menümüze göz atarak hemen ilk siparişinizi oluşturabilirsiniz.</p>
               <button class="btn-primary-app" style="max-width:200px; margin:0 auto;" onclick="switchTab('menu')">Menüye Göz At</button>
             </div>
-          ` : state.orders.map(o => `
+          ` : myOrders.map(o => `
             <div class="login-card-box">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px; flex-wrap:wrap;">
                 <strong style="font-size:16px; color:var(--pt-navy);">#${o.id} — ${o.customerName}</strong>
                 <span style="background:rgba(59,82,51,0.14); color:var(--pt-olive); font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:6px;">${o.status || 'Hazırlanıyor'}</span>
               </div>
               <div style="font-size:12.5px; color:var(--pt-text-muted); margin-bottom:8px;">${o.mode} • Sipariş Saati: ${o.createdAt}</div>
-              <div style="font-size:14px; font-weight:700; margin-bottom:10px; color:var(--pt-text);">${o.items.join(", ")}</div>
+              <div style="font-size:14px; font-weight:700; margin-bottom:10px; color:var(--pt-text);">${(o.items || []).join(", ")}</div>
 
               <div style="background:#F4F7F2; border:1px solid rgba(59,82,51,0.25); border-left:3px solid var(--pt-olive); border-radius:8px; padding:8px 10px; margin-bottom:10px; font-size:12px; display:grid; gap:4px;">
                 <div><strong style="color:var(--pt-navy);">Çökertme Sunum Kalıbı:</strong> ${o.moldType || (o.customerGender === 'Kadın' ? 'Kalpli Çökertme Kalıbı (Kadın)' : 'Çember Çökertme Kalıbı (Erkek)')}</div>
@@ -5241,7 +5315,8 @@
               </div>
             </div>
           `).join("")}
-        ` : ''}
+          `;
+        })() : ''}
 
         ${accountSubTab === 'adreslerim' || accountSubTab === 'fatura' ? `
           <div class="acc-banner-header">
