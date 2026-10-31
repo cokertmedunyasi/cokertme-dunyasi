@@ -864,8 +864,8 @@
       <ul class="pt-sidemenu-nav">
         <li><a href="index.html"><span>Ana Sayfa</span><span>→</span></a></li>
         <li><a href="#sec-cokertmeler" onclick="toggleSideMenu(false)"><span>İmza Çökertme Kebapları</span><span>→</span></a></li>
-        <li><a href="#sec-baslangiclar" onclick="toggleSideMenu(false)"><span>Ege &amp; Akdeniz Başlangıçlar</span><span>→</span></a></li>
-        <li><a href="#sec-tatlilar" onclick="toggleSideMenu(false)"><span>Tatlılar &amp; İçecekler</span><span>→</span></a></li>
+        <li><a href="#sec-ikramlar" onclick="toggleSideMenu(false)"><span>Masa İkramlarımız</span><span>→</span></a></li>
+        <li><a href="#sec-tatlilar" onclick="toggleSideMenu(false)"><span>İçecekler</span><span>→</span></a></li>
         <li><a href="https://onlinesiparis.cokertmedunyasi.com/" onclick="return window.openOnlineOrderPortal ? window.openOnlineOrderPortal(event) : true;"><span>%10 İndirimli Online Sipariş</span><span>→</span></a></li>
         <li><a href="https://onlinesiparis.cokertmedunyasi.com/?auth=login" onclick="return window.openOnlineOrderPortal ? window.openOnlineOrderPortal(event, 'login') : true;"><span>Üye Girişi &amp; Üye Ol</span><span>→</span></a></li>
       </ul>
@@ -938,8 +938,7 @@
       <nav class="pt-quick-cats">
         <a href="#sec-cokertmeler" id="nav-cat-1">01. İmza Çökertme Kebapları</a>
         <a href="#sec-ikramlar" id="nav-cat-ikram">02. Masa İkramlarımız</a>
-        <a href="#sec-baslangiclar" id="nav-cat-2">03. Başlangıçlar &amp; Salatalar</a>
-        <a href="#sec-tatlilar" id="nav-cat-3">04. Tatlılar &amp; İçecekler</a>
+        <a href="#sec-tatlilar" id="nav-cat-3">03. İçecekler</a>
       </nav>
     </div>
   </div>
@@ -992,34 +991,12 @@
   </section>
 
   <!-- ========================================================================
-       PARALLAX GÖRSEL AYIRICI 1 (PatioTime min-height: 560px)
-       ======================================================================== -->
-  <div class="pt-parallax-divider" id="site-img-qrDivider1" style="background-image:url('assets/uploads/item-1792325907483.jpg?v=1');"></div>
-
-  <!-- ========================================================================
-       BÖLÜM 3: EGE & AKDENİZ BAŞLANGIÇLAR VE SALATALAR (2 SÜTUN)
-       ======================================================================== -->
-  <section id="sec-baslangiclar">
-    <div class="pt-menu-section-header">
-      <span class="pt-subtitle" id="sub-sec-2">DAMAK TADINIZI TAZELEYİN</span>
-      <h2 class="pt-title" id="title-sec-2">Başlangıçlar &amp; Salatalar</h2>
-    </div>
-
-    <div class="pt-menu-columns-container" id="grid-baslangiclar"></div>
-  </section>
-
-  <!-- ========================================================================
-       PARALLAX GÖRSEL AYIRICI 2 (PatioTime min-height: 560px)
-       ======================================================================== -->
-  <div class="pt-parallax-divider" id="site-img-qrDivider2" style="background-image:url('assets/uploads/item-1792325457108.jpg?v=1');"></div>
-
-  <!-- ========================================================================
-       BÖLÜM 4: GELENEKSEL TATLILAR & FERAHLATICI İÇECEKLER (2 SÜTUN)
+       BÖLÜM 3: İÇECEKLER (2 SÜTUN)
        ======================================================================== -->
   <section id="sec-tatlilar">
     <div class="pt-menu-section-header">
-      <span class="pt-subtitle" id="sub-sec-3">TATLI BİR FİNAL &amp; EGE ESİNTİSİ</span>
-      <h2 class="pt-title" id="title-sec-3">Tatlılar &amp; İçecekler</h2>
+      <span class="pt-subtitle" id="sub-sec-3">FERAHLATICI EGE ESİNTİSİ</span>
+      <h2 class="pt-title" id="title-sec-3">İçecekler</h2>
     </div>
 
     <div class="pt-menu-columns-container" id="grid-tatlilar"></div>
@@ -1300,29 +1277,19 @@
     function renderPatioMenu() {
       const state = CokertmeStore.getState();
       const si = (state && state.siteImages) ? state.siteImages : {};
-      const imgMap = {
-        "site-img-qrHeroBg": si.qrHeroBg,
-        "site-img-qrDivider1": si.qrDivider1,
-        "site-img-qrDivider2": si.qrDivider2
-      };
-      Object.keys(imgMap).forEach(elId => {
-        const val = imgMap[elId];
-        const el = document.getElementById(elId);
-        if (el && val) {
-          el.style.backgroundImage = `url("${val}")`;
-        }
-      });
+      const heroEl = document.getElementById("site-img-qrHeroBg");
+      if (heroEl && si.qrHeroBg) {
+        heroEl.style.backgroundImage = `url("${si.qrHeroBg}")`;
+      }
 
       const cokertmeler = state.items.filter(i => i.categoryId === "cokertmeler" && Number(i.price) > 0 && !i.isComplimentary);
       const customIkramlar = state.items.filter(i => i.categoryId === "ikramlar" || (!i.price || Number(i.price) <= 0));
       const ikramlarToRender = customIkramlar.length > 0 ? customIkramlar : DEFAULT_COMPLIMENTARY_SHOWCASE;
-      const baslangicVeSalata = state.items.filter(i => (i.categoryId === "baslangiclar" || i.categoryId === "salatalar") && Number(i.price) > 0);
-      const tatliVeIcecek = state.items.filter(i => (i.categoryId === "tatlilar" || i.categoryId === "icecekler") && Number(i.price) > 0);
+      const icecekler = state.items.filter(i => i.categoryId === "icecekler" && Number(i.price) > 0);
 
       document.getElementById("grid-cokertmeler").innerHTML = buildTwoColumnHtml(cokertmeler);
       document.getElementById("grid-ikramlar").innerHTML = buildTwoColumnHtml(ikramlarToRender);
-      document.getElementById("grid-baslangiclar").innerHTML = buildTwoColumnHtml(baslangicVeSalata);
-      document.getElementById("grid-tatlilar").innerHTML = buildTwoColumnHtml(tatliVeIcecek);
+      document.getElementById("grid-tatlilar").innerHTML = buildTwoColumnHtml(icecekler);
     }
 
     function openDishModal(itemId) {
