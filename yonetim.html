@@ -1222,14 +1222,14 @@
       <div id="site-images-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(330px, 1fr)); gap:20px;"></div>
     </section>
 
-    <!-- 2.8. ADİSYO BULUT POS & ERP + RESPOS ADİSYON + BEKO YAZARKASA + QNB FİNANSBANK POS + ANINDA KURYE API MERKEZİ -->
+    <!-- 2.8. ADİSYO BULUT POS & ERP + ÇÖKERTME DİJİTAL CÜZDAN + BEKO YAZARKASA + QNB FİNANSBANK POS + ANINDA KURYE API MERKEZİ -->
     <section class="admin-panel-box no-print" id="integrations-hub-section">
-      <div class="pt-subtitle">ADİSYO BULUT ERP • RESPOS ADİSYON • MUTFAK FİŞİ • BEKO ÖKC • QNB BANKA • ANINDA KURYE API</div>
-      <h2 class="pt-title">Adisyo, ResPOS, Beko Yazarkasa, QNB Ödeme &amp; Anında Kurye API Entegrasyonu</h2>
+      <div class="pt-subtitle">ADİSYO BULUT ERP • ÇÖKERTME DİJİTAL CÜZDAN (+%5 HEDİYE) • BEKO ÖKC • QNB 3D SECURE • ANINDA KURYE API</div>
+      <h2 class="pt-title">Adisyo Bulut ERP, Çökertme Dijital Cüzdan, Beko Yazarkasa, QNB Ödeme &amp; Anında Kurye API Entegrasyonu</h2>
       <p style="font-size:15px; color:var(--pt-text-muted); margin-bottom:24px;">
         Müşteri web portalından (<a href="https://onlinesiparis.cokertmedunyasi.com/" target="_blank" style="color:var(--pt-terracotta); font-weight:700; text-decoration:underline;">onlinesiparis.cokertmedunyasi.com</a>) veya mobil uygulamadan sipariş verdiği <strong>ilk saniyede (0. saniye)</strong> siparişiniz eşzamanlı olarak:
-        <strong>1) Adisyo Bulut Restoran Yazılımına (<a href="https://adisyo.com/" target="_blank" style="color:var(--pt-olive); font-weight:700; text-decoration:underline;">adisyo.com</a>)</strong> düşer (Adisyon, Mutfak Ekranı, Stok/Reçete düşümü, Ön Muhasebe, Pazaryeri, Kurye ve Finans modüllerine işlenir),
-        <strong>2) ResPOS &amp; Beko Yazarkasa POS / QNB Finansbank</strong> hesabınıza aktarılır ve
+        <strong>1) Adisyo Bulut Restoran Yazılımına (<a href="https://adisyo.com/" target="_blank" style="color:var(--pt-olive); font-weight:700; text-decoration:underline;">adisyo.com</a>)</strong> düşer (Adisyon, Mutfak Ekranı/Fişi, Stok/Reçete düşümü, Ön Muhasebe, Pazaryeri, Kurye, Finans ve Beko Yazarkasa ÖKC modüllerine işlenir),
+        <strong>2) QNB Finansbank 3D Secure veya Çökertme Dijital Cüzdan</strong> üzerinden tahsil edilir ve
         <strong>3) Seçili Kurye Firmasının API'sine</strong> <em>"Sipariş düştü ve X dakika sonra mutfakta hazır olacak"</em> bilgisiyle anında iletilir.
       </p>
 
@@ -1239,7 +1239,7 @@
           <div>
             <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:4px;">
               <span class="pt-badge" style="background:var(--pt-terracotta);">ADİSYO BULUT ERP &amp; POS</span>
-              <span class="pt-badge pt-badge-gold">ADİSYON • MUHASEBE • STOK • KURYE • PAZARYERİ • FİNANS</span>
+              <span class="pt-badge pt-badge-gold">ADİSYON • MUHASEBE • STOK • KURYE • PAZARYERİ • FİNANS • BEKO ÖKC</span>
               <a href="https://adisyo.com/" target="_blank" rel="noopener" style="font-size:12px; font-weight:700; color:var(--pt-navy); text-decoration:underline;">adisyo.com ↗</a>
             </div>
             <strong style="font-family:var(--font-serif); font-size:27px; color:var(--pt-navy); display:block; line-height:1.2;">
@@ -1284,7 +1284,7 @@
           </div>
         </div>
 
-        <!-- Adisyo 6 Ana Hizmet Modülü Senkronizasyon Seçenekleri -->
+        <!-- Adisyo Ana Hizmet Modülleri Senkronizasyon Seçenekleri -->
         <div style="background:var(--pt-cream); border:1px solid var(--pt-border); padding:16px 18px;">
           <div style="font-size:11.5px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--pt-navy); margin-bottom:10px;">
             AKTİF ADİSYO HİZMET MODÜLLERİ (SİPARİŞ GELDİĞİ AN OTOMATİK TETİKLENEN BİRİMLER):
@@ -1312,45 +1312,43 @@
             </label>
             <label style="display:flex; align-items:center; gap:8px; background:#fff; padding:10px 12px; border:1px solid var(--pt-border); border-left:3px solid var(--pt-terracotta); cursor:pointer;">
               <input type="checkbox" id="int-adisyo-finance" checked />
-              <span><strong>6. Finans &amp; Kasa Raporlama:</strong> QNB 3D Secure ve Beko Yazarkasa tahsilatları Adisyo Gün Sonu / Finans raporuna yansısın</span>
+              <span><strong>6. Finans, Cüzdan &amp; Beko ÖKC:</strong> QNB 3D Secure, Çökertme Cüzdan ve Beko Yazarkasa (TokenX/GMP3) tahsilatları Adisyo Finans'a işlensin</span>
             </label>
           </div>
         </div>
       </div>
 
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:22px; margin-bottom:24px;">
-        <!-- Kutu 1: ResPOS Adisyon & Beko Yazarkasa & Mutfak Fişi -->
+        <!-- Kutu 1: Çökertme Dijital Cüzdan & Kademeli Bakiye Yükleme (1.500 / 3.000 / 5.000 TL +%5 Hediye TL) -->
         <div style="background:#fff; padding:22px; border:1px solid var(--pt-border); border-top:4px solid var(--pt-navy);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-            <strong style="font-family:var(--font-serif); font-size:23px; color:var(--pt-navy);">1. ResPOS API &amp; Beko Yazarkasa</strong>
-            <span class="pt-badge">MUTFAK FİŞİ + ÖKC</span>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:8px; flex-wrap:wrap;">
+            <strong style="font-family:var(--font-serif); font-size:23px; color:var(--pt-navy);">1. Çökertme Dijital Cüzdan (+%5 Hediye TL)</strong>
+            <span class="pt-badge pt-badge-gold">1.500 • 3.000 • 5.000 TL PAKETLER</span>
           </div>
-          <div style="display:grid; gap:12px;">
-            <div>
-              <label class="pt-form-label">ResPOS Sipariş API Endpoint URL</label>
-              <input type="text" id="int-respos-url" class="pt-form-input" placeholder="https://api.respos.com.tr/v1/online-orders" />
+          <p style="font-size:13px; color:var(--pt-text-muted); margin-bottom:12px;">
+            Müşteriler <strong>1.500 TL (+%3: +45 TL)</strong>, <strong>3.000 TL (+%4: +120 TL)</strong> ve <strong>5.000 TL+ (+%5: +250 TL Hediye)</strong> paketleriyle bakiye yükleyip 3D SMS beklemeden 1 saniyede sipariş verebilir. Kurumsal/Hastane müşterilerine aşağıdan manuel bakiye de tanımlayabilirsiniz:
+          </p>
+          <div style="background:var(--pt-cream); border:1px solid var(--pt-border); padding:12px; margin-bottom:12px; display:grid; gap:8px;">
+            <div style="font-size:11.5px; font-weight:800; color:var(--pt-navy); text-transform:uppercase; letter-spacing:0.06em;">
+              Müşteriye / Kuruma Hızlı Cüzdan Bakiyesi Tanımla (Nakit / Havale / EFT):
             </div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-              <div>
-                <label class="pt-form-label">ResPOS API Anahtarı (Key)</label>
-                <input type="text" id="int-respos-key" class="pt-form-input" placeholder="ResPOS API Key girin..." />
-              </div>
-              <div>
-                <label class="pt-form-label">ResPOS Şube Kodu</label>
-                <input type="text" id="int-respos-branch" class="pt-form-input" placeholder="ADANA-MERKEZ-01" />
-              </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <input type="text" id="admin-wallet-name" class="pt-form-input" placeholder="Müşteri / Kurum Adı" style="padding:8px 10px; font-size:13px;" />
+              <input type="tel" id="admin-wallet-phone" class="pt-form-input" placeholder="Telefon (05XX...)" style="padding:8px 10px; font-size:13px;" />
             </div>
-            <div style="display:flex; flex-direction:column; gap:6px; font-size:13.5px; font-weight:600; color:var(--pt-olive); background:var(--pt-cream); padding:10px 12px; border:1px solid var(--pt-border);">
-              <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-                <input type="checkbox" id="int-respos-kitchen" checked />
-                <span>Sipariş Geldiği An Mutfak Yazıcısından Otomatik Fiş Yazdır</span>
-              </label>
-              <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-                <input type="checkbox" id="int-respos-beko" checked />
-                <span>Beko Yazarkasa POS (TokenX / GMP3) Otomatik Mali Eşleştirme</span>
-              </label>
+            <div style="display:grid; grid-template-columns:1fr auto; gap:8px;">
+              <select id="admin-wallet-amount" class="pt-form-select" style="padding:8px 10px; font-size:13px; font-weight:700;">
+                <option value="5000">5.000 TL Yükle → +250 TL (%5) Hediye = 5.250 TL Bakiye</option>
+                <option value="3000">3.000 TL Yükle → +120 TL (%4) Hediye = 3.120 TL Bakiye</option>
+                <option value="1500">1.500 TL Yükle → +45 TL (%3) Hediye = 1.545 TL Bakiye</option>
+                <option value="10000">10.000 TL Yükle → +500 TL (%5) Hediye = 10.500 TL Bakiye</option>
+              </select>
+              <button type="button" class="pt-btn-olive" style="padding:8px 14px; font-size:11px; white-space:nowrap;" onclick="adminAddWalletBalance()">
+                + BAKİYE YÜKLE
+              </button>
             </div>
           </div>
+          <div id="admin-wallet-members-summary" style="font-size:12.5px; color:var(--pt-navy); max-height:115px; overflow-y:auto; background:#f8fafc; border:1px solid var(--pt-border); padding:8px 10px;"></div>
         </div>
 
         <!-- Kutu 2: QNB Finansbank Sanal POS & Beko QNB POS Bağlantısı -->
@@ -1375,7 +1373,7 @@
               <input type="password" id="int-qnb-pass" class="pt-form-input" placeholder="••••••••••••••••" />
             </div>
             <div style="font-size:13px; color:var(--pt-text-muted); background:var(--pt-cream); padding:10px 12px; border:1px solid var(--pt-border); line-height:1.5;">
-              <strong style="color:var(--pt-navy);">✓ Beko Yazarkasa QNB &amp; Adisyo Hesap Uyumu:</strong> Uygulamadan çekilen QNB 3D Secure ödemeler doğrudan restorandaki Beko Yazarkasa POS'un bağlı olduğu QNB Finansbank ticari hesabınıza aktarılır; Adisyo ve ResPOS'a <em>"Ödendi"</em> olarak düşer.
+              <strong style="color:var(--pt-navy);">✓ Beko Yazarkasa QNB &amp; Adisyo Hesap Uyumu:</strong> Uygulamadan çekilen QNB 3D Secure sipariş ve Cüzdan Bakiye yükleme ödemeleri doğrudan restorandaki Beko Yazarkasa POS'un bağlı olduğu QNB Finansbank ticari hesabınıza aktarılır; Adisyo'ya <em>"Ödendi"</em> olarak düşer.
             </div>
           </div>
         </div>
@@ -1431,15 +1429,15 @@
       </div>
 
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
-        <button type="button" class="pt-btn-fill" onclick="saveIntegrationSettings()">✓ TÜM ENTEGRASYON (ADİSYO • RESPOS • QNB • BEKO • KURYE API) AYARLARINI KAYDET</button>
-        <button type="button" class="pt-btn-olive" onclick="testDispatchSimulation()" style="display:inline-flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> ÖRNEK SİPARİŞ İLE ADİSYO + RESPOS + KURYE API TESTİ GÖNDER</button>
+        <button type="button" class="pt-btn-fill" onclick="saveIntegrationSettings()">✓ TÜM ENTEGRASYON (ADİSYO • CÜZDAN • QNB • BEKO • KURYE API) AYARLARINI KAYDET</button>
+        <button type="button" class="pt-btn-olive" onclick="testDispatchSimulation()" style="display:inline-flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> ÖRNEK SİPARİŞ İLE ADİSYO + KURYE API TESTİ GÖNDER</button>
       </div>
     </section>
 
     <!-- 3. MOBİL UYGULAMADAN GELEN SİPARİŞLER & FRANCHISE BAŞVURULARI -->
     <div class="no-print" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:30px;">
       <section class="admin-panel-box" style="margin-bottom:0;">
-        <div class="pt-subtitle">ADİSYO ERP + RESPOS + BEKO POS + ANINDA KURYE API AKIŞI</div>
+        <div class="pt-subtitle">ADİSYO BULUT ERP + ÇÖKERTME CÜZDAN + BEKO POS + ANINDA KURYE API AKIŞI</div>
         <h3 style="font-size:30px; color:var(--pt-navy); margin-bottom:18px;">
           Gelen Uygulama Siparişleri &amp; Kurye/Mutfak Durumu
         </h3>
@@ -1512,7 +1510,7 @@
     </div>
   </footer>
 
-  <script src="assets/data.js?v=7"></script>
+  <script src="assets/data.js?v=8"></script>
   <script>
     const ADMIN_SESSION_KEY = "cokertme_admin_auth_v1";
 
@@ -2236,10 +2234,136 @@
       renderAdminAll();
     });
 
+    function normalizeAdminPhoneDigits(phoneStr) {
+      const digits = String(phoneStr || "").replace(/\D/g, "");
+      return digits.length >= 10 ? digits.slice(-10) : digits;
+    }
+
+    function calcAdminWalletBonus(paidAmount, state) {
+      const amt = Number(paidAmount) || 0;
+      const wCfg = (state && state.appSettings && state.appSettings.wallet) || {};
+      const t3 = Number(wCfg.tier3Amount) || 5000;
+      const t2 = Number(wCfg.tier2Amount) || 3000;
+      const t1 = Number(wCfg.tier1Amount) || 1500;
+      let pct = 0;
+      if (amt >= t3) pct = Number(wCfg.tier3BonusPct) || 5;
+      else if (amt >= t2) pct = Number(wCfg.tier2BonusPct) || 4;
+      else if (amt >= t1) pct = Number(wCfg.tier1BonusPct) || 3;
+      const bonus = Math.round((amt * pct) / 100);
+      return { paidAmount: amt, bonusPct: pct, bonusAmount: bonus, totalCredit: amt + bonus };
+    }
+
+    function renderAdminWalletSummary(state) {
+      const summaryEl = document.getElementById("admin-wallet-members-summary");
+      if (!summaryEl) return;
+      const members = Array.isArray(state.members) ? state.members : [];
+      const withWallet = members.filter(m => (Number(m.walletBalance) || 0) > 0 || (Array.isArray(m.walletTransactions) && m.walletTransactions.length > 0));
+      if (!withWallet.length) {
+        summaryEl.innerHTML = `<div style="color:var(--pt-text-muted); font-size:12px;">Henüz bakiye yüklemiş üye bulunmuyor. Yukarıdan kurumsal veya bireysel müşteriye paket tanımlayabilirsiniz.</div>`;
+        return;
+      }
+      summaryEl.innerHTML = withWallet.slice(0, 8).map(m => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 8px; background:#fff; border:1px solid var(--pt-border); margin-bottom:4px; gap:8px; flex-wrap:wrap;">
+          <div>
+            <strong style="color:var(--pt-navy); font-size:12.5px;">${m.fullName || 'Üye'}</strong>
+            <span style="color:var(--pt-text-muted); font-size:11.5px; margin-left:6px;">${m.phone || ''}</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:11px; color:var(--pt-olive); font-weight:700;">Hediye: +${Number(m.walletBonusEarned || 0).toLocaleString("tr-TR")} ₺</span>
+            <span class="pt-badge pt-badge-gold" style="font-size:11.5px;">Bakiye: ${Number(m.walletBalance || 0).toLocaleString("tr-TR")} ₺</span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function adminAddWalletBalance() {
+      const nameInput = document.getElementById("admin-wallet-name");
+      const phoneInput = document.getElementById("admin-wallet-phone");
+      const amountSelect = document.getElementById("admin-wallet-amount");
+      const fullName = (nameInput && nameInput.value.trim()) || "Kurumsal Müşteri";
+      const rawPhone = (phoneInput && phoneInput.value.trim()) || "";
+      const phoneKey = normalizeAdminPhoneDigits(rawPhone);
+      if (!phoneKey || phoneKey.length < 10) {
+        alert("Lütfen geçerli bir 10/11 haneli müşteri telefon numarası girin (Örn: 0532 000 00 00).");
+        return;
+      }
+      const state = CokertmeStore.getState();
+      const paidVal = Number(amountSelect ? amountSelect.value : 5000) || 5000;
+      const calc = calcAdminWalletBonus(paidVal, state);
+      const nowIso = new Date().toISOString();
+      const nowStr = new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+
+      if (!Array.isArray(state.members)) state.members = [];
+      let member = state.members.find(m => normalizeAdminPhoneDigits(m.phone) === phoneKey);
+      const txItem = {
+        id: "WTX-" + Date.now(),
+        type: "TOPUP",
+        title: `Cüzdan Yükleme (${paidVal.toLocaleString("tr-TR")} TL + %${calc.bonusPct} Hediye)`,
+        paidAmount: calc.paidAmount,
+        bonusAmount: calc.bonusAmount,
+        amount: calc.totalCredit,
+        method: "Merkez Yönetim / Kurumsal Tahsilat (Adisyo Kasa)",
+        createdAt: nowStr,
+        timestamp: Date.now()
+      };
+
+      if (member) {
+        member.fullName = fullName || member.fullName;
+        member.walletBalance = Math.round(((Number(member.walletBalance) || 0) + calc.totalCredit) * 100) / 100;
+        member.walletBonusEarned = Math.round(((Number(member.walletBonusEarned) || 0) + calc.bonusAmount) * 100) / 100;
+        member.walletUpdatedAt = nowIso;
+        if (!Array.isArray(member.walletTransactions)) member.walletTransactions = [];
+        member.walletTransactions.unshift(txItem);
+      } else {
+        member = {
+          id: "MEM-" + Date.now(),
+          fullName: fullName,
+          gender: "Belirtilmedi",
+          moldType: "Standart Çökertme Kalıbı",
+          phone: rawPhone,
+          address: "Adana",
+          registeredAt: new Date().toLocaleDateString("tr-TR") + " " + nowStr,
+          source: "Çökertme Dijital Cüzdan (Yönetim)",
+          loyaltyStamps: 0,
+          loyaltyRewardsAvailable: 0,
+          walletBalance: calc.totalCredit,
+          walletBonusEarned: calc.bonusAmount,
+          walletUpdatedAt: nowIso,
+          walletTransactions: [txItem]
+        };
+        state.members.unshift(member);
+      }
+
+      try {
+        const localWallets = JSON.parse(localStorage.getItem("cokertme_wallets_v1") || "{}");
+        localWallets[phoneKey] = {
+          phone: rawPhone,
+          fullName: member.fullName,
+          balance: member.walletBalance,
+          bonusEarned: member.walletBonusEarned,
+          updatedAt: nowIso,
+          transactions: member.walletTransactions.slice(0, 50)
+        };
+        localStorage.setItem("cokertme_wallets_v1", JSON.stringify(localWallets));
+      } catch (e) {}
+
+      CokertmeStore.saveState(state);
+      renderAdminAll();
+      if (nameInput) nameInput.value = "";
+      if (phoneInput) phoneInput.value = "";
+      alert(
+        `✓ Çökertme Dijital Cüzdan Yüklemesi Tamamlandı!\n\n` +
+        `• Müşteri: ${member.fullName} (${rawPhone})\n` +
+        `• Ödenen Tutar: ${calc.paidAmount.toLocaleString("tr-TR")} TL\n` +
+        `• Hediye Bakiye (+%${calc.bonusPct}): +${calc.bonusAmount.toLocaleString("tr-TR")} TL\n` +
+        `• Cüzdana Eklenen Toplam: ${calc.totalCredit.toLocaleString("tr-TR")} TL\n` +
+        `• Güncel Cüzdan Bakiyesi: ${member.walletBalance.toLocaleString("tr-TR")} TL`
+      );
+    }
+
     function renderIntegrationSettings(state) {
       const intCfg = state.integrationSettings || {};
       const adisyo = intCfg.adisyo || {};
-      const respos = intCfg.respos || {};
       const qnb = intCfg.qnbPos || {};
       const courier = intCfg.courier || {};
       const companies = courier.companies || [];
@@ -2256,18 +2380,16 @@
       document.getElementById("int-adisyo-marketplace").checked = adisyo.marketplaceUnifiedSync !== false;
       document.getElementById("int-adisyo-courier").checked = adisyo.courierDispatchSync !== false;
       document.getElementById("int-adisyo-finance").checked = adisyo.financeCashRegisterSync !== false;
-
-      document.getElementById("int-respos-url").value = respos.apiUrl || "https://api.respos.com.tr/v1/online-orders";
-      document.getElementById("int-respos-key").value = respos.apiKey || "";
-      document.getElementById("int-respos-branch").value = respos.branchCode || "ADANA-MERKEZ-01";
-      document.getElementById("int-respos-kitchen").checked = respos.autoKitchenPrint !== false;
-      document.getElementById("int-respos-beko").checked = respos.bekoPosSync !== false;
+      const bekoEl = document.getElementById("int-adisyo-beko");
+      if (bekoEl) bekoEl.checked = adisyo.bekoPosSync !== false;
 
       document.getElementById("int-qnb-merchant").value = qnb.merchantId || "";
       document.getElementById("int-qnb-terminal").value = qnb.terminalId || "";
       document.getElementById("int-qnb-pass").value = qnb.apiPass || "";
 
       document.getElementById("int-courier-prep-min").value = courier.defaultPrepMinutes || 15;
+
+      renderAdminWalletSummary(state);
 
       const selectEl = document.getElementById("int-active-courier-select");
       selectEl.innerHTML = companies.map(c =>
@@ -2385,6 +2507,7 @@
       });
 
       const activeId = document.getElementById("int-active-courier-select").value;
+      const bekoEl = document.getElementById("int-adisyo-beko");
 
       state.integrationSettings = {
         adisyo: {
@@ -2399,15 +2522,8 @@
           accountingEInvoiceSync: document.getElementById("int-adisyo-accounting").checked,
           marketplaceUnifiedSync: document.getElementById("int-adisyo-marketplace").checked,
           courierDispatchSync: document.getElementById("int-adisyo-courier").checked,
-          financeCashRegisterSync: document.getElementById("int-adisyo-finance").checked
-        },
-        respos: {
-          enabled: true,
-          apiUrl: document.getElementById("int-respos-url").value.trim(),
-          apiKey: document.getElementById("int-respos-key").value.trim(),
-          branchCode: document.getElementById("int-respos-branch").value.trim() || "ADANA-MERKEZ-01",
-          autoKitchenPrint: document.getElementById("int-respos-kitchen").checked,
-          bekoPosSync: document.getElementById("int-respos-beko").checked
+          financeCashRegisterSync: document.getElementById("int-adisyo-finance").checked,
+          bekoPosSync: bekoEl ? bekoEl.checked : true
         },
         qnbPos: {
           enabled: true,
@@ -2427,7 +2543,7 @@
 
       CokertmeStore.saveState(state);
       renderAdminAll();
-      alert("✓ Adisyo Bulut ERP (Adisyon, Stok, Muhasebe, Pazaryeri, Kurye, Finans), ResPOS, Beko Yazarkasa POS, QNB Finansbank 3D Secure ve Anında Kurye API ayarları başarıyla kaydedildi!");
+      alert("✓ Adisyo Bulut ERP (Adisyon, Stok, Muhasebe, Pazaryeri, Kurye, Finans), Beko Yazarkasa POS, QNB Finansbank 3D Secure ve Anında Kurye API ayarları başarıyla kaydedildi!");
     }
 
     function testAdisyoConnection() {
@@ -2479,8 +2595,7 @@
         prepTimeMinutes: prepMin,
         estimatedReadyAt: readyStr,
         courierCompanyName: activeCourier.name,
-        adisyoStatus: "Adisyo Bulut ERP'ye İletildi • Adisyon, Stok/Reçete, Muhasebe, Pazaryeri, Kurye & Finans İşlendi",
-        resposStatus: "ResPOS API'ye İletildi • Mutfak Fişi (Kalpli Çökertme Kalıbı) Yazdırıldı • Beko ÖKC Eşleşti",
+        adisyoStatus: "Adisyo Bulut ERP'ye İletildi • Mutfak Fişi (Kalpli Çökertme Kalıbı) Basıldı • Stok/Reçete, Muhasebe, Pazaryeri, Kurye & Beko ÖKC İşlendi",
         courierStatus: `${activeCourier.name} API'sine Anında Atandı (${prepMin} dk sonra [${readyStr}] hazır olacağı bildirildi)`,
         status: "Adisyo & Mutfakta Hazırlanıyor • Kurye Atandı",
         createdAt: createdAtStr
@@ -2493,9 +2608,8 @@
       alert(
         `⚡ Test Siparişi (#${sampleOrder.id}) 0. Saniyede Tetiklendi!\n\n` +
         `• Cinsiyet & Sunum Kalıbı: Kadın -> Kalpli Çökertme Kalıbı\n` +
-        `1. Adisyo Bulut ERP (adisyo.com): Adisyon açıldı, reçete/stok düşümü yapıldı, ön muhasebe/finans ve Adisyo Kurye modülüne işlendi.\n` +
-        `2. ResPOS & Beko Yazarkasa POS: Mutfak fişi ve QNB POS tahsilatı eşleştirildi.\n` +
-        `3. Kurye API (${activeCourier.name}): Siparişin düştüğü ve ${prepMin} dakika sonra (${readyStr}) mutfakta hazır olacağı anında bildirildi.`
+        `1. Adisyo Bulut ERP (adisyo.com): Adisyon açıldı, mutfak fişi basıldı, reçete/stok düşümü yapıldı, ön muhasebe/finans ve Beko ÖKC eşleştirildi.\n` +
+        `2. Kurye API (${activeCourier.name}): Siparişin düştüğü ve ${prepMin} dakika sonra (${readyStr}) mutfakta hazır olacağı anında bildirildi.`
       );
     }
 
@@ -2555,9 +2669,8 @@
             <div><strong style="color:var(--pt-olive);">Üyelik Durumu:</strong> ${o.membershipNote || 'Sipariş Bilgileriyle Otomatik Üyelik Açıldı'}</div>
             ${o.loyaltyNote ? `<div><strong style="color:var(--pt-gold);">Sadakat Programı:</strong> <strong style="color:var(--pt-navy);">${o.loyaltyNote}</strong></div>` : ''}
             <div><strong style="color:var(--pt-terracotta);">Mutfak Sunum Kalıbı (Cinsiyet):</strong> <strong>${moldDisplay}</strong></div>
-            <div><strong style="color:var(--pt-terracotta);">Adisyo Bulut ERP (adisyo.com):</strong> ${o.adisyoStatus || 'Adisyo POS & ERP İletildi • Adisyon, Stok/Reçete, Muhasebe, Pazaryeri, Kurye & Finans İşlendi'}</div>
-            <div><strong style="color:var(--pt-navy);">QNB / Beko Yazarkasa POS:</strong> ${o.paymentLabel || 'QNB Finansbank Online 3D (Beko POS Hesabına Aktarıldı)'}</div>
-            <div><strong style="color:var(--pt-olive);">ResPOS &amp; Mutfak Yazıcısı:</strong> ${o.resposStatus || 'ResPOS API İletildi • Mutfak Fişi Basıldı'}</div>
+            <div><strong style="color:var(--pt-terracotta);">Adisyo Bulut ERP &amp; Mutfak (adisyo.com):</strong> ${o.adisyoStatus || 'Adisyo POS & ERP İletildi • Mutfak Fişi Basıldı • Stok/Reçete, Muhasebe, Pazaryeri, Kurye & Finans İşlendi'}</div>
+            <div><strong style="color:var(--pt-navy);">Ödeme / Tahsilat (QNB / Cüzdan / Beko POS):</strong> ${o.paymentLabel || 'QNB Finansbank Online 3D (Beko POS Hesabına Aktarıldı)'}</div>
             <div><strong style="color:var(--pt-terracotta);">Kurye API (0. Saniye):</strong> ${o.courierStatus || `Anında Kurye API'ye Atandı (${o.prepTimeMinutes || 15} dk sonra hazır)`}</div>
             <div style="display:flex; align-items:center; gap:8px; margin-top:4px; flex-wrap:wrap;">
               <span style="font-weight:700; color:var(--pt-navy);">Başka Kurye Firmasına Yönlendir:</span>

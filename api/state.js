@@ -117,6 +117,19 @@ function mergeOrdersLists(existingOrders, incomingOrders) {
   return merged;
 }
 
+function mergeWalletTxLists(txA, txB) {
+  const txMap = new Map();
+  const addTx = (tx) => {
+    if (!tx || !tx.id) return;
+    txMap.set(tx.id, tx);
+  };
+  if (Array.isArray(txA)) txA.forEach(addTx);
+  if (Array.isArray(txB)) txB.forEach(addTx);
+  const list = Array.from(txMap.values());
+  list.sort((a, b) => (Number(b.createdAtMs || 0) - Number(a.createdAtMs || 0)));
+  return list;
+}
+
 function mergeMembersLists(existingMembers, incomingMembers) {
   const map = new Map();
   const addMember = (m) => {
@@ -125,18 +138,39 @@ function mergeMembersLists(existingMembers, incomingMembers) {
     if (!key || key.length < 10) return;
     const prev = map.get(key);
     if (!prev) {
-      map.set(key, { ...m, phoneNormalized: key });
+      map.set(key, {
+        ...m,
+        phoneNormalized: key,
+        walletBalance: Number(m.walletBalance || 0),
+        walletBonusEarned: Number(m.walletBonusEarned || 0),
+        walletTransactions: Array.isArray(m.walletTransactions) ? m.walletTransactions : []
+      });
     } else {
       const combinedStamps = Array.from(new Set([
         ...(Array.isArray(prev.stampTimestamps) ? prev.stampTimestamps : []),
         ...(Array.isArray(m.stampTimestamps) ? m.stampTimestamps : [])
       ])).map(Number).filter(Boolean).sort((a, b) => a - b);
+      const mergedTx = mergeWalletTxLists(prev.walletTransactions, m.walletTransactions);
+      const prevWalTime = Number(prev.walletUpdatedAt || prev.updatedAt || 0);
+      const newWalTime = Number(m.walletUpdatedAt || m.updatedAt || 0);
+      let finalBalance = newWalTime >= prevWalTime
+        ? Number(m.walletBalance !== undefined ? m.walletBalance : prev.walletBalance || 0)
+        : Number(prev.walletBalance !== undefined ? prev.walletBalance : m.walletBalance || 0);
+      if (mergedTx.length > 0 && mergedTx[0].balanceAfter !== undefined) {
+        finalBalance = Number(mergedTx[0].balanceAfter);
+      }
+      const totalBonus = Math.max(Number(prev.walletBonusEarned || 0), Number(m.walletBonusEarned || 0));
+
       map.set(key, {
         ...prev,
         ...m,
         phoneNormalized: key,
         stamps: Math.max(Number(prev.stamps || 0), Number(m.stamps || 0), combinedStamps.length),
-        stampTimestamps: combinedStamps
+        stampTimestamps: combinedStamps,
+        walletBalance: Number(finalBalance.toFixed(2)),
+        walletBonusEarned: Number(totalBonus.toFixed(2)),
+        walletTransactions: mergedTx,
+        walletUpdatedAt: Math.max(prevWalTime, newWalTime)
       });
     }
   };

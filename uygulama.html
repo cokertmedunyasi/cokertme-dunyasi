@@ -2529,6 +2529,7 @@
           </div>
           <div class="desktop-nav-pills">
             <button type="button" class="desktop-nav-btn" onclick="switchTab('home')">Menü &amp; Sipariş</button>
+            <button type="button" class="desktop-nav-btn" onclick="openAccountSubTab('cuzdanim')" style="color:var(--pt-gold-soft); border-color:rgba(212,155,53,0.45);">Cüzdan (+%5 Hediye)</button>
             <button type="button" class="desktop-nav-btn" onclick="switchTab('branches')">Şubeler</button>
             <button type="button" class="desktop-nav-btn" onclick="openAccountSubTab('siparislerim')">Sipariş Takibi</button>
           </div>
@@ -2600,6 +2601,7 @@
       </div>
 
       <ul class="drawer-nav-list" style="padding-left:14px;">
+        <li><a href="javascript:void(0)" onclick="toggleAppDrawer(false); openAccountSubTab('cuzdanim');" style="color:var(--pt-gold-soft); font-weight:700;">Cüzdanım (+%5 Hediye TL)</a></li>
         <li><a href="javascript:void(0)" onclick="toggleAppDrawer(false); openAccountSubTab('profil');">Hesabım</a></li>
         <li><a href="javascript:void(0)" onclick="toggleAppDrawer(false); openAccountSubTab('siparislerim');">Siparişlerim</a></li>
         <li><a href="javascript:void(0)" onclick="toggleAppDrawer(false); openAccountSubTab('adreslerim');">Adreslerim</a></li>
@@ -2766,7 +2768,7 @@
 
   </div>
 
-  <script src="assets/data.js?v=7"></script>
+  <script src="assets/data.js?v=8"></script>
   <script>
     // =========================================================================
     // UYGULAMA DURUMU (STATE)
@@ -2835,11 +2837,12 @@
     function saveAppUser() {
       if (appUser) {
         localStorage.setItem("cokertme_app_user_v2", JSON.stringify(appUser));
-        // Bulut Üye Listesine (state.members) Anında Senkronize Et (Web & Mobil Uygulama Ortak Üyelik)
+        // Bulut Üye Listesine (state.members) Anında Senkronize Et (Web & Mobil Uygulama Ortak Üyelik + Cüzdan)
         if (window.CokertmeStore && typeof CokertmeStore.upsertMember === "function" && appUser.phone) {
           const st = CokertmeStore.getState();
           const lStat = typeof getUserLoyaltyStatus === "function" ? getUserLoyaltyStatus(appUser.phone, st) : { stampCount: 0, validStamps: [] };
-          CokertmeStore.upsertMember({
+          const wStat = typeof getUserWalletStatus === "function" ? getUserWalletStatus(appUser.phone, st) : null;
+          const memberPayload = {
             phone: appUser.phone,
             fullName: appUser.fullName || "",
             name: appUser.fullName || "",
@@ -2849,7 +2852,14 @@
             savedAddress: appUser.address || "",
             stamps: lStat.stampCount || 0,
             stampTimestamps: lStat.validStamps || []
-          });
+          };
+          if (wStat) {
+            memberPayload.walletBalance = wStat.balance;
+            memberPayload.walletBonusEarned = wStat.bonusEarned;
+            memberPayload.walletTransactions = wStat.transactions;
+            memberPayload.walletUpdatedAt = wStat.updatedAt;
+          }
+          CokertmeStore.upsertMember(memberPayload);
         }
       } else {
         localStorage.removeItem("cokertme_app_user_v2");
@@ -2881,18 +2891,25 @@
         const letter = (appUser.fullName && appUser.fullName.trim()[0]) ? appUser.fullName.trim()[0].toUpperCase() : "Ü";
         const firstName = (appUser.fullName || appUser.phone).trim().split(" ")[0];
         let stampBadgeText = "";
+        let walletBadgeText = "";
         try {
+          const st = CokertmeStore.getState();
           if (typeof getUserLoyaltyStatus === "function") {
-            const st = CokertmeStore.getState();
             const lStat = getUserLoyaltyStatus(appUser.phone, st);
             stampBadgeText = ` • ${lStat.stampCount}/${lStat.requiredStamps}★`;
+          }
+          if (typeof getUserWalletStatus === "function") {
+            const wStat = getUserWalletStatus(appUser.phone, st);
+            if (wStat && wStat.balance > 0) {
+              walletBadgeText = ` • ${Math.round(wStat.balance).toLocaleString("tr-TR")}₺`;
+            }
           }
         } catch (e) {}
         if (authArea) {
           authArea.innerHTML = `
-            <button type="button" class="hdr-user-pill" onclick="switchTab('account')" title="Hesabım ve Sadakat Puanım">
+            <button type="button" class="hdr-user-pill" onclick="switchTab('account')" title="Hesabım, Cüzdanım ve Sadakat Puanım">
               <span class="hdr-user-pill-avatar">${letter}</span>
-              <span>${firstName}${stampBadgeText}</span>
+              <span>${firstName}${stampBadgeText}${walletBadgeText}</span>
             </button>
           `;
         }
@@ -4027,6 +4044,293 @@
     }
 
     // =========================================================================
+    // ÇÖKERTME DİJİTAL CÜZDAN MOTORU (ÖN ÖDEMELİ BAKİYE + KADEMELİ HEDİYE TL):
+    // 1.500 TL Yükle -> +%3 Hediye (+45 TL)  = 1.545 TL Bakiye
+    // 3.000 TL Yükle -> +%4 Hediye (+120 TL) = 3.120 TL Bakiye
+    // 5.000 TL+ Yükle -> +%5 Hediye (+250 TL) = 5.250 TL Bakiye
+    // =========================================================================
+    const WALLET_STORAGE_KEY = "cokertme_wallets_v1";
+    let selectedWalletPackageAmount = 5000;
+    let customWalletAmountValue = "";
+    let checkoutPaymentMethod = "WALLET_OR_QNB"; // "COKERTME_WALLET" | "QNB_ONLINE_3D"
+    let pendingWalletTopupData = null;
+
+    function getWalletConfig(state) {
+      const wCfg = (state && state.appSettings && state.appSettings.wallet) || {};
+      return {
+        enabled: wCfg.enabled !== false,
+        tier1Amount: Number(wCfg.tier1Amount) || 1500,
+        tier1BonusPct: Number(wCfg.tier1BonusPct) || 3,
+        tier2Amount: Number(wCfg.tier2Amount) || 3000,
+        tier2BonusPct: Number(wCfg.tier2BonusPct) || 4,
+        tier3Amount: Number(wCfg.tier3Amount) || 5000,
+        tier3BonusPct: Number(wCfg.tier3BonusPct) || 5
+      };
+    }
+
+    function calculateWalletTopupBonus(paidAmount, state) {
+      const cfg = getWalletConfig(state);
+      const amt = Math.max(0, Number(paidAmount) || 0);
+      let bonusPct = 0;
+      if (amt >= cfg.tier3Amount) {
+        bonusPct = cfg.tier3BonusPct;
+      } else if (amt >= cfg.tier2Amount) {
+        bonusPct = cfg.tier2BonusPct;
+      } else if (amt >= cfg.tier1Amount) {
+        bonusPct = cfg.tier1BonusPct;
+      }
+      const bonusAmount = Math.round(((amt * bonusPct) / 100) * 100) / 100;
+      const totalCredit = Math.round((amt + bonusAmount) * 100) / 100;
+      return {
+        paidAmount: amt,
+        bonusPct,
+        bonusAmount,
+        totalCredit
+      };
+    }
+
+    function loadAllLocalWallets() {
+      try {
+        return JSON.parse(localStorage.getItem(WALLET_STORAGE_KEY) || "{}");
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveAllLocalWallets(wallets) {
+      try {
+        localStorage.setItem(WALLET_STORAGE_KEY, JSON.stringify(wallets));
+      } catch (e) {}
+    }
+
+    function mergeClientWalletTxList(listA, listB) {
+      const map = new Map();
+      const addAll = (arr) => {
+        if (!Array.isArray(arr)) return;
+        arr.forEach(tx => {
+          if (!tx || typeof tx !== "object") return;
+          const key = tx.id ? String(tx.id) : `${tx.type || 'TX'}_${tx.amount || 0}_${tx.createdAt || ''}`;
+          if (!map.has(key)) map.set(key, tx);
+        });
+      };
+      addAll(listA);
+      addAll(listB);
+      const merged = Array.from(map.values());
+      merged.sort((a, b) => (Number(b.timestamp || 0) - Number(a.timestamp || 0)));
+      return merged.slice(0, 60);
+    }
+
+    function getUserWalletStatus(phoneStr, state) {
+      const normPhone = normalizeLoyaltyPhone(phoneStr);
+      if (!normPhone || normPhone.length < 10) {
+        return { normPhone: "", balance: 0, bonusEarned: 0, updatedAt: "", transactions: [] };
+      }
+
+      const localWallets = loadAllLocalWallets();
+      const localRec = localWallets[normPhone] || null;
+      let cloudMember = null;
+      if (state && Array.isArray(state.members)) {
+        cloudMember = state.members.find(m => m && normalizeLoyaltyPhone(m.phone) === normPhone) || null;
+      }
+
+      const localUpd = localRec && localRec.updatedAt ? String(localRec.updatedAt) : "";
+      const cloudUpd = cloudMember && cloudMember.walletUpdatedAt ? String(cloudMember.walletUpdatedAt) : "";
+      const mergedTxs = mergeClientWalletTxList(
+        localRec ? localRec.transactions : [],
+        cloudMember ? cloudMember.walletTransactions : []
+      );
+
+      let balance = 0;
+      let bonusEarned = 0;
+      let updatedAt = localUpd || cloudUpd || "";
+
+      if (localUpd && cloudUpd) {
+        if (localUpd >= cloudUpd) {
+          balance = Number(localRec.balance) || 0;
+          bonusEarned = Math.max(Number(localRec.bonusEarned) || 0, Number(cloudMember.walletBonusEarned) || 0);
+          updatedAt = localUpd;
+        } else {
+          balance = Number(cloudMember.walletBalance) || 0;
+          bonusEarned = Math.max(Number(cloudMember.walletBonusEarned) || 0, Number(localRec.bonusEarned) || 0);
+          updatedAt = cloudUpd;
+        }
+      } else if (localUpd) {
+        balance = Number(localRec.balance) || 0;
+        bonusEarned = Number(localRec.bonusEarned) || 0;
+      } else if (cloudUpd || (cloudMember && Number(cloudMember.walletBalance) > 0)) {
+        balance = Number(cloudMember.walletBalance) || 0;
+        bonusEarned = Number(cloudMember.walletBonusEarned) || 0;
+      } else if (localRec) {
+        balance = Number(localRec.balance) || 0;
+        bonusEarned = Number(localRec.bonusEarned) || 0;
+      }
+
+      balance = Math.round(Math.max(0, balance) * 100) / 100;
+      bonusEarned = Math.round(Math.max(0, bonusEarned) * 100) / 100;
+
+      // Yerel cüzdan kaydını güncel tut
+      if (!localRec || localRec.balance !== balance || (localRec.transactions || []).length !== mergedTxs.length) {
+        localWallets[normPhone] = {
+          phone: phoneStr,
+          balance,
+          bonusEarned,
+          updatedAt,
+          transactions: mergedTxs
+        };
+        saveAllLocalWallets(localWallets);
+      }
+
+      return {
+        normPhone,
+        balance,
+        bonusEarned,
+        updatedAt,
+        transactions: mergedTxs
+      };
+    }
+
+    function creditUserWallet(phoneStr, fullName, paidAmount, methodLabel, state) {
+      const normPhone = normalizeLoyaltyPhone(phoneStr);
+      if (!normPhone || normPhone.length < 10) return null;
+
+      const st = state || CokertmeStore.getState();
+      const current = getUserWalletStatus(phoneStr, st);
+      const calc = calculateWalletTopupBonus(paidAmount, st);
+      const nowIso = new Date().toISOString();
+      const nowTime = new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+      const nowDate = new Date().toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
+
+      const txItem = {
+        id: "WTX-" + Date.now() + "-" + Math.floor(100 + Math.random() * 900),
+        type: "TOPUP",
+        title: calc.bonusAmount > 0
+          ? `Cüzdan Yükleme (${calc.paidAmount.toLocaleString("tr-TR")} TL + %${calc.bonusPct} Hediye: +${calc.bonusAmount.toLocaleString("tr-TR")} TL)`
+          : `Cüzdan Yükleme (${calc.paidAmount.toLocaleString("tr-TR")} TL)`,
+        paidAmount: calc.paidAmount,
+        bonusAmount: calc.bonusAmount,
+        amount: calc.totalCredit,
+        method: methodLabel || "QNB Finansbank 3D Secure (Adisyo Kasa)",
+        createdAt: `${nowDate} • ${nowTime}`,
+        timestamp: Date.now()
+      };
+
+      const newBalance = Math.round((current.balance + calc.totalCredit) * 100) / 100;
+      const newBonus = Math.round((current.bonusEarned + calc.bonusAmount) * 100) / 100;
+      const newTxs = [txItem, ...current.transactions].slice(0, 60);
+
+      const localWallets = loadAllLocalWallets();
+      localWallets[normPhone] = {
+        phone: phoneStr,
+        fullName: fullName || "",
+        balance: newBalance,
+        bonusEarned: newBonus,
+        updatedAt: nowIso,
+        transactions: newTxs
+      };
+      saveAllLocalWallets(localWallets);
+
+      if (!Array.isArray(st.members)) st.members = [];
+      let member = st.members.find(m => m && normalizeLoyaltyPhone(m.phone) === normPhone);
+      if (member) {
+        if (fullName) {
+          member.fullName = fullName;
+          member.name = fullName;
+        }
+        member.walletBalance = newBalance;
+        member.walletBonusEarned = newBonus;
+        member.walletUpdatedAt = nowIso;
+        member.walletTransactions = newTxs;
+        member.updatedAt = Date.now();
+      } else {
+        st.members.unshift({
+          id: "MEM-" + Date.now(),
+          fullName: fullName || "Cüzdan Üyesi",
+          name: fullName || "Cüzdan Üyesi",
+          phone: phoneStr,
+          phoneNormalized: normPhone,
+          gender: (appUser && appUser.gender) || "Kadın",
+          moldType: (appUser && appUser.moldType) || "Standart Çökertme Kalıbı",
+          address: (appUser && appUser.address) || "",
+          stamps: 0,
+          stampTimestamps: [],
+          walletBalance: newBalance,
+          walletBonusEarned: newBonus,
+          walletUpdatedAt: nowIso,
+          walletTransactions: newTxs,
+          registeredVia: "Çökertme Dijital Cüzdan",
+          createdAt: `${nowDate} • ${nowTime}`,
+          updatedAt: Date.now()
+        });
+      }
+      CokertmeStore.saveState(st);
+      updateUserHeaderUI();
+
+      return {
+        balance: newBalance,
+        bonusEarned: newBonus,
+        calc,
+        txItem
+      };
+    }
+
+    function deductUserWalletForOrder(phoneStr, orderTotal, orderId, state) {
+      const normPhone = normalizeLoyaltyPhone(phoneStr);
+      if (!normPhone || normPhone.length < 10) return { ok: false, reason: "Telefon numarası geçersiz." };
+
+      const st = state || CokertmeStore.getState();
+      const current = getUserWalletStatus(phoneStr, st);
+      const spend = Math.round((Number(orderTotal) || 0) * 100) / 100;
+      if (current.balance < spend) {
+        return { ok: false, reason: "Cüzdan bakiyesi yetersiz.", balance: current.balance };
+      }
+
+      const nowIso = new Date().toISOString();
+      const nowTime = new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+      const nowDate = new Date().toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
+
+      const txItem = {
+        id: "WTX-SPEND-" + Date.now(),
+        type: "SPEND",
+        title: `Sipariş Ödemesi (#${orderId})`,
+        amount: -spend,
+        orderId: orderId,
+        method: "Çökertme Dijital Cüzdan (1 Saniyede Tek Tıkla Ödeme)",
+        createdAt: `${nowDate} • ${nowTime}`,
+        timestamp: Date.now()
+      };
+
+      const newBalance = Math.round(Math.max(0, current.balance - spend) * 100) / 100;
+      const newTxs = [txItem, ...current.transactions].slice(0, 60);
+
+      const localWallets = loadAllLocalWallets();
+      localWallets[normPhone] = {
+        phone: phoneStr,
+        balance: newBalance,
+        bonusEarned: current.bonusEarned,
+        updatedAt: nowIso,
+        transactions: newTxs
+      };
+      saveAllLocalWallets(localWallets);
+
+      if (!Array.isArray(st.members)) st.members = [];
+      const member = st.members.find(m => m && normalizeLoyaltyPhone(m.phone) === normPhone);
+      if (member) {
+        member.walletBalance = newBalance;
+        member.walletUpdatedAt = nowIso;
+        member.walletTransactions = newTxs;
+        member.updatedAt = Date.now();
+      }
+      updateUserHeaderUI();
+
+      return {
+        ok: true,
+        spentAmount: spend,
+        remainingBalance: newBalance,
+        txItem
+      };
+    }
+
+    // =========================================================================
     // SADAKAT PROGRAMI MOTORU:
     // SON 30 GÜNDE + 24 SAATTE EN FAZLA 1 DAMGA (HASTANE/GRUP KORUMALI)
     // + 5 AYRI GÜNDE 5 SİPARİŞE -> 1 ADET %50 İNDİRİMLİ ÇÖKERTME HEDİYESİ
@@ -4054,6 +4358,7 @@
         canEarnToday: true,
         hoursUntilNextStamp: 0
       };
+      const wStat = isLogged ? getUserWalletStatus(appUser.phone, state) : { balance: 0, bonusEarned: 0 };
       const userName = isLogged ? (appUser.fullName || appUser.phone).split(" ")[0] : "";
 
       let stampsHtml = "";
@@ -4103,7 +4408,23 @@
               ${stampsHtml}
             </div>
 
-            <div class="promo-loyalty-links" style="justify-content:space-between; margin-top:2px;">
+            <!-- Çökertme Dijital Cüzdan (+%5 Hediye TL) Hızlı Erişim Şeridi -->
+            <div style="margin-top:8px; padding:8px 10px; background:rgba(255,255,255,0.1); border:1px solid rgba(212,155,53,0.45); border-radius:10px; display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;">
+              <div style="display:flex; align-items:center; gap:7px; font-size:12px; color:#fff;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--pt-gold-soft)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                <span>
+                  <strong style="color:var(--pt-gold-soft);">Dijital Cüzdan:</strong>
+                  ${isLogged && wStat.balance > 0
+                    ? `Bakiyeniz <strong>${wStat.balance.toLocaleString("tr-TR")} TL</strong>`
+                    : `1.500 / 3.000 / 5.000 TL Yüklemede <strong>+%5 Hediye (+250 TL)</strong>`}
+                </span>
+              </div>
+              <button type="button" onclick="openAccountSubTab('cuzdanim')" style="background:var(--pt-gold); color:var(--pt-navy-dark); border:none; border-radius:7px; padding:5px 10px; font-size:11px; font-weight:800; cursor:pointer; white-space:nowrap;">
+                ${isLogged && wStat.balance > 0 ? 'Cüzdanım & Yükle ›' : 'Cüzdana Yükle (+%5 Hediye) ›'}
+              </button>
+            </div>
+
+            <div class="promo-loyalty-links" style="justify-content:space-between; margin-top:6px;">
               <button type="button" class="btn-loyalty-terms-link" onclick="openLoyaltyTermsModal()">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                 Sadakat Şartları ›
@@ -4570,39 +4891,98 @@
           </div>
         </div>
 
-        <!-- QNB Finansbank Zorunlu Online Ödeme (Ödeme Yapılmadan Sipariş Verilemez) -->
+        <!-- 2. Ödeme Yöntemi Seçimi: Çökertme Dijital Cüzdan (1 Saniyede Tek Tıkla) veya QNB Finansbank 3D Secure Kart -->
+        ${(() => {
+          const wStat = getUserWalletStatus(draftPhone, state);
+          const hasEnoughWallet = wStat.balance >= finalTotal && finalTotal > 0;
+          const activePayMode = (checkoutPaymentMethod === "COKERTME_WALLET" || (checkoutPaymentMethod === "WALLET_OR_QNB" && hasEnoughWallet))
+            ? "COKERTME_WALLET"
+            : "QNB_ONLINE_3D";
+          const missingAmount = Math.max(0, Math.ceil(finalTotal - wStat.balance));
+
+          return `
         <div class="cart-card" style="border:2px solid var(--pt-navy);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
-            <div style="font-weight:700; font-size:15px; color:var(--pt-navy);">2. Zorunlu Online Ödeme (QNB Finansbank POS)</div>
-            <span style="background:var(--pt-navy); color:var(--pt-gold-soft); font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:6px;">3D SECURE ZORUNLU</span>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
+            <div style="font-weight:700; font-size:15px; color:var(--pt-navy);">2. Güvenli Ödeme Yöntemi Seçimi</div>
+            <span style="background:var(--pt-navy); color:var(--pt-gold-soft); font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:6px;">CÜZDAN VEYA 3D SECURE</span>
           </div>
 
-          <div style="background:#FFF8EB; border:1px solid var(--pt-gold); border-radius:8px; padding:8px 10px; font-size:12px; font-weight:700; color:var(--pt-navy-dark); margin-bottom:10px;">
-            Ödeme tamamlanmadan sipariş oluşturulamaz. Kart ödemeniz QNB Finansbank 3D Secure ile çekildiği anda restoranımızdaki Beko Yazarkasa QNB POS hesabına işlenir ve mutfak fişiniz otomatik yazdırılır.
+          <!-- Ödeme Yöntemi Seçici Sekmeler -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px;">
+            <button type="button" onclick="selectCheckoutPaymentMethod('COKERTME_WALLET')" style="padding:10px 8px; border-radius:10px; border:2px solid ${activePayMode === 'COKERTME_WALLET' ? 'var(--pt-olive)' : 'var(--pt-border)'}; background:${activePayMode === 'COKERTME_WALLET' ? '#F4F7F2' : '#fff'}; color:var(--pt-navy); font-weight:700; font-size:12.5px; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:2px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:4px;">
+                <span>Çökertme Cüzdan</span>
+                <span style="background:var(--pt-gold); color:var(--pt-navy-dark); font-size:9.5px; font-weight:800; padding:2px 6px; border-radius:4px;">+%5 HEDİYE</span>
+              </div>
+              <span style="font-size:11px; color:${hasEnoughWallet ? 'var(--pt-olive)' : 'var(--pt-terracotta)'}; font-weight:700;">
+                Bakiye: ${wStat.balance.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL
+              </span>
+            </button>
+
+            <button type="button" onclick="selectCheckoutPaymentMethod('QNB_ONLINE_3D')" style="padding:10px 8px; border-radius:10px; border:2px solid ${activePayMode === 'QNB_ONLINE_3D' ? 'var(--pt-navy)' : 'var(--pt-border)'}; background:${activePayMode === 'QNB_ONLINE_3D' ? '#f0f5fa' : '#fff'}; color:var(--pt-navy); font-weight:700; font-size:12.5px; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:2px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:4px;">
+                <span>Kredi / Banka Kartı</span>
+                <span style="background:var(--pt-navy); color:#fff; font-size:9.5px; font-weight:800; padding:2px 6px; border-radius:4px;">3D SECURE</span>
+              </div>
+              <span style="font-size:11px; color:var(--pt-text-muted); font-weight:600;">QNB Finansbank POS</span>
+            </button>
           </div>
 
-          <div id="qnb-online-card-box" style="background:#f8fafc; border:1px solid var(--pt-border); border-radius:10px; padding:12px;">
-            <div style="display:grid; gap:9px;">
-              <div>
-                <label style="font-size:11.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">Kart Üzerindeki İsim Soyisim *</label>
-                <input type="text" id="qnb-card-holder" placeholder="Örn: AHMET YILMAZ" value="${draftCardHolder}" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:14px; font-weight:600;" />
-              </div>
-              <div>
-                <label style="font-size:11.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">Kredi / Banka Kartı Numarası (16 Hane) *</label>
-                <input type="tel" id="qnb-card-number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" value="${draftCardNum}" oninput="formatCardNumberInput(this)" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:15px; font-weight:700; letter-spacing:1.5px;" />
-              </div>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          ${activePayMode === 'COKERTME_WALLET' ? `
+            <div style="background:linear-gradient(135deg, #14314F 0%, #023A58 100%); color:#fff; border-radius:12px; padding:14px; border:1.5px solid var(--pt-gold);">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:8px;">
                 <div>
-                  <label style="font-size:11.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">Son Kullanma (AA/YY) *</label>
-                  <input type="tel" id="qnb-card-exp" placeholder="AA/YY" maxlength="5" value="${draftCardExp}" oninput="formatCardExpInput(this)" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:14px; font-weight:700; text-align:center;" />
+                  <div style="font-size:10.5px; letter-spacing:0.1em; color:var(--pt-gold-soft); font-weight:800;">ÇÖKERTME DİJİTAL CÜZDAN • 1 SANİYEDE ÖDEME</div>
+                  <div style="font-family:var(--font-serif); font-size:22px; font-weight:700;">Mevcut Bakiye: ${wStat.balance.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL</div>
+                </div>
+                <button type="button" onclick="openAccountSubTab('cuzdanim')" style="background:var(--pt-gold); color:var(--pt-navy-dark); border:none; border-radius:8px; padding:7px 11px; font-size:11.5px; font-weight:800; cursor:pointer;">
+                  + Bakiye Yükle (+%5 Hediye)
+                </button>
+              </div>
+
+              ${hasEnoughWallet ? `
+                <div style="background:rgba(59,82,51,0.45); border:1px solid #86efac; border-radius:8px; padding:9px 11px; font-size:12px; line-height:1.4;">
+                  ✓ <strong>Cüzdan bakiyeniz bu sipariş için yeterli!</strong> Kart numarası veya 3D SMS şifresi girmenize gerek olmadan aşağıdaki butonla <strong>1 saniyede tek tıkla</strong> siparişinizi tamamlayabilirsiniz. Sipariş sonrası kalan bakiyeniz: <strong>${(wStat.balance - finalTotal).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL</strong>
+                </div>
+              ` : `
+                <div style="background:rgba(221,89,3,0.28); border:1px solid var(--pt-gold-soft); border-radius:8px; padding:10px 11px; font-size:12px; line-height:1.45;">
+                  <div>Cüzdan bakiyeniz bu sipariş için <strong>${missingAmount} TL</strong> eksik. Hemen paket yükleyerek anında <strong>+%5'e varan Hediye TL</strong> kazanabilir veya Kredi Kartı ile devam edebilirsiniz:</div>
+                  <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
+                    <button type="button" onclick="quickOpenWalletPackage(1500)" style="background:#fff; color:var(--pt-navy); border:none; border-radius:6px; padding:6px 9px; font-size:11px; font-weight:800; cursor:pointer;">1.500 TL Yükle (+45 TL Hediye)</button>
+                    <button type="button" onclick="quickOpenWalletPackage(3000)" style="background:#fff; color:var(--pt-navy); border:none; border-radius:6px; padding:6px 9px; font-size:11px; font-weight:800; cursor:pointer;">3.000 TL Yükle (+120 TL Hediye)</button>
+                    <button type="button" onclick="quickOpenWalletPackage(5000)" style="background:var(--pt-terracotta); color:#fff; border:none; border-radius:6px; padding:6px 9px; font-size:11px; font-weight:800; cursor:pointer;">5.000 TL Yükle (+250 TL Hediye)</button>
+                  </div>
+                </div>
+              `}
+            </div>
+          ` : `
+            <div style="background:#FFF8EB; border:1px solid var(--pt-gold); border-radius:8px; padding:8px 10px; font-size:12px; font-weight:700; color:var(--pt-navy-dark); margin-bottom:10px;">
+              Kart ödemeniz QNB Finansbank 3D Secure ile çekildiği anda restoranımızdaki Adisyo Bulut ERP ve Beko Yazarkasa QNB POS hesabına işlenir, mutfak fişiniz otomatik yazdırılır.
+            </div>
+
+            <div id="qnb-online-card-box" style="background:#f8fafc; border:1px solid var(--pt-border); border-radius:10px; padding:12px;">
+              <div style="display:grid; gap:9px;">
+                <div>
+                  <label style="font-size:11.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">Kart Üzerindeki İsim Soyisim *</label>
+                  <input type="text" id="qnb-card-holder" placeholder="Örn: AHMET YILMAZ" value="${draftCardHolder}" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:14px; font-weight:600;" />
                 </div>
                 <div>
-                  <label style="font-size:11.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">CVV Güvenlik Kodu *</label>
-                  <input type="password" id="qnb-card-cvv" placeholder="***" maxlength="4" value="${draftCardCvv}" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:14px; font-weight:700; text-align:center;" />
+                  <label style="font-size:11.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">Kredi / Banka Kartı Numarası (16 Hane) *</label>
+                  <input type="tel" id="qnb-card-number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" value="${draftCardNum}" oninput="formatCardNumberInput(this)" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:15px; font-weight:700; letter-spacing:1.5px;" />
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                  <div>
+                    <label style="font-size:11.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">Son Kullanma (AA/YY) *</label>
+                    <input type="tel" id="qnb-card-exp" placeholder="AA/YY" maxlength="5" value="${draftCardExp}" oninput="formatCardExpInput(this)" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:14px; font-weight:700; text-align:center;" />
+                  </div>
+                  <div>
+                    <label style="font-size:11.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">CVV Güvenlik Kodu *</label>
+                    <input type="password" id="qnb-card-cvv" placeholder="***" maxlength="4" value="${draftCardCvv}" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:14px; font-weight:700; text-align:center;" />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          `}
         </div>
 
         <div class="cart-summary-footer">
@@ -4627,11 +5007,20 @@
             <span>${finalTotal.toFixed(2).replace('.', ',')} TL</span>
           </div>
 
-          <button type="button" class="btn-approve-cart" onclick="completeAppOrder()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-            <span>QNB 3D Secure ile Öde ve Siparişi Tamamla (${finalTotal.toFixed(2).replace('.', ',')} TL)</span>
-          </button>
+          ${activePayMode === 'COKERTME_WALLET' && hasEnoughWallet ? `
+            <button type="button" class="btn-approve-cart" style="background:var(--pt-olive);" onclick="completeAppOrderWithWallet()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span>Cüzdan Bakiyemle Tek Tıkla Öde (${finalTotal.toFixed(2).replace('.', ',')} TL)</span>
+            </button>
+          ` : `
+            <button type="button" class="btn-approve-cart" onclick="completeAppOrder()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              <span>QNB 3D Secure ile Öde ve Siparişi Tamamla (${finalTotal.toFixed(2).replace('.', ',')} TL)</span>
+            </button>
+          `}
         </div>
+          `;
+        })()}
 
         <!-- QNB Finansbank 3D Secure Ödeme Doğrulama Modalı -->
         <div id="qnb-3d-modal" style="display:none; position:fixed; inset:0; background:rgba(10,37,62,0.82); z-index:2500; align-items:center; justify-content:center; padding:16px;">
@@ -4712,6 +5101,67 @@
 
     let pendingCheckoutData = null;
 
+    function selectCheckoutPaymentMethod(method) {
+      captureCartCheckoutDraft();
+      checkoutPaymentMethod = method;
+      renderCurrentView();
+    }
+
+    function quickOpenWalletPackage(pkgAmount) {
+      captureCartCheckoutDraft();
+      selectedWalletPackageAmount = Number(pkgAmount) || 5000;
+      customWalletAmountValue = "";
+      openAccountSubTab("cuzdanim");
+    }
+
+    function completeAppOrderWithWallet() {
+      const nameVal = (document.getElementById("checkout-name").value || "").trim();
+      const phoneVal = (document.getElementById("checkout-phone").value || "").trim();
+      const addrVal = (document.getElementById("checkout-address").value || "").trim();
+      const modeVal = document.getElementById("checkout-mode").value;
+      const genderRadio = document.querySelector('input[name="checkout-gender"]:checked');
+      const genderVal = genderRadio ? genderRadio.value : "";
+
+      if (!nameVal || !phoneVal) {
+        alert("Lütfen siparişinizi oluşturmak için Ad Soyad ve Telefon Numaranızı girin.");
+        return;
+      }
+
+      if (!genderVal) {
+        alert("Lütfen Çökertme kalıbınızı (Kadın: Kalpli Kalıp / Erkek: Çember Kalıp) belirleyebilmemiz için Cinsiyet seçiminizi yapın.");
+        return;
+      }
+
+      if (modeVal.includes("Paket") && !addrVal) {
+        alert("Lütfen paket servis için açık teslimat adresinizi girin.");
+        return;
+      }
+
+      const state = CokertmeStore.getState();
+      const pricingInfo = calculateCartPricing(state, phoneVal);
+      const { finalTotal } = pricingInfo;
+      const wStat = getUserWalletStatus(phoneVal, state);
+
+      if (wStat.balance < finalTotal) {
+        alert(`Cüzdan bakiyeniz (${wStat.balance.toFixed(2)} TL) bu sipariş (${finalTotal.toFixed(2)} TL) için yeterli değil. Lütfen bakiye yükleyin veya Kredi Kartı ile ödeme seçin.`);
+        return;
+      }
+
+      pendingCheckoutData = {
+        nameVal,
+        phoneVal,
+        addrVal,
+        modeVal,
+        genderVal,
+        cardHolder: nameVal,
+        cardLast4: "CÜZDAN",
+        payViaWallet: true,
+        usedLoyaltyReward: Boolean(pricingInfo.loyaltyRewardDiscount > 0)
+      };
+
+      finalizePaidOrderAfter3D(true);
+    }
+
     function completeAppOrder() {
       const nameVal = (document.getElementById("checkout-name").value || "").trim();
       const phoneVal = (document.getElementById("checkout-phone").value || "").trim();
@@ -4720,10 +5170,15 @@
       const genderRadio = document.querySelector('input[name="checkout-gender"]:checked');
       const genderVal = genderRadio ? genderRadio.value : "";
 
-      const cardHolder = (document.getElementById("qnb-card-holder").value || "").trim();
-      const cardNumberRaw = (document.getElementById("qnb-card-number").value || "").replace(/\D/g, "");
-      const cardExp = (document.getElementById("qnb-card-exp").value || "").trim();
-      const cardCvv = (document.getElementById("qnb-card-cvv").value || "").replace(/\D/g, "");
+      const cardHolderEl = document.getElementById("qnb-card-holder");
+      const cardNumEl = document.getElementById("qnb-card-number");
+      const cardExpEl = document.getElementById("qnb-card-exp");
+      const cardCvvEl = document.getElementById("qnb-card-cvv");
+
+      const cardHolder = (cardHolderEl ? cardHolderEl.value : "").trim();
+      const cardNumberRaw = (cardNumEl ? cardNumEl.value : "").replace(/\D/g, "");
+      const cardExp = (cardExpEl ? cardExpEl.value : "").trim();
+      const cardCvv = (cardCvvEl ? cardCvvEl.value : "").replace(/\D/g, "");
 
       if (!nameVal || !phoneVal) {
         alert("Lütfen siparişinizi oluşturmak için Ad Soyad ve Telefon Numaranızı girin.");
@@ -4742,7 +5197,7 @@
 
       // Ödeme yapılmadan kesinlikle sipariş verilemez!
       if (!cardHolder || cardNumberRaw.length < 15 || cardExp.length < 4 || cardCvv.length < 3) {
-        alert("Ödeme yapılmadan sipariş oluşturulamaz!\n\nLütfen QNB Finansbank 3D Secure online ödeme için Kart Üzerindeki İsim, 16 Haneli Kart Numarası, Son Kullanma Tarihi (AA/YY) ve CVV güvenlik kodunu eksiksiz girin.");
+        alert("Ödeme yapılmadan sipariş oluşturulamaz!\n\nLütfen QNB Finansbank 3D Secure online ödeme için Kart Üzerindeki İsim, 16 Haneli Kart Numarası, Son Kullanma Tarihi (AA/YY) ve CVV güvenlik kodunu eksiksiz girin veya Çökertme Dijital Cüzdan bakiyenizle ödeyin.");
         return;
       }
 
@@ -4759,6 +5214,7 @@
         genderVal,
         cardHolder,
         cardLast4: last4,
+        payViaWallet: false,
         usedLoyaltyReward: Boolean(pricingInfo.loyaltyRewardDiscount > 0)
       };
 
@@ -4767,17 +5223,18 @@
       document.getElementById("qnb-3d-modal").style.display = "flex";
     }
 
-    async function finalizePaidOrderAfter3D() {
+    async function finalizePaidOrderAfter3D(skipSmsCheck) {
       if (!pendingCheckoutData) return;
-      const smsCode = (document.getElementById("qnb-3d-sms-code").value || "").trim();
-      if (smsCode.length < 4) {
-        alert("Lütfen 3D Secure doğrulama kodunu girin.");
-        return;
+      if (!skipSmsCheck && !pendingCheckoutData.payViaWallet) {
+        const smsCode = (document.getElementById("qnb-3d-sms-code").value || "").trim();
+        if (smsCode.length < 4) {
+          alert("Lütfen 3D Secure doğrulama kodunu girin.");
+          return;
+        }
+        closeQnb3dModal();
       }
 
-      closeQnb3dModal();
-
-      const { nameVal, phoneVal, addrVal, modeVal, genderVal, cardLast4, usedLoyaltyReward } = pendingCheckoutData;
+      const { nameVal, phoneVal, addrVal, modeVal, genderVal, cardLast4, payViaWallet, usedLoyaltyReward } = pendingCheckoutData;
       const moldType = genderVal === "Kadın"
         ? "Kalpli Çökertme Kalıbı (Kadın Sunumu)"
         : "Çember Çökertme Kalıbı (Erkek Sunumu)";
@@ -4788,6 +5245,16 @@
       const pricingInfo = calculateCartPricing(state, phoneVal);
       const { subtotal, totalDiscount, loyaltyRewardDiscount, finalTotal, cartHasCokertme, rewardedItemName } = pricingInfo;
       const summaryItems = [];
+      const orderId = "CKR-" + Math.floor(1000 + Math.random() * 9000);
+
+      let walletDeductionResult = null;
+      if (payViaWallet) {
+        walletDeductionResult = deductUserWalletForOrder(phoneVal, finalTotal, orderId, state);
+        if (!walletDeductionResult.ok) {
+          alert(walletDeductionResult.reason || "Cüzdan bakiyesi düşülemedi.");
+          return;
+        }
+      }
 
       appCart.forEach(entry => {
         const item = state.items.find(i => i.id === entry.itemId);
@@ -4842,6 +5309,7 @@
         state.members = [];
       }
       const latestLoyalty = getUserLoyaltyStatus(phoneVal, state);
+      const latestWallet = getUserWalletStatus(phoneVal, state);
       const existingMember = state.members.find(m => m && normalizeLoyaltyPhone(m.phone) === normPhoneVal);
       if (existingMember) {
         existingMember.fullName = nameVal;
@@ -4851,6 +5319,10 @@
         existingMember.address = addrVal;
         existingMember.stamps = latestLoyalty.stampCount;
         existingMember.stampTimestamps = latestLoyalty.validStamps;
+        existingMember.walletBalance = latestWallet.balance;
+        existingMember.walletBonusEarned = latestWallet.bonusEarned;
+        existingMember.walletTransactions = latestWallet.transactions;
+        existingMember.walletUpdatedAt = latestWallet.updatedAt;
         existingMember.updatedAt = Date.now();
       } else {
         state.members.unshift({
@@ -4864,14 +5336,23 @@
           address: addrVal,
           stamps: latestLoyalty.stampCount,
           stampTimestamps: latestLoyalty.validStamps,
+          walletBalance: latestWallet.balance,
+          walletBonusEarned: latestWallet.bonusEarned,
+          walletTransactions: latestWallet.transactions,
+          walletUpdatedAt: latestWallet.updatedAt,
           registeredVia: wasAlreadyMember ? "Üye Kaydı" : "Sipariş Bilgileriyle Otomatik Üyelik",
           createdAt: createdAtStr,
           updatedAt: Date.now()
         });
       }
 
+      const paymentMethodCode = payViaWallet ? "COKERTME_WALLET" : "QNB_ONLINE_3D";
+      const paymentLabelText = payViaWallet
+        ? `Çökertme Dijital Cüzdan ile Ödendi (-${finalTotal.toFixed(2)} TL • Kalan Cüzdan: ${walletDeductionResult.remainingBalance.toFixed(2)} TL -> Adisyo Kasa)`
+        : `QNB Finansbank 3D Secure Ödendi (Kart: **** ${cardLast4} -> Adisyo & Beko POS Hesabına Aktarıldı)`;
+
       const newOrder = {
-        id: "CKR-" + Math.floor(1000 + Math.random() * 9000),
+        id: orderId,
         createdAtMs: Date.now(),
         customerName: nameVal,
         customerGender: genderVal,
@@ -4889,19 +5370,18 @@
         discount: discount,
         total: finalTotal,
         pointsEarned: loyaltyOutcome.earnedStamp ? 1 : 0,
-        paymentMethod: "QNB_ONLINE_3D",
-        paymentLabel: `QNB Finansbank 3D Secure Ödendi (Kart: **** ${cardLast4} -> Beko POS Hesabına Aktarıldı)`,
+        paymentMethod: paymentMethodCode,
+        paymentLabel: paymentLabelText,
         isPaidOnline: true,
         prepTimeMinutes: prepMinutes,
         estimatedReadyAt: estimatedReadyAtStr,
         courierCompanyId: activeCourier.id,
         courierCompanyName: activeCourier.name,
-        adisyoStatus: `Adisyo Bulut ERP'ye İletildi • Adisyon (${moldType}), Stok/Reçete, Muhasebe, Pazaryeri, Kurye & Finans İşlendi`,
-        resposStatus: `ResPOS API'ye İletildi • Mutfak Fişi (${moldType}) Yazdırıldı • Beko ÖKC Eşleşti`,
+        adisyoStatus: `Adisyo Bulut ERP'ye İletildi • Mutfak Fişi (${moldType}) Yazdırıldı • Stok/Reçete, Muhasebe, Pazaryeri, Kurye & Beko ÖKC Eşleşti`,
         courierStatus: modeVal.includes("Paket")
           ? `${activeCourier.name} API'sine Anında Atandı (${prepMinutes} dk sonra [${estimatedReadyAtStr}] hazır olacağı bildirildi)`
           : `Şubeden Gel-Al (${prepMinutes} dk sonra [${estimatedReadyAtStr}] hazır)`,
-        status: "Ödeme Alındı • Mutfakta Hazırlanıyor & Kurye Atandı",
+        status: "Ödeme Alındı • Adisyo Mutfakta Hazırlanıyor & Kurye Atandı",
         createdAt: createdAtStr
       };
 
@@ -4912,7 +5392,7 @@
       state.orders.unshift(newOrder);
       CokertmeStore.saveState(state);
 
-      // 0. Saniyede ResPOS API + Kurye Firması API'sini paralel tetikle
+      // 0. Saniyede Adisyo Bulut ERP API + Kurye Firması API'sini paralel tetikle
       CokertmeStore.dispatchOrder(newOrder);
 
       appCart = [];
@@ -4921,11 +5401,13 @@
       pendingCheckoutData = null;
 
       alert(
-        `✓ QNB Finansbank 3D Secure Ödemeniz Onaylandı ve Siparişiniz (#${newOrder.id}) Alındı!\n\n` +
+        (payViaWallet
+          ? `✓ Çökertme Dijital Cüzdan Bakiyenizle 1 Saniyede Ödemeniz Tamamlandı ve Siparişiniz (#${newOrder.id}) Alındı!\n• Kalan Cüzdan Bakiyeniz: ${walletDeductionResult.remainingBalance.toFixed(2)} TL\n\n`
+          : `✓ QNB Finansbank 3D Secure Ödemeniz Onaylandı ve Siparişiniz (#${newOrder.id}) Alındı!\n\n`) +
         `• Otomatik Üyelik: Sipariş bilgilerinizle (${nameVal} - ${phoneVal}) üyeliğiniz otomatik tanımlandı.\n` +
         (loyaltyOutcome.statusText ? `• Sadakat Programı: ${loyaltyOutcome.statusText}\n` : "") +
         `• Sunum Kalıbı: ${moldType}\n` +
-        `• ResPOS & Mutfak: Sipariş fişiniz (${moldType}) mutfak yazıcısından otomatik yazdırıldı ve Beko Yazarkasa QNB POS'a işlendi.\n` +
+        `• Adisyo Bulut ERP & Mutfak: Sipariş fişiniz (${moldType}) Adisyo üzerinden mutfak yazıcısından otomatik yazdırıldı, reçete/stok düşümü ve Beko Yazarkasa POS eşleşmesi yapıldı.\n` +
         `• Kurye Bildirimi: ${activeCourier.name} sistemine siparişin ${prepMinutes} dk sonra (${estimatedReadyAtStr}) hazır olacağı anında iletildi!`
       );
       openAccountSubTab("siparislerim");
@@ -4984,9 +5466,294 @@
       return result;
     }
 
-    // =========================================================================
-    // 4. HESABIM, GİRİŞ YAP & ÜYE OL EKRANI (WEB + MOBİL UYGULAMA ENTEGRE)
-    // =========================================================================
+    function selectWalletPackageAmount(pkgVal) {
+      selectedWalletPackageAmount = Number(pkgVal) || 5000;
+      customWalletAmountValue = "";
+      renderCurrentView();
+    }
+
+    function onCustomWalletAmountInput(val) {
+      const cleaned = String(val || "").replace(/\D/g, "").slice(0, 6);
+      customWalletAmountValue = cleaned;
+      if (cleaned && Number(cleaned) >= 100) {
+        selectedWalletPackageAmount = Number(cleaned);
+      }
+      renderCurrentView();
+      const inp = document.getElementById("wallet-custom-amount-input");
+      if (inp) {
+        inp.focus();
+        inp.setSelectionRange(inp.value.length, inp.value.length);
+      }
+    }
+
+    function startWalletTopup3D() {
+      if (!appUser || !appUser.phone) {
+        alert("Lütfen önce hesabınıza giriş yapın.");
+        return;
+      }
+      const state = CokertmeStore.getState();
+      const paidVal = Number(selectedWalletPackageAmount) || 5000;
+      if (paidVal < 500) {
+        alert("Minimum cüzdan yükleme tutarı 500 TL'dir. Hediye TL kazanmak için 1.500 TL (+%3), 3.000 TL (+%4) veya 5.000 TL (+%5) paketlerinden birini seçebilirsiniz.");
+        return;
+      }
+
+      const holderEl = document.getElementById("wallet-card-holder");
+      const numEl = document.getElementById("wallet-card-number");
+      const expEl = document.getElementById("wallet-card-exp");
+      const cvvEl = document.getElementById("wallet-card-cvv");
+
+      const cardHolder = (holderEl ? holderEl.value : "").trim();
+      const cardNumberRaw = (numEl ? numEl.value : "").replace(/\D/g, "");
+      const cardExp = (expEl ? expEl.value : "").trim();
+      const cardCvv = (cvvEl ? cvvEl.value : "").replace(/\D/g, "");
+
+      if (!cardHolder || cardNumberRaw.length < 15 || cardExp.length < 4 || cardCvv.length < 3) {
+        alert("Lütfen QNB Finansbank 3D Secure ile bakiye yüklemek için Kart Üzerindeki İsim, 16 Haneli Kart Numarası, Son Kullanma Tarihi (AA/YY) ve CVV güvenlik kodunu eksiksiz girin.");
+        return;
+      }
+
+      const calc = calculateWalletTopupBonus(paidVal, state);
+      const last4 = cardNumberRaw.slice(-4);
+      pendingWalletTopupData = {
+        phone: appUser.phone,
+        fullName: appUser.fullName || cardHolder,
+        paidAmount: calc.paidAmount,
+        bonusPct: calc.bonusPct,
+        bonusAmount: calc.bonusAmount,
+        totalCredit: calc.totalCredit,
+        cardLast4: last4
+      };
+
+      const amtLbl = document.getElementById("wallet-3d-amount-lbl");
+      const bonusLbl = document.getElementById("wallet-3d-bonus-lbl");
+      const cardLbl = document.getElementById("wallet-3d-card-lbl");
+      const modal = document.getElementById("wallet-3d-modal");
+      if (amtLbl) amtLbl.textContent = calc.paidAmount.toLocaleString("tr-TR") + " TL";
+      if (bonusLbl) bonusLbl.textContent = `+${calc.bonusAmount.toLocaleString("tr-TR")} TL (%${calc.bonusPct}) -> Toplam: ${calc.totalCredit.toLocaleString("tr-TR")} TL`;
+      if (cardLbl) cardLbl.textContent = "**** **** **** " + last4;
+      if (modal) modal.style.display = "flex";
+    }
+
+    function closeWallet3dModal() {
+      const m = document.getElementById("wallet-3d-modal");
+      if (m) m.style.display = "none";
+    }
+
+    function finalizeWalletTopupAfter3D() {
+      if (!pendingWalletTopupData) return;
+      const smsEl = document.getElementById("wallet-3d-sms-code");
+      const smsCode = (smsEl ? smsEl.value : "").trim();
+      if (smsCode.length < 4) {
+        alert("Lütfen 3D Secure banka doğrulama şifresini girin.");
+        return;
+      }
+      closeWallet3dModal();
+
+      const state = CokertmeStore.getState();
+      const { phone, fullName, paidAmount, cardLast4 } = pendingWalletTopupData;
+      const res = creditUserWallet(
+        phone,
+        fullName,
+        paidAmount,
+        `QNB Finansbank 3D Secure (Kart: **** ${cardLast4} -> Adisyo Kasa & Beko POS)`,
+        state
+      );
+      pendingWalletTopupData = null;
+
+      if (res) {
+        alert(
+          `✓ Çökertme Dijital Cüzdan Yüklemeniz Onaylandı!\n\n` +
+          `• Kartınızdan Çekilen: ${res.calc.paidAmount.toLocaleString("tr-TR")} TL\n` +
+          `• Anında Hediye Bakiye (+%${res.calc.bonusPct}): +${res.calc.bonusAmount.toLocaleString("tr-TR")} TL\n` +
+          `• Cüzdanınıza Eklenen Net Tutar: ${res.calc.totalCredit.toLocaleString("tr-TR")} TL\n` +
+          `• Güncel Toplam Cüzdan Bakiyeniz: ${res.balance.toLocaleString("tr-TR")} TL\n\n` +
+          `Artık tüm siparişlerinizde %10 Online İndirim + 5 Damgada 1 Hediye ayrıcalığına ek olarak 1 saniyede kart girmeden cüzdan bakiyenizle ödeme yapabilirsiniz!`
+        );
+      }
+      renderCurrentView();
+    }
+
+    function renderWalletSubTabHtml(state, user) {
+      const wStat = getUserWalletStatus(user.phone, state);
+      const calc = calculateWalletTopupBonus(selectedWalletPackageAmount, state);
+      const defaultHolder = (user.fullName || "").toUpperCase();
+
+      const packages = [
+        { amount: 1500, pct: 3, bonus: 45, total: 1545, badge: "BAŞLANGIÇ PAKETİ", tagColor: "var(--pt-olive)" },
+        { amount: 3000, pct: 4, bonus: 120, total: 3120, badge: "AVANTAJ PAKETİ", tagColor: "var(--pt-navy)" },
+        { amount: 5000, pct: 5, bonus: 250, total: 5250, badge: "VIP EN ÇOK TERCİH EDİLEN", tagColor: "var(--pt-terracotta)" }
+      ];
+
+      const packagesGridHtml = packages.map(p => {
+        const isSel = Number(selectedWalletPackageAmount) === p.amount && !customWalletAmountValue;
+        return `
+          <div onclick="selectWalletPackageAmount(${p.amount})" style="cursor:pointer; border-radius:14px; padding:14px; border:${isSel ? '2.5px solid var(--pt-terracotta)' : '1.5px solid var(--pt-border)'}; background:${isSel ? '#FFF8F3' : '#fff'}; box-shadow:${isSel ? '0 8px 20px rgba(221,89,3,0.14)' : 'none'}; display:flex; flex-direction:column; justify-content:space-between; gap:8px; position:relative;">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
+              <span style="background:${p.tagColor}; color:#fff; font-size:9.5px; font-weight:800; padding:3px 7px; border-radius:5px; letter-spacing:0.05em;">${p.badge}</span>
+              <span style="background:rgba(59,82,51,0.14); color:var(--pt-olive); font-size:11px; font-weight:800; padding:3px 7px; border-radius:6px;">+%${p.pct} HEDİYE</span>
+            </div>
+            <div>
+              <div style="font-size:21px; font-weight:800; color:var(--pt-navy); line-height:1.15;">${p.amount.toLocaleString("tr-TR")} TL Yükle</div>
+              <div style="font-size:13px; font-weight:800; color:var(--pt-terracotta); margin-top:2px;">+${p.bonus} TL Hediye Bakiye Kazan!</div>
+            </div>
+            <div style="padding-top:8px; border-top:1px dashed var(--pt-border); display:flex; justify-content:space-between; align-items:center; font-size:12.5px;">
+              <span style="color:var(--pt-text-muted); font-weight:600;">Cüzdana Geçecek:</span>
+              <strong style="font-size:15px; color:var(--pt-olive);">${p.total.toLocaleString("tr-TR")} TL</strong>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      const txHistoryHtml = wStat.transactions.length === 0
+        ? `<div style="text-align:center; padding:20px; color:var(--pt-text-muted); font-size:13px;">Henüz cüzdan hareketiniz bulunmuyor. Yukarıdaki paketlerden birini seçerek anında hediye TL kazanabilirsiniz.</div>`
+        : wStat.transactions.map(tx => {
+            const isTopup = tx.type === "TOPUP" || Number(tx.amount) > 0;
+            return `
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; padding:11px 12px; border-bottom:1px solid var(--pt-border); flex-wrap:wrap;">
+                <div>
+                  <div style="font-size:13.5px; font-weight:700; color:var(--pt-navy);">${tx.title || (isTopup ? 'Cüzdan Yükleme' : 'Sipariş Harcaması')}</div>
+                  <div style="font-size:11.5px; color:var(--pt-text-muted);">${tx.createdAt || ''} • ${tx.method || 'Adisyo Cüzdan'}</div>
+                </div>
+                <strong style="font-size:14.5px; color:${isTopup ? 'var(--pt-olive)' : 'var(--pt-terracotta)'}; white-space:nowrap;">
+                  ${isTopup ? '+' : ''}${Number(tx.amount || 0).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL
+                </strong>
+              </div>
+            `;
+          }).join("");
+
+      return `
+        <div class="acc-banner-header" style="background:linear-gradient(135deg, #14314F 0%, #023A58 60%, #3B5233 100%); border:1.5px solid var(--pt-gold);">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;">
+            <div>
+              <span style="display:inline-block; background:var(--pt-gold); color:var(--pt-navy-dark); font-size:10px; font-weight:800; padding:3px 8px; border-radius:5px; letter-spacing:0.08em; margin-bottom:5px;">ÇÖKERTME DİJİTAL CÜZDAN • ÖN ÖDEMELİ VIP HESAP</span>
+              <h3 style="font-family:var(--font-serif); font-size:24px;">Kullanılabilir Bakiye: ${wStat.balance.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL</h3>
+              <p style="margin-top:3px;">Toplam Kazanılan Hediye Bakiye: <strong style="color:var(--pt-gold-soft);">+${wStat.bonusEarned.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL</strong></p>
+            </div>
+            ${appCart.length > 0 ? `
+              <button type="button" onclick="checkoutPaymentMethod='COKERTME_WALLET'; switchTab('cart');" style="background:var(--pt-terracotta); color:#fff; border:none; border-radius:10px; padding:10px 14px; font-size:12.5px; font-weight:800; cursor:pointer;">
+                Sepete Dön &amp; Cüzdanla Öde →
+              </button>
+            ` : ''}
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:8px; margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.16); font-size:11.5px; color:rgba(255,255,255,0.92);">
+            <div>✓ <strong>5.000 TL'ye +250 TL (%5)</strong> Hediye</div>
+            <div>✓ <strong>%10 Online İndirimle</strong> Birleşir</div>
+            <div>✓ <strong>1 Saniyede Kart Girmeden</strong> Ödeme</div>
+          </div>
+        </div>
+
+        <div class="login-card-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+            <div>
+              <h4 style="font-size:17px; font-weight:800; color:var(--pt-navy);">1. Kademeli Bakiye Paketi Seçin</h4>
+              <p style="font-size:12.5px; color:var(--pt-text-muted);">Yüklediğiniz anda hediye TL bakiyeniz cüzdanınıza peşin olarak eklenir</p>
+            </div>
+            <span style="background:#F4F7F2; color:var(--pt-olive); border:1px solid var(--pt-olive); font-size:11px; font-weight:800; padding:4px 9px; border-radius:6px;">ADİSYO &amp; QNB 3D GÜVENCESİ</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:10px; margin-bottom:14px;">
+            ${packagesGridHtml}
+          </div>
+
+          <!-- Özel Tutar Girişi (Örn: 7.500 TL veya 10.000 TL Kurumsal Yükleme) -->
+          <div style="background:var(--pt-cream); border:1px solid var(--pt-gold); border-radius:10px; padding:10px 12px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+            <div style="font-size:12.5px; color:var(--pt-navy); font-weight:700;">
+              Farklı / Kurumsal Tutar Yüklemek İster misiniz? <span style="font-weight:500; color:var(--pt-text-muted);">(5.000 TL ve üzeri tüm tutarlara anında +%5 Hediye TL eklenir)</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <input type="tel" id="wallet-custom-amount-input" placeholder="Özel Tutar (TL)" value="${customWalletAmountValue}" oninput="onCustomWalletAmountInput(this.value)" style="width:140px; padding:8px 10px; border:1.5px solid var(--pt-border); border-radius:8px; font-size:13.5px; font-weight:700; color:var(--pt-navy);" />
+              <span style="font-size:12.5px; font-weight:800; color:var(--pt-navy);">TL</span>
+            </div>
+          </div>
+
+          <!-- Seçilen Paket Canlı Özeti -->
+          <div style="background:#F4F7F2; border:1.5px solid var(--pt-olive); border-radius:12px; padding:12px 14px; margin-bottom:14px; display:grid; gap:6px; font-size:13px;">
+            <div style="display:flex; justify-content:space-between;">
+              <span style="color:var(--pt-text-muted); font-weight:600;">Kartınızdan Çekilecek Tutar:</span>
+              <strong style="color:var(--pt-navy);">${calc.paidAmount.toLocaleString("tr-TR")} TL</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="color:var(--pt-olive); font-weight:700;">Anında Eklenecek Hediye TL (+%${calc.bonusPct}):</span>
+              <strong style="color:var(--pt-terracotta);">+${calc.bonusAmount.toLocaleString("tr-TR")} TL HEDİYE</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding-top:6px; border-top:1px dashed var(--pt-border); font-size:15px;">
+              <strong style="color:var(--pt-navy);">Cüzdanınıza Geçecek Toplam Bakiye:</strong>
+              <strong style="color:var(--pt-olive); font-size:17px;">${calc.totalCredit.toLocaleString("tr-TR")} TL</strong>
+            </div>
+          </div>
+
+          <!-- QNB Finansbank 3D Secure Kart Bilgileri -->
+          <div style="background:#f8fafc; border:1px solid var(--pt-border); border-radius:12px; padding:12px;">
+            <div style="font-size:13.5px; font-weight:800; color:var(--pt-navy); margin-bottom:8px;">2. QNB Finansbank 3D Secure ile Güvenli Bakiye Yükle</div>
+            <div style="display:grid; gap:9px;">
+              <div>
+                <label style="font-size:11.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">Kart Üzerindeki İsim Soyisim *</label>
+                <input type="text" id="wallet-card-holder" placeholder="Örn: AHMET YILMAZ" value="${defaultHolder}" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:14px; font-weight:600;" />
+              </div>
+              <div>
+                <label style="font-size:11.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">Kredi / Banka Kartı Numarası (16 Hane) *</label>
+                <input type="tel" id="wallet-card-number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" oninput="formatCardNumberInput(this)" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:15px; font-weight:700; letter-spacing:1.5px;" />
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div>
+                  <label style="font-size:11.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">Son Kullanma (AA/YY) *</label>
+                  <input type="tel" id="wallet-card-exp" placeholder="AA/YY" maxlength="5" oninput="formatCardExpInput(this)" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:14px; font-weight:700; text-align:center;" />
+                </div>
+                <div>
+                  <label style="font-size:11.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">CVV Güvenlik Kodu *</label>
+                  <input type="password" id="wallet-card-cvv" placeholder="***" maxlength="4" style="width:100%; padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:14px; font-weight:700; text-align:center;" />
+                </div>
+              </div>
+            </div>
+
+            <button type="button" class="btn-approve-cart" style="margin-top:12px;" onclick="startWalletTopup3D()">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+              <span>${calc.paidAmount.toLocaleString("tr-TR")} TL Öde -> Cüzdana ${calc.totalCredit.toLocaleString("tr-TR")} TL Yükle</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Cüzdan Hesap Hareketleri -->
+        <div class="login-card-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <strong style="font-size:15.5px; color:var(--pt-navy);">Cüzdan Hesap Hareketlerim</strong>
+            <span style="font-size:11.5px; color:var(--pt-text-muted); font-weight:600;">Son İşlemler</span>
+          </div>
+          <div style="border:1px solid var(--pt-border); border-radius:10px; overflow:hidden; background:#fff;">
+            ${txHistoryHtml}
+          </div>
+        </div>
+
+        <!-- Cüzdan Yükleme QNB 3D Secure Modalı -->
+        <div id="wallet-3d-modal" style="display:none; position:fixed; inset:0; background:rgba(10,37,62,0.82); z-index:2500; align-items:center; justify-content:center; padding:16px;">
+          <div style="background:#fff; width:100%; max-width:410px; border-radius:16px; overflow:hidden; border-top:5px solid var(--pt-gold); box-shadow:0 24px 60px rgba(0,0,0,0.4);">
+            <div style="background:var(--pt-navy-dark); color:#fff; padding:14px 18px; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-size:10px; letter-spacing:0.12em; color:var(--pt-gold-soft); font-weight:700;">QNB FİNANSBANK • ADİSYO CÜZDAN POS</div>
+                <div style="font-size:16px; font-weight:700;">3D Secure Cüzdan Yükleme Onayı</div>
+              </div>
+              <button type="button" onclick="closeWallet3dModal()" style="background:none; border:none; color:#fff; font-size:20px; cursor:pointer;">✕</button>
+            </div>
+            <div style="padding:18px;">
+              <div style="background:#f8fafc; border:1px solid var(--pt-border); border-radius:10px; padding:12px; margin-bottom:14px; font-size:13px; display:grid; gap:5px;">
+                <div style="display:flex; justify-content:space-between;"><span>İşyeri:</span><strong>ÇÖKERTME DÜNYASI CÜZDAN</strong></div>
+                <div style="display:flex; justify-content:space-between;"><span>Çekilecek Tutar:</span><strong style="color:var(--pt-navy); font-size:15px;" id="wallet-3d-amount-lbl">5.000 TL</strong></div>
+                <div style="display:flex; justify-content:space-between;"><span>Hediye &amp; Toplam:</span><strong style="color:var(--pt-olive); font-size:13px;" id="wallet-3d-bonus-lbl">+250 TL (%5) -> 5.250 TL</strong></div>
+                <div style="display:flex; justify-content:space-between;"><span>Kart No:</span><strong id="wallet-3d-card-lbl">**** **** **** 0000</strong></div>
+              </div>
+              <label style="font-size:12.5px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:6px;">
+                Telefonunuza Gönderilen 3D Secure Banka Şifresi:
+              </label>
+              <input type="tel" id="wallet-3d-sms-code" value="593821" maxlength="6" style="width:100%; padding:12px; border:2px solid var(--pt-navy); border-radius:10px; font-size:20px; font-weight:700; text-align:center; letter-spacing:6px; margin-bottom:14px;" />
+              <button type="button" class="btn-approve-cart" style="margin-top:0; background:var(--pt-olive);" onclick="finalizeWalletTopupAfter3D()">
+                ✓ Onayla ve Hediye Bakiyeyi Cüzdana Yükle
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
     function renderAccountHtml() {
       // Kullanıcı henüz giriş yapmadıysa: Giriş Yap / Üye Ol Sekmeli Ekran + Üyeliksiz Sipariş Kısayolu
       if (!appUser) {
@@ -5210,6 +5977,10 @@
 
         <!-- Yatay Kaydırılabilir Hesap Menüsü Sekmeleri -->
         <div class="account-tabs-scroll">
+          <button class="acc-tab-btn ${accountSubTab === 'cuzdanim' ? 'active' : ''}" onclick="openAccountSubTab('cuzdanim')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            <span>Cüzdanım (+%5 Hediye)</span>
+          </button>
           <button class="acc-tab-btn ${accountSubTab === 'profil' ? 'active' : ''}" onclick="openAccountSubTab('profil')">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             <span>Hesap</span>
@@ -5233,6 +6004,8 @@
         </div>
 
         ${renderLoyaltyStampCardWidgetHtml(state, appUser.phone, 'account', null)}
+
+        ${accountSubTab === 'cuzdanim' ? renderWalletSubTabHtml(state, appUser) : ''}
 
         ${accountSubTab === 'profil' ? `
           <div class="acc-banner-header">
@@ -5304,8 +6077,8 @@
               <div style="background:#F4F7F2; border:1px solid rgba(59,82,51,0.25); border-left:3px solid var(--pt-olive); border-radius:8px; padding:8px 10px; margin-bottom:10px; font-size:12px; display:grid; gap:4px;">
                 <div><strong style="color:var(--pt-navy);">Çökertme Sunum Kalıbı:</strong> ${o.moldType || (o.customerGender === 'Kadın' ? 'Kalpli Çökertme Kalıbı (Kadın)' : 'Çember Çökertme Kalıbı (Erkek)')}</div>
                 ${o.loyaltyNote ? `<div><strong style="color:var(--pt-terracotta);">Sadakat Programı:</strong> ${o.loyaltyNote}</div>` : ''}
-                <div><strong style="color:var(--pt-navy);">Ödeme (QNB / Beko POS):</strong> ${o.paymentLabel || 'QNB Finansbank Online 3D'}</div>
-                <div><strong style="color:var(--pt-olive);">ResPOS &amp; Mutfak:</strong> ${o.resposStatus || 'ResPOS API İletildi • Mutfak Fişi Yazdırıldı'}</div>
+                <div><strong style="color:var(--pt-navy);">Ödeme (QNB / Cüzdan / Beko POS):</strong> ${o.paymentLabel || 'QNB Finansbank Online 3D'}</div>
+                <div><strong style="color:var(--pt-olive);">Adisyo Bulut ERP &amp; Mutfak:</strong> ${o.adisyoStatus || 'Adisyo Bulut ERP İletildi • Mutfak Fişi Yazdırıldı'}</div>
                 <div><strong style="color:var(--pt-terracotta);">Kurye &amp; Hazırlık Süresi:</strong> ${o.courierStatus || `Kurye Firmasına Anında Atandı (${o.prepTimeMinutes || 15} dk sonra hazır)`}</div>
               </div>
 

@@ -483,6 +483,15 @@ const DEFAULT_COKERTME_DATA = {
       windowDays: 30,
       cooldownHours: 24,
       rewardDiscountPercent: 50
+    },
+    wallet: {
+      enabled: true,
+      tier1Amount: 1500,
+      tier1BonusPct: 3,
+      tier2Amount: 3000,
+      tier2BonusPct: 4,
+      tier3Amount: 5000,
+      tier3BonusPct: 5
     }
   },
   siteImages: {
@@ -516,14 +525,7 @@ const DEFAULT_COKERTME_DATA = {
       accountingEInvoiceSync: true,
       marketplaceUnifiedSync: true,
       courierDispatchSync: true,
-      financeCashRegisterSync: true
-    },
-    respos: {
-      enabled: true,
-      apiUrl: "https://api.respos.com.tr/v1/online-orders",
-      apiKey: "",
-      branchCode: "ADANA-MERKEZ-01",
-      autoKitchenPrint: true,
+      financeCashRegisterSync: true,
       bekoPosSync: true,
       bekoTerminalModel: "Beko X30TR / 300TR (TokenX GMP3)"
     },
@@ -657,6 +659,19 @@ function mergeOrdersList(listA, listB) {
   return merged;
 }
 
+function mergeWalletTxList(txA, txB) {
+  const txMap = new Map();
+  const addTx = (tx) => {
+    if (!tx || !tx.id) return;
+    txMap.set(tx.id, tx);
+  };
+  if (Array.isArray(txA)) txA.forEach(addTx);
+  if (Array.isArray(txB)) txB.forEach(addTx);
+  const list = Array.from(txMap.values());
+  list.sort((a, b) => (Number(b.createdAtMs || 0) - Number(a.createdAtMs || 0)));
+  return list;
+}
+
 function mergeMembersList(listA, listB) {
   const map = new Map();
   const processList = (arr) => {
@@ -667,7 +682,13 @@ function mergeMembersList(listA, listB) {
       if (!key || key.length < 10) return;
       const existing = map.get(key);
       if (!existing) {
-        map.set(key, { ...m, phoneNormalized: key });
+        map.set(key, {
+          ...m,
+          phoneNormalized: key,
+          walletBalance: Number(m.walletBalance || 0),
+          walletBonusEarned: Number(m.walletBonusEarned || 0),
+          walletTransactions: Array.isArray(m.walletTransactions) ? m.walletTransactions : []
+        });
       } else {
         const exTime = Number(existing.updatedAt || existing.createdAt || 0);
         const newTime = Number(m.updatedAt || m.createdAt || 0);
@@ -677,6 +698,18 @@ function mergeMembersList(listA, listB) {
           ...(Array.isArray(existing.stampTimestamps) ? existing.stampTimestamps : []),
           ...(Array.isArray(m.stampTimestamps) ? m.stampTimestamps : [])
         ])).map(Number).filter(Boolean).sort((a, b) => a - b);
+
+        const mergedTx = mergeWalletTxList(existing.walletTransactions, m.walletTransactions);
+        const prevWalTime = Number(existing.walletUpdatedAt || existing.updatedAt || 0);
+        const newWalTime = Number(m.walletUpdatedAt || m.updatedAt || 0);
+        let finalBalance = newWalTime >= prevWalTime
+          ? Number(m.walletBalance !== undefined ? m.walletBalance : existing.walletBalance || 0)
+          : Number(existing.walletBalance !== undefined ? existing.walletBalance : m.walletBalance || 0);
+        if (mergedTx.length > 0 && mergedTx[0].balanceAfter !== undefined) {
+          finalBalance = Number(mergedTx[0].balanceAfter);
+        }
+        const totalBonus = Math.max(Number(existing.walletBonusEarned || 0), Number(m.walletBonusEarned || 0));
+
         map.set(key, {
           ...loser,
           ...winner,
@@ -684,6 +717,10 @@ function mergeMembersList(listA, listB) {
           stamps: Math.max(Number(existing.stamps || 0), Number(m.stamps || 0), combinedStamps.length),
           stampTimestamps: combinedStamps,
           points: Math.max(Number(existing.points || 0), Number(m.points || 0)),
+          walletBalance: Number(finalBalance.toFixed(2)),
+          walletBonusEarned: Number(totalBonus.toFixed(2)),
+          walletTransactions: mergedTx,
+          walletUpdatedAt: Math.max(prevWalTime, newWalTime),
           password: winner.password || loser.password || "",
           savedAddress: winner.savedAddress || loser.savedAddress || null
         });
@@ -760,6 +797,10 @@ function sanitizeAndMergeState(parsed) {
       loyalty: {
         ...DEFAULT_COKERTME_DATA.appSettings.loyalty,
         ...((parsed.appSettings && parsed.appSettings.loyalty) || {})
+      },
+      wallet: {
+        ...DEFAULT_COKERTME_DATA.appSettings.wallet,
+        ...((parsed.appSettings && parsed.appSettings.wallet) || {})
       }
     },
     siteImages: {
@@ -770,10 +811,6 @@ function sanitizeAndMergeState(parsed) {
       adisyo: {
         ...DEFAULT_COKERTME_DATA.integrationSettings.adisyo,
         ...((parsed.integrationSettings && parsed.integrationSettings.adisyo) || {})
-      },
-      respos: {
-        ...DEFAULT_COKERTME_DATA.integrationSettings.respos,
-        ...((parsed.integrationSettings && parsed.integrationSettings.respos) || {})
       },
       qnbPos: {
         ...DEFAULT_COKERTME_DATA.integrationSettings.qnbPos,
