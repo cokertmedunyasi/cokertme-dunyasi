@@ -2,6 +2,9 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <script>
     try {
       if (window.location.hostname === "onlinesiparis.cokertmedunyasi.com" && window.location.pathname !== "/") {
@@ -5415,6 +5418,35 @@
       const modal = document.getElementById("order-success-modal");
       if (modal) modal.style.display = "none";
     }
+
+    function showAppNoticeModal(message) {
+      const modal = document.getElementById("order-success-modal");
+      const body = document.getElementById("order-success-modal-body");
+      if (!modal || !body) return;
+      const safeMsg = String(message || "").replace(/\n/g, "<br/>");
+      body.innerHTML = `
+        <div style="background:linear-gradient(135deg, #14314F 0%, #023A58 100%); color:#fff; padding:18px 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid var(--pt-gold);">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:36px; height:36px; border-radius:50%; background:var(--pt-gold); color:var(--pt-navy-dark); font-family:var(--font-serif); font-size:20px; font-weight:700; display:flex; align-items:center; justify-content:center;">Ç</div>
+            <div>
+              <div style="font-size:10px; font-weight:800; letter-spacing:0.12em; color:var(--pt-gold-soft);">ÇÖKERTME DÜNYASI</div>
+              <div style="font-family:var(--font-serif); font-size:20px; font-weight:700; line-height:1.15;">Bilgilendirme</div>
+            </div>
+          </div>
+          <button type="button" onclick="closeOrderSuccessModal()" style="background:rgba(255,255,255,0.14); border:none; color:#fff; width:30px; height:30px; border-radius:50%; font-size:15px; cursor:pointer;">✕</button>
+        </div>
+        <div style="padding:20px;">
+          <div style="font-size:14px; color:var(--pt-navy); line-height:1.55; margin-bottom:18px; font-weight:600;">
+            ${safeMsg}
+          </div>
+          <button type="button" class="btn-approve-cart" style="margin-top:0; padding:12px;" onclick="closeOrderSuccessModal()">
+            <span>Tamam</span>
+          </button>
+        </div>
+      `;
+      modal.style.display = "flex";
+    }
+    window.alert = showAppNoticeModal;
 
     function showOrderSuccessNotificationModal(order, loyaltyStatus, payViaWallet, walletDeductionResult) {
       const modal = document.getElementById("order-success-modal");
