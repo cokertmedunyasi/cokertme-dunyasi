@@ -16,7 +16,7 @@
       ]
     }
   ],
-  "rewrites": [
+  "redirects": [
     {
       "source": "/",
       "has": [
@@ -25,8 +25,11 @@
           "value": "onlinesiparis.cokertmedunyasi.com"
         }
       ],
-      "destination": "/uygulama"
-    },
+      "destination": "/uygulama",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
     { "source": "/onlinesiparis", "destination": "/uygulama" }
   ]
 }
