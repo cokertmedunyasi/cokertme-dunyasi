@@ -2711,6 +2711,13 @@
     </div>
 
     <!-- ======================================================================
+         MODERN SİPARİŞ ONAY, CANLI TAKİP VE SADAKAT BİLDİRİM MODALI
+         ====================================================================== -->
+    <div id="order-success-modal" onclick="if(event.target===this) closeOrderSuccessModal()" style="display:none; position:fixed; inset:0; z-index:2800; background:rgba(10, 30, 48, 0.78); backdrop-filter:blur(5px); align-items:center; justify-content:center; padding:16px;">
+      <div id="order-success-modal-body" style="background:#fff; width:100%; max-width:430px; max-height:92vh; overflow-y:auto; border-radius:22px; border:2px solid var(--pt-gold); box-shadow:0 24px 60px rgba(0,0,0,0.45); animation:fadeIn 0.2s ease;"></div>
+    </div>
+
+    <!-- ======================================================================
          MASAÜSTÜ (WEB) PATIOTIME DEMO 4 3-KATMANLI DALGALI FOOTER (#14314F)
          ====================================================================== -->
     <footer class="pt-desktop-footer" style="display:none;">
@@ -5400,17 +5407,165 @@
       saveCart();
       pendingCheckoutData = null;
 
-      alert(
-        (payViaWallet
-          ? `✓ Çökertme Dijital Cüzdan Bakiyenizle 1 Saniyede Ödemeniz Tamamlandı ve Siparişiniz (#${newOrder.id}) Alındı!\n• Kalan Cüzdan Bakiyeniz: ${walletDeductionResult.remainingBalance.toFixed(2)} TL\n\n`
-          : `✓ QNB Finansbank 3D Secure Ödemeniz Onaylandı ve Siparişiniz (#${newOrder.id}) Alındı!\n\n`) +
-        `• Otomatik Üyelik: Sipariş bilgilerinizle (${nameVal} - ${phoneVal}) üyeliğiniz otomatik tanımlandı.\n` +
-        (loyaltyOutcome.statusText ? `• Sadakat Programı: ${loyaltyOutcome.statusText}\n` : "") +
-        `• Sunum Kalıbı: ${moldType}\n` +
-        `• Adisyo Bulut ERP & Mutfak: Sipariş fişiniz (${moldType}) Adisyo üzerinden mutfak yazıcısından otomatik yazdırıldı, reçete/stok düşümü ve Beko Yazarkasa POS eşleşmesi yapıldı.\n` +
-        `• Kurye Bildirimi: ${activeCourier.name} sistemine siparişin ${prepMinutes} dk sonra (${estimatedReadyAtStr}) hazır olacağı anında iletildi!`
-      );
       openAccountSubTab("siparislerim");
+      showOrderSuccessNotificationModal(newOrder, latestLoyalty, payViaWallet, walletDeductionResult);
+    }
+
+    function closeOrderSuccessModal() {
+      const modal = document.getElementById("order-success-modal");
+      if (modal) modal.style.display = "none";
+    }
+
+    function showOrderSuccessNotificationModal(order, loyaltyStatus, payViaWallet, walletDeductionResult) {
+      const modal = document.getElementById("order-success-modal");
+      const body = document.getElementById("order-success-modal-body");
+      if (!modal || !body || !order) return;
+
+      const reqStamps = (loyaltyStatus && loyaltyStatus.requiredStamps) || 5;
+      const curStamps = (loyaltyStatus && loyaltyStatus.stampCount) || 0;
+      const isDelivery = (order.deliveryType || order.mode || "").includes("Paket");
+
+      let miniStampsHtml = "";
+      for (let i = 1; i <= reqStamps; i++) {
+        const filled = i <= curStamps;
+        miniStampsHtml += `
+          <div style="width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; background:${filled ? 'var(--pt-gold)' : 'rgba(255,255,255,0.12)'}; color:${filled ? 'var(--pt-navy-dark)' : 'rgba(255,255,255,0.75)'}; border:1.5px solid ${filled ? '#fff' : 'rgba(212,155,53,0.45)'};">
+            ${filled ? '✓' : i}
+          </div>
+        `;
+      }
+
+      body.innerHTML = `
+        <!-- Üst Başlık: Zeytin Yeşili & Altın Vurgulu Onay Başlığı -->
+        <div style="background:linear-gradient(135deg, var(--pt-olive-dark) 0%, var(--pt-olive) 60%, var(--pt-navy-dark) 100%); color:#fff; padding:22px 20px 18px; text-align:center; border-bottom:3px solid var(--pt-gold); position:relative;">
+          <button type="button" onclick="closeOrderSuccessModal()" style="position:absolute; top:12px; right:12px; background:rgba(255,255,255,0.14); border:none; color:#fff; width:30px; height:30px; border-radius:50%; font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+          <div style="width:56px; height:56px; border-radius:50%; background:var(--pt-gold); color:var(--pt-navy-dark); display:flex; align-items:center; justify-content:center; margin:0 auto 10px; box-shadow:0 8px 20px rgba(0,0,0,0.28);">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div style="font-size:11px; font-weight:800; letter-spacing:0.14em; color:var(--pt-gold-soft); text-transform:uppercase; margin-bottom:3px;">SİPARİŞİNİZ ONAYLANDI</div>
+          <h3 style="font-family:var(--font-serif); font-size:26px; font-weight:700; line-height:1.15; margin-bottom:6px;">Afiyet Olsun, ${order.customerName.split(' ')[0]}!</h3>
+          <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.14); border:1px solid rgba(243,217,153,0.45); padding:5px 12px; border-radius:999px; font-size:12.5px; font-weight:700;">
+            <span>Sipariş No: <strong style="color:var(--pt-gold-soft);">#${order.id}</strong></span>
+            <span>•</span>
+            <span>Hazırlık: <strong>~${order.prepTimeMinutes || 15} dk (${order.estimatedReadyAt || ''})</strong></span>
+          </div>
+        </div>
+
+        <div style="padding:18px;">
+          <!-- 1. Canlı Sipariş Takip Adımları -->
+          <div style="background:#FAF7F2; border:1.5px solid var(--pt-gold); border-radius:14px; padding:14px 12px; margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="font-size:12px; font-weight:800; color:var(--pt-navy); letter-spacing:0.04em;">CANLI SİPARİŞ DURUMU</span>
+              <span style="background:rgba(59,82,51,0.14); color:var(--pt-olive); font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:999px;">● Canlı Takip Aktif</span>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; text-align:center;">
+              <div style="background:#fff; border:1.5px solid var(--pt-olive); border-radius:10px; padding:8px 6px;">
+                <div style="width:24px; height:24px; border-radius:50%; background:var(--pt-olive); color:#fff; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; margin:0 auto 4px;">✓</div>
+                <div style="font-size:11px; font-weight:800; color:var(--pt-olive);">Sipariş Alındı</div>
+                <div style="font-size:10px; color:var(--pt-text-muted);">Onaylandı</div>
+              </div>
+
+              <div style="background:#FFF8F3; border:1.5px solid var(--pt-terracotta); border-radius:10px; padding:8px 6px;">
+                <div style="width:24px; height:24px; border-radius:50%; background:var(--pt-terracotta); color:#fff; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; margin:0 auto 4px;">2</div>
+                <div style="font-size:11px; font-weight:800; color:var(--pt-terracotta);">Hazırlanıyor</div>
+                <div style="font-size:10px; color:var(--pt-text-muted);">Mutfakta</div>
+              </div>
+
+              <div style="background:#fff; border:1px dashed var(--pt-border); border-radius:10px; padding:8px 6px; opacity:0.8;">
+                <div style="width:24px; height:24px; border-radius:50%; background:#e2e8f0; color:var(--pt-navy); font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; margin:0 auto 4px;">3</div>
+                <div style="font-size:11px; font-weight:700; color:var(--pt-navy);">${isDelivery ? 'Kurye Yolda' : 'Teslime Hazır'}</div>
+                <div style="font-size:10px; color:var(--pt-text-muted);">~${order.prepTimeMinutes || 15} dk</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Sadakat Kartı & Damga Durumu -->
+          <div style="background:linear-gradient(135deg, #14314F 0%, #023A58 100%); color:#fff; border-radius:14px; padding:13px 14px; margin-bottom:14px; border:1px solid var(--pt-gold);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-size:11px; font-weight:800; color:var(--pt-gold-soft); letter-spacing:0.06em;">SADAKAT KARTI DURUMUNUZ</span>
+              <span style="background:var(--pt-terracotta); color:#fff; font-size:11px; font-weight:800; padding:2px 8px; border-radius:999px;">${curStamps} / ${reqStamps} Damga</span>
+            </div>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; margin-bottom:8px;">
+              <div style="display:flex; gap:6px; align-items:center;">
+                ${miniStampsHtml}
+              </div>
+              <span style="font-size:11.5px; font-weight:800; color:var(--pt-gold-soft); white-space:nowrap;">%50 Hediye!</span>
+            </div>
+            <div style="font-size:11.5px; color:rgba(255,255,255,0.9); line-height:1.35;">
+              ${curStamps >= reqStamps
+                ? 'Tebrikler! 5 damganız tamamlandı, bir sonraki siparişinizde 1 Çökertme %50 Hediye!'
+                : (order.pointsEarned
+                    ? `✓ Bu siparişinizle <strong>+1 Sadakat Damgası</strong> kazandınız! (${reqStamps - curStamps} damga sonra %50 Hediye)`
+                    : `Toplam <strong>${curStamps}/${reqStamps}</strong> aktif damganız bulunuyor.`)}
+            </div>
+          </div>
+
+          <!-- 3. Sipariş ve Ödeme Özeti -->
+          <div style="background:#f8fafc; border:1px solid var(--pt-border); border-radius:12px; padding:12px 14px; margin-bottom:16px; font-size:12.5px; display:grid; gap:6px;">
+            <div style="font-weight:700; color:var(--pt-navy); font-size:13px; border-bottom:1px dashed var(--pt-border); padding-bottom:6px;">
+              ${(order.items || []).join(", ")}
+            </div>
+            <div style="display:flex; justify-content:space-between; color:var(--pt-text-muted);">
+              <span>Teslimat Şekli:</span>
+              <strong style="color:var(--pt-navy);">${isDelivery ? 'Adrese Paket Servis' : 'Şubeden Gel-Al'}</strong>
+            </div>
+            ${payViaWallet && walletDeductionResult ? `
+              <div style="display:flex; justify-content:space-between; color:var(--pt-olive);">
+                <span>Kalan Cüzdan Bakiyeniz:</span>
+                <strong>${walletDeductionResult.remainingBalance.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL</strong>
+              </div>
+            ` : ''}
+            <div style="display:flex; justify-content:space-between; align-items:center; padding-top:4px; border-top:1px solid var(--pt-border);">
+              <span style="font-weight:700; color:var(--pt-navy);">Ödenen Tutar:</span>
+              <strong style="font-size:15px; color:var(--pt-terracotta);">${Number(order.total || 0).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL</strong>
+            </div>
+          </div>
+
+          <button type="button" class="btn-approve-cart" style="margin-top:0; padding:13px;" onclick="closeOrderSuccessModal(); openAccountSubTab('siparislerim');">
+            <span>Siparişimi Canlı Takip Et →</span>
+          </button>
+        </div>
+      `;
+
+      modal.style.display = "flex";
+    }
+
+    function showWalletTopupSuccessModal(res) {
+      const modal = document.getElementById("order-success-modal");
+      const body = document.getElementById("order-success-modal-body");
+      if (!modal || !body || !res) return;
+
+      body.innerHTML = `
+        <div style="background:linear-gradient(135deg, #14314F 0%, #023A58 60%, var(--pt-olive) 100%); color:#fff; padding:22px 20px 18px; text-align:center; border-bottom:3px solid var(--pt-gold); position:relative;">
+          <button type="button" onclick="closeOrderSuccessModal()" style="position:absolute; top:12px; right:12px; background:rgba(255,255,255,0.14); border:none; color:#fff; width:30px; height:30px; border-radius:50%; font-size:15px; cursor:pointer;">✕</button>
+          <div style="width:54px; height:54px; border-radius:50%; background:var(--pt-gold); color:var(--pt-navy-dark); display:flex; align-items:center; justify-content:center; margin:0 auto 10px;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div style="font-size:10.5px; font-weight:800; letter-spacing:0.14em; color:var(--pt-gold-soft); margin-bottom:3px;">ÇÖKERTME DİJİTAL CÜZDAN</div>
+          <h3 style="font-family:var(--font-serif); font-size:24px; font-weight:700;">Bakiye Yüklemeniz Tamamlandı!</h3>
+        </div>
+        <div style="padding:18px;">
+          <div style="background:#F4F7F2; border:1.5px solid var(--pt-olive); border-radius:12px; padding:14px; margin-bottom:14px; display:grid; gap:7px; font-size:13px;">
+            <div style="display:flex; justify-content:space-between;">
+              <span style="color:var(--pt-text-muted);">Yüklenen Ana Tutar:</span>
+              <strong style="color:var(--pt-navy);">${res.calc.paidAmount.toLocaleString("tr-TR")} TL</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="color:var(--pt-olive); font-weight:700;">Kazanılan Hediye Bakiye (+%${res.calc.bonusPct}):</span>
+              <strong style="color:var(--pt-terracotta);">+${res.calc.bonusAmount.toLocaleString("tr-TR")} TL</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding-top:8px; border-top:1px dashed var(--pt-border); font-size:15px;">
+              <strong style="color:var(--pt-navy);">Güncel Cüzdan Bakiyeniz:</strong>
+              <strong style="color:var(--pt-olive); font-size:18px;">${res.balance.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL</strong>
+            </div>
+          </div>
+          <button type="button" class="btn-approve-cart" style="margin-top:0; padding:13px;" onclick="closeOrderSuccessModal()">
+            <span>Harika, Alışverişe Devam Et →</span>
+          </button>
+        </div>
+      `;
+      modal.style.display = "flex";
     }
 
     const MY_LOCAL_ORDERS_KEY = "cokertme_my_orders_v1";
@@ -5562,14 +5717,7 @@
       pendingWalletTopupData = null;
 
       if (res) {
-        alert(
-          `✓ Çökertme Dijital Cüzdan Yüklemeniz Onaylandı!\n\n` +
-          `• Kartınızdan Çekilen: ${res.calc.paidAmount.toLocaleString("tr-TR")} TL\n` +
-          `• Anında Hediye Bakiye (+%${res.calc.bonusPct}): +${res.calc.bonusAmount.toLocaleString("tr-TR")} TL\n` +
-          `• Cüzdanınıza Eklenen Net Tutar: ${res.calc.totalCredit.toLocaleString("tr-TR")} TL\n` +
-          `• Güncel Toplam Cüzdan Bakiyeniz: ${res.balance.toLocaleString("tr-TR")} TL\n\n` +
-          `Artık tüm siparişlerinizde %10 Online İndirim + 5 Damgada 1 Hediye ayrıcalığına ek olarak 1 saniyede kart girmeden cüzdan bakiyenizle ödeme yapabilirsiniz!`
-        );
+        showWalletTopupSuccessModal(res);
       }
       renderCurrentView();
     }
@@ -6065,29 +6213,42 @@
               <p style="font-size:13.5px; color:var(--pt-text-muted); margin-bottom:18px;">Menümüze göz atarak hemen ilk siparişinizi oluşturabilirsiniz.</p>
               <button class="btn-primary-app" style="max-width:200px; margin:0 auto;" onclick="switchTab('menu')">Menüye Göz At</button>
             </div>
-          ` : myOrders.map(o => `
+          ` : myOrders.map(o => {
+            const isDelivery = (o.deliveryType || o.mode || "").includes("Paket");
+            return `
             <div class="login-card-box">
               <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px; flex-wrap:wrap;">
-                <strong style="font-size:16px; color:var(--pt-navy);">#${o.id} — ${o.customerName}</strong>
-                <span style="background:rgba(59,82,51,0.14); color:var(--pt-olive); font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:6px;">${o.status || 'Hazırlanıyor'}</span>
+                <strong style="font-size:16.5px; color:var(--pt-navy);">Sipariş #${o.id}</strong>
+                <span style="background:rgba(59,82,51,0.14); color:var(--pt-olive); font-size:11.5px; font-weight:800; padding:4px 10px; border-radius:999px;">● Hazırlanıyor &amp; Canlı Takip</span>
               </div>
-              <div style="font-size:12.5px; color:var(--pt-text-muted); margin-bottom:8px;">${o.mode} • Sipariş Saati: ${o.createdAt}</div>
-              <div style="font-size:14px; font-weight:700; margin-bottom:10px; color:var(--pt-text);">${(o.items || []).join(", ")}</div>
+              <div style="font-size:12.5px; color:var(--pt-text-muted); margin-bottom:10px;">${o.mode} • Sipariş Zamanı: ${o.createdAt}</div>
+              <div style="font-size:14px; font-weight:700; margin-bottom:12px; color:var(--pt-text); background:#f8fafc; padding:10px 12px; border-radius:10px; border:1px solid var(--pt-border);">${(o.items || []).join(", ")}</div>
 
-              <div style="background:#F4F7F2; border:1px solid rgba(59,82,51,0.25); border-left:3px solid var(--pt-olive); border-radius:8px; padding:8px 10px; margin-bottom:10px; font-size:12px; display:grid; gap:4px;">
-                <div><strong style="color:var(--pt-navy);">Çökertme Sunum Kalıbı:</strong> ${o.moldType || (o.customerGender === 'Kadın' ? 'Kalpli Çökertme Kalıbı (Kadın)' : 'Çember Çökertme Kalıbı (Erkek)')}</div>
-                ${o.loyaltyNote ? `<div><strong style="color:var(--pt-terracotta);">Sadakat Programı:</strong> ${o.loyaltyNote}</div>` : ''}
-                <div><strong style="color:var(--pt-navy);">Ödeme (QNB / Cüzdan / Beko POS):</strong> ${o.paymentLabel || 'QNB Finansbank Online 3D'}</div>
-                <div><strong style="color:var(--pt-olive);">Adisyo Bulut ERP &amp; Mutfak:</strong> ${o.adisyoStatus || 'Adisyo Bulut ERP İletildi • Mutfak Fişi Yazdırıldı'}</div>
-                <div><strong style="color:var(--pt-terracotta);">Kurye &amp; Hazırlık Süresi:</strong> ${o.courierStatus || `Kurye Firmasına Anında Atandı (${o.prepTimeMinutes || 15} dk sonra hazır)`}</div>
+              <!-- Müşteri Odaklı Canlı Sipariş Takip Çubuğu -->
+              <div style="background:#FAF7F2; border:1px solid var(--pt-gold); border-radius:12px; padding:10px 12px; margin-bottom:10px;">
+                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; text-align:center; margin-bottom:8px;">
+                  <div style="background:#fff; border:1.5px solid var(--pt-olive); border-radius:8px; padding:6px 4px;">
+                    <div style="font-size:11px; font-weight:800; color:var(--pt-olive);">✓ Sipariş Alındı</div>
+                  </div>
+                  <div style="background:#FFF8F3; border:1.5px solid var(--pt-terracotta); border-radius:8px; padding:6px 4px;">
+                    <div style="font-size:11px; font-weight:800; color:var(--pt-terracotta);">● Hazırlanıyor</div>
+                  </div>
+                  <div style="background:#fff; border:1px dashed var(--pt-border); border-radius:8px; padding:6px 4px;">
+                    <div style="font-size:11px; font-weight:700; color:var(--pt-navy);">${isDelivery ? 'Kurye Teslimat' : 'Gel-Al Hazır'}</div>
+                  </div>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; font-size:12px; color:var(--pt-navy);">
+                  <span>Tahmini Hazırlanma: <strong>~${o.prepTimeMinutes || 15} dk ${o.estimatedReadyAt ? `(${o.estimatedReadyAt})` : ''}</strong></span>
+                  ${o.loyaltyNote ? `<span style="color:var(--pt-olive); font-weight:700;">★ ${o.loyaltyNote}</span>` : ''}
+                </div>
               </div>
 
               <div style="display:flex; justify-content:space-between; padding-top:8px; border-top:1px dashed var(--pt-border); font-size:14px;">
                 <span style="color:var(--pt-olive); font-weight:600;">Toplam İndirim: -${o.discount} TL</span>
-                <strong style="color:var(--pt-terracotta);">Toplam: ${o.total} TL</strong>
+                <strong style="color:var(--pt-terracotta);">Ödenen: ${o.total} TL</strong>
               </div>
             </div>
-          `).join("")}
+          `}).join("")}
           `;
         })() : ''}
 
