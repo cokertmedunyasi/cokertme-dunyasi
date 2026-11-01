@@ -2154,7 +2154,7 @@
 
       /* Masaüstü Ana Sticky Header */
       .app-header {
-        padding: 14px 24px;
+        padding: 13px 22px;
         background: var(--pt-navy-dark);
         border-bottom: 3px solid var(--pt-gold);
       }
@@ -2166,39 +2166,48 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 16px;
+        gap: 14px;
+      }
+
+      .app-brand {
+        flex: 0 0 auto;
+        overflow: visible;
       }
 
       .app-brand-emblem {
-        width: 42px;
-        height: 42px;
-        font-size: 24px;
+        width: 40px;
+        height: 40px;
+        font-size: 22px;
       }
 
       .app-brand-title {
-        font-size: 21px;
-        letter-spacing: 0.05em;
+        font-size: 20px;
+        letter-spacing: 0.04em;
       }
 
       .desktop-header-center {
-        flex: 1;
-        max-width: 620px;
+        flex: 1 1 auto;
+        max-width: 880px;
         min-width: 0;
+        margin: 0 auto;
         display: flex;
         align-items: center;
+        justify-content: center;
         gap: 10px;
+        overflow: hidden;
       }
 
       .desktop-search-bar {
-        flex: 1;
-        min-width: 160px;
+        flex: 1 1 150px;
+        max-width: 260px;
+        min-width: 110px;
         display: flex;
         align-items: center;
         gap: 8px;
         background: rgba(255, 255, 255, 0.96);
         border: 1.5px solid var(--pt-gold);
         border-radius: 999px;
-        padding: 8px 14px;
+        padding: 8px 13px;
         color: var(--pt-navy-dark);
       }
 
@@ -2207,7 +2216,8 @@
         outline: none;
         background: transparent;
         width: 100%;
-        font-size: 13.5px;
+        min-width: 0;
+        font-size: 13px;
         font-weight: 500;
         color: var(--pt-navy-dark);
       }
@@ -2223,12 +2233,13 @@
         background: rgba(255, 255, 255, 0.08);
         border: 1px solid rgba(243, 217, 153, 0.35);
         color: #fff;
-        padding: 8px 12px;
+        padding: 8px 11px;
         border-radius: 999px;
         font-size: 12px;
         font-weight: 700;
         cursor: pointer;
         white-space: nowrap;
+        flex-shrink: 0;
         transition: all 0.15s ease;
       }
 
@@ -2239,10 +2250,19 @@
         color: var(--pt-gold-soft);
       }
 
+      .app-header-actions {
+        flex: 0 0 auto;
+        gap: 8px;
+      }
+
+      .hdr-user-pill {
+        max-width: 210px;
+      }
+
       .hdr-btn-login,
       .hdr-btn-register {
-        padding: 8px 14px;
-        font-size: 12.5px;
+        padding: 8px 13px;
+        font-size: 12px;
       }
 
       /* 3 Sütunlu Masaüstü Sipariş Grid Mimarisi (Sol Kategori | Orta Vitrin | Sağ Canlı Sepet) */
@@ -2487,6 +2507,61 @@
         font-size: 13px;
         color: rgba(255, 255, 255, 0.65);
       }
+
+      .product-card-desc {
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        font-size: 12px;
+        color: var(--pt-text-muted);
+        margin-bottom: 6px;
+        line-height: 1.35;
+      }
+    }
+
+    .product-card-desc {
+      display: none;
+    }
+
+    @media (min-width: 960px) and (max-width: 1179px) {
+      .app-header {
+        padding: 11px 14px;
+      }
+      .app-header-inner-wrap {
+        gap: 8px;
+      }
+      .app-brand-emblem {
+        width: 34px;
+        height: 34px;
+        font-size: 19px;
+      }
+      .app-brand-title {
+        font-size: 16.5px;
+      }
+      .desktop-header-center {
+        gap: 6px;
+      }
+      .desktop-search-bar {
+        min-width: 90px;
+        max-width: 175px;
+        padding: 6px 10px;
+      }
+      .desktop-search-bar input {
+        font-size: 12px;
+      }
+      .desktop-nav-pills {
+        gap: 4px;
+      }
+      .desktop-nav-btn {
+        padding: 6px 8px;
+        font-size: 11px;
+      }
+      .hdr-btn-login,
+      .hdr-btn-register {
+        padding: 6px 10px;
+        font-size: 11px;
+      }
     }
 
     @media (min-width: 1180px) {
@@ -2496,7 +2571,7 @@
         padding: 24px 28px 60px;
       }
       .app-brand-title {
-        font-size: 23px;
+        font-size: 21px;
       }
     }
 
@@ -2917,9 +2992,9 @@
         } catch (e) {}
         if (authArea) {
           authArea.innerHTML = `
-            <button type="button" class="hdr-user-pill" onclick="switchTab('account')" title="Hesabım, Cüzdanım ve Sadakat Puanım">
+            <button type="button" class="hdr-user-pill" onclick="switchTab('account')" title="Hesabım, Cüzdanım ve Sadakat Puanım${walletBadgeText}">
               <span class="hdr-user-pill-avatar">${letter}</span>
-              <span>${firstName}${stampBadgeText}${walletBadgeText}</span>
+              <span style="overflow:hidden; text-overflow:ellipsis;">${firstName}${stampBadgeText}</span>
             </button>
           `;
         }
@@ -3243,7 +3318,7 @@
               <div class="product-card-body">
                 <div>
                   <div class="product-card-name">${item.name.tr}</div>
-                  <div class="desktop-only" style="font-size:12px; color:var(--pt-text-muted); margin-bottom:6px; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${item.desc.tr || ''}</div>
+                  <div class="product-card-desc">${item.desc.tr || ''}</div>
                   ${ikramOrMetaHtml}
                 </div>
                 <div class="product-card-footer">
@@ -4918,9 +4993,9 @@
           </div>
 
           <!-- Ödeme Yöntemi Seçici Sekmeler -->
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px;">
-            <button type="button" onclick="selectCheckoutPaymentMethod('COKERTME_WALLET')" style="padding:10px 8px; border-radius:10px; border:2px solid ${activePayMode === 'COKERTME_WALLET' ? 'var(--pt-olive)' : 'var(--pt-border)'}; background:${activePayMode === 'COKERTME_WALLET' ? '#F4F7F2' : '#fff'}; color:var(--pt-navy); font-weight:700; font-size:12.5px; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:2px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; gap:4px;">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:8px; margin-bottom:12px;">
+            <button type="button" onclick="selectCheckoutPaymentMethod('COKERTME_WALLET')" style="padding:10px 8px; border-radius:10px; border:2px solid ${activePayMode === 'COKERTME_WALLET' ? 'var(--pt-olive)' : 'var(--pt-border)'}; background:${activePayMode === 'COKERTME_WALLET' ? '#F4F7F2' : '#fff'}; color:var(--pt-navy); font-weight:700; font-size:12.5px; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:2px; min-width:0;">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:4px; flex-wrap:wrap;">
                 <span>Çökertme Cüzdan</span>
                 <span style="background:var(--pt-gold); color:var(--pt-navy-dark); font-size:9.5px; font-weight:800; padding:2px 6px; border-radius:4px;">+%5 HEDİYE</span>
               </div>
@@ -4929,8 +5004,8 @@
               </span>
             </button>
 
-            <button type="button" onclick="selectCheckoutPaymentMethod('QNB_ONLINE_3D')" style="padding:10px 8px; border-radius:10px; border:2px solid ${activePayMode === 'QNB_ONLINE_3D' ? 'var(--pt-navy)' : 'var(--pt-border)'}; background:${activePayMode === 'QNB_ONLINE_3D' ? '#f0f5fa' : '#fff'}; color:var(--pt-navy); font-weight:700; font-size:12.5px; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:2px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; gap:4px;">
+            <button type="button" onclick="selectCheckoutPaymentMethod('QNB_ONLINE_3D')" style="padding:10px 8px; border-radius:10px; border:2px solid ${activePayMode === 'QNB_ONLINE_3D' ? 'var(--pt-navy)' : 'var(--pt-border)'}; background:${activePayMode === 'QNB_ONLINE_3D' ? '#f0f5fa' : '#fff'}; color:var(--pt-navy); font-weight:700; font-size:12.5px; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:2px; min-width:0;">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:4px; flex-wrap:wrap;">
                 <span>Kredi / Banka Kartı</span>
                 <span style="background:var(--pt-navy); color:#fff; font-size:9.5px; font-weight:800; padding:2px 6px; border-radius:4px;">3D SECURE</span>
               </div>
