@@ -473,6 +473,8 @@ const DEFAULT_COKERTME_DATA = {
     tier: "Gümüş Gurme"
   },
   appSettings: {
+    maintenanceLockEnabled: true,
+    testAccessPin: "YEo13221990.,",
     discountPercent: 10,
     bannerHeadline: "LEZZET ÜSTÜNE LEZZET KAT",
     bannerSub: "Tüm Çökertme Kebaplarının Yanında 6 Masa İkramı Bedava!",

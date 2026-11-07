@@ -1138,6 +1138,33 @@
         </div>
       </div>
 
+      <!-- Online Sipariş Müşteri Erişim Kilidi (Test / Bakım Modu Şalteri) -->
+      <div style="background:#FFF8F3; border:2px solid var(--pt-terracotta); padding:18px; margin-bottom:18px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+          <div>
+            <strong style="font-family:var(--font-serif); font-size:23px; color:var(--pt-navy); display:block;">
+              🔒 Online Sipariş Müşteri Erişim Kilidi (Test &amp; Bakım Modu)
+            </strong>
+            <span style="font-size:13px; color:var(--pt-text-muted);">
+              Kilit açıkken müşteriler <strong>onlinesiparis.cokertmedunyasi.com</strong> adresine girdiğinde <em>"Çok Yakında Hizmetinizde / Telefonla Sipariş Ver"</em> ekranını görür ve sahte/test sipariş veremez. Siz ise <strong>Yönetici Test Şifrenizle</strong> giriş yapıp tüm sistemi canlı test edebilirsiniz.
+            </span>
+          </div>
+          <label style="display:inline-flex; align-items:center; gap:8px; background:var(--pt-terracotta); color:#fff; padding:9px 14px; font-size:13px; font-weight:700; cursor:pointer; border-radius:6px;">
+            <input type="checkbox" id="app-maintenance-lock-cb" checked style="width:17px; height:17px;" />
+            <span>Müşterilere Kilitli (Sadece Yönetici Test Girişi Açık)</span>
+          </label>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px;">
+          <div>
+            <label class="pt-form-label">Yönetici Test Girişi Şifresi</label>
+            <input type="text" id="app-test-pin-input" class="pt-form-input" value="YEo13221990.," placeholder="Örn: YEo13221990.," />
+          </div>
+          <div style="display:flex; align-items:flex-end; font-size:12.5px; color:var(--pt-olive); font-weight:600; padding-bottom:6px;">
+            ✓ Banka Sanal POS canlıya geçtiğinde sağ üstteki kutucuğun işaretini kaldırıp kaydederek online siparişi tüm müşterilere açabilirsiniz.
+          </div>
+        </div>
+      </div>
+
       <!-- Sadakat Programı Kuralları (Hastane/Grup Korumalı %0 Zarar Modeli) -->
       <div style="background:#fff; border:1.5px solid var(--pt-gold); padding:18px; margin-bottom:18px;">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
@@ -1582,6 +1609,10 @@
       document.getElementById("kpi-franchise").textContent = state.franchiseApplications.length;
 
       if (state.appSettings) {
+        const lockCb = document.getElementById("app-maintenance-lock-cb");
+        if (lockCb) lockCb.checked = state.appSettings.maintenanceLockEnabled !== false;
+        const pinInp = document.getElementById("app-test-pin-input");
+        if (pinInp) pinInp.value = state.appSettings.testAccessPin || "YEo13221990.,";
         document.getElementById("app-discount-Input").value = state.appSettings.discountPercent ?? 10;
         document.getElementById("app-headline-input").value = state.appSettings.bannerHeadline || "LEZZET ÜSTÜNE LEZZET KAT";
         document.getElementById("app-sub-input").value = state.appSettings.bannerSub || "Tüm Çökertme Kebaplarının Yanında 6 Masa İkramı Bedava!";
@@ -1827,8 +1858,12 @@
 
     function saveAppSettings() {
       const state = CokertmeStore.getState();
+      const lockCb = document.getElementById("app-maintenance-lock-cb");
+      const pinInp = document.getElementById("app-test-pin-input");
       state.appSettings = {
         ...(state.appSettings || {}),
+        maintenanceLockEnabled: lockCb ? lockCb.checked : true,
+        testAccessPin: (pinInp && pinInp.value.trim()) ? pinInp.value.trim() : "YEo13221990.,",
         discountPercent: parseFloat(document.getElementById("app-discount-Input").value) || 10,
         bannerHeadline: document.getElementById("app-headline-input").value.trim() || "LEZZET ÜSTÜNE LEZZET KAT",
         bannerSub: document.getElementById("app-sub-input").value.trim() || "Tüm Çökertme Kebaplarının Yanında 6 Masa İkramı Bedava!",
@@ -1842,7 +1877,7 @@
       };
       CokertmeStore.saveState(state);
       renderAdminAll();
-      alert("Mobil Uygulama İndirim ve Korumalı Sadakat Programı ayarları kaydedildi ve canlıya yayınlandı!");
+      alert("Mobil Uygulama Erişim Kilidi, İndirim ve Korumalı Sadakat Programı ayarları kaydedildi ve canlıya yayınlandı!");
     }
 
     function selectPresetImage(url) {

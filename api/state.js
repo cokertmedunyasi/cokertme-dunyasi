@@ -82,6 +82,11 @@ function normalizeItemsImages(stateObj) {
     passwordHash: "YEo13221990.,",
     ...(stateObj.adminSettings || {})
   };
+  stateObj.appSettings = {
+    ...(stateObj.appSettings || {}),
+    maintenanceLockEnabled: (stateObj.appSettings && stateObj.appSettings.maintenanceLockEnabled === false) ? false : true,
+    testAccessPin: (stateObj.appSettings && stateObj.appSettings.testAccessPin) || "YEo13221990.,"
+  };
   return stateObj;
 }
 

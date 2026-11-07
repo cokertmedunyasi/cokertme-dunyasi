@@ -2584,7 +2584,80 @@
 </head>
 <body>
 
+  <!-- ======================================================================
+       MÜŞTERİ ERİŞİM KİLİDİ & YÖNETİCİ TEST GİRİŞİ (GATEKEEPER)
+       ====================================================================== -->
+  <div id="app-maintenance-gate" style="display:flex; position:fixed; inset:0; z-index:9999; background:linear-gradient(145deg, #091929 0%, #14314F 52%, #283822 100%); align-items:center; justify-content:center; padding:16px; overflow-y:auto;">
+    <div style="background:var(--pt-cream); width:100%; max-width:460px; border-radius:22px; border:2px solid var(--pt-gold); border-top:6px solid var(--pt-terracotta); box-shadow:0 28px 70px rgba(0,0,0,0.55); overflow:hidden; margin:auto;">
+      <div style="background:var(--pt-navy-dark); color:#fff; padding:22px 20px 18px; text-align:center; border-bottom:2px solid var(--pt-gold);">
+        <div style="width:52px; height:52px; border-radius:50%; border:2px solid var(--pt-gold); background:var(--pt-navy); color:var(--pt-gold-soft); font-family:var(--font-serif); font-size:28px; font-weight:700; display:flex; align-items:center; justify-content:center; margin:0 auto 8px;">Ç</div>
+        <div style="font-size:10px; letter-spacing:3.5px; color:var(--pt-gold-soft); margin-bottom:3px;">★ ★ ★ ★ ★</div>
+        <div style="font-family:var(--font-serif); font-size:24px; font-weight:700; letter-spacing:0.05em;">ÇÖKERTME DÜNYASI</div>
+        <div style="display:inline-block; margin-top:8px; background:rgba(212,155,53,0.2); border:1px solid var(--pt-gold); color:var(--pt-gold-soft); font-size:10.5px; font-weight:800; letter-spacing:0.12em; padding:4px 12px; border-radius:999px; text-transform:uppercase;">
+          ONLINE SİPARİŞ &amp; UYGULAMA • ÇOK YAKINDA
+        </div>
+      </div>
+
+      <div style="padding:22px 20px;">
+        <h2 style="font-family:var(--font-serif); font-size:26px; font-weight:700; color:var(--pt-navy); text-align:center; line-height:1.2; margin-bottom:12px;">
+          Online Sipariş Sistemimiz Çok Yakında Hizmetinizde!
+        </h2>
+
+        <div style="background:#FFF8EB; border:1.5px solid var(--pt-gold); border-left:4px solid var(--pt-terracotta); border-radius:12px; padding:12px 14px; font-size:13px; color:var(--pt-navy); line-height:1.5; margin-bottom:18px;">
+          <strong style="color:var(--pt-terracotta); display:block; margin-bottom:3px;">⚠️ Önemli Bilgilendirme:</strong>
+          Online ödeme ve banka Sanal POS entegrasyon çalışmalarımız devam etmektedir. <strong>Şu anda bu sayfa üzerinden online ödeme ve sipariş alınmamaktadır.</strong> Paket servis siparişlerinizi doğrudan telefon hattımızdan verebilirsiniz.
+        </div>
+
+        <div style="display:grid; gap:10px;">
+          <a href="tel:+905469180701" style="display:flex; align-items:center; justify-content:center; gap:9px; background:var(--pt-olive); color:#fff; padding:14px 16px; border-radius:12px; font-size:14.5px; font-weight:800; text-decoration:none; box-shadow:0 6px 18px rgba(59,82,51,0.28);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span>Telefonla Sipariş: 0 (546) 918 07 01</span>
+          </a>
+
+          <a href="https://www.cokertmedunyasi.com/menu" style="display:flex; align-items:center; justify-content:center; gap:8px; background:var(--pt-navy); color:#fff; padding:13px 16px; border-radius:12px; font-size:13.5px; font-weight:700; text-decoration:none; border:1px solid var(--pt-gold);">
+            <span>🍽️ Restoran Menüsünü İncele (QR Menü)</span>
+          </a>
+
+          <a href="https://www.cokertmedunyasi.com/" style="display:block; text-align:center; color:var(--pt-text-muted); font-size:12.5px; font-weight:700; padding:6px; text-decoration:underline;">
+            ← Ana Sayfaya Dön (cokertmedunyasi.com)
+          </a>
+        </div>
+
+        <!-- Yönetici / Test Girişi Bölümü -->
+        <div style="margin-top:16px; padding-top:14px; border-top:1px dashed var(--pt-border);">
+          <button type="button" onclick="toggleAdminTestPinBox()" style="width:100%; background:transparent; border:1px solid var(--pt-border); color:var(--pt-text-muted); border-radius:9px; padding:8px 12px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>Yönetici / Test Girişi (Yetkili Personel)</span>
+          </button>
+
+          <form id="admin-test-pin-box" onsubmit="return unlockAdminTestMode(event)" style="display:none; margin-top:10px; background:#fff; border:1.5px solid var(--pt-navy); border-radius:12px; padding:12px;">
+            <label style="display:block; font-size:11.5px; font-weight:800; color:var(--pt-navy); margin-bottom:6px;">
+              Yönetici Test Şifresi:
+            </label>
+            <div style="display:flex; gap:8px;">
+              <input type="password" id="admin-test-pin-field" placeholder="Şifrenizi girin..." style="flex:1; min-width:0; padding:9px 11px; border:1.5px solid var(--pt-border); border-radius:8px; font-size:13.5px; font-weight:700;" />
+              <button type="submit" style="background:var(--pt-terracotta); color:#fff; border:none; border-radius:8px; padding:9px 14px; font-size:12.5px; font-weight:800; cursor:pointer; white-space:nowrap;">
+                Testi Aç →
+              </button>
+            </div>
+            <div id="admin-test-pin-error" style="display:none; color:#c93b2b; font-size:11.5px; font-weight:700; margin-top:6px;">
+              ✕ Hatalı yönetici şifresi! Lütfen tekrar deneyin.
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="app-shell">
+
+    <!-- YÖNETİCİ TEST MODU ÜST BİLGİ BANDI (SADECE YÖNETİCİ GİRİŞ YAPTIĞINDA GÖRÜNÜR) -->
+    <div id="admin-test-mode-strip" style="display:none; background:linear-gradient(90deg, #b93829 0%, #dd5903 100%); color:#fff; padding:7px 14px; font-size:11.5px; font-weight:800; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; border-bottom:1.5px solid var(--pt-gold); z-index:1100; position:relative;">
+      <span>🔧 YÖNETİCİ TEST MODU AKTİF (Müşterilere Kapalı — Sadece Sizin Cihazınızda Açık)</span>
+      <button type="button" onclick="lockAdminTestMode()" style="background:rgba(0,0,0,0.28); color:#fff; border:1px solid rgba(255,255,255,0.6); border-radius:6px; padding:3px 9px; font-size:11px; font-weight:800; cursor:pointer; white-space:nowrap;">
+        🔒 Testten Çık &amp; Kilitle
+      </button>
+    </div>
 
     <!-- ======================================================================
          ÜST UYGULAMA & WEB SİPARİŞ BARI (LOGO + ARAMA + KULLANICI + SEPET + MENÜ)
@@ -6632,6 +6705,76 @@
       `;
     }
 
+    // =========================================================================
+    // MÜŞTERİ ERİŞİM KİLİDİ & YÖNETİCİ TEST MODU KONTROLÜ
+    // =========================================================================
+    const ADMIN_TEST_UNLOCK_KEY = "cokertme_admin_test_unlocked_v1";
+
+    function checkMaintenanceGate() {
+      const gate = document.getElementById("app-maintenance-gate");
+      const strip = document.getElementById("admin-test-mode-strip");
+      if (!gate) return;
+
+      const state = CokertmeStore.getState();
+      const appCfg = (state && state.appSettings) || {};
+      const lockEnabled = appCfg.maintenanceLockEnabled !== false;
+      const isAdminUnlocked =
+        localStorage.getItem(ADMIN_TEST_UNLOCK_KEY) === "true" ||
+        sessionStorage.getItem("cokertme_admin_auth_v1") === "authenticated";
+
+      if (!lockEnabled) {
+        gate.style.display = "none";
+        if (strip) strip.style.display = "none";
+        document.body.style.overflow = "";
+      } else if (isAdminUnlocked) {
+        gate.style.display = "none";
+        if (strip) strip.style.display = "flex";
+        document.body.style.overflow = "";
+      } else {
+        gate.style.display = "flex";
+        if (strip) strip.style.display = "none";
+        document.body.style.overflow = "hidden";
+      }
+    }
+
+    function toggleAdminTestPinBox() {
+      const box = document.getElementById("admin-test-pin-box");
+      if (!box) return;
+      const willOpen = box.style.display === "none";
+      box.style.display = willOpen ? "block" : "none";
+      if (willOpen) {
+        const inp = document.getElementById("admin-test-pin-field");
+        if (inp) inp.focus();
+      }
+    }
+
+    function unlockAdminTestMode(ev) {
+      if (ev) ev.preventDefault();
+      const inp = document.getElementById("admin-test-pin-field");
+      const err = document.getElementById("admin-test-pin-error");
+      const val = (inp && inp.value ? inp.value : "").trim();
+
+      const state = CokertmeStore.getState();
+      const customPin = (state && state.appSettings && state.appSettings.testAccessPin) || "YEo13221990.,";
+      const adminPass = (state && state.adminSettings && state.adminSettings.passwordHash) || "YEo13221990.,";
+
+      if (val && (val === customPin || val === adminPass || val === "YEo13221990.,")) {
+        localStorage.setItem(ADMIN_TEST_UNLOCK_KEY, "true");
+        if (err) err.style.display = "none";
+        if (inp) inp.value = "";
+        checkMaintenanceGate();
+      } else {
+        if (err) err.style.display = "block";
+      }
+      return false;
+    }
+
+    function lockAdminTestMode() {
+      localStorage.removeItem(ADMIN_TEST_UNLOCK_KEY);
+      sessionStorage.removeItem("cokertme_admin_auth_v1");
+      checkMaintenanceGate();
+    }
+
     // Başlangıç
     (function initUrlAuthParam() {
       try {
@@ -6643,9 +6786,11 @@
         }
       } catch (e) {}
     })();
+    checkMaintenanceGate();
     updateCartBadges();
     updateUserHeaderUI();
     CokertmeStore.syncFromServer().then(() => {
+      checkMaintenanceGate();
       updateUserHeaderUI();
       renderCurrentView();
     });
