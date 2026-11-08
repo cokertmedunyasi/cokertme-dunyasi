@@ -3358,7 +3358,7 @@
 
   </div>
 
-  <script src="assets/data.js?v=8"></script>
+  <script src="assets/data.js?v=9"></script>
   <script>
     // =========================================================================
     // UYGULAMA DURUMU (STATE)
@@ -3722,6 +3722,23 @@
     // KAMPANYALAR & KUPONLAR SAYFASI (EKRAN GÖRÜNTÜSÜ 2 VE 3 BİREBİR TASARIM)
     // =========================================================================
     function getAppCampaignsData() {
+      const st = CokertmeStore.getState();
+      const wCfg = getWalletConfig(st);
+      const t1Amt = wCfg.tier1Amount;
+      const t1Pct = wCfg.tier1BonusPct;
+      const t1Bon = Math.round((t1Amt * t1Pct) / 100);
+      const t1Tot = t1Amt + t1Bon;
+
+      const t2Amt = wCfg.tier2Amount;
+      const t2Pct = wCfg.tier2BonusPct;
+      const t2Bon = Math.round((t2Amt * t2Pct) / 100);
+      const t2Tot = t2Amt + t2Bon;
+
+      const t3Amt = wCfg.tier3Amount;
+      const t3Pct = wCfg.tier3BonusPct;
+      const t3Bon = Math.round((t3Amt * t3Pct) / 100);
+      const t3Tot = t3Amt + t3Bon;
+
       return [
         {
           id: "yuzde10-online",
@@ -3817,9 +3834,9 @@
         },
         {
           id: "cokertme-cuzdan",
-          title: "Çökertme Cüzdan'a +%5 Hediye TL",
-          shortCaption: "Çökertme Cüzdan +%5 Hediye TL",
-          actionLabel: "Cüzdana Bakiye Yükle (+%5 Hediye)",
+          title: `Çökertme Cüzdan'a +%${t3Pct}'a Varan Hediye TL`,
+          shortCaption: `Çökertme Cüzdan +%${t3Pct} Hediye TL`,
+          actionLabel: `Cüzdana Bakiye Yükle (+%${t3Pct} Hediye)`,
           actionFn: "openAccountSubTab('cuzdanim')",
           posterHtml: (isThumb) => `
             <div style="width:100%; height:100%; min-height:${isThumb ? '112px' : '224px'}; background:linear-gradient(150deg, #14314F 0%, #3B5233 55%, #283822 100%); padding:${isThumb ? '8px' : '12px 10px 10px'}; display:flex; flex-direction:column; justify-content:space-between; position:relative; overflow:hidden; color:#fff;">
@@ -3828,28 +3845,28 @@
                   ÇÖKERTME DİJİTAL CÜZDAN
                 </div>
                 <div style="font-size:${isThumb ? '12px' : '17px'}; font-weight:900; line-height:1.08; color:#fff;">
-                  CÜZDANA YÜKLE <span style="color:#F3D999;">+%5 HEDİYE TL</span> KAZAN!
+                  CÜZDANA YÜKLE <span style="color:#F3D999;">+%${t3Pct} HEDİYE TL</span> KAZAN!
                 </div>
               </div>
 
               ${!isThumb ? `
               <div style="position:relative; z-index:2; display:grid; gap:4px; margin:4px 0;">
                 <div style="background:rgba(255,255,255,0.12); border:1px solid rgba(243,217,153,0.45); border-radius:6px; padding:3px 7px; display:flex; justify-content:space-between; font-size:9.5px; font-weight:800;">
-                  <span>1.500 TL Yükle</span>
-                  <span style="color:#F3D999;">+45 TL (%3)</span>
+                  <span>${t1Amt.toLocaleString("tr-TR")} TL Yükle</span>
+                  <span style="color:#F3D999;">+${t1Bon.toLocaleString("tr-TR")} TL (%${t1Pct})</span>
                 </div>
                 <div style="background:rgba(255,255,255,0.12); border:1px solid rgba(243,217,153,0.45); border-radius:6px; padding:3px 7px; display:flex; justify-content:space-between; font-size:9.5px; font-weight:800;">
-                  <span>3.000 TL Yükle</span>
-                  <span style="color:#F3D999;">+120 TL (%4)</span>
+                  <span>${t2Amt.toLocaleString("tr-TR")} TL Yükle</span>
+                  <span style="color:#F3D999;">+${t2Bon.toLocaleString("tr-TR")} TL (%${t2Pct})</span>
                 </div>
                 <div style="background:rgba(221,89,3,0.92); border:1px solid #F3D999; border-radius:6px; padding:3px 7px; display:flex; justify-content:space-between; font-size:10px; font-weight:900;">
-                  <span>5.000 TL Yükle</span>
-                  <span style="color:#fff;">+250 TL (%5)</span>
+                  <span>${t3Amt.toLocaleString("tr-TR")} TL Yükle</span>
+                  <span style="color:#fff;">+${t3Bon.toLocaleString("tr-TR")} TL (%${t3Pct})</span>
                 </div>
               </div>
               ` : `
               <div style="position:relative; z-index:2; text-align:center; font-size:11px; font-weight:900; color:#F3D999;">
-                +250 TL HEDİYE
+                +${t3Bon.toLocaleString("tr-TR")} TL HEDİYE
               </div>
               `}
 
@@ -3860,12 +3877,12 @@
           `,
           shortSummaryHtml: `
             <p style="margin:0 0 10px; font-size:14.5px; line-height:1.55; color:#1f2937;">
-              <strong>Çökertme Dijital Cüzdan</strong> hesabınıza bakiye yüklediğiniz anda <strong>+%5'e varan Hediye TL</strong> peşin olarak cüzdanınıza eklenir ve siparişlerinizde kart numarası girmeden <strong>1 saniyede ödeme</strong> yaparsınız.
+              <strong>Çökertme Dijital Cüzdan</strong> hesabınıza bakiye yüklediğiniz anda <strong>+%${t3Pct}'a varan Hediye TL</strong> peşin olarak cüzdanınıza eklenir ve siparişlerinizde kart numarası girmeden <strong>1 saniyede ödeme</strong> yaparsınız.
             </p>
             <ul style="margin:0; padding-left:18px; font-size:14px; line-height:1.65; color:#374151;">
-              <li><strong>1.500 TL Yüklemede:</strong> +%3 Hediye (<strong>+45 TL</strong>) -> Cüzdana <strong>1.545 TL</strong> geçer.</li>
-              <li><strong>3.000 TL Yüklemede:</strong> +%4 Hediye (<strong>+120 TL</strong>) -> Cüzdana <strong>3.120 TL</strong> geçer.</li>
-              <li><strong>5.000 TL Yüklemede:</strong> +%5 Hediye (<strong>+250 TL</strong>) -> Cüzdana <strong>5.250 TL</strong> geçer.</li>
+              <li><strong>${t1Amt.toLocaleString("tr-TR")} TL Yüklemede:</strong> +%${t1Pct} Hediye (<strong>+${t1Bon.toLocaleString("tr-TR")} TL</strong>) -> Cüzdana <strong>${t1Tot.toLocaleString("tr-TR")} TL</strong> geçer.</li>
+              <li><strong>${t2Amt.toLocaleString("tr-TR")} TL Yüklemede:</strong> +%${t2Pct} Hediye (<strong>+${t2Bon.toLocaleString("tr-TR")} TL</strong>) -> Cüzdana <strong>${t2Tot.toLocaleString("tr-TR")} TL</strong> geçer.</li>
+              <li><strong>${t3Amt.toLocaleString("tr-TR")} TL Yüklemede:</strong> +%${t3Pct} Hediye (<strong>+${t3Bon.toLocaleString("tr-TR")} TL</strong>) -> Cüzdana <strong>${t3Tot.toLocaleString("tr-TR")} TL</strong> geçer.</li>
               <li><strong>Çifte Avantaj:</strong> Cüzdan bakiyenizle ödeme yaparken sepetteki <strong>%10 uygulama indiriminden</strong> ve <strong>5 damga sadakat programından</strong> da tam yararlanırsınız.</li>
             </ul>
           `
@@ -5222,9 +5239,9 @@
 
     // =========================================================================
     // ÇÖKERTME DİJİTAL CÜZDAN MOTORU (ÖN ÖDEMELİ BAKİYE + KADEMELİ HEDİYE TL):
-    // 1.500 TL Yükle -> +%3 Hediye (+45 TL)  = 1.545 TL Bakiye
-    // 3.000 TL Yükle -> +%4 Hediye (+120 TL) = 3.120 TL Bakiye
-    // 5.000 TL+ Yükle -> +%5 Hediye (+250 TL) = 5.250 TL Bakiye
+    // 2.000 TL Yükle -> +%5 Hediye (+100 TL)  = 2.100 TL Bakiye
+    // 3.000 TL Yükle -> +%7 Hediye (+210 TL)  = 3.210 TL Bakiye
+    // 5.000 TL+ Yükle -> +%10 Hediye (+500 TL) = 5.500 TL Bakiye
     // =========================================================================
     const WALLET_STORAGE_KEY = "cokertme_wallets_v1";
     let selectedWalletPackageAmount = 5000;
@@ -5234,14 +5251,15 @@
 
     function getWalletConfig(state) {
       const wCfg = (state && state.appSettings && state.appSettings.wallet) || {};
+      const isLegacy = !wCfg.walletSchemaV2 && (Number(wCfg.tier1Amount) === 1500 || Number(wCfg.tier1BonusPct) === 3);
       return {
         enabled: wCfg.enabled !== false,
-        tier1Amount: Number(wCfg.tier1Amount) || 1500,
-        tier1BonusPct: Number(wCfg.tier1BonusPct) || 3,
-        tier2Amount: Number(wCfg.tier2Amount) || 3000,
-        tier2BonusPct: Number(wCfg.tier2BonusPct) || 4,
-        tier3Amount: Number(wCfg.tier3Amount) || 5000,
-        tier3BonusPct: Number(wCfg.tier3BonusPct) || 5
+        tier1Amount: isLegacy ? 2000 : (Number(wCfg.tier1Amount) || 2000),
+        tier1BonusPct: isLegacy ? 5 : (Number(wCfg.tier1BonusPct) || 5),
+        tier2Amount: isLegacy ? 3000 : (Number(wCfg.tier2Amount) || 3000),
+        tier2BonusPct: isLegacy ? 7 : (Number(wCfg.tier2BonusPct) || 7),
+        tier3Amount: isLegacy ? 5000 : (Number(wCfg.tier3Amount) || 5000),
+        tier3BonusPct: isLegacy ? 10 : (Number(wCfg.tier3BonusPct) || 10)
       };
     }
 
@@ -5536,6 +5554,8 @@
         hoursUntilNextStamp: 0
       };
       const wStat = isLogged ? getUserWalletStatus(appUser.phone, state) : { balance: 0, bonusEarned: 0 };
+      const wCfg = getWalletConfig(state);
+      const t3Bonus = Math.round((wCfg.tier3Amount * wCfg.tier3BonusPct) / 100);
       const userName = isLogged ? (appUser.fullName || appUser.phone).split(" ")[0] : "";
 
       let stampsHtml = "";
@@ -5593,11 +5613,11 @@
                   <strong style="color:var(--pt-gold-soft);">Dijital Cüzdan:</strong>
                   ${isLogged && wStat.balance > 0
                     ? `Bakiyeniz <strong>${wStat.balance.toLocaleString("tr-TR")} TL</strong>`
-                    : `1.500 / 3.000 / 5.000 TL Yüklemede <strong>+%5 Hediye (+250 TL)</strong>`}
+                    : `${wCfg.tier1Amount.toLocaleString("tr-TR")} / ${wCfg.tier2Amount.toLocaleString("tr-TR")} / ${wCfg.tier3Amount.toLocaleString("tr-TR")} TL Yüklemede <strong>+%${wCfg.tier3BonusPct} Hediye (+${t3Bonus.toLocaleString("tr-TR")} TL)</strong>`}
                 </span>
               </div>
               <button type="button" onclick="openAccountSubTab('cuzdanim')" style="background:var(--pt-gold); color:var(--pt-navy-dark); border:none; border-radius:7px; padding:5px 10px; font-size:11px; font-weight:800; cursor:pointer; white-space:nowrap;">
-                ${isLogged && wStat.balance > 0 ? 'Cüzdanım & Yükle ›' : 'Cüzdana Yükle (+%5 Hediye) ›'}
+                ${isLogged && wStat.balance > 0 ? 'Cüzdanım & Yükle ›' : `Cüzdana Yükle (+%${wCfg.tier3BonusPct} Hediye) ›`}
               </button>
             </div>
 
@@ -6080,6 +6100,10 @@
         <!-- 2. Ödeme Yöntemi Seçimi: Çökertme Dijital Cüzdan (1 Saniyede Tek Tıkla) veya QNB Finansbank 3D Secure Kart -->
         ${(() => {
           const wStat = getUserWalletStatus(draftPhone, state);
+          const wCfg = getWalletConfig(state);
+          const t1Bonus = Math.round((wCfg.tier1Amount * wCfg.tier1BonusPct) / 100);
+          const t2Bonus = Math.round((wCfg.tier2Amount * wCfg.tier2BonusPct) / 100);
+          const t3Bonus = Math.round((wCfg.tier3Amount * wCfg.tier3BonusPct) / 100);
           const hasEnoughWallet = wStat.balance >= finalTotal && finalTotal > 0;
           const activePayMode = (checkoutPaymentMethod === "COKERTME_WALLET" || (checkoutPaymentMethod === "WALLET_OR_QNB" && hasEnoughWallet))
             ? "COKERTME_WALLET"
@@ -6098,7 +6122,7 @@
             <button type="button" onclick="selectCheckoutPaymentMethod('COKERTME_WALLET')" style="padding:10px 8px; border-radius:10px; border:2px solid ${activePayMode === 'COKERTME_WALLET' ? 'var(--pt-olive)' : 'var(--pt-border)'}; background:${activePayMode === 'COKERTME_WALLET' ? '#F4F7F2' : '#fff'}; color:var(--pt-navy); font-weight:700; font-size:12.5px; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:2px; min-width:0;">
               <div style="display:flex; justify-content:space-between; align-items:center; gap:4px; flex-wrap:wrap;">
                 <span>Çökertme Cüzdan</span>
-                <span style="background:var(--pt-gold); color:var(--pt-navy-dark); font-size:9.5px; font-weight:800; padding:2px 6px; border-radius:4px;">+%5 HEDİYE</span>
+                <span style="background:var(--pt-gold); color:var(--pt-navy-dark); font-size:9.5px; font-weight:800; padding:2px 6px; border-radius:4px;">+%${wCfg.tier3BonusPct} HEDİYE</span>
               </div>
               <span style="font-size:11px; color:${hasEnoughWallet ? 'var(--pt-olive)' : 'var(--pt-terracotta)'}; font-weight:700;">
                 Bakiye: ${wStat.balance.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL
@@ -6122,7 +6146,7 @@
                   <div style="font-family:var(--font-serif); font-size:22px; font-weight:700;">Mevcut Bakiye: ${wStat.balance.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL</div>
                 </div>
                 <button type="button" onclick="openAccountSubTab('cuzdanim')" style="background:var(--pt-gold); color:var(--pt-navy-dark); border:none; border-radius:8px; padding:7px 11px; font-size:11.5px; font-weight:800; cursor:pointer;">
-                  + Bakiye Yükle (+%5 Hediye)
+                  + Bakiye Yükle (+%${wCfg.tier3BonusPct} Hediye)
                 </button>
               </div>
 
@@ -6132,11 +6156,11 @@
                 </div>
               ` : `
                 <div style="background:rgba(221,89,3,0.28); border:1px solid var(--pt-gold-soft); border-radius:8px; padding:10px 11px; font-size:12px; line-height:1.45;">
-                  <div>Cüzdan bakiyeniz bu sipariş için <strong>${missingAmount} TL</strong> eksik. Hemen paket yükleyerek anında <strong>+%5'e varan Hediye TL</strong> kazanabilir veya Kredi Kartı ile devam edebilirsiniz:</div>
+                  <div>Cüzdan bakiyeniz bu sipariş için <strong>${missingAmount} TL</strong> eksik. Hemen paket yükleyerek anında <strong>+%${wCfg.tier3BonusPct}'a varan Hediye TL</strong> kazanabilir veya Kredi Kartı ile devam edebilirsiniz:</div>
                   <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
-                    <button type="button" onclick="quickOpenWalletPackage(1500)" style="background:#fff; color:var(--pt-navy); border:none; border-radius:6px; padding:6px 9px; font-size:11px; font-weight:800; cursor:pointer;">1.500 TL Yükle (+45 TL Hediye)</button>
-                    <button type="button" onclick="quickOpenWalletPackage(3000)" style="background:#fff; color:var(--pt-navy); border:none; border-radius:6px; padding:6px 9px; font-size:11px; font-weight:800; cursor:pointer;">3.000 TL Yükle (+120 TL Hediye)</button>
-                    <button type="button" onclick="quickOpenWalletPackage(5000)" style="background:var(--pt-terracotta); color:#fff; border:none; border-radius:6px; padding:6px 9px; font-size:11px; font-weight:800; cursor:pointer;">5.000 TL Yükle (+250 TL Hediye)</button>
+                    <button type="button" onclick="quickOpenWalletPackage(${wCfg.tier1Amount})" style="background:#fff; color:var(--pt-navy); border:none; border-radius:6px; padding:6px 9px; font-size:11px; font-weight:800; cursor:pointer;">${wCfg.tier1Amount.toLocaleString("tr-TR")} TL Yükle (+${t1Bonus} TL Hediye)</button>
+                    <button type="button" onclick="quickOpenWalletPackage(${wCfg.tier2Amount})" style="background:#fff; color:var(--pt-navy); border:none; border-radius:6px; padding:6px 9px; font-size:11px; font-weight:800; cursor:pointer;">${wCfg.tier2Amount.toLocaleString("tr-TR")} TL Yükle (+${t2Bonus} TL Hediye)</button>
+                    <button type="button" onclick="quickOpenWalletPackage(${wCfg.tier3Amount})" style="background:var(--pt-terracotta); color:#fff; border:none; border-radius:6px; padding:6px 9px; font-size:11px; font-weight:800; cursor:pointer;">${wCfg.tier3Amount.toLocaleString("tr-TR")} TL Yükle (+${t3Bonus} TL Hediye)</button>
                   </div>
                 </div>
               `}
@@ -6857,9 +6881,10 @@
         return;
       }
       const state = CokertmeStore.getState();
-      const paidVal = Number(selectedWalletPackageAmount) || 5000;
+      const wCfg = getWalletConfig(state);
+      const paidVal = Number(selectedWalletPackageAmount) || wCfg.tier3Amount;
       if (paidVal < 500) {
-        alert("Minimum cüzdan yükleme tutarı 500 TL'dir. Hediye TL kazanmak için 1.500 TL (+%3), 3.000 TL (+%4) veya 5.000 TL (+%5) paketlerinden birini seçebilirsiniz.");
+        alert(`Minimum cüzdan yükleme tutarı 500 TL'dir. Hediye TL kazanmak için ${wCfg.tier1Amount.toLocaleString("tr-TR")} TL (+%${wCfg.tier1BonusPct}), ${wCfg.tier2Amount.toLocaleString("tr-TR")} TL (+%${wCfg.tier2BonusPct}) veya ${wCfg.tier3Amount.toLocaleString("tr-TR")} TL (+%${wCfg.tier3BonusPct}) paketlerinden birini seçebilirsiniz.`);
         return;
       }
 
@@ -6934,13 +6959,18 @@
 
     function renderWalletSubTabHtml(state, user) {
       const wStat = getUserWalletStatus(user.phone, state);
+      const wCfg = getWalletConfig(state);
       const calc = calculateWalletTopupBonus(selectedWalletPackageAmount, state);
       const defaultHolder = (user.fullName || "").toUpperCase();
 
+      const t1Bon = Math.round((wCfg.tier1Amount * wCfg.tier1BonusPct) / 100);
+      const t2Bon = Math.round((wCfg.tier2Amount * wCfg.tier2BonusPct) / 100);
+      const t3Bon = Math.round((wCfg.tier3Amount * wCfg.tier3BonusPct) / 100);
+
       const packages = [
-        { amount: 1500, pct: 3, bonus: 45, total: 1545, badge: "BAŞLANGIÇ PAKETİ", tagColor: "var(--pt-olive)" },
-        { amount: 3000, pct: 4, bonus: 120, total: 3120, badge: "AVANTAJ PAKETİ", tagColor: "var(--pt-navy)" },
-        { amount: 5000, pct: 5, bonus: 250, total: 5250, badge: "VIP EN ÇOK TERCİH EDİLEN", tagColor: "var(--pt-terracotta)" }
+        { amount: wCfg.tier1Amount, pct: wCfg.tier1BonusPct, bonus: t1Bon, total: wCfg.tier1Amount + t1Bon, badge: "1. PAKET • BAŞLANGIÇ", tagColor: "var(--pt-olive)" },
+        { amount: wCfg.tier2Amount, pct: wCfg.tier2BonusPct, bonus: t2Bon, total: wCfg.tier2Amount + t2Bon, badge: "2. PAKET • AVANTAJ", tagColor: "var(--pt-navy)" },
+        { amount: wCfg.tier3Amount, pct: wCfg.tier3BonusPct, bonus: t3Bon, total: wCfg.tier3Amount + t3Bon, badge: "3. PAKET • VIP EN ÇOK TERCİH EDİLEN", tagColor: "var(--pt-terracotta)" }
       ];
 
       const packagesGridHtml = packages.map(p => {
@@ -6995,7 +7025,7 @@
             ` : ''}
           </div>
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:8px; margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.16); font-size:11.5px; color:rgba(255,255,255,0.92);">
-            <div>✓ <strong>5.000 TL'ye +250 TL (%5)</strong> Hediye</div>
+            <div>✓ <strong>${wCfg.tier3Amount.toLocaleString("tr-TR")} TL'ye +${t3Bon.toLocaleString("tr-TR")} TL (%${wCfg.tier3BonusPct})</strong> Hediye</div>
             <div>✓ <strong>%10 Online İndirimle</strong> Birleşir</div>
             <div>✓ <strong>1 Saniyede Kart Girmeden</strong> Ödeme</div>
           </div>
@@ -7017,7 +7047,7 @@
           <!-- Özel Tutar Girişi (Örn: 7.500 TL veya 10.000 TL Kurumsal Yükleme) -->
           <div style="background:var(--pt-cream); border:1px solid var(--pt-gold); border-radius:10px; padding:10px 12px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
             <div style="font-size:12.5px; color:var(--pt-navy); font-weight:700;">
-              Farklı / Kurumsal Tutar Yüklemek İster misiniz? <span style="font-weight:500; color:var(--pt-text-muted);">(5.000 TL ve üzeri tüm tutarlara anında +%5 Hediye TL eklenir)</span>
+              Farklı / Kurumsal Tutar Yüklemek İster misiniz? <span style="font-weight:500; color:var(--pt-text-muted);">(${wCfg.tier3Amount.toLocaleString("tr-TR")} TL ve üzeri tüm tutarlara anında +%${wCfg.tier3BonusPct} Hediye TL eklenir)</span>
             </div>
             <div style="display:flex; align-items:center; gap:6px;">
               <input type="tel" id="wallet-custom-amount-input" placeholder="Özel Tutar (TL)" value="${customWalletAmountValue}" oninput="onCustomWalletAmountInput(this.value)" style="width:140px; padding:8px 10px; border:1.5px solid var(--pt-border); border-radius:8px; font-size:13.5px; font-weight:700; color:var(--pt-navy);" />
@@ -7337,7 +7367,7 @@
         <div class="account-tabs-scroll">
           <button class="acc-tab-btn ${accountSubTab === 'cuzdanim' ? 'active' : ''}" onclick="openAccountSubTab('cuzdanim')">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-            <span>Cüzdanım (+%5 Hediye)</span>
+            <span>Cüzdanım (+%${getWalletConfig(state).tier3BonusPct} Hediye)</span>
           </button>
           <button class="acc-tab-btn ${accountSubTab === 'profil' ? 'active' : ''}" onclick="openAccountSubTab('profil')">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>

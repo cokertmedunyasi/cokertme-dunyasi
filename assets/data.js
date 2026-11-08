@@ -488,12 +488,13 @@ const DEFAULT_COKERTME_DATA = {
     },
     wallet: {
       enabled: true,
-      tier1Amount: 1500,
-      tier1BonusPct: 3,
+      walletSchemaV2: true,
+      tier1Amount: 2000,
+      tier1BonusPct: 5,
       tier2Amount: 3000,
-      tier2BonusPct: 4,
+      tier2BonusPct: 7,
       tier3Amount: 5000,
-      tier3BonusPct: 5
+      tier3BonusPct: 10
     }
   },
   siteImages: {
@@ -800,10 +801,17 @@ function sanitizeAndMergeState(parsed) {
         ...DEFAULT_COKERTME_DATA.appSettings.loyalty,
         ...((parsed.appSettings && parsed.appSettings.loyalty) || {})
       },
-      wallet: {
-        ...DEFAULT_COKERTME_DATA.appSettings.wallet,
-        ...((parsed.appSettings && parsed.appSettings.wallet) || {})
-      }
+      wallet: (() => {
+        const rawW = (parsed.appSettings && parsed.appSettings.wallet) || {};
+        if (!rawW.walletSchemaV2 && (Number(rawW.tier1Amount) === 1500 || Number(rawW.tier1BonusPct) === 3)) {
+          return { ...DEFAULT_COKERTME_DATA.appSettings.wallet };
+        }
+        return {
+          ...DEFAULT_COKERTME_DATA.appSettings.wallet,
+          ...rawW,
+          walletSchemaV2: true
+        };
+      })()
     },
     siteImages: {
       ...DEFAULT_COKERTME_DATA.siteImages,

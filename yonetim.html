@@ -1196,8 +1196,91 @@
         </div>
       </div>
 
+      <!-- Çökertme Dijital Cüzdan Paketleri & Ek Hediye Yüzdesi Ayarları (3 Bölüm) -->
+      <div style="background:#fff; border:2px solid var(--pt-navy); border-top:4px solid var(--pt-gold); padding:20px; margin-bottom:18px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+          <div>
+            <strong style="font-family:var(--font-serif); font-size:23px; color:var(--pt-navy); display:block;">
+              Çökertme Dijital Cüzdan Yükleme Paketleri &amp; Ek Hediye Yüzdesi Ayarları (3 Bölüm)
+            </strong>
+            <span style="font-size:13px; color:var(--pt-text-muted);">
+              Müşterilerin Cüzdanım sayfasında, Kampanyalar ekranında ve Sepette gördüğü 3 kademeli cüzdan yükleme fiyatlarını ve yüzde (%) ek hediye TL oranlarını buradan dilediğiniz zaman güncelleyebilirsiniz.
+            </span>
+          </div>
+          <label style="display:inline-flex; align-items:center; gap:8px; font-size:13.5px; font-weight:700; color:var(--pt-olive); cursor:pointer;">
+            <input type="checkbox" id="wallet-enabled-cb" checked />
+            <span>Çökertme Cüzdan Aktif</span>
+          </label>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
+          <!-- 1. BÖLÜM: 1. PAKET (BAŞLANGIÇ) -->
+          <div style="background:var(--pt-cream); border:1.5px solid var(--pt-border); border-top:4px solid var(--pt-olive); padding:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span class="pt-badge">1. BÖLÜM • 1. PAKET</span>
+              <span style="font-size:11.5px; font-weight:700; color:var(--pt-olive);">Başlangıç Paketi</span>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+              <div>
+                <label class="pt-form-label">Yükleme Tutarı (TL)</label>
+                <input type="number" id="wallet-tier1-amount-input" class="pt-form-input" min="100" step="100" value="2000" oninput="updateAdminWalletTierPreviews()" />
+              </div>
+              <div>
+                <label class="pt-form-label">Ek Hediye (%)</label>
+                <input type="number" id="wallet-tier1-pct-input" class="pt-form-input" min="0" max="100" step="1" value="5" oninput="updateAdminWalletTierPreviews()" />
+              </div>
+            </div>
+            <div id="wallet-tier1-preview-lbl" style="background:#fff; border:1px solid var(--pt-border); padding:8px 10px; font-size:12.5px; font-weight:700; color:var(--pt-navy);">
+              2.000 TL Yükleme → <span style="color:var(--pt-terracotta);">+%5 Ek Hediye (+100 TL)</span> = <span style="color:var(--pt-olive);">2.100 TL</span>
+            </div>
+          </div>
+
+          <!-- 2. BÖLÜM: 2. PAKET (AVANTAJ) -->
+          <div style="background:var(--pt-cream); border:1.5px solid var(--pt-border); border-top:4px solid var(--pt-navy); padding:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span class="pt-badge pt-badge-navy">2. BÖLÜM • 2. PAKET</span>
+              <span style="font-size:11.5px; font-weight:700; color:var(--pt-navy);">Avantaj Paketi</span>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+              <div>
+                <label class="pt-form-label">Yükleme Tutarı (TL)</label>
+                <input type="number" id="wallet-tier2-amount-input" class="pt-form-input" min="100" step="100" value="3000" oninput="updateAdminWalletTierPreviews()" />
+              </div>
+              <div>
+                <label class="pt-form-label">Ek Hediye (%)</label>
+                <input type="number" id="wallet-tier2-pct-input" class="pt-form-input" min="0" max="100" step="1" value="7" oninput="updateAdminWalletTierPreviews()" />
+              </div>
+            </div>
+            <div id="wallet-tier2-preview-lbl" style="background:#fff; border:1px solid var(--pt-border); padding:8px 10px; font-size:12.5px; font-weight:700; color:var(--pt-navy);">
+              3.000 TL Yükleme → <span style="color:var(--pt-terracotta);">+%7 Ek Hediye (+210 TL)</span> = <span style="color:var(--pt-olive);">3.210 TL</span>
+            </div>
+          </div>
+
+          <!-- 3. BÖLÜM: 3. PAKET (VIP EN ÇOK TERCİH EDİLEN) -->
+          <div style="background:var(--pt-cream); border:1.5px solid var(--pt-gold); border-top:4px solid var(--pt-terracotta); padding:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span class="pt-badge pt-badge-danger">3. BÖLÜM • 3. PAKET</span>
+              <span style="font-size:11.5px; font-weight:700; color:var(--pt-terracotta);">VIP Paket</span>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+              <div>
+                <label class="pt-form-label">Yükleme Tutarı (TL)</label>
+                <input type="number" id="wallet-tier3-amount-input" class="pt-form-input" min="100" step="100" value="5000" oninput="updateAdminWalletTierPreviews()" />
+              </div>
+              <div>
+                <label class="pt-form-label">Ek Hediye (%)</label>
+                <input type="number" id="wallet-tier3-pct-input" class="pt-form-input" min="0" max="100" step="1" value="10" oninput="updateAdminWalletTierPreviews()" />
+              </div>
+            </div>
+            <div id="wallet-tier3-preview-lbl" style="background:#fff; border:1px solid var(--pt-border); padding:8px 10px; font-size:12.5px; font-weight:700; color:var(--pt-navy);">
+              5.000 TL Yükleme → <span style="color:var(--pt-terracotta);">+%10 Ek Hediye (+500 TL)</span> = <span style="color:var(--pt-olive);">5.500 TL</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div>
-        <button type="button" class="pt-btn-olive" onclick="saveAppSettings()">✓ UYGULAMA &amp; SADAKAT PROGRAMI AYARLARINI KAYDET</button>
+        <button type="button" class="pt-btn-olive" onclick="saveAppSettings()">✓ UYGULAMA, SADAKAT &amp; ÇÖKERTME CÜZDAN AYARLARINI KAYDET</button>
       </div>
     </section>
 
@@ -1346,14 +1429,14 @@
       </div>
 
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:22px; margin-bottom:24px;">
-        <!-- Kutu 1: Çökertme Dijital Cüzdan & Kademeli Bakiye Yükleme (1.500 / 3.000 / 5.000 TL +%5 Hediye TL) -->
+        <!-- Kutu 1: Çökertme Dijital Cüzdan & Kademeli Bakiye Yükleme (2.000 / 3.000 / 5.000 TL +%10'a Varan Hediye TL) -->
         <div style="background:#fff; padding:22px; border:1px solid var(--pt-border); border-top:4px solid var(--pt-navy);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:8px; flex-wrap:wrap;">
-            <strong style="font-family:var(--font-serif); font-size:23px; color:var(--pt-navy);">1. Çökertme Dijital Cüzdan (+%5 Hediye TL)</strong>
-            <span class="pt-badge pt-badge-gold">1.500 • 3.000 • 5.000 TL PAKETLER</span>
+            <strong style="font-family:var(--font-serif); font-size:23px; color:var(--pt-navy);" id="admin-wallet-box-title">1. Çökertme Dijital Cüzdan (+%10'a Varan Hediye TL)</strong>
+            <span class="pt-badge pt-badge-gold" id="admin-wallet-box-badge">2.000 • 3.000 • 5.000 TL PAKETLER</span>
           </div>
-          <p style="font-size:13px; color:var(--pt-text-muted); margin-bottom:12px;">
-            Müşteriler <strong>1.500 TL (+%3: +45 TL)</strong>, <strong>3.000 TL (+%4: +120 TL)</strong> ve <strong>5.000 TL+ (+%5: +250 TL Hediye)</strong> paketleriyle bakiye yükleyip 3D SMS beklemeden 1 saniyede sipariş verebilir. Kurumsal/Hastane müşterilerine aşağıdan manuel bakiye de tanımlayabilirsiniz:
+          <p style="font-size:13px; color:var(--pt-text-muted); margin-bottom:12px;" id="admin-wallet-box-desc">
+            Müşteriler <strong>2.000 TL (+%5: +100 TL)</strong>, <strong>3.000 TL (+%7: +210 TL)</strong> ve <strong>5.000 TL+ (+%10: +500 TL Hediye)</strong> paketleriyle bakiye yükleyip 3D SMS beklemeden 1 saniyede sipariş verebilir. Kurumsal/Hastane müşterilerine aşağıdan manuel bakiye de tanımlayabilirsiniz:
           </p>
           <div style="background:var(--pt-cream); border:1px solid var(--pt-border); padding:12px; margin-bottom:12px; display:grid; gap:8px;">
             <div style="font-size:11.5px; font-weight:800; color:var(--pt-navy); text-transform:uppercase; letter-spacing:0.06em;">
@@ -1365,10 +1448,10 @@
             </div>
             <div style="display:grid; grid-template-columns:1fr auto; gap:8px;">
               <select id="admin-wallet-amount" class="pt-form-select" style="padding:8px 10px; font-size:13px; font-weight:700;">
-                <option value="5000">5.000 TL Yükle → +250 TL (%5) Hediye = 5.250 TL Bakiye</option>
-                <option value="3000">3.000 TL Yükle → +120 TL (%4) Hediye = 3.120 TL Bakiye</option>
-                <option value="1500">1.500 TL Yükle → +45 TL (%3) Hediye = 1.545 TL Bakiye</option>
-                <option value="10000">10.000 TL Yükle → +500 TL (%5) Hediye = 10.500 TL Bakiye</option>
+                <option value="5000">5.000 TL Yükle → +500 TL (%10) Hediye = 5.500 TL Bakiye</option>
+                <option value="3000">3.000 TL Yükle → +210 TL (%7) Hediye = 3.210 TL Bakiye</option>
+                <option value="2000">2.000 TL Yükle → +100 TL (%5) Hediye = 2.100 TL Bakiye</option>
+                <option value="10000">10.000 TL Yükle → +1.000 TL (%10) Hediye = 11.000 TL Bakiye</option>
               </select>
               <button type="button" class="pt-btn-olive" style="padding:8px 14px; font-size:11px; white-space:nowrap;" onclick="adminAddWalletBalance()">
                 + BAKİYE YÜKLE
@@ -1537,7 +1620,7 @@
     </div>
   </footer>
 
-  <script src="assets/data.js?v=8"></script>
+  <script src="assets/data.js?v=9"></script>
   <script>
     const ADMIN_SESSION_KEY = "cokertme_admin_auth_v1";
 
@@ -1622,6 +1705,24 @@
         document.getElementById("loyalty-window-input").value = loy.windowDays ?? 30;
         document.getElementById("loyalty-cooldown-input").value = loy.cooldownHours ?? 24;
         document.getElementById("loyalty-reward-pct-input").value = loy.rewardDiscountPercent ?? 50;
+
+        const wal = state.appSettings.wallet || {};
+        const isOldWal = !wal.walletSchemaV2 && (Number(wal.tier1Amount) === 1500 || Number(wal.tier1BonusPct) === 3);
+        const wEnabledEl = document.getElementById("wallet-enabled-cb");
+        if (wEnabledEl) wEnabledEl.checked = wal.enabled !== false;
+        const t1AmtEl = document.getElementById("wallet-tier1-amount-input");
+        const t1PctEl = document.getElementById("wallet-tier1-pct-input");
+        const t2AmtEl = document.getElementById("wallet-tier2-amount-input");
+        const t2PctEl = document.getElementById("wallet-tier2-pct-input");
+        const t3AmtEl = document.getElementById("wallet-tier3-amount-input");
+        const t3PctEl = document.getElementById("wallet-tier3-pct-input");
+        if (t1AmtEl) t1AmtEl.value = isOldWal ? 2000 : (Number(wal.tier1Amount) || 2000);
+        if (t1PctEl) t1PctEl.value = isOldWal ? 5 : (Number(wal.tier1BonusPct) || 5);
+        if (t2AmtEl) t2AmtEl.value = isOldWal ? 3000 : (Number(wal.tier2Amount) || 3000);
+        if (t2PctEl) t2PctEl.value = isOldWal ? 7 : (Number(wal.tier2BonusPct) || 7);
+        if (t3AmtEl) t3AmtEl.value = isOldWal ? 5000 : (Number(wal.tier3Amount) || 5000);
+        if (t3PctEl) t3PctEl.value = isOldWal ? 10 : (Number(wal.tier3BonusPct) || 10);
+        updateAdminWalletTierPreviews();
       }
 
       renderTableQRCards();
@@ -1856,10 +1957,64 @@
       alert("Tüm web sitesi ve QR menü görselleri kaydedildi ve anında canlıya alındı!");
     }
 
+    function updateAdminWalletTierPreviews() {
+      const t1Amt = parseInt((document.getElementById("wallet-tier1-amount-input") || {}).value, 10) || 2000;
+      const t1Pct = parseFloat((document.getElementById("wallet-tier1-pct-input") || {}).value) || 5;
+      const t1Bon = Math.round((t1Amt * t1Pct) / 100);
+      const t1Tot = t1Amt + t1Bon;
+
+      const t2Amt = parseInt((document.getElementById("wallet-tier2-amount-input") || {}).value, 10) || 3000;
+      const t2Pct = parseFloat((document.getElementById("wallet-tier2-pct-input") || {}).value) || 7;
+      const t2Bon = Math.round((t2Amt * t2Pct) / 100);
+      const t2Tot = t2Amt + t2Bon;
+
+      const t3Amt = parseInt((document.getElementById("wallet-tier3-amount-input") || {}).value, 10) || 5000;
+      const t3Pct = parseFloat((document.getElementById("wallet-tier3-pct-input") || {}).value) || 10;
+      const t3Bon = Math.round((t3Amt * t3Pct) / 100);
+      const t3Tot = t3Amt + t3Bon;
+
+      const p1 = document.getElementById("wallet-tier1-preview-lbl");
+      if (p1) p1.innerHTML = `${t1Amt.toLocaleString("tr-TR")} TL Yükleme → <span style="color:var(--pt-terracotta);">+%${t1Pct} Ek Hediye (+${t1Bon.toLocaleString("tr-TR")} TL)</span> = <span style="color:var(--pt-olive);">${t1Tot.toLocaleString("tr-TR")} TL</span>`;
+
+      const p2 = document.getElementById("wallet-tier2-preview-lbl");
+      if (p2) p2.innerHTML = `${t2Amt.toLocaleString("tr-TR")} TL Yükleme → <span style="color:var(--pt-terracotta);">+%${t2Pct} Ek Hediye (+${t2Bon.toLocaleString("tr-TR")} TL)</span> = <span style="color:var(--pt-olive);">${t2Tot.toLocaleString("tr-TR")} TL</span>`;
+
+      const p3 = document.getElementById("wallet-tier3-preview-lbl");
+      if (p3) p3.innerHTML = `${t3Amt.toLocaleString("tr-TR")} TL Yükleme → <span style="color:var(--pt-terracotta);">+%${t3Pct} Ek Hediye (+${t3Bon.toLocaleString("tr-TR")} TL)</span> = <span style="color:var(--pt-olive);">${t3Tot.toLocaleString("tr-TR")} TL</span>`;
+
+      const sel = document.getElementById("admin-wallet-amount");
+      if (sel) {
+        const corpAmt = 10000;
+        const corpBon = Math.round((corpAmt * t3Pct) / 100);
+        sel.innerHTML = `
+          <option value="${t3Amt}">${t3Amt.toLocaleString("tr-TR")} TL Yükle → +${t3Bon.toLocaleString("tr-TR")} TL (%${t3Pct}) Hediye = ${t3Tot.toLocaleString("tr-TR")} TL Bakiye</option>
+          <option value="${t2Amt}">${t2Amt.toLocaleString("tr-TR")} TL Yükle → +${t2Bon.toLocaleString("tr-TR")} TL (%${t2Pct}) Hediye = ${t2Tot.toLocaleString("tr-TR")} TL Bakiye</option>
+          <option value="${t1Amt}">${t1Amt.toLocaleString("tr-TR")} TL Yükle → +${t1Bon.toLocaleString("tr-TR")} TL (%${t1Pct}) Hediye = ${t1Tot.toLocaleString("tr-TR")} TL Bakiye</option>
+          <option value="${corpAmt}">${corpAmt.toLocaleString("tr-TR")} TL Yükle → +${corpBon.toLocaleString("tr-TR")} TL (%${t3Pct}) Hediye = ${(corpAmt + corpBon).toLocaleString("tr-TR")} TL Bakiye</option>
+        `;
+      }
+      const boxTitle = document.getElementById("admin-wallet-box-title");
+      if (boxTitle) boxTitle.textContent = `1. Çökertme Dijital Cüzdan (+%${t3Pct}'a Varan Hediye TL)`;
+      const boxBadge = document.getElementById("admin-wallet-box-badge");
+      if (boxBadge) boxBadge.textContent = `${t1Amt.toLocaleString("tr-TR")} • ${t2Amt.toLocaleString("tr-TR")} • ${t3Amt.toLocaleString("tr-TR")} TL PAKETLER`;
+      const boxDesc = document.getElementById("admin-wallet-box-desc");
+      if (boxDesc) {
+        boxDesc.innerHTML = `Müşteriler <strong>${t1Amt.toLocaleString("tr-TR")} TL (+%${t1Pct}: +${t1Bon.toLocaleString("tr-TR")} TL)</strong>, <strong>${t2Amt.toLocaleString("tr-TR")} TL (+%${t2Pct}: +${t2Bon.toLocaleString("tr-TR")} TL)</strong> ve <strong>${t3Amt.toLocaleString("tr-TR")} TL+ (+%${t3Pct}: +${t3Bon.toLocaleString("tr-TR")} TL Hediye)</strong> paketleriyle bakiye yükleyip 3D SMS beklemeden 1 saniyede sipariş verebilir. Kurumsal/Hastane müşterilerine aşağıdan manuel bakiye de tanımlayabilirsiniz:`;
+      }
+    }
+
     function saveAppSettings() {
       const state = CokertmeStore.getState();
       const lockCb = document.getElementById("app-maintenance-lock-cb");
       const pinInp = document.getElementById("app-test-pin-input");
+      const wEnabledEl = document.getElementById("wallet-enabled-cb");
+      const t1Amt = parseInt((document.getElementById("wallet-tier1-amount-input") || {}).value, 10) || 2000;
+      const t1Pct = parseFloat((document.getElementById("wallet-tier1-pct-input") || {}).value) || 5;
+      const t2Amt = parseInt((document.getElementById("wallet-tier2-amount-input") || {}).value, 10) || 3000;
+      const t2Pct = parseFloat((document.getElementById("wallet-tier2-pct-input") || {}).value) || 7;
+      const t3Amt = parseInt((document.getElementById("wallet-tier3-amount-input") || {}).value, 10) || 5000;
+      const t3Pct = parseFloat((document.getElementById("wallet-tier3-pct-input") || {}).value) || 10;
+
       state.appSettings = {
         ...(state.appSettings || {}),
         maintenanceLockEnabled: lockCb ? lockCb.checked : true,
@@ -1873,11 +2028,26 @@
           windowDays: parseInt(document.getElementById("loyalty-window-input").value, 10) || 30,
           cooldownHours: parseInt(document.getElementById("loyalty-cooldown-input").value, 10) || 24,
           rewardDiscountPercent: parseInt(document.getElementById("loyalty-reward-pct-input").value, 10) || 50
+        },
+        wallet: {
+          enabled: wEnabledEl ? wEnabledEl.checked : true,
+          walletSchemaV2: true,
+          tier1Amount: t1Amt,
+          tier1BonusPct: t1Pct,
+          tier2Amount: t2Amt,
+          tier2BonusPct: t2Pct,
+          tier3Amount: t3Amt,
+          tier3BonusPct: t3Pct
         }
       };
       CokertmeStore.saveState(state);
       renderAdminAll();
-      alert("Mobil Uygulama Erişim Kilidi, İndirim ve Korumalı Sadakat Programı ayarları kaydedildi ve canlıya yayınlandı!");
+      alert(
+        "✓ Mobil Uygulama, Sadakat Programı ve Çökertme Dijital Cüzdan Paket Ayarları kaydedildi ve canlıya yayınlandı!\n\n" +
+        `• 1. Paket: ${t1Amt.toLocaleString("tr-TR")} TL → +%${t1Pct} Ek Hediye (+${Math.round(t1Amt * t1Pct / 100)} TL)\n` +
+        `• 2. Paket: ${t2Amt.toLocaleString("tr-TR")} TL → +%${t2Pct} Ek Hediye (+${Math.round(t2Amt * t2Pct / 100)} TL)\n` +
+        `• 3. Paket: ${t3Amt.toLocaleString("tr-TR")} TL → +%${t3Pct} Ek Hediye (+${Math.round(t3Amt * t3Pct / 100)} TL)`
+      );
     }
 
     function selectPresetImage(url) {
@@ -2277,13 +2447,14 @@
     function calcAdminWalletBonus(paidAmount, state) {
       const amt = Number(paidAmount) || 0;
       const wCfg = (state && state.appSettings && state.appSettings.wallet) || {};
-      const t3 = Number(wCfg.tier3Amount) || 5000;
-      const t2 = Number(wCfg.tier2Amount) || 3000;
-      const t1 = Number(wCfg.tier1Amount) || 1500;
+      const isOld = !wCfg.walletSchemaV2 && (Number(wCfg.tier1Amount) === 1500 || Number(wCfg.tier1BonusPct) === 3);
+      const t3 = isOld ? 5000 : (Number(wCfg.tier3Amount) || 5000);
+      const t2 = isOld ? 3000 : (Number(wCfg.tier2Amount) || 3000);
+      const t1 = isOld ? 2000 : (Number(wCfg.tier1Amount) || 2000);
       let pct = 0;
-      if (amt >= t3) pct = Number(wCfg.tier3BonusPct) || 5;
-      else if (amt >= t2) pct = Number(wCfg.tier2BonusPct) || 4;
-      else if (amt >= t1) pct = Number(wCfg.tier1BonusPct) || 3;
+      if (amt >= t3) pct = isOld ? 10 : (Number(wCfg.tier3BonusPct) || 10);
+      else if (amt >= t2) pct = isOld ? 7 : (Number(wCfg.tier2BonusPct) || 7);
+      else if (amt >= t1) pct = isOld ? 5 : (Number(wCfg.tier1BonusPct) || 5);
       const bonus = Math.round((amt * pct) / 100);
       return { paidAmount: amt, bonusPct: pct, bonusAmount: bonus, totalCredit: amt + bonus };
     }
