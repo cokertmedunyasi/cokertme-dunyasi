@@ -1171,8 +1171,8 @@
         <button type="button" class="pt-btn-olive" onclick="addNewBranchFromAdmin()">✓ ŞUBEYİ, SORUMLU MAHALLELERİ VE ADİSYO API BİLGİLERİNİ KAYDET</button>
       </div>
 
-      <!-- Mevcut Şubeler ve Sorumlu Mahalle Kartları -->
-      <div id="admin-branches-manager-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(360px, 1fr)); gap:18px;"></div>
+      <!-- Mevcut Şubeler ve Sorumlu Mahalle Kartları (Tam Genişlik - Alt Alta Ferah Görünüm) -->
+      <div id="admin-branches-manager-grid" style="display:grid; grid-template-columns:1fr; gap:24px;"></div>
     </section>
 
     <!-- 0.C. MÜŞTERİ VERİ TABANI (CRM) & YENİDEN PAZARLAMA (REMARKETING) MERKEZİ -->
@@ -2771,23 +2771,23 @@
       }).join("");
 
       container.innerHTML = `
-        <div style="background:var(--pt-cream); border:2px solid var(--pt-olive); padding:14px;">
+        <div style="background:var(--pt-cream); border:2px solid var(--pt-olive); padding:16px; width:100%; box-sizing:border-box; overflow:hidden;">
           <!-- Üst Başlık ve Canlı Sayaçlar -->
           <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
-            <div>
-              <div style="font-size:11px; font-weight:800; color:var(--pt-olive); text-transform:uppercase; letter-spacing:0.08em;">
+            <div style="min-width:240px; flex:1;">
+              <div style="font-size:11.5px; font-weight:800; color:var(--pt-olive); text-transform:uppercase; letter-spacing:0.08em;">
                 🗺️ SIFIR HATALI AKILLI MAHALLE SEÇİM &amp; OTOMATİK ŞUBE DEVİR MATRİSİ (${city.toUpperCase()})
               </div>
               <div style="font-size:12.5px; color:var(--pt-text-muted); margin-top:2px;">
                 Virgülle yazmanıza gerek yoktur. Şubenin paket servis götüreceği mahallelere tıklayarak seçin. Seçilmeyen mahalleler müşteriye görünmez.
               </div>
             </div>
-            <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
-              <span class="pt-badge pt-badge-olive" style="font-size:11px; padding:6px 10px;">
+            <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+              <span class="pt-badge pt-badge-olive" style="font-size:11.5px; padding:6px 12px;">
                 ✓ Seçilen: ${totalSelectedCount} / ${totalCatalogCount} Mahalle
               </span>
               ${totalTransferCount > 0 ? `
-                <span class="pt-badge" style="background:#0284C7; color:#fff; font-size:11px; padding:6px 10px;">
+                <span class="pt-badge" style="background:#0284C7; color:#fff; font-size:11.5px; padding:6px 12px;">
                   🔄 Otomatik Devralınacak: ${totalTransferCount} Mahalle
                 </span>
               ` : ''}
@@ -2795,56 +2795,56 @@
           </div>
 
           <!-- Renk Rehberi (3 Durum) -->
-          <div style="display:flex; flex-wrap:wrap; gap:12px; background:#fff; border:1px solid var(--pt-border); padding:8px 12px; margin-bottom:12px; font-size:11.5px; font-weight:700;">
+          <div style="display:flex; flex-wrap:wrap; gap:14px; background:#fff; border:1px solid var(--pt-border); padding:9px 14px; margin-bottom:12px; font-size:12px; font-weight:700;">
             <span style="display:inline-flex; align-items:center; gap:6px; color:var(--pt-olive-dark);">
-              <span style="width:12px; height:12px; background:#EDF7ED; border:2px solid var(--pt-olive); display:inline-block; border-radius:3px;"></span>
+              <span style="width:12px; height:12px; background:#EDF7ED; border:2px solid var(--pt-olive); display:inline-block; border-radius:3px; flex-shrink:0;"></span>
               Yeşil: Bu Şubede Seçili
             </span>
             <span style="display:inline-flex; align-items:center; gap:6px; color:#9A3412;">
-              <span style="width:12px; height:12px; background:#FFF7ED; border:1.5px solid #EA580C; display:inline-block; border-radius:3px;"></span>
+              <span style="width:12px; height:12px; background:#FFF7ED; border:1.5px solid #EA580C; display:inline-block; border-radius:3px; flex-shrink:0;"></span>
               Turuncu: Başka Şubede Kayıtlı (Tıklarsanız 1. Şubeden Alıp Bu Şubeye Devreder!)
             </span>
             <span style="display:inline-flex; align-items:center; gap:6px; color:#0369A1;">
-              <span style="width:12px; height:12px; background:#EBF5FF; border:2px solid #0284C7; display:inline-block; border-radius:3px;"></span>
+              <span style="width:12px; height:12px; background:#EBF5FF; border:2px solid #0284C7; display:inline-block; border-radius:3px; flex-shrink:0;"></span>
               Mavi: Diğer Şubeden Devralınacak
             </span>
             <span style="display:inline-flex; align-items:center; gap:6px; color:var(--pt-text-muted);">
-              <span style="width:12px; height:12px; background:#fff; border:1.5px solid rgba(3,58,88,0.3); display:inline-block; border-radius:3px;"></span>
+              <span style="width:12px; height:12px; background:#fff; border:1.5px solid rgba(3,58,88,0.3); display:inline-block; border-radius:3px; flex-shrink:0;"></span>
               Beyaz: Boşta / Teslimat Dışı
             </span>
           </div>
 
-          <!-- Arama + Tüm İli Seç/Temizle + Yeni Mahalle Ekle Barı -->
-          <div style="display:grid; grid-template-columns:1fr auto auto; gap:8px; margin-bottom:10px; align-items:center;">
+          <!-- Arama + Tüm İli Seç/Temizle Barı (Esnek Wrap Yapısı) -->
+          <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px; align-items:center;">
             <input type="text"
               id="matrix-search-${contextKey}"
               class="pt-form-input"
               placeholder="🔍 ${city} içinde mahalle veya ilçe ara (Örn: Pozcu, Gürselpaşa, Çukurova)..."
               value="${branchMatrixSearchQuery[contextKey] || ''}"
               oninput="filterMatrixSearch('${contextKey}', this.value)"
-              style="padding:8px 12px; font-size:13px; background:#fff;" />
-            <button type="button" onclick="selectMatrixCityAll('${contextKey}')" class="pt-btn-olive" style="padding:8px 12px; font-size:11px; white-space:nowrap;">
+              style="flex:1; min-width:240px; padding:9px 12px; font-size:13px; background:#fff;" />
+            <button type="button" onclick="selectMatrixCityAll('${contextKey}')" class="pt-btn-olive" style="padding:9px 14px; font-size:11px; white-space:nowrap;">
               ✓ TÜM ${city.toUpperCase()} MAHALLELERİNİ SEÇ
             </button>
-            <button type="button" onclick="clearMatrixCityAll('${contextKey}')" style="background:#fff; border:1px solid #E5A0A0; color:#A61B1B; padding:8px 12px; font-size:11px; font-weight:800; cursor:pointer; white-space:nowrap;">
+            <button type="button" onclick="clearMatrixCityAll('${contextKey}')" style="background:#fff; border:1px solid #E5A0A0; color:#A61B1B; padding:9px 14px; font-size:11px; font-weight:800; cursor:pointer; white-space:nowrap;">
               ✕ TÜM SEÇİMİ KALDIR
             </button>
           </div>
 
           <!-- Listede Olmayan Özel Mahalle / Bölge Ekleme Satırı -->
-          <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:#fff; border:1px dashed var(--pt-gold); padding:8px 12px; margin-bottom:12px;">
-            <span style="font-size:11.5px; font-weight:800; color:var(--pt-navy);">+ Listede Olmayan Yeni Mahalle Ekle:</span>
-            <select id="matrix-custom-dist-${contextKey}" class="pt-form-select" style="width:auto; min-width:150px; padding:6px 10px; font-size:12px;">
+          <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:#fff; border:1px dashed var(--pt-gold); padding:9px 12px; margin-bottom:12px;">
+            <span style="font-size:12px; font-weight:800; color:var(--pt-navy);">+ Listede Olmayan Yeni Mahalle Ekle:</span>
+            <select id="matrix-custom-dist-${contextKey}" class="pt-form-select" style="width:auto; min-width:160px; padding:7px 10px; font-size:12.5px;">
               ${districtNames.map(d => `<option value="${d}">${d}</option>`).join("")}
             </select>
-            <input type="text" id="matrix-custom-hood-${contextKey}" class="pt-form-input" placeholder="Yeni mahalle adı yazın..." style="flex:1; min-width:160px; padding:6px 10px; font-size:12px;" />
-            <button type="button" onclick="addCustomMatrixNeighborhood('${contextKey}')" class="pt-btn-navy" style="padding:7px 12px; font-size:11px; white-space:nowrap;">
+            <input type="text" id="matrix-custom-hood-${contextKey}" class="pt-form-input" placeholder="Yeni mahalle adı yazın..." style="flex:1; min-width:180px; padding:7px 10px; font-size:12.5px;" />
+            <button type="button" onclick="addCustomMatrixNeighborhood('${contextKey}')" class="pt-btn-navy" style="padding:8px 14px; font-size:11px; white-space:nowrap;">
               + KATALOĞA EKLE &amp; SEÇ
             </button>
           </div>
 
           <!-- İlçe Bazlı Mahalle Kutucukları -->
-          <div style="max-height:420px; overflow-y:auto; padding-right:4px;">
+          <div style="max-height:460px; overflow-y:auto; padding-right:4px;">
             ${districtsHtml || `<div style="padding:18px; text-align:center; color:var(--pt-text-muted); background:#fff;">Aramanıza uygun mahalle bulunamadı. Yukarıdan "+ Kataloğa Ekle & Seç" ile ekleyebilirsiniz.</div>`}
           </div>
         </div>
@@ -2860,9 +2860,9 @@
         if (previewBox) {
           const arr = Array.from(selectedSet);
           previewBox.innerHTML = arr.length > 0
-            ? arr.slice(0, 12).map(x => `<span style="background:#EDF7ED; border:1px solid var(--pt-olive); color:var(--pt-olive-dark); padding:2px 7px; border-radius:4px; font-size:11px; font-weight:700;">✓ ${x} Mah.</span>`).join(" ") +
-              (arr.length > 12 ? ` <span style="font-size:11px; font-weight:800; color:var(--pt-navy);">+${arr.length - 12} mahalle daha</span>` : "")
-            : `<span style="color:#A61B1B; font-size:12px; font-weight:700;">⚠️ Henüz sorumlu mahalle seçilmedi.</span>`;
+            ? arr.slice(0, 20).map(x => `<span style="background:#EDF7ED; border:1px solid var(--pt-olive); color:var(--pt-olive-dark); padding:3px 9px; border-radius:4px; font-size:11.5px; font-weight:700;">✓ ${x} Mah.</span>`).join(" ") +
+              (arr.length > 20 ? ` <span style="font-size:11.5px; font-weight:800; color:var(--pt-navy); padding:3px 6px;">+${arr.length - 20} mahalle daha</span>` : "")
+            : `<span style="color:#A61B1B; font-size:12.5px; font-weight:700;">⚠️ Henüz sorumlu mahalle seçilmedi.</span>`;
         }
       }
     }
@@ -3094,117 +3094,139 @@
         const cityOptionsHtml = allProvinces.map(p => `<option value="${p}" ${p === bCity ? "selected" : ""}>${p}</option>`).join("");
 
         return `
-          <div style="background:#fff; border:1px solid var(--pt-border); border-top:4px solid ${b.isActive ? 'var(--pt-olive)' : 'var(--pt-gold)'}; padding:18px; display:grid; gap:10px;">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+          <div style="background:#fff; border:1.5px solid var(--pt-border); border-top:5px solid ${b.isActive ? 'var(--pt-olive)' : 'var(--pt-gold)'}; padding:22px 24px; display:grid; gap:16px; width:100%; box-sizing:border-box; box-shadow:0 8px 24px rgba(2,58,88,0.05);">
+            <!-- Üst Başlık ve Hızlı Aksiyon Barı -->
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding-bottom:12px; border-bottom:1px solid var(--pt-border);">
               <div>
-                <span class="pt-badge ${b.isActive ? 'pt-badge-olive' : 'pt-badge-gold'}">${bCity} • ${b.isActive ? 'AKTİF ŞUBE' : 'ÇOK YAKINDA'}</span>
-                <h4 style="font-size:21px; color:var(--pt-navy); margin-top:4px;">${b.name}</h4>
+                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px;">
+                  <span class="pt-badge ${b.isActive ? 'pt-badge-olive' : 'pt-badge-gold'}">${bCity} • ${b.isActive ? 'AKTİF ŞUBE' : 'ÇOK YAKINDA'}</span>
+                  <span class="pt-badge pt-badge-navy">ADİSYO KOD: ${b.adisyoBranchCode || 'ADANA-BARAJYOLU-01'}</span>
+                  <span class="pt-badge ${hasOwnApiKey ? 'pt-badge-olive' : 'pt-badge-gold'}">${hasOwnApiKey ? '✓ Özel Adisyo API Key Aktif' : 'Standart / Test Modu'}</span>
+                </div>
+                <h4 style="font-size:25px; color:var(--pt-navy); margin:0;">${b.name}</h4>
               </div>
-              <button type="button" onclick="onAdminBranchViewChange('${b.id}')" style="background:var(--pt-cream); border:1px solid var(--pt-gold); color:var(--pt-navy); font-size:10.5px; font-weight:800; padding:5px 9px; cursor:pointer;">ŞUBE EKRANINI GÖR</button>
+              <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <button type="button" onclick="onAdminBranchViewChange('${b.id}')" style="background:var(--pt-cream); border:1.5px solid var(--pt-gold); color:var(--pt-navy); font-size:11px; font-weight:800; padding:8px 14px; cursor:pointer;">👁️ ŞUBE EKRANINI GÖR</button>
+                <button type="button" class="pt-btn-navy" style="padding:8px 14px; font-size:11px;" onclick="testBranchAdisyoConnection('${b.id}')">⚡ ADİSYO CANLI TEST</button>
+                <button type="button" style="background:var(--pt-cream); border:1.5px solid var(--pt-gold); color:var(--pt-navy); padding:8px 14px; font-size:11px; font-weight:800; cursor:pointer;" onclick="copyBranchAdisyoSetupGuide('${b.id}')">📋 KURULUM ŞABLONU</button>
+                <button type="button" onclick="deleteBranchFromAdmin('${b.id}')" style="background:#FDECEC; border:1px solid #E5A0A0; color:#A61B1B; padding:8px 14px; font-size:11px; font-weight:800; cursor:pointer;">SİL</button>
+              </div>
             </div>
 
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <!-- 1. Satır: İl, İlçe, Açık Adres ve Sipariş Durumu (4 Sütunlu Ferah Grid) -->
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:12px;">
               <div>
-                <label class="pt-form-label" style="font-size:10px;">İl / Şehir (81 İl)</label>
-                <select id="br-city-${b.id}" class="pt-form-select" style="padding:7px 10px; font-size:13px;" onchange="onExistingBranchCitySelectChange('${b.id}', this.value)">
+                <label class="pt-form-label" style="font-size:10.5px;">İl / Şehir (81 İl)</label>
+                <select id="br-city-${b.id}" class="pt-form-select" style="padding:9px 12px; font-size:13.5px;" onchange="onExistingBranchCitySelectChange('${b.id}', this.value)">
                   ${cityOptionsHtml}
                 </select>
               </div>
               <div>
-                <label class="pt-form-label" style="font-size:10px;">İlçe / Bölge Başlığı</label>
-                <input type="text" id="br-dist-${b.id}" class="pt-form-input" style="padding:7px 10px; font-size:13px;" value="${b.district || ''}" />
-              </div>
-            </div>
-
-            <!-- Sorumlu Mahalleler Görsel Kutusu + Akıllı Seçim & Devir Matrisi Açıcı -->
-            <div style="background:#F8FAFC; border:1.5px solid var(--pt-olive); padding:12px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
-                <span style="font-size:10.5px; font-weight:800; color:var(--pt-navy); text-transform:uppercase;">
-                  📍 SORUMLU OLDUĞU MAHALLELER (KUTUCUKLU SEÇİM &amp; OTOMATİK DEVİR)
-                </span>
-                <span id="br-hood-count-badge-${b.id}" class="pt-badge pt-badge-olive" style="font-size:10px;">
-                  ${hoods.length} Sorumlu Mahalle Seçili
-                </span>
-              </div>
-
-              <div id="br-hood-preview-${b.id}" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;">
-                ${hoods.length > 0
-                  ? hoods.slice(0, 12).map(x => `<span style="background:#EDF7ED; border:1px solid var(--pt-olive); color:var(--pt-olive-dark); padding:2px 7px; border-radius:4px; font-size:11px; font-weight:700;">✓ ${x} Mah.</span>`).join(" ") +
-                    (hoods.length > 12 ? ` <span style="font-size:11px; font-weight:800; color:var(--pt-navy);">+${hoods.length - 12} mahalle daha</span>` : "")
-                  : `<span style="color:#A61B1B; font-size:12px; font-weight:700;">⚠️ Henüz sorumlu mahalle seçilmedi.</span>`}
-              </div>
-
-              <button type="button"
-                id="br-matrix-toggle-btn-${b.id}"
-                onclick="toggleBranchMatrixExpand('${b.id}')"
-                style="width:100%; background:var(--pt-navy); color:#fff; border:1px solid var(--pt-gold); padding:9px 12px; font-size:11px; font-weight:800; cursor:pointer; letter-spacing:0.06em;">
-                ${isExpanded ? "▲ MAHALLE SEÇİM & DEVİR PANELİNİ KAPAT" : "🗺️ MAHALLE SEÇİM & ŞUBE DEVİR PANELİNİ AÇ (KUTUCUKLARLA DÜZENLE)"}
-              </button>
-
-              <div id="br-matrix-collapse-${b.id}" style="display:${isExpanded ? 'block' : 'none'}; margin-top:10px;">
-                <div id="br-smart-matrix-${b.id}"></div>
-              </div>
-            </div>
-
-            <!-- Şubeye Özel Bağımsız Adisyo Programı & API Bilgileri -->
-            <div style="background:var(--pt-cream); padding:10px 12px; border:1px solid var(--pt-gold); display:grid; gap:8px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
-                <span style="font-size:10.5px; font-weight:800; color:var(--pt-navy); text-transform:uppercase;">🔌 ŞUBEYE ÖZEL ADİSYO PROGRAMI &amp; API BİLGİLERİ</span>
-                <span class="pt-badge ${hasOwnApiKey ? 'pt-badge-olive' : 'pt-badge-gold'}" style="font-size:9.5px;">${hasOwnApiKey ? '✓ Özel API Key Aktif' : 'Standart / Test Modu'}</span>
-              </div>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                <div>
-                  <label class="pt-form-label" style="font-size:9.5px;">Adisyo Şube / Kasa Kodu</label>
-                  <input type="text" id="br-adisyo-${b.id}" class="pt-form-input" style="padding:6px 8px; font-size:12px; font-weight:700;" value="${b.adisyoBranchCode || ''}" />
-                </div>
-                <div>
-                  <label class="pt-form-label" style="font-size:9.5px;">Adisyo Consumer ID (x-api-consumer)</label>
-                  <input type="text" id="br-adisyo-consumer-${b.id}" class="pt-form-input" style="padding:6px 8px; font-size:12px;" value="${b.adisyoConsumerId || ''}" placeholder="Örn: COKERTME-ADN-01" />
-                </div>
-              </div>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                <div>
-                  <label class="pt-form-label" style="font-size:9.5px;">Şube Adisyo API Key (x-api-key)</label>
-                  <input type="text" id="br-adisyo-key-${b.id}" class="pt-form-input" style="padding:6px 8px; font-size:12px;" value="${b.adisyoApiKey || ''}" placeholder="Bu şubenin Adisyo API Key'i" />
-                </div>
-                <div>
-                  <label class="pt-form-label" style="font-size:9.5px;">Şube Adisyo API Secret (x-api-secret)</label>
-                  <input type="password" id="br-adisyo-secret-${b.id}" class="pt-form-input" style="padding:6px 8px; font-size:12px;" value="${b.adisyoApiSecret || ''}" placeholder="Bu şubenin Adisyo API Secret'ı" />
-                </div>
-              </div>
-            </div>
-
-            <!-- Şube Yöneticisi Giriş Bilgileri -->
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; background:#f8fafc; padding:10px; border:1px solid var(--pt-border);">
-              <div>
-                <label class="pt-form-label" style="font-size:9.5px;">Şube Paneli Kullanıcı Adı</label>
-                <input type="text" id="br-user-${b.id}" class="pt-form-input" style="padding:6px 8px; font-size:12px;" value="${b.adminUsername || ''}" />
+                <label class="pt-form-label" style="font-size:10.5px;">İlçe / Bölge Başlığı</label>
+                <input type="text" id="br-dist-${b.id}" class="pt-form-input" style="padding:9px 12px; font-size:13.5px;" value="${b.district || ''}" />
               </div>
               <div>
-                <label class="pt-form-label" style="font-size:9.5px;">Şube Paneli Giriş Şifresi</label>
-                <input type="text" id="br-pass-${b.id}" class="pt-form-input" style="padding:6px 8px; font-size:12px;" value="${b.adminPassword || ''}" />
-              </div>
-            </div>
-
-            <div style="display:grid; grid-template-columns:2fr 1fr; gap:8px;">
-              <div>
-                <label class="pt-form-label" style="font-size:10px;">Açık Adres</label>
-                <input type="text" id="br-addr-${b.id}" class="pt-form-input" style="padding:7px 10px; font-size:12.5px;" value="${b.address || ''}" />
+                <label class="pt-form-label" style="font-size:10.5px;">Şube Açık Adresi</label>
+                <input type="text" id="br-addr-${b.id}" class="pt-form-input" style="padding:9px 12px; font-size:13.5px;" value="${b.address || ''}" />
               </div>
               <div>
-                <label class="pt-form-label" style="font-size:10px;">Sipariş Durumu</label>
-                <select id="br-active-${b.id}" class="pt-form-select" style="padding:7px 10px; font-size:12.5px;">
-                  <option value="true" ${b.isActive ? 'selected' : ''}>Aktif (Açık)</option>
+                <label class="pt-form-label" style="font-size:10.5px;">Sipariş Durumu</label>
+                <select id="br-active-${b.id}" class="pt-form-select" style="padding:9px 12px; font-size:13.5px;">
+                  <option value="true" ${b.isActive ? 'selected' : ''}>Aktif (Açık — Sipariş Alıyor)</option>
                   <option value="false" ${!b.isActive ? 'selected' : ''}>Çok Yakında (Kapalı)</option>
                 </select>
               </div>
             </div>
 
-            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; padding-top:6px; flex-wrap:wrap;">
-              <button type="button" class="pt-btn-olive" style="padding:8px 14px; font-size:11px; flex:1;" onclick="saveBranchConfig('${b.id}')">✓ BÖLGE &amp; ADİSYO AYARLARINI KAYDET</button>
-              <button type="button" class="pt-btn-navy" style="padding:8px 10px; font-size:10.5px;" onclick="testBranchAdisyoConnection('${b.id}')">⚡ ADİSYO CANLI TEST</button>
-              <button type="button" style="background:var(--pt-cream); border:1px solid var(--pt-gold); color:var(--pt-navy); padding:8px 10px; font-size:10.5px; font-weight:800; cursor:pointer;" onclick="copyBranchAdisyoSetupGuide('${b.id}')">📋 KURULUM ŞABLONU</button>
-              <button type="button" onclick="deleteBranchFromAdmin('${b.id}')" style="background:#FDECEC; border:1px solid #E5A0A0; color:#A61B1B; padding:8px 10px; font-size:11px; font-weight:700; cursor:pointer;">SİL</button>
+            <!-- 2. Satır: Bağımsız Adisyo POS Bilgileri + Şube Yöneticisi Giriş Bilgileri (Yan Yana 2 Geniş Kutu) -->
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:14px;">
+              <!-- Sol Kutu: Şubeye Özel Bağımsız Adisyo Programı & API Bilgileri -->
+              <div style="background:var(--pt-cream); padding:14px 16px; border:1.5px solid var(--pt-gold); display:grid; gap:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                  <span style="font-size:11px; font-weight:800; color:var(--pt-navy); text-transform:uppercase; letter-spacing:0.06em;">🔌 ŞUBEYE ÖZEL ADİSYO PROGRAMI &amp; API BİLGİLERİ</span>
+                  <span class="pt-badge ${hasOwnApiKey ? 'pt-badge-olive' : 'pt-badge-gold'}" style="font-size:9.5px;">${hasOwnApiKey ? '✓ Özel API Key Aktif' : 'Standart / Test Modu'}</span>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
+                  <div>
+                    <label class="pt-form-label" style="font-size:10px;">Adisyo Şube / Kasa Kodu</label>
+                    <input type="text" id="br-adisyo-${b.id}" class="pt-form-input" style="padding:8px 10px; font-size:12.5px; font-weight:700;" value="${b.adisyoBranchCode || ''}" />
+                  </div>
+                  <div>
+                    <label class="pt-form-label" style="font-size:10px;">Adisyo Consumer ID (x-api-consumer)</label>
+                    <input type="text" id="br-adisyo-consumer-${b.id}" class="pt-form-input" style="padding:8px 10px; font-size:12.5px;" value="${b.adisyoConsumerId || ''}" placeholder="Örn: COKERTME-ADN-01" />
+                  </div>
+                  <div>
+                    <label class="pt-form-label" style="font-size:10px;">Şube Adisyo API Key (x-api-key)</label>
+                    <input type="text" id="br-adisyo-key-${b.id}" class="pt-form-input" style="padding:8px 10px; font-size:12.5px;" value="${b.adisyoApiKey || ''}" placeholder="Bu şubenin Adisyo API Key'i" />
+                  </div>
+                  <div>
+                    <label class="pt-form-label" style="font-size:10px;">Şube Adisyo API Secret (x-api-secret)</label>
+                    <input type="password" id="br-adisyo-secret-${b.id}" class="pt-form-input" style="padding:8px 10px; font-size:12.5px;" value="${b.adisyoApiSecret || ''}" placeholder="Bu şubenin Adisyo API Secret'ı" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sağ Kutu: Şube Yöneticisi Giriş Bilgileri -->
+              <div style="background:#f8fafc; padding:14px 16px; border:1px solid var(--pt-border); display:flex; flex-direction:column; justify-content:space-between; gap:10px;">
+                <div>
+                  <div style="font-size:11px; font-weight:800; color:var(--pt-navy); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px;">
+                    🔐 ŞUBE YÖNETİCİSİ PANEL GİRİŞ BİLGİLERİ
+                  </div>
+                  <div style="font-size:12px; color:var(--pt-text-muted); margin-bottom:10px;">
+                    Bu şubenin müdürü <code>yonetim.html</code> ekranına bu bilgilerle girdiğinde sadece kendi şubesinin siparişlerini, cirosunu ve müşterilerini görür.
+                  </div>
+                  <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div>
+                      <label class="pt-form-label" style="font-size:10px;">Şube Paneli Kullanıcı Adı</label>
+                      <input type="text" id="br-user-${b.id}" class="pt-form-input" style="padding:8px 10px; font-size:13px; font-weight:700;" value="${b.adminUsername || ''}" />
+                    </div>
+                    <div>
+                      <label class="pt-form-label" style="font-size:10px;">Şube Paneli Giriş Şifresi</label>
+                      <input type="text" id="br-pass-${b.id}" class="pt-form-input" style="padding:8px 10px; font-size:13px; font-weight:700;" value="${b.adminPassword || ''}" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Satır (Tam Genişlik): Sorumlu Mahalleler Görsel Kutusu + Akıllı Seçim & Devir Matrisi -->
+            <div style="background:#F8FAFC; border:1.5px solid var(--pt-olive); padding:14px 16px; width:100%; box-sizing:border-box;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+                <div>
+                  <span style="font-size:11.5px; font-weight:800; color:var(--pt-navy); text-transform:uppercase; letter-spacing:0.06em;">
+                    📍 SORUMLU OLDUĞU MAHALLELER (KUTUCUKLU SEÇİM &amp; OTOMATİK ŞUBE DEVİR PANELİ)
+                  </span>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                  <span id="br-hood-count-badge-${b.id}" class="pt-badge pt-badge-olive" style="font-size:11px; padding:5px 10px;">
+                    ${hoods.length} Sorumlu Mahalle Seçili
+                  </span>
+                  <button type="button"
+                    id="br-matrix-toggle-btn-${b.id}"
+                    onclick="toggleBranchMatrixExpand('${b.id}')"
+                    style="background:var(--pt-navy); color:#fff; border:1.5px solid var(--pt-gold); padding:8px 16px; font-size:11.5px; font-weight:800; cursor:pointer; letter-spacing:0.06em;">
+                    ${isExpanded ? "▲ MAHALLE SEÇİM & DEVİR PANELİNİ KAPAT" : "🗺️ MAHALLE SEÇİM & ŞUBE DEVİR PANELİNİ AÇ (KUTUCUKLARLA DÜZENLE)"}
+                  </button>
+                </div>
+              </div>
+
+              <div id="br-hood-preview-${b.id}" style="display:flex; flex-wrap:wrap; gap:6px;">
+                ${hoods.length > 0
+                  ? hoods.slice(0, 20).map(x => `<span style="background:#EDF7ED; border:1px solid var(--pt-olive); color:var(--pt-olive-dark); padding:3px 9px; border-radius:4px; font-size:11.5px; font-weight:700;">✓ ${x} Mah.</span>`).join(" ") +
+                    (hoods.length > 20 ? ` <span style="font-size:11.5px; font-weight:800; color:var(--pt-navy); padding:3px 6px;">+${hoods.length - 20} mahalle daha</span>` : "")
+                  : `<span style="color:#A61B1B; font-size:12.5px; font-weight:700;">⚠️ Henüz sorumlu mahalle seçilmedi.</span>`}
+              </div>
+
+              <div id="br-matrix-collapse-${b.id}" style="display:${isExpanded ? 'block' : 'none'}; margin-top:12px; width:100%; box-sizing:border-box;">
+                <div id="br-smart-matrix-${b.id}" style="width:100%; box-sizing:border-box;"></div>
+              </div>
+            </div>
+
+            <!-- Alt Kaydet Barı -->
+            <div style="display:flex; justify-content:flex-end; align-items:center; gap:10px; padding-top:4px;">
+              <button type="button" class="pt-btn-olive" style="padding:11px 22px; font-size:12px; width:100%; max-width:460px;" onclick="saveBranchConfig('${b.id}')">
+                ✓ "${b.name.toUpperCase()}" BÖLGE, MAHALLE &amp; ADİSYO AYARLARINI KAYDET
+              </button>
             </div>
           </div>
         `;
