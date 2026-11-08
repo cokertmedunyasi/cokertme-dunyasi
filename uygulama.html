@@ -1034,8 +1034,8 @@
     }
 
     .promo-drink-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      display: flex;
+      flex-direction: column;
       gap: 8px;
     }
 
@@ -1043,16 +1043,17 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 6px;
-      padding: 10px 10px;
+      gap: 10px;
+      padding: 12px 14px;
       border: 1.5px solid var(--pt-border);
-      border-radius: 10px;
+      border-radius: 12px;
       background: #fff;
       cursor: pointer;
       text-align: left;
       transition: all 0.15s ease;
       min-height: 48px;
-      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .promo-drink-card:hover {
@@ -1071,8 +1072,43 @@
       box-shadow: 0 2px 8px rgba(59, 82, 51, 0.14);
     }
 
-    .promo-drink-name {
+    .promo-drink-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .promo-drink-check {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid rgba(3, 58, 88, 0.28);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       font-size: 12px;
+      font-weight: 900;
+      color: transparent;
+      background: #fff;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+    }
+
+    .promo-drink-card.active-no-drink .promo-drink-check {
+      background: var(--pt-terracotta);
+      border-color: var(--pt-terracotta);
+      color: #fff;
+    }
+
+    .promo-drink-card.active-drink .promo-drink-check {
+      background: var(--pt-olive);
+      border-color: var(--pt-olive);
+      color: #fff;
+    }
+
+    .promo-drink-name {
+      font-size: 14px;
       font-weight: 700;
       color: var(--pt-text);
       line-height: 1.25;
@@ -1080,9 +1116,9 @@
     }
 
     .promo-drink-price {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--pt-text-muted);
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--pt-navy);
       white-space: nowrap;
       flex-shrink: 0;
     }
@@ -2058,7 +2094,8 @@
         gap: 14px;
       }
       .promo-drink-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        display: flex;
+        flex-direction: column;
       }
       .detail-photo-card img {
         height: 290px;
@@ -4138,7 +4175,10 @@
         const isSel = currentDetailDrinkIds.includes(d.id);
         return `
           <button type="button" class="promo-drink-card ${isSel ? 'active-drink' : ''}" onclick="togglePromoDrink('${d.id}')">
-            <span class="promo-drink-name">${d.name.tr}</span>
+            <span class="promo-drink-left">
+              <span class="promo-drink-check">✓</span>
+              <span class="promo-drink-name">${d.name.tr}</span>
+            </span>
             <span class="promo-drink-price">+${Math.round(d.price)} TL</span>
           </button>
         `;
@@ -4206,8 +4246,11 @@
             <div class="promo-drink-sub">İçecek seçin veya "İçecek İstemiyorum" işaretleyin</div>
             <div class="promo-drink-grid">
               <button type="button" class="promo-drink-card ${currentDetailNoDrink ? 'active-no-drink' : ''}" onclick="selectPromoNoDrink()">
-                <span class="promo-drink-name">İçecek İstemiyorum</span>
-                <span class="promo-drink-price">-</span>
+                <span class="promo-drink-left">
+                  <span class="promo-drink-check">✓</span>
+                  <span class="promo-drink-name">İçecek İstemiyorum</span>
+                </span>
+                <span class="promo-drink-price">Ücretsiz</span>
               </button>
               ${drinkCardsHtml}
             </div>
@@ -4288,7 +4331,10 @@
         const isSel = currentDetailDrinkIds.includes(d.id);
         return `
           <button type="button" class="promo-drink-card ${isSel ? 'active-drink' : ''}" onclick="togglePromoDrink('${d.id}')">
-            <span class="promo-drink-name">${d.name.tr}</span>
+            <span class="promo-drink-left">
+              <span class="promo-drink-check">✓</span>
+              <span class="promo-drink-name">${d.name.tr}</span>
+            </span>
             <span class="promo-drink-price">+${Math.round(d.price)} TL</span>
           </button>
         `;
@@ -4366,8 +4412,11 @@
 
             <div class="promo-drink-grid">
               <button type="button" class="promo-drink-card ${currentDetailNoDrink ? 'active-no-drink' : ''}" onclick="selectPromoNoDrink()">
-                <span class="promo-drink-name">İçecek İstemiyorum</span>
-                <span class="promo-drink-price">-</span>
+                <span class="promo-drink-left">
+                  <span class="promo-drink-check">✓</span>
+                  <span class="promo-drink-name">İçecek İstemiyorum</span>
+                </span>
+                <span class="promo-drink-price">Ücretsiz</span>
               </button>
               ${drinkCardsHtml}
             </div>
@@ -4699,14 +4748,20 @@
                 </div>
                 <div class="promo-drink-grid" style="margin-bottom:12px;">
                   <button type="button" class="promo-drink-card ${cartQuickNoDrink ? 'active-no-drink' : ''}" onclick="selectCartQuickNoDrink()">
-                    <span class="promo-drink-name">İçecek İstemiyorum</span>
-                    <span class="promo-drink-price">-</span>
+                    <span class="promo-drink-left">
+                      <span class="promo-drink-check">✓</span>
+                      <span class="promo-drink-name">İçecek İstemiyorum</span>
+                    </span>
+                    <span class="promo-drink-price">Ücretsiz</span>
                   </button>
                   ${drinkItems.map(d => {
                     const isSel = cartQuickDrinkIds.includes(d.id);
                     return `
                       <button type="button" class="promo-drink-card ${isSel ? 'active-drink' : ''}" onclick="toggleCartQuickDrink('${d.id}')">
-                        <span class="promo-drink-name">${d.name.tr}</span>
+                        <span class="promo-drink-left">
+                          <span class="promo-drink-check">✓</span>
+                          <span class="promo-drink-name">${d.name.tr}</span>
+                        </span>
                         <span class="promo-drink-price">+${Math.round(d.price)} TL</span>
                       </button>
                     `;
