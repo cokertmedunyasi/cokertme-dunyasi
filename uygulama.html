@@ -4002,7 +4002,7 @@
       const totalCount = appCart.reduce((acc, i) => acc + i.qty, 0);
       const userPhone = (appUser && appUser.phone) ? appUser.phone : (cartCheckoutDraft && cartCheckoutDraft.phone ? cartCheckoutDraft.phone : "");
       const pricingInfo = calculateCartPricing(state, userPhone);
-      const { subtotal, appDiscountAmount, loyaltyRewardDiscount, finalTotal } = pricingInfo;
+      const { subtotal, appDiscountAmount, loyaltyRewardDiscount, courierFee, finalTotal } = pricingInfo;
 
       if (appCart.length === 0) {
         return `
@@ -4093,9 +4093,15 @@
               </div>
             ` : ''}
             ${appDiscountAmount > 0 ? `
-              <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--pt-olive); font-weight:700; margin-bottom:8px;">
+              <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--pt-olive); font-weight:700; margin-bottom:5px;">
                 <span>%${discountPct} Online Sipariş İndirimi</span>
                 <span>-${appDiscountAmount.toFixed(2).replace('.', ',')} TL</span>
+              </div>
+            ` : ''}
+            ${courierFee > 0 ? `
+              <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--pt-navy); font-weight:700; margin-bottom:8px;">
+                <span>Kurye Paket Hizmeti</span>
+                <span>+${courierFee.toFixed(2).replace('.', ',')} TL</span>
               </div>
             ` : ''}
             <div style="display:flex; justify-content:space-between; align-items:baseline; padding-top:8px; border-top:1px dashed var(--pt-border); margin-bottom:12px;">
@@ -5762,7 +5768,7 @@
       return { earnedStamp, usedReward, statusText, newStampCount: validStamps.length };
     }
 
-    function calculateCartPricing(state, phoneForLoyalty) {
+    function calculateCartPricing(state, phoneForLoyalty, deliveryModeOverride) {
       const appCfg = state.appSettings || {};
       const discountPct = Number(appCfg.discountPercent) || 10;
       const loyaltyStatus = getUserLoyaltyStatus(phoneForLoyalty, state);
@@ -5806,7 +5812,14 @@
 
       const appDiscountAmount = Number((appDiscountBase * (discountPct / 100)).toFixed(2));
       const totalDiscount = Number((loyaltyRewardDiscount + appDiscountAmount).toFixed(2));
-      const finalTotal = Number(Math.max(0, subtotal - totalDiscount).toFixed(2));
+
+      // Kurye Paket Hizmeti: Eve Paket Servis seçiliyse tüm sepet için tek seferlik +100 TL, Şubeden Gel-Al seçiliyse 0 TL
+      const modeEl = document.getElementById("checkout-mode");
+      const currentMode = deliveryModeOverride || (modeEl ? modeEl.value : (cartCheckoutDraft && cartCheckoutDraft.mode ? cartCheckoutDraft.mode : "Eve Paket Servis"));
+      const isCourierDelivery = appCart.length > 0 && String(currentMode).includes("Paket");
+      const courierFee = isCourierDelivery ? 100 : 0;
+
+      const finalTotal = Number((Math.max(0, subtotal - totalDiscount) + courierFee).toFixed(2));
 
       return {
         subtotal,
@@ -5814,12 +5827,24 @@
         appDiscountAmount,
         loyaltyRewardDiscount,
         totalDiscount,
+        courierFee,
+        isCourierDelivery,
         finalTotal,
         cartHasCokertme,
         canApplyLoyaltyReward,
         rewardedItemName,
         loyaltyStatus
       };
+    }
+
+    function onCheckoutModeChange(val) {
+      captureCartCheckoutDraft();
+      if (!cartCheckoutDraft) {
+        cartCheckoutDraft = { mode: val, name: "", phone: "", address: "", gender: "", cardHolder: "", cardNumber: "", cardExp: "", cardCvv: "" };
+      } else {
+        cartCheckoutDraft.mode = val;
+      }
+      renderCurrentView();
     }
 
     function toggleUseLoyaltyReward() {
@@ -5941,8 +5966,8 @@
       const draftCardExp = cartCheckoutDraft ? cartCheckoutDraft.cardExp : "";
       const draftCardCvv = cartCheckoutDraft ? cartCheckoutDraft.cardCvv : "";
 
-      const pricingInfo = calculateCartPricing(state, draftPhone);
-      const { subtotal, appDiscountAmount, loyaltyRewardDiscount, finalTotal } = pricingInfo;
+      const pricingInfo = calculateCartPricing(state, draftPhone, draftMode);
+      const { subtotal, appDiscountAmount, loyaltyRewardDiscount, courierFee, finalTotal } = pricingInfo;
 
       const drinkSvgIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M8 22h8"/><path d="M12 15v7"/><path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"/><line x1="7.5" y1="7" x2="16.5" y2="7"/></svg>`;
       const cardsHtml = appCart.map((entry, idx) => {
@@ -6041,7 +6066,7 @@
           ` : ''}
 
           <div style="display:grid; gap:10px;">
-            <select id="checkout-mode" class="phone-input-group" style="margin:0; padding:10px 12px; border-width:1px; border-color:var(--pt-border); font-size:14px;">
+            <select id="checkout-mode" class="phone-input-group" onchange="onCheckoutModeChange(this.value)" style="margin:0; padding:10px 12px; border-width:1px; border-color:var(--pt-border); font-size:14px;">
               <option value="Eve Paket Servis" ${draftMode === 'Eve Paket Servis' ? 'selected' : ''}>Eve / Adrese Paket Servis (Anında Kurye Atamalı)</option>
               <option value="Şubeden Gel-Al" ${draftMode === 'Şubeden Gel-Al' ? 'selected' : ''}>Şubeden Gel-Al (Beklemeden Teslim)</option>
             </select>
@@ -6161,6 +6186,12 @@
           <div class="cart-summary-row" style="color:var(--pt-olive); font-weight:600;">
             <span>%${discountPct} Mobil Uygulama İndirimi ${loyaltyRewardDiscount > 0 ? '(Diğer Ürünler)' : ''}</span>
             <span>-${appDiscountAmount.toFixed(2).replace('.', ',')} TL</span>
+          </div>
+          ` : ''}
+          ${courierFee > 0 ? `
+          <div class="cart-summary-row" style="color:var(--pt-navy); font-weight:700;">
+            <span>Kurye Paket Hizmeti</span>
+            <span>+${courierFee.toFixed(2).replace('.', ',')} TL</span>
           </div>
           ` : ''}
           <div class="cart-summary-total">
@@ -6294,7 +6325,7 @@
       }
 
       const state = CokertmeStore.getState();
-      const pricingInfo = calculateCartPricing(state, phoneVal);
+      const pricingInfo = calculateCartPricing(state, phoneVal, modeVal);
       const { finalTotal } = pricingInfo;
       const wStat = getUserWalletStatus(phoneVal, state);
 
@@ -6353,7 +6384,7 @@
       }
 
       const state = CokertmeStore.getState();
-      const pricingInfo = calculateCartPricing(state, phoneVal);
+      const pricingInfo = calculateCartPricing(state, phoneVal, modeVal);
       const { finalTotal } = pricingInfo;
 
       const last4 = cardNumberRaw.slice(-4);
@@ -6393,8 +6424,8 @@
       const state = CokertmeStore.getState();
       const intCfg = state.integrationSettings || {};
       const courierCfg = intCfg.courier || {};
-      const pricingInfo = calculateCartPricing(state, phoneVal);
-      const { subtotal, totalDiscount, loyaltyRewardDiscount, finalTotal, cartHasCokertme, rewardedItemName } = pricingInfo;
+      const pricingInfo = calculateCartPricing(state, phoneVal, modeVal);
+      const { subtotal, totalDiscount, loyaltyRewardDiscount, courierFee, finalTotal, cartHasCokertme, rewardedItemName } = pricingInfo;
       const summaryItems = [];
       const orderId = "CKR-" + Math.floor(1000 + Math.random() * 9000);
 
@@ -6424,6 +6455,9 @@
 
       if (usedLoyaltyReward && loyaltyRewardDiscount > 0) {
         summaryItems.push(`[SADAKAT HEDİYESİ: 1 Adet ${rewardedItemName} %50 İndirimli (-${loyaltyRewardDiscount} TL)]`);
+      }
+      if (courierFee > 0) {
+        summaryItems.push(`[Kurye Paket Hizmeti: +${courierFee} TL]`);
       }
 
       // Sadakat Programı Damga / Ödül Güncellemesi (Son 30 Gün + 24 Saatte Maks 1 Damga)
