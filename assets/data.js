@@ -985,7 +985,12 @@ const CokertmeStore = {
         if (!b || b.isActive === false) return false;
         if (targetCity && norm(b.city) !== targetCity) return false;
         const nList = Array.isArray(b.neighborhoods) ? b.neighborhoods : [];
-        return nList.some(n => norm(n) === targetNeigh || targetNeigh.includes(norm(n)) || norm(n).includes(targetNeigh));
+        return nList.some(n => norm(n) === targetNeigh);
+      }) || branches.find(b => {
+        if (!b || b.isActive === false) return false;
+        if (targetCity && norm(b.city) !== targetCity) return false;
+        const nList = Array.isArray(b.neighborhoods) ? b.neighborhoods : [];
+        return nList.some(n => targetNeigh.includes(norm(n)) || norm(n).includes(targetNeigh));
       });
       if (exactNeighBranch) return applyOverflowIfSet(exactNeighBranch);
     }

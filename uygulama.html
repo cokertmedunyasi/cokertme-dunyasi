@@ -3365,7 +3365,7 @@
 
   </div>
 
-  <script src="assets/data.js?v=10"></script>
+  <script src="assets/data.js?v=11"></script>
   <script>
     // =========================================================================
     // UYGULAMA DURUMU (STATE)
@@ -3413,6 +3413,14 @@
       } catch (e) {}
     }
 
+    function formatShortBranchLabel(branchName) {
+      let s = String(branchName || "").trim();
+      s = s.replace(/\s*\(Amiral Mağaza\)/gi, "");
+      s = s.replace(/^Adana\s+/i, "");
+      s = s.replace(/Merkez\s+Şube/i, "Şubesi");
+      return s.trim() || "Merkez Şube";
+    }
+
     function getCityNeighborhoodEntries(state, cityName) {
       const st = state || CokertmeStore.getState();
       const branches = Array.isArray(st.branches) ? st.branches : [];
@@ -3433,12 +3441,17 @@
               district: b.district || "",
               branchId: b.id,
               branchName: b.name,
+              shortBranchName: formatShortBranchLabel(b.name),
               adisyoBranchCode: b.adisyoBranchCode || "ADISYO-MERKEZ",
               prepMinutes: Number(b.prepMinutes) || 15
             });
           }
         });
       });
+
+      // Müşterinin mahallesini kolayca bulabilmesi için Türkçe A-Z alfabetik sırala
+      entries.sort((a, b) => a.neighborhood.localeCompare(b.neighborhood, "tr-TR"));
+
       return { cityBranches, entries };
     }
 
@@ -3462,14 +3475,35 @@
         }
       }
 
+      // 1. Önce seçilen ildeki mahalle tablosundan (entries) birebir sorumlu şubeyi bul
+      const normHood = String(neighborhood || "").trim().toLocaleLowerCase("tr-TR");
+      if (normHood) {
+        const { entries } = getCityNeighborhoodEntries(st, city);
+        const matchedEntry = entries.find(e => e.neighborhood.toLocaleLowerCase("tr-TR") === normHood);
+        if (matchedEntry) {
+          const entryBranch = branches.find(b => b && b.id === matchedEntry.branchId && b.isActive !== false);
+          if (entryBranch) {
+            return {
+              matched: true,
+              branch: entryBranch,
+              city: entryBranch.city || city,
+              district: entryBranch.district || matchedEntry.district || "",
+              neighborhood: matchedEntry.neighborhood
+            };
+          }
+        }
+      }
+
+      // 2. CokertmeStore.resolveBranchByLocation ile kontrol et (hem doğrudan şube nesnesi hem de {branch} formatını destekler)
       if (window.CokertmeStore && typeof CokertmeStore.resolveBranchByLocation === "function") {
         const res = CokertmeStore.resolveBranchByLocation(city, selectedLocation.district || "", neighborhood, st);
-        if (res && res.branch) {
+        const resolvedBranchObj = (res && res.branch) ? res.branch : (res && res.id ? res : null);
+        if (resolvedBranchObj) {
           return {
-            matched: Boolean(res.matched),
-            branch: res.branch,
-            city: res.branch.city || city,
-            district: res.branch.district || selectedLocation.district || "",
+            matched: true,
+            branch: resolvedBranchObj,
+            city: resolvedBranchObj.city || city,
+            district: resolvedBranchObj.district || selectedLocation.district || "",
             neighborhood: neighborhood
           };
         }
@@ -3617,17 +3651,17 @@
             <!-- Şube Bazlı Mahalle Grupları -->
             <div style="display:flex; flex-direction:column; gap:10px; max-height:310px; overflow-y:auto; padding-right:2px; margin-bottom:14px;">
               ${cityBranches.map(b => {
-                const bHoods = Array.isArray(b.neighborhoods) ? b.neighborhoods : [];
+                const bHoods = [...(Array.isArray(b.neighborhoods) ? b.neighborhoods : [])].sort((x, y) => String(x).localeCompare(String(y), "tr-TR"));
                 return `
                   <div style="background:#FAF7F2; border:1.5px solid var(--pt-border); border-left:4px solid var(--pt-olive); border-radius:12px; padding:10px 12px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:6px; flex-wrap:wrap;">
                       <strong style="font-size:13.5px; color:var(--pt-navy);">${b.name}</strong>
                       <span style="background:rgba(59,82,51,0.14); color:var(--pt-olive); font-size:10.5px; font-weight:800; padding:2px 7px; border-radius:999px;">~${b.prepMinutes || 15} dk • ${b.adisyoBranchCode || 'ADISYO'}</span>
                     </div>
-                    <div style="font-size:11px; color:var(--pt-text-muted); margin-bottom:8px;">Sorumlu Olduğu Mahalleler (Dokunarak Seçin):</div>
+                    <div style="font-size:11px; color:var(--pt-text-muted); margin-bottom:8px;">Sorumlu Olduğu Mahalleler (A-Z Alfabetik • Dokunarak Seçin):</div>
                     <div style="display:flex; flex-wrap:wrap; gap:6px;">
                       ${bHoods.map(h => {
-                        const isSel = modalLocationNeighborhood === h;
+                        const isSel = String(modalLocationNeighborhood || "").toLocaleLowerCase("tr-TR") === String(h).toLocaleLowerCase("tr-TR");
                         const escH = String(h).replace(/'/g, "\\'");
                         return `
                           <button type="button" onclick="onModalNeighborhoodSelect('${escH}')" style="padding:6px 10px; border-radius:8px; border:1.5px solid ${isSel ? 'var(--pt-terracotta)' : 'var(--pt-border)'}; background:${isSel ? 'var(--pt-terracotta)' : '#fff'}; color:${isSel ? '#fff' : 'var(--pt-navy)'}; font-size:12px; font-weight:700; cursor:pointer;">
@@ -5384,7 +5418,8 @@
       const st = CokertmeStore.getState();
       const cityVal = (cartCheckoutDraft && cartCheckoutDraft.city) || selectedLocation.city || "Adana";
       const { entries } = getCityNeighborhoodEntries(st, cityVal);
-      const matched = entries.find(e => e.neighborhood === newHood) || entries[0];
+      const normNew = String(newHood || "").trim().toLocaleLowerCase("tr-TR");
+      const matched = entries.find(e => e.neighborhood.toLocaleLowerCase("tr-TR") === normNew) || entries[0];
       if (matched) {
         saveSelectedLocation({
           city: cityVal,
@@ -5393,6 +5428,7 @@
           branchId: matched.branchId
         });
         if (!cartCheckoutDraft) cartCheckoutDraft = {};
+        cartCheckoutDraft.city = cityVal;
         cartCheckoutDraft.neighborhood = matched.neighborhood;
         cartCheckoutDraft.branchId = matched.branchId;
       }
@@ -6508,9 +6544,9 @@
                     ${checkoutCityBranches.map(b => `<option value="${b.id}" ${targetBranchObj.id === b.id ? 'selected' : ''}>${b.name}</option>`).join("")}
                   </select>
                 ` : `
-                  <label style="font-size:11px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">Mahalle / Bölge Seçimi *</label>
+                  <label style="font-size:11px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">Mahalle / Bölge Seçimi (A-Z) *</label>
                   <select id="checkout-neighborhood" onchange="onCheckoutNeighborhoodChange(this.value)" style="width:100%; padding:10px; border:1.5px solid var(--pt-gold); border-radius:10px; font-size:13px; font-weight:700; color:var(--pt-navy); background:#fff;">
-                    ${checkoutHoodEntries.map(e => `<option value="${e.neighborhood}" ${draftHood === e.neighborhood ? 'selected' : ''}>${e.neighborhood} Mah. (${e.branchName.replace('Adana ', '')})</option>`).join("")}
+                    ${checkoutHoodEntries.map(e => `<option value="${e.neighborhood}" ${String(draftHood || '').toLocaleLowerCase('tr-TR') === e.neighborhood.toLocaleLowerCase('tr-TR') ? 'selected' : ''}>${e.neighborhood} Mah. (${e.shortBranchName || formatShortBranchLabel(e.branchName)})</option>`).join("")}
                   </select>
                 `}
               </div>
