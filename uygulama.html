@@ -2764,6 +2764,249 @@
     .campaign-hide-terms-btn:hover {
       background: #f3f4f6;
     }
+
+    /* =========================================================================
+       UBER EATS / TRENDYOL GO YEMEK TARZI ZORUNLU SEÇENEK SATIRLARI & ALT SHEET
+       ========================================================================= */
+    .uber-options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 14px 0 8px;
+    }
+
+    .uber-option-row {
+      background: #ffffff;
+      border: 1.5px solid rgba(3, 58, 88, 0.12);
+      border-radius: 14px;
+      padding: 16px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(2, 58, 88, 0.04);
+      transition: all 0.16s ease;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: left;
+    }
+
+    .uber-option-row:hover {
+      border-color: var(--pt-gold);
+    }
+
+    .uber-option-row.has-error {
+      border-color: #dc2626;
+      background: #fffafa;
+    }
+
+    .uber-option-row.is-selected {
+      border-color: rgba(59, 82, 51, 0.45);
+    }
+
+    .uber-option-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #111827;
+      line-height: 1.25;
+    }
+
+    .uber-option-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .uber-option-val {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: #111827;
+      text-align: right;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 195px;
+    }
+
+    .uber-option-val.missing-warn {
+      color: #b91c1c;
+      font-weight: 700;
+    }
+
+    .uber-option-chevron {
+      color: #111827;
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    /* Alt Kısımdan Açılan Zorunlu Seçenek Sheet (Bottom Sheet) */
+    .uber-sheet-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 3200;
+      background: rgba(15, 23, 42, 0.58);
+      backdrop-filter: blur(2px);
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .uber-sheet-backdrop.open {
+      display: flex;
+    }
+
+    .uber-sheet-panel {
+      background: #ffffff;
+      width: 100%;
+      max-width: 540px;
+      max-height: 82vh;
+      border-radius: 24px 24px 0 0;
+      box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.28);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: uberSheetSlideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @media (min-width: 768px) {
+      .uber-sheet-backdrop {
+        align-items: center;
+        padding: 20px;
+      }
+      .uber-sheet-panel {
+        border-radius: 22px;
+        max-width: 480px;
+        max-height: 80vh;
+      }
+    }
+
+    @keyframes uberSheetSlideUp {
+      from {
+        transform: translateY(100%);
+        opacity: 0.6;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .uber-sheet-handle {
+      width: 48px;
+      height: 5px;
+      background: #9ca3af;
+      border-radius: 999px;
+      margin: 12px auto 8px;
+      flex-shrink: 0;
+    }
+
+    .uber-sheet-header {
+      padding: 6px 20px 14px;
+      text-align: center;
+      border-bottom: 1px solid #f1f5f9;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .uber-sheet-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .uber-sheet-step-sub {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+
+    .uber-sheet-list {
+      overflow-y: auto;
+      padding: 8px 18px 26px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .uber-sheet-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 15px 4px;
+      border: none;
+      border-bottom: 1px solid #f3f4f6;
+      background: transparent;
+      width: 100%;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.12s ease;
+    }
+
+    .uber-sheet-item:last-child {
+      border-bottom: none;
+    }
+
+    .uber-sheet-item:active,
+    .uber-sheet-item:hover {
+      background: #f9fafb;
+    }
+
+    .uber-sheet-item-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .uber-radio-circle {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid #4b5563;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: #fff;
+      transition: all 0.14s ease;
+    }
+
+    .uber-sheet-item.selected .uber-radio-circle {
+      border-color: var(--pt-terracotta);
+      background: var(--pt-terracotta);
+    }
+
+    .uber-sheet-item.selected .uber-radio-circle::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .uber-sheet-item-label {
+      font-size: 16px;
+      font-weight: 500;
+      color: #111827;
+      line-height: 1.3;
+    }
+
+    .uber-sheet-item.selected .uber-sheet-item-label {
+      font-weight: 700;
+      color: var(--pt-navy);
+    }
+
+    .uber-sheet-item-price {
+      font-size: 15.5px;
+      font-weight: 600;
+      color: #111827;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
   </style>
 </head>
 <body>
@@ -3041,6 +3284,13 @@
          ====================================================================== -->
     <div id="desktop-product-modal" onclick="if(event.target===this) closeDesktopProductModal()" style="display:none; position:fixed; inset:0; z-index:2200; background:rgba(10, 30, 48, 0.75); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:20px;">
       <div id="desktop-product-modal-body" style="background:#fff; width:100%; max-width:680px; max-height:90vh; overflow-y:auto; border-radius:20px; border:2px solid var(--pt-gold); border-top:6px solid var(--pt-olive); box-shadow:0 24px 60px rgba(0,0,0,0.45);"></div>
+    </div>
+
+    <!-- ======================================================================
+         UBER EATS / TRENDYOL GO TARZI ALT SEÇENEK ÇEKMECESİ (BOTTOM SHEET)
+         ====================================================================== -->
+    <div id="cokertme-option-sheet-backdrop" class="uber-sheet-backdrop" onclick="if(event.target===this) closeCokertmeOptionSheet()">
+      <div class="uber-sheet-panel" id="cokertme-option-sheet-panel"></div>
     </div>
 
     <!-- ======================================================================
@@ -3799,6 +4049,7 @@
               <div>
                 <div style="font-size:13.5px; font-weight:700; color:var(--pt-navy); line-height:1.25;">${item.name.tr}</div>
                 ${item.categoryId === "cokertmeler" ? `<div style="font-size:11px; color:var(--pt-text-muted); font-weight:600;">${entry.portion || '1 Porsiyon (Standart)'}</div>` : ''}
+                ${item.categoryId === "cokertmeler" && (entry.yogurtChoice || entry.garlicChoice || entry.toppingChoice) ? `<div style="font-size:11px; color:var(--pt-olive); font-weight:700;">${[entry.yogurtChoice, entry.garlicChoice, entry.toppingChoice].filter(Boolean).join(" • ")}</div>` : ''}
                 ${drinkInfo ? `<div style="font-size:11px; color:var(--pt-terracotta); font-weight:700;">${drinkInfo}</div>` : ''}
               </div>
               <strong style="font-size:14px; color:var(--pt-terracotta); white-space:nowrap;">${linePrice.toFixed(0)} TL</strong>
@@ -4080,11 +4331,55 @@
     }
 
     // =========================================================================
-    // 2. ÜRÜN DETAY EKRANI VE MASAÜSTÜ HIZLI SEÇENEKLER MODALI
+    // 2. ÜRÜN DETAY EKRANI VE UBER EATS / TRENDYOL GO TARZI ZORUNLU SEÇİM SİSTEMİ
     // =========================================================================
     let currentDetailNoDrink = false;
     let currentDetailDrinkIds = [];
+    let currentDetailYogurt = "";
+    let currentDetailGarlic = "";
+    let currentDetailTopping = "";
+    let detailValidationTriggered = false;
+    let activeOptionSheetStep = null; // "yogurt" | "garlic" | "topping" | "drink"
+    let pendingAfterOptionSheetAction = null; // "GO_CART" | "DESKTOP_ADD_STAY" | "DESKTOP_ADD_CHECKOUT" | "SWITCH_NEXT:..."
     let desktopModalOpen = false;
+
+    const COKERTME_REQUIRED_STEPS = [
+      {
+        key: "yogurt",
+        title: "Yoğurt Seçimi",
+        stepLabel: "Adım 1 / 4 • Zorunlu Seçim",
+        options: [
+          { value: "Közlenmiş Patlıcanlı", label: "Közlenmiş Patlıcanlı", priceText: "" },
+          { value: "Közlenmiş Kapya Biberli", label: "Közlenmiş Kapya Biberli", priceText: "" },
+          { value: "Sade Yoğurt", label: "Sade Yoğurt", priceText: "" }
+        ]
+      },
+      {
+        key: "garlic",
+        title: "Sarımsak Seçimi",
+        stepLabel: "Adım 2 / 4 • Zorunlu Seçim",
+        options: [
+          { value: "Sarımsaklı Yoğurt", label: "Sarımsaklı Yoğurt", priceText: "" },
+          { value: "Sarımsaksız Yoğurt", label: "Sarımsaksız Yoğurt", priceText: "" }
+        ]
+      },
+      {
+        key: "topping",
+        title: "Üst Katman Seçimi",
+        stepLabel: "Adım 3 / 4 • Zorunlu Seçim",
+        options: [
+          { value: "Hepsi (Mısır + Kapya Biber)", label: "Hepsi (Mısır + Kapya Biber)", priceText: "" },
+          { value: "Sadece Kapya Biber", label: "Sadece Kapya Biber", priceText: "" },
+          { value: "Sadece Mısır", label: "Sadece Mısır", priceText: "" },
+          { value: "Hiçbiri", label: "Hiçbiri", priceText: "" }
+        ]
+      },
+      {
+        key: "drink",
+        title: "İçecek Seçimi",
+        stepLabel: "Adım 4 / 4 • Son Seçim (Seçince Sepete Eklenir)"
+      }
+    ];
 
     function openProductDetail(itemId) {
       currentDetailItemId = itemId;
@@ -4092,6 +4387,13 @@
       currentDetailPortion = "1 Porsiyon (Standart)";
       currentDetailNoDrink = false;
       currentDetailDrinkIds = [];
+      currentDetailYogurt = "";
+      currentDetailGarlic = "";
+      currentDetailTopping = "";
+      detailValidationTriggered = false;
+      activeOptionSheetStep = null;
+      pendingAfterOptionSheetAction = null;
+      closeCokertmeOptionSheet();
 
       // Bilgisayarda (≥ 960px) sayfadan kopmadan şık Popup Modal açılır; Mobilde (< 960px) Detay ekranına geçer
       if (window.innerWidth >= 960 && (activeTab === "home" || activeTab === "menu")) {
@@ -4108,12 +4410,207 @@
 
     function closeDesktopProductModal() {
       desktopModalOpen = false;
+      closeCokertmeOptionSheet();
       const modal = document.getElementById("desktop-product-modal");
       if (modal) modal.style.display = "none";
     }
 
+    function getFirstMissingCokertmeStep() {
+      if (!currentDetailYogurt) return "yogurt";
+      if (!currentDetailGarlic) return "garlic";
+      if (!currentDetailTopping) return "topping";
+      if (!currentDetailNoDrink && currentDetailDrinkIds.length === 0) return "drink";
+      return null;
+    }
+
+    function getDrinkChoiceSummaryLabel(drinkItems) {
+      if (currentDetailNoDrink) return "İçecek İstemiyorum";
+      if (currentDetailDrinkIds.length > 0) {
+        const names = currentDetailDrinkIds.map(id => {
+          const d = (drinkItems || []).find(x => x.id === id);
+          return d ? `${d.name.tr} +${Math.round(d.price)} TL` : "";
+        }).filter(Boolean);
+        return names.join(", ");
+      }
+      return "";
+    }
+
+    function openCokertmeOptionSheet(stepKey, afterAction) {
+      activeOptionSheetStep = stepKey || getFirstMissingCokertmeStep() || "yogurt";
+      if (afterAction) {
+        pendingAfterOptionSheetAction = afterAction;
+      } else if (!pendingAfterOptionSheetAction) {
+        pendingAfterOptionSheetAction = desktopModalOpen ? "DESKTOP_ADD_CHECKOUT" : "GO_CART";
+      }
+      renderCokertmeOptionSheetContent();
+      const backdrop = document.getElementById("cokertme-option-sheet-backdrop");
+      if (backdrop) backdrop.classList.add("open");
+    }
+
+    function closeCokertmeOptionSheet() {
+      const backdrop = document.getElementById("cokertme-option-sheet-backdrop");
+      if (backdrop) backdrop.classList.remove("open");
+      activeOptionSheetStep = null;
+    }
+
+    function renderCokertmeOptionSheetContent() {
+      const panel = document.getElementById("cokertme-option-sheet-panel");
+      if (!panel || !activeOptionSheetStep) return;
+
+      const stepMeta = COKERTME_REQUIRED_STEPS.find(s => s.key === activeOptionSheetStep) || COKERTME_REQUIRED_STEPS[0];
+      const allItems = getOrderableItems();
+      const drinkItems = allItems.filter(i => i.categoryId === "icecekler");
+
+      let itemsHtml = "";
+      if (stepMeta.key === "drink") {
+        const noDrinkSel = currentDetailNoDrink;
+        itemsHtml += `
+          <button type="button" class="uber-sheet-item ${noDrinkSel ? 'selected' : ''}" onclick="handleOptionSheetSelect('drink', 'NO_DRINK')">
+            <span class="uber-sheet-item-left">
+              <span class="uber-radio-circle"></span>
+              <span class="uber-sheet-item-label">İçecek İstemiyorum</span>
+            </span>
+            <span class="uber-sheet-item-price"></span>
+          </button>
+        `;
+        itemsHtml += drinkItems.map(d => {
+          const isSel = !currentDetailNoDrink && currentDetailDrinkIds.includes(d.id);
+          return `
+            <button type="button" class="uber-sheet-item ${isSel ? 'selected' : ''}" onclick="handleOptionSheetSelect('drink', '${d.id}')">
+              <span class="uber-sheet-item-left">
+                <span class="uber-radio-circle"></span>
+                <span class="uber-sheet-item-label">${d.name.tr}</span>
+              </span>
+              <span class="uber-sheet-item-price">+${Math.round(d.price)} TL</span>
+            </button>
+          `;
+        }).join("");
+      } else {
+        const currentVal = stepMeta.key === "yogurt"
+          ? currentDetailYogurt
+          : (stepMeta.key === "garlic" ? currentDetailGarlic : currentDetailTopping);
+        itemsHtml = (stepMeta.options || []).map(opt => {
+          const isSel = currentVal === opt.value;
+          const escapedVal = opt.value.replace(/'/g, "\\'");
+          return `
+            <button type="button" class="uber-sheet-item ${isSel ? 'selected' : ''}" onclick="handleOptionSheetSelect('${stepMeta.key}', '${escapedVal}')">
+              <span class="uber-sheet-item-left">
+                <span class="uber-radio-circle"></span>
+                <span class="uber-sheet-item-label">${opt.label}</span>
+              </span>
+              <span class="uber-sheet-item-price">${opt.priceText || ''}</span>
+            </button>
+          `;
+        }).join("");
+      }
+
+      panel.innerHTML = `
+        <div class="uber-sheet-handle"></div>
+        <div class="uber-sheet-header">
+          <div class="uber-sheet-title">${stepMeta.title}</div>
+          <div class="uber-sheet-step-sub">${stepMeta.stepLabel}</div>
+        </div>
+        <div class="uber-sheet-list">
+          ${itemsHtml}
+        </div>
+      `;
+    }
+
+    function handleOptionSheetSelect(stepKey, val) {
+      if (stepKey === "yogurt") {
+        currentDetailYogurt = val;
+      } else if (stepKey === "garlic") {
+        currentDetailGarlic = val;
+      } else if (stepKey === "topping") {
+        currentDetailTopping = val;
+      } else if (stepKey === "drink") {
+        if (val === "NO_DRINK") {
+          currentDetailNoDrink = true;
+          currentDetailDrinkIds = [];
+        } else {
+          currentDetailNoDrink = false;
+          currentDetailDrinkIds = [val];
+        }
+      }
+
+      renderCokertmeOptionSheetContent();
+      renderCurrentView();
+
+      setTimeout(() => {
+        const nextMissing = getFirstMissingCokertmeStep();
+        if (nextMissing) {
+          activeOptionSheetStep = nextMissing;
+          renderCokertmeOptionSheetContent();
+          const listEl = document.querySelector("#cokertme-option-sheet-panel .uber-sheet-list");
+          if (listEl) listEl.scrollTop = 0;
+        } else {
+          // Tüm zorunlu seçimler tamamlandı! Otomatik olarak sepete ekle ve sepete git
+          closeCokertmeOptionSheet();
+          const action = pendingAfterOptionSheetAction || (desktopModalOpen ? "DESKTOP_ADD_CHECKOUT" : "GO_CART");
+          pendingAfterOptionSheetAction = null;
+
+          if (action.startsWith("SWITCH_NEXT:")) {
+            const nextId = action.split(":")[1];
+            if (addCurrentDetailItemToCartArray(currentDetailItemId)) {
+              openProductDetail(nextId);
+            }
+          } else if (action === "DESKTOP_ADD_STAY") {
+            if (addCurrentDetailItemToCartArray(currentDetailItemId)) {
+              closeDesktopProductModal();
+              renderCurrentView();
+            }
+          } else if (action === "DESKTOP_ADD_CHECKOUT") {
+            if (addCurrentDetailItemToCartArray(currentDetailItemId)) {
+              closeDesktopProductModal();
+              switchTab("cart");
+            }
+          } else {
+            if (addCurrentDetailItemToCartArray(currentDetailItemId)) {
+              switchTab("cart");
+            }
+          }
+        }
+      }, 150);
+    }
+
+    function renderUberRequiredOptionRowsHtml(drinkItems) {
+      const drinkSummary = getDrinkChoiceSummaryLabel(drinkItems);
+      const rows = [
+        { key: "yogurt", title: "Yoğurt Seçimi", val: currentDetailYogurt },
+        { key: "garlic", title: "Sarımsak Seçimi", val: currentDetailGarlic },
+        { key: "topping", title: "Üst Katman Seçimi", val: currentDetailTopping },
+        { key: "drink", title: "İçecek Seçimi", val: drinkSummary }
+      ];
+
+      return `
+        <div class="uber-options-list">
+          ${rows.map(r => {
+            const hasVal = Boolean(r.val);
+            const showErr = detailValidationTriggered && !hasVal;
+            return `
+              <button type="button" class="uber-option-row ${showErr ? 'has-error' : (hasVal ? 'is-selected' : '')}" onclick="detailValidationTriggered=true; renderCurrentView(); openCokertmeOptionSheet('${r.key}')">
+                <span class="uber-option-title">${r.title}</span>
+                <span class="uber-option-right">
+                  ${hasVal
+                    ? `<span class="uber-option-val">${r.val}</span>`
+                    : (showErr
+                        ? `<span class="uber-option-val missing-warn">Lütfen Seçim Yapın</span>`
+                        : `<span class="uber-option-val" style="color:#6b7280;">Seçiniz</span>`)}
+                  <span class="uber-option-chevron">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                  </span>
+                </span>
+              </button>
+            `;
+          }).join("")}
+        </div>
+      `;
+    }
+
     function confirmDesktopModalAdd(itemId, goToCheckout) {
+      pendingAfterOptionSheetAction = goToCheckout ? "DESKTOP_ADD_CHECKOUT" : "DESKTOP_ADD_STAY";
       if (!addCurrentDetailItemToCartArray(itemId)) return;
+      pendingAfterOptionSheetAction = null;
       closeDesktopProductModal();
       if (goToCheckout) {
         switchTab("cart");
@@ -4160,30 +4657,6 @@
       const totalVal = Math.round(unitWithDrinks * currentDetailQty);
       const detailSidesList = isCokertme ? getItemComplimentaryList(item) : [];
 
-      let promoStatusText = "Lütfen Seçim Yapın (Zorunlu)";
-      if (currentDetailNoDrink) {
-        promoStatusText = "İçecek İstemiyorum";
-      } else if (currentDetailDrinkIds.length > 0) {
-        const selectedNames = currentDetailDrinkIds.map(id => {
-          const d = drinkItems.find(x => x.id === id);
-          return d ? d.name.tr : "";
-        }).filter(Boolean);
-        promoStatusText = selectedNames.join(", ");
-      }
-
-      const drinkCardsHtml = drinkItems.map(d => {
-        const isSel = currentDetailDrinkIds.includes(d.id);
-        return `
-          <button type="button" class="promo-drink-card ${isSel ? 'active-drink' : ''}" onclick="togglePromoDrink('${d.id}')">
-            <span class="promo-drink-left">
-              <span class="promo-drink-check">✓</span>
-              <span class="promo-drink-name">${d.name.tr}</span>
-            </span>
-            <span class="promo-drink-price">+${Math.round(d.price)} TL</span>
-          </button>
-        `;
-      }).join("");
-
       const qtyOptionsHtml = Array.from({ length: 10 }, (_, idx) => {
         const n = idx + 1;
         return `<option value="${n}" ${currentDetailQty === n ? 'selected' : ''}>Adet ${n}</option>`;
@@ -4213,12 +4686,12 @@
           </div>
         </div>
 
-        <div style="padding:20px 24px;">
+        <div style="padding:20px 24px; background:#f8fafc;">
           ${isCokertme ? `
-          <!-- 1. Porsiyon Seçimi (Sadece Çökertme Kebaplarında: 1 Porsiyon ve 1.5 Porsiyon +%50) -->
-          <div style="background:var(--pt-cream); border:1.5px solid var(--pt-gold); border-radius:12px; padding:12px 14px; margin-bottom:14px;">
+          <!-- Porsiyon Seçimi (Sadece Çökertme Kebaplarında: 1 Porsiyon ve 1.5 Porsiyon +%50) -->
+          <div style="background:var(--pt-cream); border:1.5px solid var(--pt-gold); border-radius:12px; padding:12px 14px; margin-bottom:12px;">
             <div style="margin-bottom:8px; font-size:13px; font-weight:700; color:var(--pt-navy); display:flex; justify-content:space-between;">
-              <span>1. Porsiyon Seçimi:</span>
+              <span>Porsiyon Seçimi:</span>
               <span style="color:var(--pt-terracotta); font-size:11.5px; font-weight:800;">${currentDetailPortion} (${portionPrice} TL)</span>
             </div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
@@ -4231,30 +4704,12 @@
             </div>
           </div>
 
-          <div style="background:#F4F7F2; border:1px solid rgba(59,82,51,0.3); border-left:4px solid var(--pt-olive); border-radius:10px; padding:10px 14px; margin-bottom:14px; font-size:12.5px; color:var(--pt-navy);">
+          <div style="background:#F4F7F2; border:1px solid rgba(59,82,51,0.3); border-left:4px solid var(--pt-olive); border-radius:10px; padding:10px 14px; margin-bottom:12px; font-size:12.5px; color:var(--pt-navy);">
             <strong style="color:var(--pt-olive);">ÜCRETSİZ PAKET İKRAMLARIMIZ:</strong> ${detailSidesList.join(" • ")}
           </div>
 
-          <div class="promo-drink-box" id="promo-drinks-box" style="margin-top:0; padding-top:10px;">
-            <div class="promo-drink-header">
-              <div class="promo-drink-title">
-                <span>2. İçecek Seçimi (Zorunlu) <span style="color:var(--pt-terracotta);">*</span></span>
-                <span class="promo-drink-status">${promoStatusText}</span>
-              </div>
-              <span class="promo-drink-badge">Çoklu seçim</span>
-            </div>
-            <div class="promo-drink-sub">İçecek seçin veya "İçecek İstemiyorum" işaretleyin</div>
-            <div class="promo-drink-grid">
-              <button type="button" class="promo-drink-card ${currentDetailNoDrink ? 'active-no-drink' : ''}" onclick="selectPromoNoDrink()">
-                <span class="promo-drink-left">
-                  <span class="promo-drink-check">✓</span>
-                  <span class="promo-drink-name">İçecek İstemiyorum</span>
-                </span>
-                <span class="promo-drink-price">Ücretsiz</span>
-              </button>
-              ${drinkCardsHtml}
-            </div>
-          </div>
+          <!-- Zorunlu 4 Seçim Satırı (Yoğurt / Sarımsak / Üst Katman / İçecek) -->
+          ${renderUberRequiredOptionRowsHtml(drinkItems)}
           ` : ''}
 
           <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:18px; padding-top:16px; border-top:1px solid var(--pt-border);">
@@ -4291,12 +4746,7 @@
 
     function togglePromoDrink(drinkId) {
       currentDetailNoDrink = false;
-      const idx = currentDetailDrinkIds.indexOf(drinkId);
-      if (idx > -1) {
-        currentDetailDrinkIds.splice(idx, 1);
-      } else {
-        currentDetailDrinkIds.push(drinkId);
-      }
+      currentDetailDrinkIds = [drinkId];
       renderCurrentView();
     }
 
@@ -4316,37 +4766,13 @@
       const totalVal = Math.round(unitWithDrinks * currentDetailQty);
       const detailSidesList = isCokertme ? getItemComplimentaryList(item) : [];
 
-      let promoStatusText = "Lütfen Seçim Yapın (Zorunlu)";
-      if (currentDetailNoDrink) {
-        promoStatusText = "İçecek İstemiyorum";
-      } else if (currentDetailDrinkIds.length > 0) {
-        const selectedNames = currentDetailDrinkIds.map(id => {
-          const d = drinkItems.find(x => x.id === id);
-          return d ? d.name.tr : "";
-        }).filter(Boolean);
-        promoStatusText = selectedNames.join(", ");
-      }
-
-      const drinkCardsHtml = drinkItems.map(d => {
-        const isSel = currentDetailDrinkIds.includes(d.id);
-        return `
-          <button type="button" class="promo-drink-card ${isSel ? 'active-drink' : ''}" onclick="togglePromoDrink('${d.id}')">
-            <span class="promo-drink-left">
-              <span class="promo-drink-check">✓</span>
-              <span class="promo-drink-name">${d.name.tr}</span>
-            </span>
-            <span class="promo-drink-price">+${Math.round(d.price)} TL</span>
-          </button>
-        `;
-      }).join("");
-
       const qtyOptionsHtml = Array.from({ length: 10 }, (_, idx) => {
         const n = idx + 1;
         return `<option value="${n}" ${currentDetailQty === n ? 'selected' : ''}>Adet ${n}</option>`;
       }).join("");
 
       return `
-        <!-- Büyük Ürün Fotoğrafı + Sol Üst Kapat Butonu (Üstteki Geri/Menü/İmza Çökertme yazısı kaldırıldı) -->
+        <!-- Büyük Ürün Fotoğrafı + Sol Üst Kapat Butonu -->
         <div class="detail-photo-card" style="position:relative; margin-top:12px;">
           <button type="button" onclick="switchTab('home')" title="Kapat" style="position:absolute; top:12px; left:12px; z-index:5; width:38px; height:38px; border-radius:50%; background:rgba(15, 29, 44, 0.78); color:#fff; border:1.5px solid rgba(255,255,255,0.35); display:flex; align-items:center; justify-content:center; font-size:18px; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.28);">
             ✕
@@ -4354,7 +4780,7 @@
           <img src="${item.image}" alt="${item.name.tr}" />
         </div>
 
-        <!-- Ürün Bilgisi, Üst Adet Seçimi, Porsiyon Seçimi ve İçecek Promosyon Seçimi -->
+        <!-- Ürün Bilgisi, Üst Adet Seçimi ve Porsiyon Seçimi -->
         <div class="detail-info-box">
           <!-- 1. YEMEK BAŞLIĞI VE AÇIKLAMASI -->
           <div style="text-align:center; margin-bottom:12px;">
@@ -4362,7 +4788,7 @@
             <p style="font-size:13.5px; color:var(--pt-text-muted); margin:0; line-height:1.42;">${item.desc.tr}</p>
           </div>
 
-          <!-- 2. ÜST ADET SEÇİMİ (Adet 1 v) VE CANLI FİYAT SATIRI (2. Ekran Görüntüsü Birebir) -->
+          <!-- 2. ÜST ADET SEÇİMİ (Adet 1 v) VE CANLI FİYAT SATIRI -->
           <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 4px 14px; margin-bottom:12px; border-bottom:1px solid var(--pt-border);">
             <div style="position:relative; display:inline-flex; align-items:center;">
               <select onchange="setDetailQty(this.value)" style="appearance:none; -webkit-appearance:none; background:#f3f4f6; color:#111827; border:1.5px solid rgba(3,58,88,0.16); border-radius:999px; padding:9px 38px 9px 16px; font-size:15px; font-weight:700; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.04);">
@@ -4390,7 +4816,7 @@
             </select>
           </div>
 
-          <div style="background:#F4F7F2; border:1.5px solid rgba(59,82,51,0.35); border-left:4px solid var(--pt-olive); border-radius:12px; padding:12px 14px; margin-bottom:8px;">
+          <div style="background:#F4F7F2; border:1.5px solid rgba(59,82,51,0.35); border-left:4px solid var(--pt-olive); border-radius:12px; padding:12px 14px; margin-bottom:6px;">
             <div style="font-size:11.5px; font-weight:700; color:var(--pt-olive); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px;">
               YANINDA ÜCRETSİZ İKRAMLARIMIZ (${detailSidesList.length} ÇEŞİT)
             </div>
@@ -4399,28 +4825,8 @@
             </div>
           </div>
 
-          <!-- 4. PROMOSYON İÇECEK EKLEME BÖLÜMÜ (Sadece İçecekler + İçecek İstemiyorum Zorunlu Seçim) -->
-          <div class="promo-drink-box" id="promo-drinks-box">
-            <div class="promo-drink-header">
-              <div class="promo-drink-title">
-                <span>İçecekler (Promosyon Seçimi) <span style="color:var(--pt-terracotta);">*</span></span>
-                <span class="promo-drink-status">${promoStatusText}</span>
-              </div>
-              <span class="promo-drink-badge">Çoklu seçim ⌃</span>
-            </div>
-            <div class="promo-drink-sub">Seçim: 1+ (İçecek seçin veya "İçecek İstemiyorum" işaretleyin)</div>
-
-            <div class="promo-drink-grid">
-              <button type="button" class="promo-drink-card ${currentDetailNoDrink ? 'active-no-drink' : ''}" onclick="selectPromoNoDrink()">
-                <span class="promo-drink-left">
-                  <span class="promo-drink-check">✓</span>
-                  <span class="promo-drink-name">İçecek İstemiyorum</span>
-                </span>
-                <span class="promo-drink-price">Ücretsiz</span>
-              </button>
-              ${drinkCardsHtml}
-            </div>
-          </div>
+          <!-- 4. ZORUNLU SEÇENEK SATIRLARI (UBER EATS / TRENDYOL GO TARZI ALT SHEET İLE OTOMATİK GEÇİŞLİ) -->
+          ${renderUberRequiredOptionRowsHtml(drinkItems)}
 
           <!-- Hızlı 2. / 3. Farklı Çökertmeye Geçiş (Ana Sayfaya Dönmeden) -->
           ${(() => {
@@ -4435,7 +4841,7 @@
                   <span>Arkadaşınız İçin 2. / 3. Çökertme mi Ekleyeceksiniz?</span>
                 </div>
                 <div style="font-size:11.5px; color:var(--pt-text-muted); margin-bottom:8px;">
-                  Bu ürünü seçtikten sonra aşağıdaki diğer Çökertmelerden birine dokunarak <strong>ana sayfaya dönmeden</strong> hemen 2. Çökertmeyi de ekleyebilirsiniz (Sepet ekranında da hızlı seçim mevcuttur):
+                  Bu ürünü seçtikten sonra aşağıdaki diğer Çökertmelerden birine dokunarak <strong>ana sayfaya dönmeden</strong> hemen 2. Çökertmeyi de ekleyebilirsiniz:
                 </div>
                 <div style="display:flex; gap:8px; overflow-x:auto; padding-bottom:4px;">
                   ${otherUnadded.map(o => `
@@ -4454,7 +4860,7 @@
           ` : ''}
         </div>
 
-        <!-- Alt Sabit Sepete Ekle Çubuğu (Alt adet kutusu üst karta taşındığı için sadeleştirildi) -->
+        <!-- Alt Sabit Sepete Ekle Çubuğu -->
         <div class="detail-sticky-action">
           <div class="detail-total-box" style="min-width:85px;">
             <div class="lbl">Toplam (${currentDetailQty} Adet)</div>
@@ -4480,17 +4886,15 @@
 
       const isCokertme = item.categoryId === "cokertmeler";
 
-      // Çökertme menülerinde içecek veya "İçecek İstemiyorum" seçimi yapılmadan devam edilemez!
-      if (isCokertme && !currentDetailNoDrink && currentDetailDrinkIds.length === 0) {
-        alert("Lütfen devam edebilmek için içecek seçiminizi yapın veya 'İçecek İstemiyorum' seçeneğini işaretleyin.");
-        const promoBox = document.getElementById("promo-drinks-box");
-        if (promoBox) {
-          promoBox.style.border = "2px solid var(--pt-terracotta)";
-          promoBox.style.padding = "12px";
-          promoBox.style.borderRadius = "12px";
-          promoBox.scrollIntoView({ behavior: "smooth", block: "center" });
+      // Çökertme menülerinde Yoğurt, Sarımsak, Üst Katman ve İçecek seçimi yapılmadan devam edilemez -> Otomatik Alt Sheet açılır!
+      if (isCokertme) {
+        const missingStep = getFirstMissingCokertmeStep();
+        if (missingStep) {
+          detailValidationTriggered = true;
+          renderCurrentView();
+          openCokertmeOptionSheet(missingStep, pendingAfterOptionSheetAction || (desktopModalOpen ? "DESKTOP_ADD_CHECKOUT" : "GO_CART"));
+          return false;
         }
-        return false;
       }
 
       const selectedPromoDrinks = (isCokertme && !currentDetailNoDrink)
@@ -4504,9 +4908,19 @@
         ? (currentDetailNoDrink ? "NO_DRINK" : selectedPromoDrinks.map(d => d.id).sort().join(","))
         : "";
       const portionToSave = isCokertme ? currentDetailPortion : "";
+      const yogurtToSave = isCokertme ? currentDetailYogurt : "";
+      const garlicToSave = isCokertme ? currentDetailGarlic : "";
+      const toppingToSave = isCokertme ? currentDetailTopping : "";
 
       const existing = appCart.find(
-        c => c.itemId === itemId && (c.portion || "") === portionToSave && (c.drinkKey || "") === drinkKey && !c.itemMold
+        c =>
+          c.itemId === itemId &&
+          (c.portion || "") === portionToSave &&
+          (c.yogurtChoice || "") === yogurtToSave &&
+          (c.garlicChoice || "") === garlicToSave &&
+          (c.toppingChoice || "") === toppingToSave &&
+          (c.drinkKey || "") === drinkKey &&
+          !c.itemMold
       );
       if (existing) {
         existing.qty += currentDetailQty;
@@ -4515,6 +4929,9 @@
           itemId,
           qty: currentDetailQty,
           portion: portionToSave,
+          yogurtChoice: yogurtToSave,
+          garlicChoice: garlicToSave,
+          toppingChoice: toppingToSave,
           drinkKey,
           noDrinkSelected: isCokertme ? currentDetailNoDrink : false,
           promoDrinks: selectedPromoDrinks
@@ -4525,12 +4942,16 @@
     }
 
     function confirmAddToCart(itemId) {
+      pendingAfterOptionSheetAction = "GO_CART";
       if (!addCurrentDetailItemToCartArray(itemId)) return;
+      pendingAfterOptionSheetAction = null;
       switchTab("cart");
     }
 
     function confirmAddAndSwitchToNextCokertme(currentItemId, nextItemId) {
+      pendingAfterOptionSheetAction = "SWITCH_NEXT:" + nextItemId;
       if (!addCurrentDetailItemToCartArray(currentItemId)) return;
+      pendingAfterOptionSheetAction = null;
       openProductDetail(nextItemId);
     }
 
@@ -4581,16 +5002,7 @@
 
     function toggleCartQuickItem(itemId) {
       captureCartCheckoutDraft();
-      if (cartQuickItemId === itemId) {
-        cartQuickItemId = null;
-      } else {
-        cartQuickItemId = itemId;
-        cartQuickPortion = "1 Porsiyon (Standart)";
-        cartQuickMold = "";
-        cartQuickNoDrink = false;
-        cartQuickDrinkIds = [];
-      }
-      renderCurrentView();
+      openProductDetail(itemId);
     }
 
     function setCartQuickPortion(portionVal) {
@@ -5556,6 +5968,11 @@
               <div class="cart-card-info">
                 <h4>${item.name.tr}</h4>
                 ${item.categoryId === "cokertmeler" ? `<p>Porsiyon Seçimi: ${entry.portion || '1 Porsiyon (Standart)'}</p>` : ''}
+                ${item.categoryId === "cokertmeler" && (entry.yogurtChoice || entry.garlicChoice || entry.toppingChoice) ? `
+                <div style="font-size:11.5px; color:var(--pt-navy); font-weight:700; margin-bottom:5px; background:#F8FAFC; border:1px solid var(--pt-border); padding:4px 8px; border-radius:6px;">
+                  Tercihler: <span style="color:var(--pt-olive);">${[entry.yogurtChoice, entry.garlicChoice, entry.toppingChoice].filter(Boolean).join(" • ")}</span>
+                </div>
+                ` : ''}
                 ${itemMoldHtml}
                 ${promoDrinkHtml}
                 ${cartSides.length > 0 ? `
@@ -6026,7 +6443,9 @@
             : (item.categoryId === "cokertmeler" ? " (İçecek İstemiyorum)" : "");
           const moldSuffix = entry.itemMold ? ` [Kalıp: ${entry.itemMold}]` : "";
           const portionSuffix = item.categoryId === "cokertmeler" ? ` (${entry.portion || '1 Porsiyon'})` : "";
-          summaryItems.push(`${entry.qty}x ${item.name.tr}${portionSuffix}${moldSuffix}${drinkSuffix}`);
+          const customChoices = [entry.yogurtChoice, entry.garlicChoice, entry.toppingChoice].filter(Boolean);
+          const customSuffix = customChoices.length > 0 ? ` [${customChoices.join(" / ")}]` : "";
+          summaryItems.push(`${entry.qty}x ${item.name.tr}${portionSuffix}${customSuffix}${moldSuffix}${drinkSuffix}`);
         }
       });
 
