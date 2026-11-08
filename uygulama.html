@@ -3365,7 +3365,7 @@
 
   </div>
 
-  <script src="assets/data.js?v=11"></script>
+  <script src="assets/data.js?v=12"></script>
   <script>
     // =========================================================================
     // UYGULAMA DURUMU (STATE)
@@ -3413,12 +3413,18 @@
       } catch (e) {}
     }
 
-    function formatShortBranchLabel(branchName) {
+    function formatCleanBranchName(branchName) {
       let s = String(branchName || "").trim();
       s = s.replace(/\s*\(Amiral Mağaza\)/gi, "");
+      s = s.replace(/\s*\(Çukurova\)/gi, "");
+      s = s.replace(/Merkez\s+Şube/gi, "Şubesi");
+      return s.trim() || "Adana Barajyolu Şubesi";
+    }
+
+    function formatShortBranchLabel(branchName) {
+      let s = formatCleanBranchName(branchName);
       s = s.replace(/^Adana\s+/i, "");
-      s = s.replace(/Merkez\s+Şube/i, "Şubesi");
-      return s.trim() || "Merkez Şube";
+      return s.trim() || "Barajyolu Şubesi";
     }
 
     function getCityNeighborhoodEntries(state, cityName) {
@@ -4655,7 +4661,7 @@
                         TESLİMAT BÖLGESİ: ${selectedLocation.city || 'Adana'} • ${selectedLocation.neighborhood || 'Yenibaraj'} Mah.
                       </div>
                       <div style="font-size:13px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                        Sorumlu Şube: ${b.name || 'Adana Barajyolu Merkez Şube'} (~${b.prepMinutes || 15} dk)
+                        Sorumlu Şube: ${formatCleanBranchName(b.name || 'Adana Barajyolu Şubesi')} (~${b.prepMinutes || 15} dk)
                       </div>
                     </div>
                   </div>
@@ -6553,14 +6559,9 @@
             </div>
 
             <!-- Canlı Sorumlu Şube ve Adisyo POS Bilgilendirme Rozeti -->
-            <div style="background:#F4F7F2; border:1.5px solid var(--pt-olive); border-radius:10px; padding:9px 11px; font-size:12px; color:var(--pt-navy); display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;">
-              <div>
-                <div style="font-size:10.5px; font-weight:800; color:var(--pt-olive); text-transform:uppercase;">OTOMATİK ATANAN SORUMLU ŞUBE &amp; ADİSYO</div>
-                <div style="font-weight:700; font-size:13px;">${targetBranchObj.name} <span style="font-size:11px; color:var(--pt-text-muted);">(${targetBranchObj.adisyoBranchCode || 'ADISYO-POS'})</span></div>
-              </div>
-              <button type="button" onclick="openLocationSelectorModal('${draftCity}')" style="background:#fff; color:var(--pt-navy); border:1px solid var(--pt-border); border-radius:7px; padding:5px 9px; font-size:11px; font-weight:700; cursor:pointer;">
-                Tüm İller (81 İl) ›
-              </button>
+            <div style="background:#F4F7F2; border:1.5px solid var(--pt-olive); border-radius:10px; padding:10px 12px; font-size:12px; color:var(--pt-navy);">
+              <div style="font-size:10.5px; font-weight:800; color:var(--pt-olive); text-transform:uppercase;">OTOMATİK ATANAN SORUMLU ŞUBE &amp; ADİSYO</div>
+              <div style="font-weight:700; font-size:13.5px; margin-top:2px;">${formatCleanBranchName(targetBranchObj.name)} <span style="font-size:11.5px; color:var(--pt-text-muted);">(${targetBranchObj.adisyoBranchCode || 'ADISYO-POS'})</span></div>
             </div>
 
             <input type="text" id="checkout-name" placeholder="Adınız Soyadınız *" value="${draftName}" style="padding:11px 12px; border:1px solid var(--pt-border); border-radius:10px; font-size:14px;" />

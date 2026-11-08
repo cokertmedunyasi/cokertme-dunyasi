@@ -412,7 +412,7 @@ const DEFAULT_COKERTME_DATA = {
   branches: [
     {
       id: "adana-merkez",
-      name: "Adana Barajyolu Merkez Şube (Amiral Mağaza)",
+      name: "Adana Barajyolu Şubesi",
       city: "Adana",
       district: "Seyhan",
       country: "Türkiye",
@@ -434,7 +434,7 @@ const DEFAULT_COKERTME_DATA = {
     },
     {
       id: "adana-gurselpasa",
-      name: "Adana Gürselpaşa Şubesi (Çukurova)",
+      name: "Adana Gürselpaşa Şubesi",
       city: "Adana",
       district: "Çukurova",
       country: "Türkiye",
@@ -865,9 +865,18 @@ function sanitizeAndMergeState(parsed) {
           overflowBranchId: b.overflowBranchId || ""
         };
         if (b.id === "adana-merkez" || (b.address && b.address.includes("Turgut Özal"))) {
-          upgraded.name = b.name && b.name.includes("Barajyolu") ? b.name : "Adana Barajyolu Merkez Şube (Amiral Mağaza)";
+          upgraded.name = "Adana Barajyolu Şubesi";
           upgraded.address = "Yenibaraj Mahallesi, Bülent Angın Blv. No: 66/D, Seyhan/Adana";
           upgraded.phone = b.phone || "0 (546) 918 07 01";
+        }
+        if (b.id === "adana-gurselpasa" && upgraded.name && upgraded.name.includes("(Çukurova)")) {
+          upgraded.name = "Adana Gürselpaşa Şubesi";
+        }
+        if (upgraded.name && (upgraded.name.includes("Merkez Şube") || upgraded.name.includes("Amiral Mağaza"))) {
+          upgraded.name = upgraded.name
+            .replace(/\s*\(Amiral Mağaza\)/gi, "")
+            .replace(/Merkez\s+Şube/gi, "Şubesi")
+            .trim();
         }
         return upgraded;
       })
