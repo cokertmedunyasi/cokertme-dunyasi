@@ -3365,7 +3365,7 @@
 
   </div>
 
-  <script src="assets/data.js?v=15"></script>
+  <script src="assets/data.js?v=16"></script>
   <script>
     // =========================================================================
     // UYGULAMA DURUMU (STATE)
@@ -3426,8 +3426,12 @@
       return s.trim() || "Adana Barajyolu Şubesi";
     }
 
-    function formatShortBranchLabel(branchName) {
+    function formatShortBranchLabel(branchName, cityName) {
       let s = formatCleanBranchName(branchName);
+      if (cityName) {
+        const rx = new RegExp("^" + String(cityName).trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\s+", "i");
+        s = s.replace(rx, "");
+      }
       s = s.replace(/^Adana\s+/i, "");
       return s.trim() || "Barajyolu Şubesi";
     }
@@ -3452,7 +3456,7 @@
               district: b.district || "",
               branchId: b.id,
               branchName: b.name,
-              shortBranchName: formatShortBranchLabel(b.name),
+              shortBranchName: formatShortBranchLabel(b.name, b.city || cityName),
               adisyoBranchCode: b.adisyoBranchCode || "ADISYO-MERKEZ",
               prepMinutes: Number(b.prepMinutes) || 15
             });

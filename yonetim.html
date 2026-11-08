@@ -1092,39 +1092,49 @@
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:12px; margin-bottom:12px;">
           <div>
             <label class="pt-form-label">Şube Adı *</label>
-            <input type="text" id="nb-name" class="pt-form-input" placeholder="Örn: Adana Çukurova Şubesi" />
+            <input type="text" id="nb-name" class="pt-form-input" placeholder="Örn: Mersin Yenişehir Şubesi" />
           </div>
           <div>
-            <label class="pt-form-label">İl (Şehir) *</label>
-            <input type="text" id="nb-city" class="pt-form-input" placeholder="Örn: Adana" value="Adana" />
+            <label class="pt-form-label">İl (Şehir Seçin — 81 İl) *</label>
+            <select id="nb-city" class="pt-form-select" onchange="onNewBranchCitySelectChange()">
+              <option value="Adana">Adana</option>
+              <option value="Mersin" selected>Mersin</option>
+              <option value="İstanbul">İstanbul</option>
+              <option value="Ankara">Ankara</option>
+              <option value="İzmir">İzmir</option>
+              <option value="Antalya">Antalya</option>
+              <option value="Muğla">Muğla</option>
+              <option value="Gaziantep">Gaziantep</option>
+              <option value="Hatay">Hatay</option>
+            </select>
           </div>
           <div>
-            <label class="pt-form-label">İlçe *</label>
-            <input type="text" id="nb-district" class="pt-form-input" placeholder="Örn: Çukurova / Seyhan" />
+            <label class="pt-form-label">Merkez İlçe / Bölge Adı *</label>
+            <input type="text" id="nb-district" class="pt-form-input" placeholder="Örn: Yenişehir / Mezitli" />
           </div>
           <div>
             <label class="pt-form-label">Şube Yöneticisi Kullanıcı Adı *</label>
-            <input type="text" id="nb-admin-user" class="pt-form-input" placeholder="Örn: cukurova" />
+            <input type="text" id="nb-admin-user" class="pt-form-input" placeholder="Örn: mersin1" />
           </div>
           <div>
             <label class="pt-form-label">Şube Yöneticisi Şifresi *</label>
-            <input type="text" id="nb-admin-pass" class="pt-form-input" placeholder="Örn: Cukurova123." />
+            <input type="text" id="nb-admin-pass" class="pt-form-input" placeholder="Örn: Mersin33!" />
           </div>
         </div>
 
         <!-- Yeni Şubeye Özel Adisyo API & Program Bilgileri -->
-        <div style="background:var(--pt-cream); border:1.5px solid var(--pt-gold); padding:14px; margin-bottom:12px;">
+        <div style="background:var(--pt-cream); border:1.5px solid var(--pt-gold); padding:14px; margin-bottom:14px;">
           <div style="font-size:11.5px; font-weight:800; color:var(--pt-navy); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">
             🔌 BU ŞUBENİN KENDİ ADİSYO PROGRAMI &amp; API BİLGİLERİ (HER ŞUBE BAĞIMSIZ ADİSYO HESABINA DÜŞER)
           </div>
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px;">
             <div>
               <label class="pt-form-label" style="font-size:10px;">Adisyo Şube / Kasa Kodu *</label>
-              <input type="text" id="nb-adisyo-code" class="pt-form-input" placeholder="Örn: ADANA-CUKUROVA-02" />
+              <input type="text" id="nb-adisyo-code" class="pt-form-input" placeholder="Örn: MERSIN-YENISEHIR-01" />
             </div>
             <div>
               <label class="pt-form-label" style="font-size:10px;">Adisyo Consumer / Restoran ID (x-api-consumer)</label>
-              <input type="text" id="nb-adisyo-consumer" class="pt-form-input" placeholder="Örn: COKERTME-ADN-02" />
+              <input type="text" id="nb-adisyo-consumer" class="pt-form-input" placeholder="Örn: COKERTME-MRS-01" />
             </div>
             <div>
               <label class="pt-form-label" style="font-size:10px;">Şube Adisyo API Key (x-api-key)</label>
@@ -1137,9 +1147,9 @@
           </div>
         </div>
 
-        <div style="margin-bottom:12px;">
-          <label class="pt-form-label">Sorumlu Olduğu Mahalleler (Virgülle Ayırarak Yazın) *</label>
-          <input type="text" id="nb-neighborhoods" class="pt-form-input" placeholder="Örn: Mahfesığmaz, Toros, Yurt, Huzurevleri, Yüzüncüyıl" />
+        <!-- SIFIR HATALI AKILLI MAHALLE SEÇİM & OTOMATİK ŞUBE DEVİR MATRİSİ -->
+        <div style="margin-bottom:14px;">
+          <div id="nb-smart-matrix-container"></div>
         </div>
         <div style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:12px; margin-bottom:14px;">
           <div>
@@ -1894,7 +1904,7 @@
     </div>
   </footer>
 
-  <script src="assets/data.js?v=15"></script>
+  <script src="assets/data.js?v=16"></script>
   <script>
     const ADMIN_SESSION_KEY = "cokertme_admin_auth_v1";
     const ADMIN_ROLE_KEY = "cokertme_admin_role_v1"; // "SUPER_ADMIN" veya branchId (örn: "adana-merkez", "adana-gurselpasa", "adana-saricam")
@@ -2555,23 +2565,459 @@
       }
     }
 
+    // =========================================================================
+    // SIFIR HATALI AKILLI İL / İLÇE / MAHALLE SEÇİM & OTOMATİK ŞUBE DEVİR MATRİSİ
+    // =========================================================================
+    const branchMatrixDrafts = {};       // contextKey ("NEW" veya branchId) -> Set(mahalleAdi)
+    const branchMatrixCities = {};       // contextKey -> cityName
+    const branchMatrixSearchQuery = {};  // contextKey -> arama metni
+    const branchMatrixExpanded = {};     // branchId -> boolean
+
+    function normalizeHoodKey(str) {
+      return String(str || "").replace(/\s*Mah\.?$/i, "").trim().toLocaleLowerCase("tr-TR");
+    }
+
+    function cleanHoodLabel(str) {
+      return String(str || "").replace(/\s*Mah\.?$/i, "").trim();
+    }
+
+    function ensureNewBranchCitySelectOptions() {
+      const sel = document.getElementById("nb-city");
+      if (!sel || !window.CokertmeStore || typeof CokertmeStore.getAllProvinces !== "function") return;
+      const currentVal = sel.value || "Mersin";
+      const allProvinces = CokertmeStore.getAllProvinces();
+      const priorityCities = ["Adana", "Mersin", "İstanbul", "Ankara", "İzmir", "Antalya", "Muğla", "Gaziantep", "Hatay", "Bursa", "Konya", "Kayseri"];
+      const restCities = allProvinces.filter(c => !priorityCities.includes(c));
+      const ordered = [...priorityCities, ...restCities];
+      sel.innerHTML = ordered.map(c => `<option value="${c}" ${c === currentVal ? "selected" : ""}>${c}</option>`).join("");
+    }
+
+    function getOtherBranchesOwnershipMap(cityName, excludeBranchId, stateOverride) {
+      const st = stateOverride || CokertmeStore.getState();
+      const branches = Array.isArray(st.branches) ? st.branches : [];
+      const normCity = String(cityName || "").trim().toLocaleLowerCase("tr-TR");
+      const ownerMap = {}; // normHoodKey -> { branchId, branchName }
+      branches.forEach(b => {
+        if (!b || b.id === excludeBranchId) return;
+        if (String(b.city || "").trim().toLocaleLowerCase("tr-TR") !== normCity) return;
+        (Array.isArray(b.neighborhoods) ? b.neighborhoods : []).forEach(nh => {
+          const k = normalizeHoodKey(nh);
+          if (k) {
+            ownerMap[k] = {
+              branchId: b.id,
+              branchName: b.name
+            };
+          }
+        });
+      });
+      return ownerMap;
+    }
+
+    function initMatrixDraftForContext(contextKey, cityName, initialNeighborhoods, forceReset) {
+      const cleanCity = String(cityName || "Adana").trim();
+      if (!forceReset && branchMatrixDrafts[contextKey] && branchMatrixCities[contextKey] === cleanCity) {
+        return;
+      }
+      branchMatrixCities[contextKey] = cleanCity;
+      const set = new Set();
+      (Array.isArray(initialNeighborhoods) ? initialNeighborhoods : []).forEach(nh => {
+        const clean = cleanHoodLabel(nh);
+        if (clean) set.add(clean);
+      });
+      branchMatrixDrafts[contextKey] = set;
+    }
+
+    function getDraftSelectedArray(contextKey) {
+      const set = branchMatrixDrafts[contextKey];
+      if (!set) return [];
+      return Array.from(set);
+    }
+
+    function computeSelectedDistrictsSummary(cityName, selectedArray) {
+      const distMap = CokertmeStore.getCityDistrictNeighborhoodMap(cityName);
+      const selectedKeys = new Set((selectedArray || []).map(normalizeHoodKey));
+      const activeDists = [];
+      Object.entries(distMap).forEach(([distName, hoods]) => {
+        if ((hoods || []).some(h => selectedKeys.has(normalizeHoodKey(h)))) {
+          activeDists.push(distName);
+        }
+      });
+      return activeDists.join(" / ");
+    }
+
+    function renderSmartNeighborhoodMatrix(contextKey) {
+      const containerId = contextKey === "NEW" ? "nb-smart-matrix-container" : `br-smart-matrix-${contextKey}`;
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const state = CokertmeStore.getState();
+      const city = branchMatrixCities[contextKey] || "Adana";
+      const distMap = CokertmeStore.getCityDistrictNeighborhoodMap(city, state);
+      const excludeId = contextKey === "NEW" ? "__NEW__" : contextKey;
+      const otherOwners = getOtherBranchesOwnershipMap(city, excludeId, state);
+
+      const selectedSet = branchMatrixDrafts[contextKey] || new Set();
+      const selectedNormMap = {};
+      selectedSet.forEach(val => {
+        selectedNormMap[normalizeHoodKey(val)] = val;
+      });
+
+      const searchQ = String(branchMatrixSearchQuery[contextKey] || "").trim().toLocaleLowerCase("tr-TR");
+
+      let totalCatalogCount = 0;
+      let totalSelectedCount = selectedSet.size;
+      let totalTransferCount = 0;
+
+      Object.values(distMap).forEach(arr => {
+        totalCatalogCount += (arr || []).length;
+      });
+
+      Object.keys(selectedNormMap).forEach(k => {
+        if (otherOwners[k]) {
+          totalTransferCount += 1;
+        }
+      });
+
+      const districtNames = Object.keys(distMap);
+
+      const districtsHtml = districtNames.map((distName, dIdx) => {
+        const hoods = distMap[distName] || [];
+        const filteredHoods = searchQ
+          ? hoods.filter(h =>
+              h.toLocaleLowerCase("tr-TR").includes(searchQ) ||
+              distName.toLocaleLowerCase("tr-TR").includes(searchQ)
+            )
+          : hoods;
+
+        if (searchQ && filteredHoods.length === 0) return "";
+
+        const selectedInDist = hoods.filter(h => Boolean(selectedNormMap[normalizeHoodKey(h)])).length;
+        const safeDistArg = distName.replace(/'/g, "\\'");
+
+        const pillsHtml = filteredHoods.map(hName => {
+          const k = normalizeHoodKey(hName);
+          const isSelected = Boolean(selectedNormMap[k]);
+          const otherOwner = otherOwners[k] || null;
+          const safeHoodArg = hName.replace(/'/g, "\\'");
+
+          let bg = "#FFFFFF";
+          let border = "1.5px solid rgba(3, 58, 88, 0.2)";
+          let color = "var(--pt-navy)";
+          let iconHtml = `<span style="display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; border:1.5px solid rgba(3,58,88,0.35); border-radius:3px; background:#fff; font-size:11px; flex-shrink:0;"></span>`;
+          let subBadgeHtml = "";
+
+          if (isSelected && otherOwner) {
+            // Başka şubeden devralınmak üzere seçildi
+            bg = "#EBF5FF";
+            border = "2px solid #0284C7";
+            color = "#0369A1";
+            iconHtml = `<span style="display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; border-radius:3px; background:#0284C7; color:#fff; font-size:11px; font-weight:900; flex-shrink:0;">✓</span>`;
+            subBadgeHtml = `<span style="display:block; font-size:9.5px; font-weight:800; color:#0284C7; margin-top:2px;">🔄 ${otherOwner.branchName.replace(/^Adana\s+/i, "")} → Bu Şubeye Devir</span>`;
+          } else if (isSelected) {
+            // Bu şubede seçili
+            bg = "#EDF7ED";
+            border = "2px solid var(--pt-olive)";
+            color = "var(--pt-olive-dark)";
+            iconHtml = `<span style="display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; border-radius:3px; background:var(--pt-olive); color:#fff; font-size:11px; font-weight:900; flex-shrink:0;">✓</span>`;
+            subBadgeHtml = `<span style="display:block; font-size:9.5px; font-weight:700; color:var(--pt-olive); margin-top:2px;">✓ Bu Şubede Sorumlu</span>`;
+          } else if (otherOwner) {
+            // Aynı ilde başka şubeye kayıtlı (tıklanırsa devralınır)
+            bg = "#FFF7ED";
+            border = "1.5px solid #EA580C";
+            color = "#9A3412";
+            iconHtml = `<span style="display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; border:1.5px solid #EA580C; border-radius:3px; background:#FFEDD5; color:#EA580C; font-size:10px; font-weight:800; flex-shrink:0;">⇄</span>`;
+            subBadgeHtml = `<span style="display:block; font-size:9.5px; font-weight:700; color:#C2410C; margin-top:2px;">🔒 Şu an: ${otherOwner.branchName.replace(/^Adana\s+/i, "")} (Tıkla Devral)</span>`;
+          } else {
+            // Boşta (teslimat dışı)
+            subBadgeHtml = `<span style="display:block; font-size:9.5px; color:var(--pt-text-muted); margin-top:2px;">Boşta (Teslimat Dışı)</span>`;
+          }
+
+          return `
+            <button type="button"
+              onclick="toggleMatrixNeighborhood('${contextKey}', '${safeHoodArg}')"
+              style="text-align:left; padding:8px 10px; background:${bg}; border:${border}; border-radius:6px; cursor:pointer; display:flex; align-items:flex-start; gap:8px; transition:all 0.15s ease;">
+              ${iconHtml}
+              <span style="min-width:0; flex:1;">
+                <strong style="display:block; font-size:12.5px; color:${color}; line-height:1.2;">${hName} Mah.</strong>
+                ${subBadgeHtml}
+              </span>
+            </button>
+          `;
+        }).join("");
+
+        return `
+          <div style="background:#fff; border:1px solid var(--pt-border); border-left:4px solid ${selectedInDist > 0 ? 'var(--pt-olive)' : 'var(--pt-gold)'}; padding:12px 14px; margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px; padding-bottom:8px; border-bottom:1px dashed var(--pt-border);">
+              <div>
+                <strong style="font-size:14px; color:var(--pt-navy);">📍 ${distName} İlçesi / Bölgesi</strong>
+                <span class="pt-badge ${selectedInDist > 0 ? 'pt-badge-olive' : 'pt-badge-gold'}" style="margin-left:6px; font-size:10px;">
+                  ${selectedInDist} / ${hoods.length} Mahalle Seçili
+                </span>
+              </div>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button type="button" onclick="selectMatrixDistrictAll('${contextKey}', '${safeDistArg}')" style="background:var(--pt-olive); color:#fff; border:none; padding:5px 10px; font-size:10.5px; font-weight:800; cursor:pointer; border-radius:4px;">
+                  ✓ Tüm ${distName} Mahallelerini Seç / Devral
+                </button>
+                <button type="button" onclick="clearMatrixDistrictAll('${contextKey}', '${safeDistArg}')" style="background:#f1f5f9; color:var(--pt-navy); border:1px solid var(--pt-border); padding:5px 10px; font-size:10.5px; font-weight:700; cursor:pointer; border-radius:4px;">
+                  ✕ İlçeyi Temizle
+                </button>
+              </div>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(185px, 1fr)); gap:8px;">
+              ${pillsHtml}
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      container.innerHTML = `
+        <div style="background:var(--pt-cream); border:2px solid var(--pt-olive); padding:14px;">
+          <!-- Üst Başlık ve Canlı Sayaçlar -->
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+            <div>
+              <div style="font-size:11px; font-weight:800; color:var(--pt-olive); text-transform:uppercase; letter-spacing:0.08em;">
+                🗺️ SIFIR HATALI AKILLI MAHALLE SEÇİM &amp; OTOMATİK ŞUBE DEVİR MATRİSİ (${city.toUpperCase()})
+              </div>
+              <div style="font-size:12.5px; color:var(--pt-text-muted); margin-top:2px;">
+                Virgülle yazmanıza gerek yoktur. Şubenin paket servis götüreceği mahallelere tıklayarak seçin. Seçilmeyen mahalleler müşteriye görünmez.
+              </div>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+              <span class="pt-badge pt-badge-olive" style="font-size:11px; padding:6px 10px;">
+                ✓ Seçilen: ${totalSelectedCount} / ${totalCatalogCount} Mahalle
+              </span>
+              ${totalTransferCount > 0 ? `
+                <span class="pt-badge" style="background:#0284C7; color:#fff; font-size:11px; padding:6px 10px;">
+                  🔄 Otomatik Devralınacak: ${totalTransferCount} Mahalle
+                </span>
+              ` : ''}
+            </div>
+          </div>
+
+          <!-- Renk Rehberi (3 Durum) -->
+          <div style="display:flex; flex-wrap:wrap; gap:12px; background:#fff; border:1px solid var(--pt-border); padding:8px 12px; margin-bottom:12px; font-size:11.5px; font-weight:700;">
+            <span style="display:inline-flex; align-items:center; gap:6px; color:var(--pt-olive-dark);">
+              <span style="width:12px; height:12px; background:#EDF7ED; border:2px solid var(--pt-olive); display:inline-block; border-radius:3px;"></span>
+              Yeşil: Bu Şubede Seçili
+            </span>
+            <span style="display:inline-flex; align-items:center; gap:6px; color:#9A3412;">
+              <span style="width:12px; height:12px; background:#FFF7ED; border:1.5px solid #EA580C; display:inline-block; border-radius:3px;"></span>
+              Turuncu: Başka Şubede Kayıtlı (Tıklarsanız 1. Şubeden Alıp Bu Şubeye Devreder!)
+            </span>
+            <span style="display:inline-flex; align-items:center; gap:6px; color:#0369A1;">
+              <span style="width:12px; height:12px; background:#EBF5FF; border:2px solid #0284C7; display:inline-block; border-radius:3px;"></span>
+              Mavi: Diğer Şubeden Devralınacak
+            </span>
+            <span style="display:inline-flex; align-items:center; gap:6px; color:var(--pt-text-muted);">
+              <span style="width:12px; height:12px; background:#fff; border:1.5px solid rgba(3,58,88,0.3); display:inline-block; border-radius:3px;"></span>
+              Beyaz: Boşta / Teslimat Dışı
+            </span>
+          </div>
+
+          <!-- Arama + Tüm İli Seç/Temizle + Yeni Mahalle Ekle Barı -->
+          <div style="display:grid; grid-template-columns:1fr auto auto; gap:8px; margin-bottom:10px; align-items:center;">
+            <input type="text"
+              id="matrix-search-${contextKey}"
+              class="pt-form-input"
+              placeholder="🔍 ${city} içinde mahalle veya ilçe ara (Örn: Pozcu, Gürselpaşa, Çukurova)..."
+              value="${branchMatrixSearchQuery[contextKey] || ''}"
+              oninput="filterMatrixSearch('${contextKey}', this.value)"
+              style="padding:8px 12px; font-size:13px; background:#fff;" />
+            <button type="button" onclick="selectMatrixCityAll('${contextKey}')" class="pt-btn-olive" style="padding:8px 12px; font-size:11px; white-space:nowrap;">
+              ✓ TÜM ${city.toUpperCase()} MAHALLELERİNİ SEÇ
+            </button>
+            <button type="button" onclick="clearMatrixCityAll('${contextKey}')" style="background:#fff; border:1px solid #E5A0A0; color:#A61B1B; padding:8px 12px; font-size:11px; font-weight:800; cursor:pointer; white-space:nowrap;">
+              ✕ TÜM SEÇİMİ KALDIR
+            </button>
+          </div>
+
+          <!-- Listede Olmayan Özel Mahalle / Bölge Ekleme Satırı -->
+          <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:#fff; border:1px dashed var(--pt-gold); padding:8px 12px; margin-bottom:12px;">
+            <span style="font-size:11.5px; font-weight:800; color:var(--pt-navy);">+ Listede Olmayan Yeni Mahalle Ekle:</span>
+            <select id="matrix-custom-dist-${contextKey}" class="pt-form-select" style="width:auto; min-width:150px; padding:6px 10px; font-size:12px;">
+              ${districtNames.map(d => `<option value="${d}">${d}</option>`).join("")}
+            </select>
+            <input type="text" id="matrix-custom-hood-${contextKey}" class="pt-form-input" placeholder="Yeni mahalle adı yazın..." style="flex:1; min-width:160px; padding:6px 10px; font-size:12px;" />
+            <button type="button" onclick="addCustomMatrixNeighborhood('${contextKey}')" class="pt-btn-navy" style="padding:7px 12px; font-size:11px; white-space:nowrap;">
+              + KATALOĞA EKLE &amp; SEÇ
+            </button>
+          </div>
+
+          <!-- İlçe Bazlı Mahalle Kutucukları -->
+          <div style="max-height:420px; overflow-y:auto; padding-right:4px;">
+            ${districtsHtml || `<div style="padding:18px; text-align:center; color:var(--pt-text-muted); background:#fff;">Aramanıza uygun mahalle bulunamadı. Yukarıdan "+ Kataloğa Ekle & Seç" ile ekleyebilirsiniz.</div>`}
+          </div>
+        </div>
+      `;
+
+      // Mevcut şube kartındaki özet etiketi de güncelle
+      if (contextKey !== "NEW") {
+        const countBadge = document.getElementById(`br-hood-count-badge-${contextKey}`);
+        if (countBadge) {
+          countBadge.textContent = `${totalSelectedCount} Sorumlu Mahalle Seçili`;
+        }
+        const previewBox = document.getElementById(`br-hood-preview-${contextKey}`);
+        if (previewBox) {
+          const arr = Array.from(selectedSet);
+          previewBox.innerHTML = arr.length > 0
+            ? arr.slice(0, 12).map(x => `<span style="background:#EDF7ED; border:1px solid var(--pt-olive); color:var(--pt-olive-dark); padding:2px 7px; border-radius:4px; font-size:11px; font-weight:700;">✓ ${x} Mah.</span>`).join(" ") +
+              (arr.length > 12 ? ` <span style="font-size:11px; font-weight:800; color:var(--pt-navy);">+${arr.length - 12} mahalle daha</span>` : "")
+            : `<span style="color:#A61B1B; font-size:12px; font-weight:700;">⚠️ Henüz sorumlu mahalle seçilmedi.</span>`;
+        }
+      }
+    }
+
+    function toggleMatrixNeighborhood(contextKey, hoodName) {
+      if (!branchMatrixDrafts[contextKey]) branchMatrixDrafts[contextKey] = new Set();
+      const set = branchMatrixDrafts[contextKey];
+      const targetKey = normalizeHoodKey(hoodName);
+      let existingVal = null;
+      set.forEach(v => {
+        if (normalizeHoodKey(v) === targetKey) existingVal = v;
+      });
+      if (existingVal !== null) {
+        set.delete(existingVal);
+      } else {
+        set.add(cleanHoodLabel(hoodName));
+      }
+      renderSmartNeighborhoodMatrix(contextKey);
+    }
+
+    function selectMatrixDistrictAll(contextKey, districtName) {
+      const city = branchMatrixCities[contextKey] || "Adana";
+      const distMap = CokertmeStore.getCityDistrictNeighborhoodMap(city);
+      const hoods = distMap[districtName] || [];
+      if (!branchMatrixDrafts[contextKey]) branchMatrixDrafts[contextKey] = new Set();
+      const set = branchMatrixDrafts[contextKey];
+      const existingNorms = new Set(Array.from(set).map(normalizeHoodKey));
+      hoods.forEach(h => {
+        const k = normalizeHoodKey(h);
+        if (!existingNorms.has(k)) {
+          existingNorms.add(k);
+          set.add(cleanHoodLabel(h));
+        }
+      });
+      renderSmartNeighborhoodMatrix(contextKey);
+    }
+
+    function clearMatrixDistrictAll(contextKey, districtName) {
+      const city = branchMatrixCities[contextKey] || "Adana";
+      const distMap = CokertmeStore.getCityDistrictNeighborhoodMap(city);
+      const hoods = distMap[districtName] || [];
+      const removeKeys = new Set(hoods.map(normalizeHoodKey));
+      if (!branchMatrixDrafts[contextKey]) return;
+      const set = branchMatrixDrafts[contextKey];
+      Array.from(set).forEach(v => {
+        if (removeKeys.has(normalizeHoodKey(v))) {
+          set.delete(v);
+        }
+      });
+      renderSmartNeighborhoodMatrix(contextKey);
+    }
+
+    function selectMatrixCityAll(contextKey) {
+      const city = branchMatrixCities[contextKey] || "Adana";
+      const distMap = CokertmeStore.getCityDistrictNeighborhoodMap(city);
+      const set = new Set();
+      Object.values(distMap).forEach(hoods => {
+        (hoods || []).forEach(h => set.add(cleanHoodLabel(h)));
+      });
+      branchMatrixDrafts[contextKey] = set;
+      renderSmartNeighborhoodMatrix(contextKey);
+    }
+
+    function clearMatrixCityAll(contextKey) {
+      branchMatrixDrafts[contextKey] = new Set();
+      renderSmartNeighborhoodMatrix(contextKey);
+    }
+
+    function filterMatrixSearch(contextKey, queryStr) {
+      branchMatrixSearchQuery[contextKey] = queryStr || "";
+      renderSmartNeighborhoodMatrix(contextKey);
+      const inputEl = document.getElementById(`matrix-search-${contextKey}`);
+      if (inputEl) {
+        inputEl.focus();
+        const len = inputEl.value.length;
+        try { inputEl.setSelectionRange(len, len); } catch (e) {}
+      }
+    }
+
+    function addCustomMatrixNeighborhood(contextKey) {
+      const city = branchMatrixCities[contextKey] || "Adana";
+      const distEl = document.getElementById(`matrix-custom-dist-${contextKey}`);
+      const hoodEl = document.getElementById(`matrix-custom-hood-${contextKey}`);
+      const dist = distEl ? distEl.value : `${city} Merkez`;
+      const rawHood = hoodEl ? hoodEl.value.trim() : "";
+      if (!rawHood) {
+        alert("Lütfen eklemek istediğiniz mahalle veya bölge adını yazın.");
+        return;
+      }
+      const added = CokertmeStore.addCustomNeighborhoodToCatalog(city, dist, rawHood);
+      if (added) {
+        if (!branchMatrixDrafts[contextKey]) branchMatrixDrafts[contextKey] = new Set();
+        branchMatrixDrafts[contextKey].add(added);
+        if (hoodEl) hoodEl.value = "";
+        renderSmartNeighborhoodMatrix(contextKey);
+      }
+    }
+
+    function onNewBranchCitySelectChange() {
+      const cityEl = document.getElementById("nb-city");
+      const newCity = (cityEl && cityEl.value) ? cityEl.value.trim() : "Mersin";
+      initMatrixDraftForContext("NEW", newCity, [], true);
+      renderSmartNeighborhoodMatrix("NEW");
+    }
+
+    function onExistingBranchCitySelectChange(branchId, newCity) {
+      const cleanCity = String(newCity || "Adana").trim();
+      initMatrixDraftForContext(branchId, cleanCity, [], true);
+      branchMatrixExpanded[branchId] = true;
+      const wrap = document.getElementById(`br-matrix-collapse-${branchId}`);
+      if (wrap) wrap.style.display = "block";
+      renderSmartNeighborhoodMatrix(branchId);
+    }
+
+    function toggleBranchMatrixExpand(branchId) {
+      branchMatrixExpanded[branchId] = !branchMatrixExpanded[branchId];
+      const wrap = document.getElementById(`br-matrix-collapse-${branchId}`);
+      const btn = document.getElementById(`br-matrix-toggle-btn-${branchId}`);
+      if (wrap) {
+        wrap.style.display = branchMatrixExpanded[branchId] ? "block" : "none";
+      }
+      if (btn) {
+        btn.textContent = branchMatrixExpanded[branchId]
+          ? "▲ MAHALLE SEÇİM & DEVİR PANELİNİ KAPAT"
+          : "🗺️ MAHALLE SEÇİM & ŞUBE DEVİR PANELİNİ AÇ (KUTUCUKLARLA DÜZENLE)";
+      }
+      if (branchMatrixExpanded[branchId]) {
+        renderSmartNeighborhoodMatrix(branchId);
+      }
+    }
+
     function toggleNewBranchForm() {
       const box = document.getElementById("new-branch-form-box");
       if (!box) return;
-      box.style.display = box.style.display === "none" ? "block" : "none";
+      const isOpening = box.style.display === "none";
+      box.style.display = isOpening ? "block" : "none";
+      if (isOpening) {
+        ensureNewBranchCitySelectOptions();
+        const cityEl = document.getElementById("nb-city");
+        const city = (cityEl && cityEl.value) || "Mersin";
+        initMatrixDraftForContext("NEW", city, [], true);
+        renderSmartNeighborhoodMatrix("NEW");
+      }
     }
 
     function addNewBranchFromAdmin() {
       const name = (document.getElementById("nb-name").value || "").trim();
-      const city = (document.getElementById("nb-city").value || "Adana").trim();
-      const district = (document.getElementById("nb-district").value || "").trim();
+      const city = (document.getElementById("nb-city").value || "Mersin").trim();
+      let district = (document.getElementById("nb-district").value || "").trim();
       const adisyoCode = (document.getElementById("nb-adisyo-code").value || "").trim() || ("ADISYO-" + Math.floor(100 + Math.random() * 900));
       const adisyoConsumer = (document.getElementById("nb-adisyo-consumer") && document.getElementById("nb-adisyo-consumer").value || "").trim() || ("COKERTME-" + Math.floor(100 + Math.random() * 900));
       const adisyoKey = (document.getElementById("nb-adisyo-key") && document.getElementById("nb-adisyo-key").value || "").trim();
       const adisyoSecret = (document.getElementById("nb-adisyo-secret") && document.getElementById("nb-adisyo-secret").value || "").trim();
       const adminUser = (document.getElementById("nb-admin-user").value || "").trim();
       const adminPass = (document.getElementById("nb-admin-pass").value || "").trim() || "Cokertme123.";
-      const neighRaw = (document.getElementById("nb-neighborhoods").value || "").trim();
       const address = (document.getElementById("nb-address").value || "").trim();
       const phone = (document.getElementById("nb-phone").value || "0 (546) 918 07 01").trim();
       const isActive = document.getElementById("nb-active").value === "true";
@@ -2581,7 +3027,16 @@
         return;
       }
 
-      const neighborhoods = neighRaw.split(",").map(s => s.trim()).filter(Boolean);
+      const selectedNeighborhoods = getDraftSelectedArray("NEW");
+      if (selectedNeighborhoods.length === 0) {
+        alert(`Lütfen "${name}" şubesinin sorumlu olacağı en az 1 mahalleyi kutucuklardan seçin.`);
+        return;
+      }
+
+      if (!district) {
+        district = computeSelectedDistrictsSummary(city, selectedNeighborhoods) || "Merkez";
+      }
+
       const slugId = (city + "-" + name).toLocaleLowerCase("tr-TR").replace(/[^a-z0-9ğüşıöç]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "") + "-" + Math.floor(10 + Math.random() * 89);
 
       const state = CokertmeStore.getState();
@@ -2590,13 +3045,14 @@
         id: slugId,
         name: name,
         city: city,
-        district: district || "Merkez",
+        district: district,
         badge: isActive ? "AKTİF ŞUBE" : "ÇOK YAKINDA",
         isActive: isActive,
         address: address || `${district} / ${city}`,
         phone: phone,
         hours: isActive ? "Her Gün 11:00 – 23:30" : "Çok Yakında Hizmetinizde",
-        neighborhoods: neighborhoods,
+        neighborhoods: [],
+        neighborhoodsConfiguredV2: true,
         adminUsername: adminUser || slugId.slice(0, 12),
         adminPassword: adminPass,
         adisyoBranchCode: adisyoCode,
@@ -2608,25 +3064,40 @@
         deliveryFeeOverride: 100
       });
 
+      const transferResult = CokertmeStore.assignNeighborhoodsWithAutoTransfer(slugId, city, selectedNeighborhoods, state);
+
       CokertmeStore.saveState(state);
       document.getElementById("new-branch-form-box").style.display = "none";
       renderAdminAll();
-      alert(`✓ "${name}" (${city}) şubesi, sorumlu mahalleleri ve bağımsız Adisyo POS ayarları başarıyla eklendi!`);
+
+      const transferMsg = transferResult.transferredList.length > 0
+        ? `\n\n🔄 OTOMATİK ŞUBE DEVRİ: ${transferResult.transferredList.length} mahalle (${transferResult.transferredList.slice(0, 6).map(x => x.neighborhood).join(", ")}${transferResult.transferredList.length > 6 ? "..." : ""}) eski şubeden otomatik düşülerek "${name}" şubesine devredildi (%0 çakışma).`
+        : "";
+
+      alert(`✓ "${name}" (${city} - ${selectedNeighborhoods.length} sorumlu mahalle) ve bağımsız Adisyo POS ayarları başarıyla kaydedildi!${transferMsg}`);
     }
 
     function renderBranchesManagerSection(state) {
       const grid = document.getElementById("admin-branches-manager-grid");
       if (!grid) return;
       const branches = Array.isArray(state.branches) ? state.branches : [];
+      const allProvinces = (window.CokertmeStore && typeof CokertmeStore.getAllProvinces === "function")
+        ? CokertmeStore.getAllProvinces()
+        : ["Adana", "Mersin", "İstanbul", "Ankara", "İzmir", "Antalya", "Muğla", "Gaziantep", "Hatay", "Berlin"];
 
       grid.innerHTML = branches.map(b => {
-        const neighStr = (Array.isArray(b.neighborhoods) ? b.neighborhoods : []).join(", ");
+        const bCity = b.city || "Adana";
+        const hoods = Array.isArray(b.neighborhoods) ? b.neighborhoods : [];
+        initMatrixDraftForContext(b.id, bCity, hoods, true);
+        const isExpanded = Boolean(branchMatrixExpanded[b.id]);
         const hasOwnApiKey = Boolean(b.adisyoApiKey && b.adisyoApiKey.trim());
+        const cityOptionsHtml = allProvinces.map(p => `<option value="${p}" ${p === bCity ? "selected" : ""}>${p}</option>`).join("");
+
         return `
           <div style="background:#fff; border:1px solid var(--pt-border); border-top:4px solid ${b.isActive ? 'var(--pt-olive)' : 'var(--pt-gold)'}; padding:18px; display:grid; gap:10px;">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
               <div>
-                <span class="pt-badge ${b.isActive ? 'pt-badge-olive' : 'pt-badge-gold'}">${b.city || 'Adana'} • ${b.isActive ? 'AKTİF ŞUBE' : 'ÇOK YAKINDA'}</span>
+                <span class="pt-badge ${b.isActive ? 'pt-badge-olive' : 'pt-badge-gold'}">${bCity} • ${b.isActive ? 'AKTİF ŞUBE' : 'ÇOK YAKINDA'}</span>
                 <h4 style="font-size:21px; color:var(--pt-navy); margin-top:4px;">${b.name}</h4>
               </div>
               <button type="button" onclick="onAdminBranchViewChange('${b.id}')" style="background:var(--pt-cream); border:1px solid var(--pt-gold); color:var(--pt-navy); font-size:10.5px; font-weight:800; padding:5px 9px; cursor:pointer;">ŞUBE EKRANINI GÖR</button>
@@ -2634,18 +3105,45 @@
 
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
               <div>
-                <label class="pt-form-label" style="font-size:10px;">İl / Şehir</label>
-                <input type="text" id="br-city-${b.id}" class="pt-form-input" style="padding:7px 10px; font-size:13px;" value="${b.city || ''}" />
+                <label class="pt-form-label" style="font-size:10px;">İl / Şehir (81 İl)</label>
+                <select id="br-city-${b.id}" class="pt-form-select" style="padding:7px 10px; font-size:13px;" onchange="onExistingBranchCitySelectChange('${b.id}', this.value)">
+                  ${cityOptionsHtml}
+                </select>
               </div>
               <div>
-                <label class="pt-form-label" style="font-size:10px;">İlçe</label>
+                <label class="pt-form-label" style="font-size:10px;">İlçe / Bölge Başlığı</label>
                 <input type="text" id="br-dist-${b.id}" class="pt-form-input" style="padding:7px 10px; font-size:13px;" value="${b.district || ''}" />
               </div>
             </div>
 
-            <div>
-              <label class="pt-form-label" style="font-size:10px; color:var(--pt-olive);">Sorumlu Olduğu Mahalleler (${(b.neighborhoods || []).length} Mahalle — Virgülle Ayırın)</label>
-              <textarea id="br-neigh-${b.id}" class="pt-form-textarea" rows="3" style="padding:8px 10px; font-size:12px; font-weight:600;">${neighStr}</textarea>
+            <!-- Sorumlu Mahalleler Görsel Kutusu + Akıllı Seçim & Devir Matrisi Açıcı -->
+            <div style="background:#F8FAFC; border:1.5px solid var(--pt-olive); padding:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                <span style="font-size:10.5px; font-weight:800; color:var(--pt-navy); text-transform:uppercase;">
+                  📍 SORUMLU OLDUĞU MAHALLELER (KUTUCUKLU SEÇİM &amp; OTOMATİK DEVİR)
+                </span>
+                <span id="br-hood-count-badge-${b.id}" class="pt-badge pt-badge-olive" style="font-size:10px;">
+                  ${hoods.length} Sorumlu Mahalle Seçili
+                </span>
+              </div>
+
+              <div id="br-hood-preview-${b.id}" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;">
+                ${hoods.length > 0
+                  ? hoods.slice(0, 12).map(x => `<span style="background:#EDF7ED; border:1px solid var(--pt-olive); color:var(--pt-olive-dark); padding:2px 7px; border-radius:4px; font-size:11px; font-weight:700;">✓ ${x} Mah.</span>`).join(" ") +
+                    (hoods.length > 12 ? ` <span style="font-size:11px; font-weight:800; color:var(--pt-navy);">+${hoods.length - 12} mahalle daha</span>` : "")
+                  : `<span style="color:#A61B1B; font-size:12px; font-weight:700;">⚠️ Henüz sorumlu mahalle seçilmedi.</span>`}
+              </div>
+
+              <button type="button"
+                id="br-matrix-toggle-btn-${b.id}"
+                onclick="toggleBranchMatrixExpand('${b.id}')"
+                style="width:100%; background:var(--pt-navy); color:#fff; border:1px solid var(--pt-gold); padding:9px 12px; font-size:11px; font-weight:800; cursor:pointer; letter-spacing:0.06em;">
+                ${isExpanded ? "▲ MAHALLE SEÇİM & DEVİR PANELİNİ KAPAT" : "🗺️ MAHALLE SEÇİM & ŞUBE DEVİR PANELİNİ AÇ (KUTUCUKLARLA DÜZENLE)"}
+              </button>
+
+              <div id="br-matrix-collapse-${b.id}" style="display:${isExpanded ? 'block' : 'none'}; margin-top:10px;">
+                <div id="br-smart-matrix-${b.id}"></div>
+              </div>
             </div>
 
             <!-- Şubeye Özel Bağımsız Adisyo Programı & API Bilgileri -->
@@ -2711,6 +3209,12 @@
           </div>
         `;
       }).join("");
+
+      branches.forEach(b => {
+        if (branchMatrixExpanded[b.id]) {
+          renderSmartNeighborhoodMatrix(b.id);
+        }
+      });
     }
 
     function saveBranchConfig(branchId) {
@@ -2720,7 +3224,6 @@
 
       const cityEl = document.getElementById(`br-city-${branchId}`);
       const distEl = document.getElementById(`br-dist-${branchId}`);
-      const neighEl = document.getElementById(`br-neigh-${branchId}`);
       const adisyoEl = document.getElementById(`br-adisyo-${branchId}`);
       const adisyoConsEl = document.getElementById(`br-adisyo-consumer-${branchId}`);
       const adisyoKeyEl = document.getElementById(`br-adisyo-key-${branchId}`);
@@ -2730,11 +3233,21 @@
       const addrEl = document.getElementById(`br-addr-${branchId}`);
       const actEl = document.getElementById(`br-active-${branchId}`);
 
-      if (cityEl) b.city = cityEl.value.trim();
-      if (distEl) b.district = distEl.value.trim();
-      if (neighEl) {
-        b.neighborhoods = neighEl.value.split(",").map(s => s.trim()).filter(Boolean);
+      const newCity = cityEl ? cityEl.value.trim() : (b.city || "Adana");
+      b.city = newCity;
+
+      const selectedNeighborhoods = branchMatrixDrafts[branchId]
+        ? getDraftSelectedArray(branchId)
+        : (Array.isArray(b.neighborhoods) ? b.neighborhoods : []);
+
+      const transferResult = CokertmeStore.assignNeighborhoodsWithAutoTransfer(branchId, newCity, selectedNeighborhoods, state);
+
+      if (distEl && distEl.value.trim()) {
+        b.district = distEl.value.trim();
+      } else {
+        b.district = computeSelectedDistrictsSummary(newCity, transferResult.finalNeighborhoods) || b.district || "Merkez";
       }
+
       if (adisyoEl) b.adisyoBranchCode = adisyoEl.value.trim();
       if (adisyoConsEl) b.adisyoConsumerId = adisyoConsEl.value.trim();
       if (adisyoKeyEl) b.adisyoApiKey = adisyoKeyEl.value.trim();
@@ -2749,7 +3262,12 @@
 
       CokertmeStore.saveState(state);
       renderAdminAll();
-      alert(`✓ "${b.name}" sorumlu mahalleleri, şubeye özel Adisyo API anahtarları ve yönetici bilgileri güncellendi!`);
+
+      const transferMsg = transferResult.transferredList.length > 0
+        ? `\n\n🔄 OTOMATİK ŞUBE DEVRİ: ${transferResult.transferredList.length} mahalle (${transferResult.transferredList.slice(0, 6).map(x => x.neighborhood).join(", ")}${transferResult.transferredList.length > 6 ? "..." : ""}) diğer şubeden otomatik düşülerek "${b.name}" şubesine devredildi (%0 çakışma).`
+        : "";
+
+      alert(`✓ "${b.name}" (${transferResult.finalNeighborhoods.length} sorumlu mahalle), şubeye özel Adisyo API anahtarları ve yönetici bilgileri güncellendi!${transferMsg}`);
     }
 
     async function testBranchAdisyoConnection(branchId) {

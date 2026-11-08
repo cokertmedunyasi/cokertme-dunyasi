@@ -819,6 +819,209 @@ const DEFAULT_ITEM_SKU_MAP = {
   "item-1792324580399": "IKR-KAHVE-01"
 };
 
+const TURKEY_PROVINCES_81 = [
+  "Adana", "Adıyaman", "Afyonkarahisar", "Ağrı", "Aksaray", "Amasya", "Ankara", "Antalya", "Ardahan", "Artvin",
+  "Aydın", "Balıkesir", "Bartın", "Batman", "Bayburt", "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur",
+  "Bursa", "Çanakkale", "Çankırı", "Çorum", "Denizli", "Diyarbakır", "Düzce", "Edirne", "Elazığ", "Erzincan",
+  "Erzurum", "Eskişehir", "Gaziantep", "Giresun", "Gümüşhane", "Hakkari", "Hatay", "Iğdır", "Isparta", "İstanbul",
+  "İzmir", "Kahramanmaraş", "Karabük", "Karaman", "Kars", "Kastamonu", "Kayseri", "Kırıkkale", "Kırklareli", "Kırşehir",
+  "Kilis", "Kocaeli", "Konya", "Kütahya", "Malatya", "Manisa", "Mardin", "Mersin", "Muğla", "Muş",
+  "Nevşehir", "Niğde", "Ordu", "Osmaniye", "Rize", "Sakarya", "Samsun", "Siirt", "Sinop", "Sivas",
+  "Şanlıurfa", "Şırnak", "Tekirdağ", "Tokat", "Trabzon", "Tunceli", "Uşak", "Van", "Yalova", "Yozgat", "Zonguldak",
+  "Berlin"
+];
+
+const TURKEY_CITY_DISTRICT_NEIGHBORHOODS = {
+  "Adana": {
+    "Çukurova": [
+      "Güzelyalı", "Gürselpaşa", "Mahfesığmaz", "Toros", "Yurt", "Huzurevleri", "Yüzüncüyıl",
+      "Belediyeevleri", "Beyazevler", "Karslılar", "Şambayadı", "Kabaktepe", "Yeni Mahalle",
+      "Esentepe", "Süleyman Demirel", "Turgut Özal", "Kenan Evren", "Çukurova", "Kurttepe"
+    ],
+    "Seyhan": [
+      "Yenibaraj", "Barajyolu", "Reşatbey", "Cemalpaşa", "Kurtuluş", "Ziyapaşa", "Gazipaşa",
+      "Çınarlı", "Sümer", "Pınar", "Demirköprü", "Döşeme", "Türkmenbaşı", "Tellidere",
+      "Mavi Bulvar", "Fatih", "Kıyıboyu", "Vali Yolu", "Aliya İzzetbegoviç", "Yeşilyurt",
+      "Gülbahçesi", "Fevzipaşa", "Namık Kemal", "Yeşilevler"
+    ],
+    "Sarıçam": [
+      "Balcalı", "Gültepe", "Osmangazi", "Orhangazi", "Yeşiltepe", "Boynuyoğun",
+      "Mehmet Akif Ersoy", "Şahintepe", "Yavuz Sultan Selim", "İncirlik", "Suluca",
+      "Sarıçam", "Kozan Yolu", "Yıldırım Beyazıt", "Estergon", "Remzi Oğuz Arık"
+    ],
+    "Yüreğir": [
+      "Atakent", "Dadaloğlu", "Kazım Karabekir", "Kiremithane", "Köprülü", "Levent",
+      "Mutlu", "PTT Evleri", "Serinevler", "Sinanpaşa", "Yamaçlı", "Yavuzlar", "19 Mayıs"
+    ]
+  },
+  "Mersin": {
+    "Yenişehir": [
+      "Pozcu", "Cumhuriyet", "Barbaros", "Eğriçam", "Akkent", "Güvenevler", "Bahçelievler",
+      "Çiftlikköy", "Aydınlıkevler", "Gazi", "Dumlupınar", "İnönü", "Palmiye", "Pirireis",
+      "Hürriyet", "Menteş", "Batıkent", "Fuatmorel", "Limonluk", "50. Yıl"
+    ],
+    "Mezitli": [
+      "Viranşehir", "Yeni Mahalle (Mezitli)", "Fatih (Mezitli)", "Merkez (Mezitli)",
+      "Atatürk (Mezitli)", "Davultepe", "Tece", "Kuyuluk", "Menderes", "Akdeniz (Mezitli)",
+      "Çamlıca", "Çankaya (Mezitli)", "Eski Mezitli", "İstiklal", "75. Yıl", "Şahin Tepesi"
+    ],
+    "Toroslar": [
+      "Akbelen", "Alsancak", "Arpaçsakarlar", "Çukurova (Toroslar)", "Güneykent", "Halkkent",
+      "Mevlana", "Mithat Toroğlu", "Sağlık", "Tozkoparan", "Yalınayak", "Yusuf Kılıç",
+      "Zeki Ayan", "Çağdaşkent"
+    ],
+    "Akdeniz": [
+      "Çankaya", "Camişerif", "İhsaniye", "Kültür", "Mahmudiye", "Mesudiye", "Nusratiye",
+      "Özgürlük", "Şevketsümer", "Siteler", "Turgutreis", "Üçocak"
+    ],
+    "Tarsus & Erdemli": [
+      "Şehitishak (Tarsus)", "Kırklarsırtı (Tarsus)", "Yeni Ömerli (Tarsus)", "Altaylılar (Tarsus)",
+      "Atatürk (Erdemli)", "Merkez (Erdemli)", "Alata (Erdemli)", "Tömük", "Çeşmeli", "Kargıpınarı", "Kızkalesi"
+    ]
+  },
+  "İstanbul": {
+    "Kadıköy": [
+      "Suadiye", "Bostancı", "Caddebostan", "Erenköy", "Fenerbahçe", "Göztepe", "Feneryolu",
+      "Kozyatağı", "Moda", "Caferağa", "Osmanağa", "Acıbadem", "Koşuyolu", "Sahrayıcedid", "19 Mayıs"
+    ],
+    "Beşiktaş": [
+      "Etiler", "Levent", "Bebek", "Arnavutköy", "Ortaköy", "Yıldız", "Sinanpaşa", "Türkali",
+      "Vişnezade", "Cihannüma", "Akatlar", "Ulus", "Gayrettepe", "Dikilitaş", "Balmumcu"
+    ],
+    "Şişli & Beyoğlu": [
+      "Teşvikiye (Nişantaşı)", "Meşrutiyet", "Fulya", "Esentepe", "Mecidiyeköy", "Bomonti",
+      "Cihangir", "Karaköy", "Gümüşsuyu", "Galata", "Asmalımescit"
+    ],
+    "Ataşehir & Üsküdar": [
+      "Atatürk (Ataşehir)", "Barbaros (Ataşehir)", "Küçükbakkalköy", "İçerenköy", "Batı Ataşehir",
+      "Altunizade", "Kuzguncuk", "Çengelköy", "Beylerbeyi", "Mimar Sinan"
+    ],
+    "Bakırköy & Sarıyer": [
+      "Yeşilköy", "Florya", "Ataköy", "Zuhuratbaba", "İncirli", "İstinye", "Tarabya",
+      "Yeniköy", "Emirgan", "Zekeriyaköy", "Maslak", "Ayazağa"
+    ]
+  },
+  "Muğla": {
+    "Bodrum": [
+      "Çarşı", "Türkkuyusu", "Kumbahçe", "Yokuşbaşı", "Gümbet", "Bitez", "Ortakent",
+      "Yalıkavak", "Turgutreis", "Gündoğan", "Göltürkbükü", "Konacık", "Torba", "Akyarlar"
+    ],
+    "Fethiye & Marmaris": [
+      "Cumhuriyet (Fethiye)", "Tuzla", "Taşyaka", "Foça (Çalış)", "Ölüdeniz", "Göcek",
+      "Armutalan (Marmaris)", "Siteler (Marmaris)", "Tepe", "Kemeraltı", "İçmeler"
+    ],
+    "Menteşe & Milas": [
+      "Emirbeyazıt", "Muslihittin", "Kötekli", "Orhaniye", "Cumhuriyet (Milas)", "Güllük", "Ören"
+    ]
+  },
+  "Ankara": {
+    "Çankaya": [
+      "Bahçelievler", "Emek", "Kızılay", "Tunalı (Kavaklıdere)", "Gaziosmanpaşa", "Çayyolu",
+      "Ümitköy", "Yaşamkent", "Balgat", "Çukurambar", "Söğütözü", "Mustafa Kemal",
+      "Yıldız", "Oran", "Ayrancı", "Birlik", "Bilkent"
+    ],
+    "Yenimahalle & Etimesgut": [
+      "Batıkent", "Çakırlar", "Demetevler", "Beştepe", "Gazi", "Eryaman", "Elvankent", "Bağlıca", "Göksu"
+    ],
+    "Keçiören & Gölbaşı": [
+      "Etlik", "İncirli", "Subayevleri", "Ovacık", "İncek", "Bahçelievler (Gölbaşı)"
+    ]
+  },
+  "İzmir": {
+    "Konak & Karşıyaka": [
+      "Alsancak", "Göztepe", "Güzelyalı (İzmir)", "Hatay", "Kültür", "Bostanlı",
+      "Mavişehir", "Atakent", "Donanmacı", "Aksoy", "Alaybey"
+    ],
+    "Bornova & Bayraklı": [
+      "Özkanlar", "Küçükpark", "Erzene", "Kazımdirik", "Evka-3", "Manavkuyu", "Mansuroğlu", "Adalet"
+    ],
+    "Çeşme & Urla & Güzelbahçe": [
+      "Alaçatı", "Ilıca", "Çeşme Merkez", "Dalyan", "İskele (Urla)", "Yalı (Güzelbahçe)"
+    ]
+  },
+  "Antalya": {
+    "Muratpaşa": [
+      "Lara", "Şirinyalı", "Fener", "Çağlayan", "Güzeloba", "Meltem", "Bahçelievler (Antalya)",
+      "Kızılsaray", "Zerdalilik", "Gençlik (Işıklar)", "Meydankavağı", "Kırcami"
+    ],
+    "Konyaaltı": [
+      "Liman", "Hurma", "Gürsu", "Uncalı", "Altınkum", "Arapsuyu", "Sarısu", "Molla Yusuf", "Pınarbaşı"
+    ],
+    "Kepez & Alanya": [
+      "Kültür (Kepez)", "Gülveren", "Varsak", "Ahatlı", "Oba (Alanya)", "Mahmutlar", "Kleopatra (Saray)"
+    ]
+  },
+  "Gaziantep": {
+    "Şehitkamil": [
+      "İbrahimli", "Batıkent (Gaziantep)", "Güvenevler (Gaziantep)", "Emek (Gaziantep)",
+      "Fatih (Gaziantep)", "Pancarlı", "Sarıgüllük", "Osmangazi", "Fıstıklık", "15 Temmuz"
+    ],
+    "Şahinbey": [
+      "Karataş", "Akkent (Gaziantep)", "Yeditepe", "Beşyüzevler", "Binevler", "Üniversite", "Mavikent"
+    ]
+  },
+  "Hatay": {
+    "İskenderun & Arsuz": [
+      "Mustafa Kemal", "Cumhuriyet (İskenderun)", "Savaş", "Çay", "Numune", "Pınarbaşı",
+      "Denizciler", "Karaağaç", "Arsuz Merkez"
+    ],
+    "Antakya & Defne": [
+      "Sümerler", "Harbiye", "Akdeniz (Defne)", "Çekmece", "Cebrail", "Saraykent", "Ekinci", "Odabaşı"
+    ]
+  },
+  "Osmaniye": {
+    "Merkez & Kadirli": [
+      "Alibeyli", "Cumhuriyet", "Fakıuşağı (Üniversite)", "Raufbey", "Rahime Hatun",
+      "Yediocak", "Adnan Menderes", "Esenevler", "Kadirli Merkez"
+    ]
+  },
+  "Kahramanmaraş": {
+    "Onikişubat & Dulkadiroğlu": [
+      "Binevler", "Haydarbey", "Üngüt", "Boğaziçi", "Yirmiikigün", "Tekerek", "Abdulhamithan",
+      "Şazi Bey", "Hürriyet", "Yavuz Selim", "Trabzon Bulvarı"
+    ]
+  },
+  "Kayseri": {
+    "Melikgazi & Kocasinan": [
+      "Alpaslan", "Köşk", "Gültepe", "Yıldırım Beyazıt", "Cumhuriyet", "Bahçelievler", "Talas (Mevlana)",
+      "Talas (Bahçelievler)", "Erciyesevler", "Sümer", "Mimarsinan"
+    ]
+  },
+  "Konya": {
+    "Selçuklu & Meram": [
+      "Bosna Hersek", "Yazır", "Şefik Can", "Feritpaşa", "İhsaniye", "Havzan", "Ahatlı",
+      "Melikşah", "Konevi", "Sancak", "Binkonutlar"
+    ]
+  },
+  "Bursa": {
+    "Nilüfer & Osmangazi": [
+      "Özlüce", "FSM Bulvarı (İhsaniye)", "Görükle", "Beşevler", "Ataevler", "Balat",
+      "Bademli", "Çekirge", "Kükürtlü", "Heykel"
+    ]
+  },
+  "Berlin": {
+    "Berlin Merkez": [
+      "Mitte", "Kreuzberg", "Charlottenburg", "Friedrichshain", "Neukölln", "Prenzlauer Berg"
+    ]
+  }
+};
+
+function buildDefaultCityDistrictMap(cityName) {
+  const cleanCity = String(cityName || "Adana").trim();
+  const matchedKey = Object.keys(TURKEY_CITY_DISTRICT_NEIGHBORHOODS).find(
+    k => k.toLocaleLowerCase("tr-TR") === cleanCity.toLocaleLowerCase("tr-TR")
+  );
+  if (matchedKey) {
+    return JSON.parse(JSON.stringify(TURKEY_CITY_DISTRICT_NEIGHBORHOODS[matchedKey]));
+  }
+  return {
+    [`${cleanCity} Merkez`]: [
+      "Cumhuriyet", "Atatürk", "Yeni Mahalle", "Bahçelievler", "Fatih",
+      "Hürriyet", "İstiklal", "Zafer", "Kültür", "Üniversite", "Çarşı", "Merkez"
+    ]
+  };
+}
+
 function resolveDefaultAdisyoSku(item) {
   if (!item) return "CKR-URUN";
   if (item.adisyoSku && String(item.adisyoSku).trim()) return String(item.adisyoSku).trim();
@@ -871,32 +1074,50 @@ function sanitizeAndMergeState(parsed) {
     defaultBranchMap[db.id] = db;
   });
 
+  const otherAdanaOwnedHoods = new Set();
+  if (Array.isArray(parsed.branches)) {
+    parsed.branches.forEach(b => {
+      if (!b || !b.id || b.id === "adana-merkez" || b.id === "adana-gurselpasa" || b.id === "adana-saricam") return;
+      if (String(b.city || "").trim().toLocaleLowerCase("tr-TR") === "adana" && Array.isArray(b.neighborhoods)) {
+        b.neighborhoods.forEach(nh => {
+          const k = String(nh || "").trim().toLocaleLowerCase("tr-TR");
+          if (k) otherAdanaOwnedHoods.add(k);
+        });
+      }
+    });
+  }
+
   let mergedBranches = Array.isArray(parsed.branches) && parsed.branches.length > 0
     ? parsed.branches
         .filter(b => b && b.id !== "adana-gurselpasa" && b.id !== "adana-saricam")
         .map(b => {
           if (!b || !b.id) return b;
           const defB = defaultBranchMap[b.id] || {};
-          let combinedNeighborhoods = Array.isArray(b.neighborhoods) && b.neighborhoods.length > 0
+          let combinedNeighborhoods = Array.isArray(b.neighborhoods)
             ? [...b.neighborhoods]
             : [...(defB.neighborhoods || [])];
 
-          if (b.id === "adana-merkez" && Array.isArray(defB.neighborhoods)) {
+          if (b.id === "adana-merkez" && !b.neighborhoodsConfiguredV2 && Array.isArray(defB.neighborhoods)) {
             const seenH = new Set(combinedNeighborhoods.map(x => String(x || "").trim().toLocaleLowerCase("tr-TR")));
             defB.neighborhoods.forEach(dh => {
               const key = String(dh || "").trim().toLocaleLowerCase("tr-TR");
-              if (key && !seenH.has(key)) {
+              if (key && !seenH.has(key) && !otherAdanaOwnedHoods.has(key)) {
                 seenH.add(key);
                 combinedNeighborhoods.push(dh);
               }
             });
+          }
+          if (b.id === "adana-merkez" && otherAdanaOwnedHoods.size > 0) {
+            combinedNeighborhoods = combinedNeighborhoods.filter(
+              nh => !otherAdanaOwnedHoods.has(String(nh || "").trim().toLocaleLowerCase("tr-TR"))
+            );
           }
 
           const upgraded = {
             ...defB,
             ...b,
             neighborhoods: combinedNeighborhoods,
-            district: b.id === "adana-merkez" ? "Seyhan / Çukurova / Sarıçam" : (b.district || defB.district || "Merkez"),
+            district: b.id === "adana-merkez" ? (b.district || "Seyhan / Çukurova / Sarıçam") : (b.district || defB.district || "Merkez"),
             adminUsername: b.adminUsername || defB.adminUsername || b.id,
             adminPassword: b.adminPassword || defB.adminPassword || "Cokertme123.",
             adisyoBranchCode: b.adisyoBranchCode || defB.adisyoBranchCode || b.id.toUpperCase(),
@@ -1122,7 +1343,10 @@ function sanitizeAndMergeState(parsed) {
           ? parsed.integrationSettings.courier.companies
           : DEFAULT_COKERTME_DATA.integrationSettings.courier.companies
       }
-    }
+    },
+    customNeighborhoodCatalog: (parsed.customNeighborhoodCatalog && typeof parsed.customNeighborhoodCatalog === "object")
+      ? parsed.customNeighborhoodCatalog
+      : {}
   };
 
   if (merged.categories && !merged.categories.some(c => c.id === "ikramlar")) {
@@ -1138,6 +1362,141 @@ function sanitizeAndMergeState(parsed) {
 const CokertmeStore = {
   normalizePhone(phoneStr) {
     return normalizePhone10(phoneStr);
+  },
+
+  getAllProvinces() {
+    return [...TURKEY_PROVINCES_81];
+  },
+
+  getCityDistrictNeighborhoodMap(cityName, stateOverride) {
+    const st = stateOverride || this.getState();
+    const cleanCity = String(cityName || "Adana").trim();
+    const normCity = cleanCity.toLocaleLowerCase("tr-TR");
+    const distMap = buildDefaultCityDistrictMap(cleanCity);
+
+    const seenLower = new Set();
+    Object.values(distMap).forEach(arr => {
+      (arr || []).forEach(n => seenLower.add(String(n || "").trim().toLocaleLowerCase("tr-TR")));
+    });
+
+    // Özel eklenen mahalleleri birleştir
+    const customCat = (st && st.customNeighborhoodCatalog) || {};
+    const customCityKey = Object.keys(customCat).find(k => k.toLocaleLowerCase("tr-TR") === normCity);
+    if (customCityKey && customCat[customCityKey] && typeof customCat[customCityKey] === "object") {
+      Object.entries(customCat[customCityKey]).forEach(([dName, list]) => {
+        if (!distMap[dName]) distMap[dName] = [];
+        (Array.isArray(list) ? list : []).forEach(nh => {
+          const clean = String(nh || "").trim();
+          const low = clean.toLocaleLowerCase("tr-TR");
+          if (clean && !seenLower.has(low)) {
+            seenLower.add(low);
+            distMap[dName].push(clean);
+          }
+        });
+      });
+    }
+
+    // O ildeki şubelerde kayıtlı olup katalogda henüz yer almayan mahalleleri de koru
+    const branches = Array.isArray(st && st.branches) ? st.branches : [];
+    const firstDistKey = Object.keys(distMap)[0] || `${cleanCity} Merkez`;
+    if (!distMap[firstDistKey]) distMap[firstDistKey] = [];
+    branches.forEach(b => {
+      if (!b || String(b.city || "").trim().toLocaleLowerCase("tr-TR") !== normCity) return;
+      (Array.isArray(b.neighborhoods) ? b.neighborhoods : []).forEach(nh => {
+        const clean = String(nh || "").trim();
+        const low = clean.toLocaleLowerCase("tr-TR");
+        if (clean && !seenLower.has(low)) {
+          seenLower.add(low);
+          distMap[firstDistKey].push(clean);
+        }
+      });
+    });
+
+    // Her ilçenin mahallelerini A-Z sırala
+    Object.keys(distMap).forEach(dKey => {
+      distMap[dKey].sort((a, b) => a.localeCompare(b, "tr-TR"));
+    });
+
+    return distMap;
+  },
+
+  addCustomNeighborhoodToCatalog(cityName, districtName, neighborhoodName) {
+    const cleanCity = String(cityName || "Adana").trim();
+    const cleanDist = String(districtName || `${cleanCity} Merkez`).trim();
+    const cleanHood = String(neighborhoodName || "").replace(/\s*Mah\.?$/i, "").trim();
+    if (!cleanHood) return null;
+
+    const state = this.getState();
+    if (!state.customNeighborhoodCatalog || typeof state.customNeighborhoodCatalog !== "object") {
+      state.customNeighborhoodCatalog = {};
+    }
+    if (!state.customNeighborhoodCatalog[cleanCity]) {
+      state.customNeighborhoodCatalog[cleanCity] = {};
+    }
+    if (!Array.isArray(state.customNeighborhoodCatalog[cleanCity][cleanDist])) {
+      state.customNeighborhoodCatalog[cleanCity][cleanDist] = [];
+    }
+    const exists = state.customNeighborhoodCatalog[cleanCity][cleanDist].some(
+      x => String(x || "").toLocaleLowerCase("tr-TR") === cleanHood.toLocaleLowerCase("tr-TR")
+    );
+    if (!exists) {
+      state.customNeighborhoodCatalog[cleanCity][cleanDist].push(cleanHood);
+    }
+    this.saveState(state);
+    return cleanHood;
+  },
+
+  assignNeighborhoodsWithAutoTransfer(targetBranchId, cityName, selectedNeighborhoodsArray, stateOverride) {
+    const state = stateOverride || this.getState();
+    const branches = Array.isArray(state.branches) ? state.branches : [];
+    const normCity = String(cityName || "Adana").trim().toLocaleLowerCase("tr-TR");
+
+    const seenSelected = new Set();
+    const finalNeighborhoods = [];
+    (Array.isArray(selectedNeighborhoodsArray) ? selectedNeighborhoodsArray : []).forEach(nh => {
+      const clean = String(nh || "").replace(/\s*Mah\.?$/i, "").trim();
+      const low = clean.toLocaleLowerCase("tr-TR");
+      if (clean && !seenSelected.has(low)) {
+        seenSelected.add(low);
+        finalNeighborhoods.push(clean);
+      }
+    });
+
+    const transferredList = [];
+    branches.forEach(b => {
+      if (!b || b.id === targetBranchId) return;
+      if (String(b.city || "").trim().toLocaleLowerCase("tr-TR") !== normCity) return;
+      const currentList = Array.isArray(b.neighborhoods) ? b.neighborhoods : [];
+      const remaining = [];
+      currentList.forEach(nh => {
+        const clean = String(nh || "").trim();
+        const low = clean.toLocaleLowerCase("tr-TR");
+        if (seenSelected.has(low)) {
+          transferredList.push({
+            neighborhood: clean,
+            fromBranchId: b.id,
+            fromBranchName: b.name
+          });
+        } else {
+          remaining.push(clean);
+        }
+      });
+      if (remaining.length !== currentList.length) {
+        b.neighborhoods = remaining;
+        b.neighborhoodsConfiguredV2 = true;
+      }
+    });
+
+    const targetBranch = branches.find(b => b && b.id === targetBranchId);
+    if (targetBranch) {
+      targetBranch.neighborhoods = finalNeighborhoods;
+      targetBranch.neighborhoodsConfiguredV2 = true;
+    }
+
+    return {
+      finalNeighborhoods,
+      transferredList
+    };
   },
 
   resolveBranchByLocation(cityStr, districtStr, neighborhoodStr, stateOverride) {
