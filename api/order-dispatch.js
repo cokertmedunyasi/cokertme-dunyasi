@@ -86,6 +86,8 @@ module.exports = async function handler(req, res) {
           : "QNB Finansbank / Beko ÖKC",
         subtotalTRY: order.subtotal,
         discountTRY: order.discount,
+        deliveryFeeTRY: Number(order.deliveryFee) || 0,
+        deliveryServiceSku: Number(order.deliveryFee) > 0 ? "CKR-KURYE-PAKET" : null,
         netTotalTRY: order.total,
         autoEArchiveInvoice: adisyoCfg.accountingEInvoiceSync !== false
       },
@@ -102,13 +104,14 @@ module.exports = async function handler(req, res) {
         prepTimeMinutes: prepMinutes,
         estimatedReadyAt: order.estimatedReadyAt
       },
-      items: order.items
+      items: order.items,
+      orderItemsDetailed: Array.isArray(order.orderItemsDetailed) ? order.orderItemsDetailed : []
     };
 
     // 2. Kurye Firması API Paketi (0. Saniyede Anında Bildirim + Kaç Dk Sonra Hazır Olacağı)
     const courierPayload = {
       orderId: order.id,
-      restaurantBranch: order.branch || "Çökertme Dünyası Adana Seyhan Merkez",
+      restaurantBranch: order.branch || "Adana Barajyolu Şubesi",
       orderCreatedAt: order.createdAt,
       prepTimeMinutes: prepMinutes,
       estimatedReadyAt: order.estimatedReadyAt,
@@ -132,6 +135,9 @@ module.exports = async function handler(req, res) {
     const results = {
       adisyoDispatched: false,
       courierDispatched: false,
+      effectiveBranchCode: effectiveBranchCode,
+      effectiveConsumerId: effectiveConsumerId,
+      hasCustomBranchKey: Boolean(effectiveAdisyoKey),
       prepTimeMinutes: prepMinutes,
       courierCompany: activeCourier.name,
       timestamp: new Date().toISOString()

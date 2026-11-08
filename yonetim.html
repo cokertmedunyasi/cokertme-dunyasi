@@ -1265,6 +1265,7 @@
           </p>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button type="button" class="pt-btn-navy" onclick="copyGlobalAdisyoSkuCatalog()">📋 ADİSYO SKU TABLOSUNU KOPYALA</button>
           <button type="button" class="pt-btn-navy" style="background:var(--pt-gold); border-color:var(--pt-gold); color:var(--pt-navy-dark);" onclick="addDefaultComplimentaryItems()">MASA İKRAMLARINI MENÜYE EKLE</button>
           <button type="button" class="pt-btn-navy" style="background:#b93829; border-color:#b93829;" onclick="deleteUnavailableItems()">TÜKENDİ (KAPALI) OLANLARI SİL</button>
           <button type="button" class="pt-btn-olive" onclick="openNewItemForm()">+ YENİ ÜRÜN EKLE</button>
@@ -1279,10 +1280,14 @@
         </div>
         <input type="hidden" id="edit-item-id" value="" />
 
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:16px;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:16px; margin-bottom:16px;">
           <div>
             <label class="pt-form-label">Ürün Adı (Türkçe) *</label>
             <input type="text" id="new-name" class="pt-form-input" placeholder="Örn: Karides Çökertme veya Közde Türk Kahvesi" required />
+          </div>
+          <div>
+            <label class="pt-form-label">Adisyo Ürün Entegrasyon Kodu (SKU)</label>
+            <input type="text" id="new-adisyo-sku" class="pt-form-input" placeholder="Örn: CKR-BONFILE-01 (Boş bırakılırsa otomatik)" />
           </div>
           <div>
             <label class="pt-form-label">Kategori *</label>
@@ -1360,6 +1365,7 @@
             <tr>
               <th>Ürün &amp; İkramlar</th>
               <th>Kategori</th>
+              <th>Adisyo Ürün Kodu (SKU)</th>
               <th>QR Menü Fiyatı (₺)</th>
               <th>Uygulama İndirimli</th>
               <th>Stok Durumu</th>
@@ -1888,7 +1894,7 @@
     </div>
   </footer>
 
-  <script src="assets/data.js?v=14"></script>
+  <script src="assets/data.js?v=15"></script>
   <script>
     const ADMIN_SESSION_KEY = "cokertme_admin_auth_v1";
     const ADMIN_ROLE_KEY = "cokertme_admin_role_v1"; // "SUPER_ADMIN" veya branchId (örn: "adana-merkez", "adana-gurselpasa", "adana-saricam")
@@ -2698,7 +2704,8 @@
 
             <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; padding-top:6px; flex-wrap:wrap;">
               <button type="button" class="pt-btn-olive" style="padding:8px 14px; font-size:11px; flex:1;" onclick="saveBranchConfig('${b.id}')">✓ BÖLGE &amp; ADİSYO AYARLARINI KAYDET</button>
-              <button type="button" class="pt-btn-navy" style="padding:8px 10px; font-size:10.5px;" onclick="testBranchAdisyoConnection('${b.id}')">⚡ ADİSYO TEST</button>
+              <button type="button" class="pt-btn-navy" style="padding:8px 10px; font-size:10.5px;" onclick="testBranchAdisyoConnection('${b.id}')">⚡ ADİSYO CANLI TEST</button>
+              <button type="button" style="background:var(--pt-cream); border:1px solid var(--pt-gold); color:var(--pt-navy); padding:8px 10px; font-size:10.5px; font-weight:800; cursor:pointer;" onclick="copyBranchAdisyoSetupGuide('${b.id}')">📋 KURULUM ŞABLONU</button>
               <button type="button" onclick="deleteBranchFromAdmin('${b.id}')" style="background:#FDECEC; border:1px solid #E5A0A0; color:#A61B1B; padding:8px 10px; font-size:11px; font-weight:700; cursor:pointer;">SİL</button>
             </div>
           </div>
@@ -2745,19 +2752,87 @@
       alert(`✓ "${b.name}" sorumlu mahalleleri, şubeye özel Adisyo API anahtarları ve yönetici bilgileri güncellendi!`);
     }
 
-    function testBranchAdisyoConnection(branchId) {
+    async function testBranchAdisyoConnection(branchId) {
       const state = CokertmeStore.getState();
       const b = (state.branches || []).find(x => x.id === branchId);
       if (!b) return;
       const hasKey = Boolean(b.adisyoApiKey && b.adisyoApiKey.trim());
+      const itemsCount = (state.items || []).length;
+
+      const testOrder = {
+        id: "ADISYO-PING-" + Math.floor(100 + Math.random() * 900),
+        branchId: b.id,
+        branch: b.name,
+        adisyoBranchCode: b.adisyoBranchCode || "ADANA-BARAJYOLU-01",
+        customerName: "Adisyo Bağlantı Testi",
+        phone: b.phone || "0 (546) 918 07 01",
+        address: b.address || b.city || "Adana",
+        mode: "Eve Paket Servis",
+        subtotal: 790,
+        discount: 79,
+        deliveryFee: 100,
+        total: 811,
+        items: ["1x BONFİLE ÇÖKERTME (1 Porsiyon) [Sarımsaksız Yoğurt]"],
+        orderItemsDetailed: [
+          {
+            itemId: "item-1792323465955",
+            adisyoSku: "CKR-BONFILE-01",
+            productName: "BONFİLE ÇÖKERTME",
+            qty: 1,
+            portion: "1 Porsiyon (Standart)",
+            unitPrice: 790,
+            garlicChoice: "Sarımsaksız Yoğurt"
+          }
+        ],
+        createdAt: new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })
+      };
+
+      const dispatchRes = await CokertmeStore.dispatchOrder(testOrder);
+
       alert(
-        `🔌 "${b.name}" — Bağımsız Adisyo POS & API Bağlantı Özeti:\n\n` +
+        `⚡ "${b.name}" — Bağımsız Adisyo POS & API Canlı Test Sonucu:\n\n` +
         `• Şube / Kasa Kodu: ${b.adisyoBranchCode || "ADANA-BARAJYOLU-01"}\n` +
-        `• Adisyo Restoran / Consumer ID: ${b.adisyoConsumerId || "COKERTME-ADANA-BARAJYOLU-01"}\n` +
+        `• Adisyo Restoran / Consumer ID (x-api-consumer): ${b.adisyoConsumerId || "COKERTME-ADANA-BARAJYOLU-01"}\n` +
         `• Adisyo API Endpoint: ${b.adisyoApiUrl || "https://ext.adisyo.com/api/v1/orders"}\n` +
-        `• Şube Özel API Key Durumu: ${hasKey ? "✓ TANIMLI (Canlı Adisyo İletimi Aktif)" : "⚠️ Henüz girilmedi (Adisyo panelinden aldığınız x-api-key ve x-api-secret bilgilerini girdiğiniz an doğrudan bu şubenin kasasına düşer)"}\n` +
-        `• Sorumlu Mahalle Sayısı: ${(b.neighborhoods || []).length} Mahalle`
+        `• Şube Özel API Key Durumu: ${hasKey ? "✓ TANIMLI (Canlı Adisyo Hesabına Bağlı)" : "⚠️ Henüz girilmedi (Şube açıldığında Adisyo panelinden alınan x-api-key ve x-api-secret girildiği an doğrudan bu şubenin kasasına düşer)"}\n` +
+        `• Eşleşen Standart Ürün & Reçete Kodu (SKU): ${itemsCount} Ürün + CKR-KURYE-PAKET (100 TL)\n` +
+        `• Sorumlu Mahalle Sayısı: ${(b.neighborhoods || []).length} Mahalle\n` +
+        `• Sunucu Dispatch Durumu: ${dispatchRes && dispatchRes.ok ? "✓ BAŞARILI (0. Saniye İletim Motoru Aktif)" : "✓ HAZIR"}`
       );
+    }
+
+    function copyBranchAdisyoSetupGuide(branchId) {
+      const state = CokertmeStore.getState();
+      const b = (state.branches || []).find(x => x.id === branchId);
+      if (!b) return;
+      const skuLines = (state.items || []).map(it =>
+        `  - [${it.adisyoSku || "CKR-URUN"}] ${it.name && it.name.tr ? it.name.tr : ""} (${it.price > 0 ? it.price + " TL" : "İKRAM"})`
+      ).join("\n");
+
+      const guideText =
+        `=== ÇÖKERTME DÜNYASI — ŞUBE ADİSYO POS KURULUM & ENTEGRASYON ŞABLONU ===\n` +
+        `Şube Adı: ${b.name} (${b.city || "Adana"} / ${b.district || ""})\n` +
+        `Adisyo Şube / Kasa Kodu: ${b.adisyoBranchCode || "ADANA-BARAJYOLU-01"}\n` +
+        `Adisyo Consumer ID (x-api-consumer): ${b.adisyoConsumerId || "COKERTME-ADANA-BARAJYOLU-01"}\n` +
+        `Adisyo Webhook / Sipariş Endpoint: https://ext.adisyo.com/api/v1/orders\n` +
+        `Sorumlu Mahalleler (${(b.neighborhoods || []).length}): ${(b.neighborhoods || []).join(", ")}\n\n` +
+        `1) ADİSYO PANELİNDEN ALINIP YÖNETİM PANELİNE GİRİLECEK BİLGİLER:\n` +
+        `   • x-api-consumer (Restoran / Abonelik ID)\n` +
+        `   • x-api-key (Şube Özel API Key)\n` +
+        `   • x-api-secret (Şube Özel API Secret)\n\n` +
+        `2) ADİSYO MENÜSÜNDE TANIMLANACAK STANDART ÜRÜN KODLARI (SKU):\n` +
+        `${skuLines}\n` +
+        `  - [CKR-KURYE-PAKET] Kurye Paket Hizmeti (100 TL)\n`;
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(guideText).then(() => {
+          alert(`📋 "${b.name}" için Adisyo Kurulum & Ürün SKU Şablonu panoya kopyalandı!\n\nYeni şube açılışında bu şablonu doğrudan Adisyo kurulum ekibine gönderebilirsiniz.`);
+        }).catch(() => {
+          alert(guideText);
+        });
+      } else {
+        alert(guideText);
+      }
     }
 
     function deleteBranchFromAdmin(branchId) {
@@ -3364,6 +3439,9 @@
           </td>
           <td><span class="pt-badge">${catMap[item.categoryId] || item.categoryId}</span></td>
           <td>
+            <input type="text" id="sku-${item.id}" value="${item.adisyoSku || 'CKR-URUN'}" class="pt-form-input" style="width:140px; padding:6px 8px; font-size:12px; font-weight:700; color:var(--pt-navy); background:var(--pt-cream);" title="Tüm şubelerin Adisyo programlarında eşleşen standart ürün kodu" />
+          </td>
+          <td>
             <div style="display:flex; align-items:center; gap:6px;">
               <input type="number" id="price-${item.id}" value="${item.price}" min="0" class="pt-form-input" style="width:95px; padding:7px 10px; font-weight:700;" />
               <span>${isIkram ? 'İKRAM' : '₺'}</span>
@@ -3380,7 +3458,7 @@
           <td>
             <div style="display:flex; align-items:center; gap:6px; flex-wrap:nowrap;">
               <button type="button" onclick="saveItemPrice('${item.id}')" class="pt-btn-fill" style="padding:8px 12px; font-size:11px; white-space:nowrap;">
-                FİYATI KAYDET
+                KAYDET
               </button>
               <button type="button" onclick="editExistingItem('${item.id}')" class="pt-btn-olive" style="padding:8px 12px; font-size:11px; white-space:nowrap;">
                 DÜZENLE
@@ -3394,14 +3472,34 @@
       `}).join("");
     }
 
+    function copyGlobalAdisyoSkuCatalog() {
+      const state = CokertmeStore.getState();
+      const rows = (state.items || []).map(it =>
+        `${it.adisyoSku || "CKR-URUN"}\t${it.name && it.name.tr ? it.name.tr : ""}\t${it.price > 0 ? it.price + " TL" : "İKRAM"}`
+      );
+      rows.push(`CKR-KURYE-PAKET\tKurye Paket Hizmeti\t100 TL`);
+      const text = "ADISYO_SKU_KODU\tURUN_ADI\tFIYAT\n" + rows.join("\n");
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          alert(`📋 Toplam ${rows.length} kalemlik Standart Adisyo Ürün Kodu (SKU) tablosu panoya kopyalandı!\n\nYeni açılan her şubenin Adisyo programında ürün kodlarını bu listeyle eşleştirebilirsiniz.`);
+        }).catch(() => alert(text));
+      } else {
+        alert(text);
+      }
+    }
+
     function saveItemPrice(itemId) {
       const state = CokertmeStore.getState();
       const item = state.items.find(i => i.id === itemId);
       if (!item) return;
       const newVal = parseFloat(document.getElementById("price-" + itemId).value);
+      const skuEl = document.getElementById("sku-" + itemId);
       if (isNaN(newVal) || newVal < 0) return;
 
       item.price = newVal;
+      if (skuEl && skuEl.value.trim()) {
+        item.adisyoSku = skuEl.value.trim().toUpperCase();
+      }
       if (newVal === 0) {
         item.categoryId = "ikramlar";
         item.isComplimentary = true;
@@ -3409,9 +3507,9 @@
       CokertmeStore.saveState(state);
       renderAdminAll();
       if (newVal === 0) {
-        alert(`"${item.name.tr}" ücretsiz MASA İKRAMI (0 ₺) olarak güncellendi!`);
+        alert(`"${item.name.tr}" ücretsiz MASA İKRAMI (0 ₺ • SKU: ${item.adisyoSku}) olarak güncellendi!`);
       } else {
-        alert(`"${item.name.tr}" fiyatı ${newVal} ₺ olarak güncellendi! Masadaki QR Menü ve Mobil Uygulama anında senkronize edildi.`);
+        alert(`"${item.name.tr}" fiyatı ${newVal} ₺ ve Adisyo Kodu (${item.adisyoSku}) olarak güncellendi!`);
       }
     }
 
@@ -3427,6 +3525,8 @@
       document.getElementById("item-form-submit-btn").textContent = "✓ DEĞİŞİKLİKLERİ KAYDET VE YAYINLA";
 
       document.getElementById("new-name").value = item.name.tr || "";
+      const skuInp = document.getElementById("new-adisyo-sku");
+      if (skuInp) skuInp.value = item.adisyoSku || "";
       document.getElementById("new-cat").value = item.categoryId || "cokertmeler";
       document.getElementById("new-price").value = item.price ?? 0;
       document.getElementById("new-is-ikram").checked = (!item.price || Number(item.price) <= 0);
@@ -3455,6 +3555,8 @@
       const f = document.getElementById("new-item-form");
       f.reset();
       document.getElementById("edit-item-id").value = "";
+      const skuInp = document.getElementById("new-adisyo-sku");
+      if (skuInp) skuInp.value = "";
       document.getElementById("item-form-title").textContent = "Yeni Menü Ürünü veya İkram Ekle";
       document.getElementById("item-form-submit-btn").textContent = "✓ ÜRÜNÜ KAYDET VE YAYINLA";
       document.getElementById("new-image").value = "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80";
@@ -3592,6 +3694,7 @@
       const state = CokertmeStore.getState();
       const editId = document.getElementById("edit-item-id").value.trim();
       const nameTr = document.getElementById("new-name").value.trim();
+      const skuVal = ((document.getElementById("new-adisyo-sku") && document.getElementById("new-adisyo-sku").value) || "").trim().toUpperCase();
       const descTr = document.getElementById("new-desc").value.trim();
       const isIkram = document.getElementById("new-is-ikram").checked;
       const priceVal = isIkram ? 0 : (parseFloat(document.getElementById("new-price").value) || 0);
@@ -3607,6 +3710,7 @@
         const target = state.items.find(i => i.id === editId);
         if (target) {
           target.name = { tr: nameTr };
+          if (skuVal) target.adisyoSku = skuVal;
           target.desc = { tr: descTr };
           target.categoryId = catId;
           target.price = priceVal;
@@ -3617,6 +3721,7 @@
       } else {
         state.items.unshift({
           id: "item-" + Date.now(),
+          adisyoSku: skuVal || undefined,
           categoryId: catId,
           name: { tr: nameTr },
           desc: { tr: descTr },

@@ -3365,7 +3365,7 @@
 
   </div>
 
-  <script src="assets/data.js?v=14"></script>
+  <script src="assets/data.js?v=15"></script>
   <script>
     // =========================================================================
     // UYGULAMA DURUMU (STATE)
@@ -6968,6 +6968,7 @@
         }
       }
 
+      const orderItemsDetailed = [];
       appCart.forEach(entry => {
         const item = state.items.find(i => i.id === entry.itemId);
         if (item) {
@@ -6980,6 +6981,23 @@
           const customChoices = [entry.yogurtChoice, entry.garlicChoice, entry.toppingChoice].filter(Boolean);
           const customSuffix = customChoices.length > 0 ? ` [${customChoices.join(" / ")}]` : "";
           summaryItems.push(`${entry.qty}x ${item.name.tr}${portionSuffix}${customSuffix}${moldSuffix}${drinkSuffix}`);
+
+          orderItemsDetailed.push({
+            itemId: item.id,
+            adisyoSku: item.adisyoSku || "CKR-URUN",
+            productName: item.name.tr,
+            categoryId: item.categoryId,
+            qty: Number(entry.qty) || 1,
+            portion: entry.portion || "1 Porsiyon (Standart)",
+            unitPrice: Number(item.price) || 0,
+            yogurtChoice: entry.yogurtChoice || "",
+            garlicChoice: entry.garlicChoice || "",
+            toppingChoice: entry.toppingChoice || "",
+            promoDrinks: promoDrinks.map(d => ({ name: d.name, price: Number(d.price) || 0 })),
+            complimentarySides: item.categoryId === "cokertmeler"
+              ? ["Ege Zeytini", "Acı Turşu", "Özel Soslu Salata", "Özel Tatlı"]
+              : []
+          });
         }
       });
 
@@ -7106,10 +7124,12 @@
         mode: modeVal + ` (${orderCity} / ${orderNeighborhood} Mah.${addrVal ? ' - ' + addrVal : ''})`,
         branchId: assignedBranch.id,
         branch: assignedBranch.name,
-        adisyoBranchCode: assignedBranch.adisyoBranchCode || "ADISYO-ADN-01",
+        adisyoBranchCode: assignedBranch.adisyoBranchCode || "ADANA-BARAJYOLU-01",
         items: summaryItems,
+        orderItemsDetailed: orderItemsDetailed,
         subtotal: subtotal,
         discount: discount,
+        deliveryFee: courierFee,
         total: finalTotal,
         pointsEarned: loyaltyOutcome.earnedStamp ? 1 : 0,
         paymentMethod: paymentMethodCode,

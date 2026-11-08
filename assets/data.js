@@ -792,9 +792,54 @@ function mergeMembersList(listA, listB) {
   return Array.from(map.values());
 }
 
+const DEFAULT_ITEM_SKU_MAP = {
+  "item-1792323465955": "CKR-BONFILE-01",
+  "item-1792324381559": "CKR-KARIDES-01",
+  "item-1792323418352": "CKR-TAVUK-01",
+  "item-1792325907483": "CKR-SALATA-01",
+  "item-1792326012633": "CKR-TURSU-01",
+  "item-1792326025883": "CKR-ZEYTIN-01",
+  "item-1792325457108": "CKR-KABAK-01",
+  "item-1792325787051": "CKR-PEPSI-01",
+  "item-1792325758628": "CKR-SARIYER-01",
+  "item-1792325574260": "CKR-CCOLA-01",
+  "item-1792325591012": "CKR-CZERO-01",
+  "item-1792325619455": "CKR-FANTA-01",
+  "item-1792325631972": "CKR-SPRITE-01",
+  "item-1792325660083": "CKR-FUSE-SEFTALI",
+  "item-1792325674127": "CKR-FUSE-MANGO",
+  "item-1792325699063": "CKR-AYRAN-01",
+  "item-1792325711075": "CKR-SALGAM-01",
+  "item-1792325730491": "CKR-SU-01",
+  "item-1792325967068": "IKR-ZEYTIN-01",
+  "item-1792325979932": "IKR-TURSU-01",
+  "item-1792324445703": "IKR-SALATA-01",
+  "item-1792324524519": "IKR-KABAK-01",
+  "item-1792324555395": "IKR-CAY-01",
+  "item-1792324580399": "IKR-KAHVE-01"
+};
+
+function resolveDefaultAdisyoSku(item) {
+  if (!item) return "CKR-URUN";
+  if (item.adisyoSku && String(item.adisyoSku).trim()) return String(item.adisyoSku).trim();
+  if (item.id && DEFAULT_ITEM_SKU_MAP[item.id]) return DEFAULT_ITEM_SKU_MAP[item.id];
+  const rawName = (item.name && item.name.tr) ? item.name.tr : (item.name || "URUN");
+  const slug = String(rawName)
+    .toLocaleUpperCase("tr-TR")
+    .replace(/Ğ/g, "G").replace(/Ü/g, "U").replace(/Ş/g, "S")
+    .replace(/İ/g, "I").replace(/Ö/g, "O").replace(/Ç/g, "C")
+    .replace(/[^A-Z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 14);
+  const prefix = (item.categoryId === "ikramlar" || Number(item.price) <= 0) ? "IKR" : "CKR";
+  return `${prefix}-${slug || "URUN"}`;
+}
+
 function sanitizeAndMergeState(parsed) {
   if (!parsed || typeof parsed !== "object") {
-    return JSON.parse(JSON.stringify(DEFAULT_COKERTME_DATA));
+    const fresh = JSON.parse(JSON.stringify(DEFAULT_COKERTME_DATA));
+    fresh.items = (fresh.items || []).map(it => ({ ...it, adisyoSku: resolveDefaultAdisyoSku(it) }));
+    return fresh;
   }
 
   // Eğer eski deneme ürünleri (item-1 .. item-14) kalmışsa onları tamamen temizle
@@ -808,12 +853,18 @@ function sanitizeAndMergeState(parsed) {
     // Varsayılan Unsplash yer tutucu görsellerini gerçek yüklenen ürün fotoğraflarına yükselt
     validItems = validItems.map(item => {
       const fallbackImg = DEFAULT_ITEM_IMAGE_MAP[item.id];
-      if (isPlaceholderImage(item.image) && fallbackImg) {
-        return { ...item, image: fallbackImg };
-      }
-      return item;
+      const nextImg = (isPlaceholderImage(item.image) && fallbackImg) ? fallbackImg : item.image;
+      return {
+        ...item,
+        image: nextImg,
+        adisyoSku: resolveDefaultAdisyoSku(item)
+      };
     });
   }
+  validItems = validItems.map(item => ({
+    ...item,
+    adisyoSku: resolveDefaultAdisyoSku(item)
+  }));
 
   const defaultBranchMap = {};
   DEFAULT_COKERTME_DATA.branches.forEach(db => {
