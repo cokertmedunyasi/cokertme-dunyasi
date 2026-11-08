@@ -3761,7 +3761,7 @@
             <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
               <div>
                 <div style="font-size:13.5px; font-weight:700; color:var(--pt-navy); line-height:1.25;">${item.name.tr}</div>
-                <div style="font-size:11px; color:var(--pt-text-muted); font-weight:600;">${entry.portion || '1 Porsiyon'}</div>
+                ${item.categoryId === "cokertmeler" ? `<div style="font-size:11px; color:var(--pt-text-muted); font-weight:600;">${entry.portion || '1 Porsiyon (Standart)'}</div>` : ''}
                 ${drinkInfo ? `<div style="font-size:11px; color:var(--pt-terracotta); font-weight:700;">${drinkInfo}</div>` : ''}
               </div>
               <strong style="font-size:14px; color:var(--pt-terracotta); white-space:nowrap;">${linePrice.toFixed(0)} TL</strong>
@@ -4085,6 +4085,26 @@
       }
     }
 
+    function getItemPortionBasePrice(item, portionStr) {
+      if (!item) return 0;
+      const base = Number(item.price) || 0;
+      if (item.categoryId === "cokertmeler" && String(portionStr || "").includes("1.5")) {
+        return Math.round(base * 1.5);
+      }
+      return Math.round(base);
+    }
+
+    function setDetailPortion(val) {
+      currentDetailPortion = val;
+      renderCurrentView();
+    }
+
+    function setDetailQty(val) {
+      const q = Math.max(1, Math.min(20, parseInt(val, 10) || 1));
+      currentDetailQty = q;
+      renderCurrentView();
+    }
+
     function renderDesktopProductModalContent() {
       const body = document.getElementById("desktop-product-modal-body");
       if (!body) return;
@@ -4092,11 +4112,16 @@
       const item = allItems.find(i => i.id === currentDetailItemId) || allItems[0];
       if (!item) return;
 
+      const isCokertme = item.categoryId === "cokertmeler";
+      const portionPrice = getItemPortionBasePrice(item, currentDetailPortion);
+      const onePortionPrice = Math.round(Number(item.price) || 0);
+      const onePointFivePrice = Math.round((Number(item.price) || 0) * 1.5);
+
       const drinkItems = allItems.filter(i => i.categoryId === "icecekler");
-      const drinkExtraSum = item.categoryId === "cokertmeler" ? getDetailDrinkSum() : 0;
-      const unitWithDrinks = Math.round(Number(item.price) + drinkExtraSum);
-      const totalVal = Math.round((Number(item.price) + drinkExtraSum) * currentDetailQty);
-      const detailSidesList = item.categoryId === "cokertmeler" ? getItemComplimentaryList(item) : [];
+      const drinkExtraSum = isCokertme ? getDetailDrinkSum() : 0;
+      const unitWithDrinks = Math.round(portionPrice + drinkExtraSum);
+      const totalVal = Math.round(unitWithDrinks * currentDetailQty);
+      const detailSidesList = isCokertme ? getItemComplimentaryList(item) : [];
 
       let promoStatusText = "Lütfen Seçim Yapın (Zorunlu)";
       if (currentDetailNoDrink) {
@@ -4119,9 +4144,14 @@
         `;
       }).join("");
 
+      const qtyOptionsHtml = Array.from({ length: 10 }, (_, idx) => {
+        const n = idx + 1;
+        return `<option value="${n}" ${currentDetailQty === n ? 'selected' : ''}>Adet ${n}</option>`;
+      }).join("");
+
       body.innerHTML = `
         <div style="display:grid; grid-template-columns:240px 1fr; background:var(--pt-navy-dark); color:#fff; border-bottom:2px solid var(--pt-gold);">
-          <img src="${item.image}" alt="${item.name.tr}" style="width:100%; height:190px; object-fit:cover; display:block;" />
+          <img src="${item.image}" alt="${item.name.tr}" style="width:100%; height:195px; object-fit:cover; display:block;" />
           <div style="padding:18px 22px; display:flex; flex-direction:column; justify-content:space-between;">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
               <div>
@@ -4131,56 +4161,62 @@
               <button type="button" onclick="closeDesktopProductModal()" style="background:rgba(255,255,255,0.14); border:none; color:#fff; width:34px; height:34px; border-radius:50%; font-size:16px; cursor:pointer;">✕</button>
             </div>
             <p style="font-size:13px; color:rgba(255,255,255,0.85); line-height:1.45;">${item.desc.tr}</p>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="font-size:21px; font-weight:800; color:var(--pt-gold-soft);">${unitWithDrinks} TL</span>
-              ${detailSidesList.length > 0 ? `<span style="background:var(--pt-olive); color:#fff; font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px;">✓ Yanında ${detailSidesList.length} İkram Bedava</span>` : ''}
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+              <div style="position:relative; display:inline-flex; align-items:center;">
+                <select onchange="setDetailQty(this.value)" style="appearance:none; -webkit-appearance:none; background:#fff; color:#111827; border:1.5px solid var(--pt-gold); border-radius:999px; padding:7px 34px 7px 14px; font-size:14px; font-weight:700; cursor:pointer;">
+                  ${qtyOptionsHtml}
+                </select>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; right:12px; pointer-events:none;"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <span style="font-size:22px; font-weight:800; color:var(--pt-gold-soft);">${totalVal} TL</span>
             </div>
           </div>
         </div>
 
         <div style="padding:20px 24px;">
-          <!-- 1. Porsiyon Seçimi -->
+          ${isCokertme ? `
+          <!-- 1. Porsiyon Seçimi (Sadece Çökertme Kebaplarında: 1 Porsiyon ve 1.5 Porsiyon +%50) -->
           <div style="background:var(--pt-cream); border:1.5px solid var(--pt-gold); border-radius:12px; padding:12px 14px; margin-bottom:14px;">
-            <div style="margin-bottom:6px; font-size:13px; font-weight:700; color:var(--pt-navy); display:flex; justify-content:space-between;">
-              <span>1. Porsiyon / Tercih Seçimi:</span>
-              <span style="color:var(--pt-terracotta); font-size:11.5px;">${currentDetailPortion}</span>
+            <div style="margin-bottom:8px; font-size:13px; font-weight:700; color:var(--pt-navy); display:flex; justify-content:space-between;">
+              <span>1. Porsiyon Seçimi:</span>
+              <span style="color:var(--pt-terracotta); font-size:11.5px; font-weight:800;">${currentDetailPortion} (${portionPrice} TL)</span>
             </div>
-            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;">
-              <button type="button" class="quick-pill-btn ${currentDetailPortion === '1 Porsiyon (Standart)' ? 'active' : ''}" onclick="currentDetailPortion='1 Porsiyon (Standart)'; renderDesktopProductModalContent();">1 Porsiyon (Standart)</button>
-              <button type="button" class="quick-pill-btn ${currentDetailPortion === '1.5 Porsiyon' ? 'active' : ''}" onclick="currentDetailPortion='1.5 Porsiyon'; renderDesktopProductModalContent();">1.5 Porsiyon</button>
-              <button type="button" class="quick-pill-btn ${currentDetailPortion === 'Sarımsaksız Yoğurtlu' ? 'active' : ''}" onclick="currentDetailPortion='Sarımsaksız Yoğurtlu'; renderDesktopProductModalContent();">Sarımsaksız Yoğurtlu</button>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <button type="button" class="quick-pill-btn ${currentDetailPortion === '1 Porsiyon (Standart)' ? 'active' : ''}" onclick="setDetailPortion('1 Porsiyon (Standart)')">
+                1 Porsiyon (${onePortionPrice} TL)
+              </button>
+              <button type="button" class="quick-pill-btn ${currentDetailPortion === '1.5 Porsiyon' ? 'active' : ''}" onclick="setDetailPortion('1.5 Porsiyon')">
+                1.5 Porsiyon (${onePointFivePrice} TL)
+              </button>
             </div>
           </div>
 
-          ${item.categoryId === "cokertmeler" ? `
-            <div style="background:#F4F7F2; border:1px solid rgba(59,82,51,0.3); border-left:4px solid var(--pt-olive); border-radius:10px; padding:10px 14px; margin-bottom:14px; font-size:12.5px; color:var(--pt-navy);">
-              <strong style="color:var(--pt-olive);">ÜCRETSİZ PAKET İKRAMLARIMIZ:</strong> ${detailSidesList.join(" • ")}
-            </div>
+          <div style="background:#F4F7F2; border:1px solid rgba(59,82,51,0.3); border-left:4px solid var(--pt-olive); border-radius:10px; padding:10px 14px; margin-bottom:14px; font-size:12.5px; color:var(--pt-navy);">
+            <strong style="color:var(--pt-olive);">ÜCRETSİZ PAKET İKRAMLARIMIZ:</strong> ${detailSidesList.join(" • ")}
+          </div>
 
-            <div class="promo-drink-box" id="promo-drinks-box" style="margin-top:0; padding-top:10px;">
-              <div class="promo-drink-header">
-                <div class="promo-drink-title">
-                  <span>2. İçecek Seçimi (Zorunlu) <span style="color:var(--pt-terracotta);">*</span></span>
-                  <span class="promo-drink-status">${promoStatusText}</span>
-                </div>
-                <span class="promo-drink-badge">Çoklu seçim</span>
+          <div class="promo-drink-box" id="promo-drinks-box" style="margin-top:0; padding-top:10px;">
+            <div class="promo-drink-header">
+              <div class="promo-drink-title">
+                <span>2. İçecek Seçimi (Zorunlu) <span style="color:var(--pt-terracotta);">*</span></span>
+                <span class="promo-drink-status">${promoStatusText}</span>
               </div>
-              <div class="promo-drink-sub">İçecek seçin veya "İçecek İstemiyorum" işaretleyin</div>
-              <div class="promo-drink-grid">
-                <button type="button" class="promo-drink-card ${currentDetailNoDrink ? 'active-no-drink' : ''}" onclick="selectPromoNoDrink()">
-                  <span class="promo-drink-name">İçecek İstemiyorum</span>
-                  <span class="promo-drink-price">-</span>
-                </button>
-                ${drinkCardsHtml}
-              </div>
+              <span class="promo-drink-badge">Çoklu seçim</span>
             </div>
+            <div class="promo-drink-sub">İçecek seçin veya "İçecek İstemiyorum" işaretleyin</div>
+            <div class="promo-drink-grid">
+              <button type="button" class="promo-drink-card ${currentDetailNoDrink ? 'active-no-drink' : ''}" onclick="selectPromoNoDrink()">
+                <span class="promo-drink-name">İçecek İstemiyorum</span>
+                <span class="promo-drink-price">-</span>
+              </button>
+              ${drinkCardsHtml}
+            </div>
+          </div>
           ` : ''}
 
           <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:18px; padding-top:16px; border-top:1px solid var(--pt-border);">
-            <div style="display:flex; align-items:center; gap:10px; background:#f4f6f8; padding:6px 12px; border-radius:999px;">
-              <button type="button" class="qty-btn-round" onclick="changeDetailQty(-1)">−</button>
-              <strong style="font-size:16px; min-width:20px; text-align:center;">${currentDetailQty}</strong>
-              <button type="button" class="qty-btn-round" onclick="changeDetailQty(1)">+</button>
+            <div style="font-size:18px; font-weight:800; color:var(--pt-navy);">
+              Toplam: <span style="color:var(--pt-terracotta);">${totalVal} TL</span>
             </div>
 
             <div style="display:flex; gap:10px; flex:1; justify-content:flex-end;">
@@ -4226,12 +4262,16 @@
       const item = allItems.find(i => i.id === currentDetailItemId) || allItems[0];
       if (!item) return "";
 
-      const meta = CATEGORY_META[item.categoryId] || CATEGORY_META.cokertmeler;
+      const isCokertme = item.categoryId === "cokertmeler";
+      const portionPrice = getItemPortionBasePrice(item, currentDetailPortion);
+      const onePortionPrice = Math.round(Number(item.price) || 0);
+      const onePointFivePrice = Math.round((Number(item.price) || 0) * 1.5);
+
       const drinkItems = allItems.filter(i => i.categoryId === "icecekler");
-      const drinkExtraSum = item.categoryId === "cokertmeler" ? getDetailDrinkSum() : 0;
-      const unitWithDrinks = Math.round(Number(item.price) + drinkExtraSum);
-      const totalVal = Math.round((Number(item.price) + drinkExtraSum) * currentDetailQty);
-      const detailSidesList = item.categoryId === "cokertmeler" ? getItemComplimentaryList(item) : [];
+      const drinkExtraSum = isCokertme ? getDetailDrinkSum() : 0;
+      const unitWithDrinks = Math.round(portionPrice + drinkExtraSum);
+      const totalVal = Math.round(unitWithDrinks * currentDetailQty);
+      const detailSidesList = isCokertme ? getItemComplimentaryList(item) : [];
 
       let promoStatusText = "Lütfen Seçim Yapın (Zorunlu)";
       if (currentDetailNoDrink) {
@@ -4254,52 +4294,56 @@
         `;
       }).join("");
 
-      return `
-        <!-- Breadcrumb -->
-        <div class="breadcrumb-bar">
-          <a href="javascript:void(0)" onclick="switchTab('home')" style="display:inline-flex; align-items:center; gap:4px; font-weight:700; color:var(--pt-navy);">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-            <span>Geri</span>
-          </a>
-          <span>/</span>
-          <a href="javascript:void(0)" onclick="switchTab('menu')">Menü</a>
-          <span>/</span>
-          <strong onclick="selectedCategoryFilter='${item.categoryId}'; switchTab('menu');" style="cursor:pointer;">${meta.shortTitle}</strong>
-          <span>/</span>
-          <strong>${item.name.tr}</strong>
-        </div>
+      const qtyOptionsHtml = Array.from({ length: 10 }, (_, idx) => {
+        const n = idx + 1;
+        return `<option value="${n}" ${currentDetailQty === n ? 'selected' : ''}>Adet ${n}</option>`;
+      }).join("");
 
-        <!-- Büyük Ürün Fotoğrafı -->
-        <div class="detail-photo-card">
+      return `
+        <!-- Büyük Ürün Fotoğrafı + Sol Üst Kapat Butonu (Üstteki Geri/Menü/İmza Çökertme yazısı kaldırıldı) -->
+        <div class="detail-photo-card" style="position:relative; margin-top:12px;">
+          <button type="button" onclick="switchTab('home')" title="Kapat" style="position:absolute; top:12px; left:12px; z-index:5; width:38px; height:38px; border-radius:50%; background:rgba(15, 29, 44, 0.78); color:#fff; border:1.5px solid rgba(255,255,255,0.35); display:flex; align-items:center; justify-content:center; font-size:18px; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.28);">
+            ✕
+          </button>
           <img src="${item.image}" alt="${item.name.tr}" />
         </div>
 
-        <!-- Ürün Bilgisi, Porsiyon Seçimi ve İçecek Promosyon Seçimi -->
+        <!-- Ürün Bilgisi, Üst Adet Seçimi, Porsiyon Seçimi ve İçecek Promosyon Seçimi -->
         <div class="detail-info-box">
-          <!-- 1. YEMEK BAŞLIĞI VE FİYATI (İlk Bakışta Net Görünür) -->
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:6px;">
-            <h1 style="font-size:20px; font-weight:700; color:var(--pt-text); line-height:1.2;">${item.name.tr}</h1>
-            <div style="text-align:right; flex-shrink:0;">
-              <span style="font-size:19px; font-weight:700; color:var(--pt-terracotta); white-space:nowrap;" id="detail-unit-price-lbl">${unitWithDrinks} TL</span>
-              ${drinkExtraSum > 0 ? `<div style="font-size:10.5px; color:var(--pt-text-muted); font-weight:600;">Seçenekler dahil</div>` : ''}
+          <!-- 1. YEMEK BAŞLIĞI VE AÇIKLAMASI -->
+          <div style="text-align:center; margin-bottom:12px;">
+            <h1 style="font-size:21px; font-weight:800; color:var(--pt-text); line-height:1.22; margin-bottom:6px;">${item.name.tr}</h1>
+            <p style="font-size:13.5px; color:var(--pt-text-muted); margin:0; line-height:1.42;">${item.desc.tr}</p>
+          </div>
+
+          <!-- 2. ÜST ADET SEÇİMİ (Adet 1 v) VE CANLI FİYAT SATIRI (2. Ekran Görüntüsü Birebir) -->
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 4px 14px; margin-bottom:12px; border-bottom:1px solid var(--pt-border);">
+            <div style="position:relative; display:inline-flex; align-items:center;">
+              <select onchange="setDetailQty(this.value)" style="appearance:none; -webkit-appearance:none; background:#f3f4f6; color:#111827; border:1.5px solid rgba(3,58,88,0.16); border-radius:999px; padding:9px 38px 9px 16px; font-size:15px; font-weight:700; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.04);">
+                ${qtyOptionsHtml}
+              </select>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; right:14px; pointer-events:none;"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+
+            <div style="text-align:right;">
+              <span style="font-size:22px; font-weight:800; color:#111827; white-space:nowrap;" id="detail-unit-price-lbl">${totalVal} TL</span>
+              ${currentDetailQty > 1 || drinkExtraSum > 0 ? `<div style="font-size:11px; color:var(--pt-text-muted); font-weight:600;">Birim: ${unitWithDrinks} TL</div>` : ''}
             </div>
           </div>
-          <p style="font-size:13px; color:var(--pt-text-muted); margin-bottom:14px; line-height:1.35;">${item.desc.tr}</p>
 
-          <!-- 2. PORSİYON / TERCİH SEÇİMİ -->
+          ${isCokertme ? `
+          <!-- 3. PORSİYON SEÇİMİ (Sadece Çökertme Kebaplarında: 1 Porsiyon ve 1.5 Porsiyon +%50 Fiyat) -->
           <div style="background:var(--pt-cream); border:1.5px solid var(--pt-gold); border-radius:12px; padding:10px 12px; margin-bottom:12px;">
-            <div style="margin-bottom:5px; font-size:12.5px; font-weight:700; color:var(--pt-navy); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
-              <span>Porsiyon / Tercih Seçimi:</span>
-              <span style="font-size:10.5px; color:var(--pt-terracotta); font-weight:700;">TERCİHİNİZİ SEÇİN</span>
+            <div style="margin-bottom:6px; font-size:12.5px; font-weight:700; color:var(--pt-navy); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
+              <span>Porsiyon Seçimi:</span>
+              <span style="font-size:10.5px; color:var(--pt-terracotta); font-weight:800;">1.5 PORSİYON +%50</span>
             </div>
-            <select class="phone-input-group" style="width:100%; margin:0; background:#fff; border-width:1.5px; border-color:var(--pt-border); padding:10px 12px; font-size:14px; font-weight:700; color:var(--pt-navy);" onchange="currentDetailPortion=this.value">
-              <option value="1 Porsiyon (Standart)" ${currentDetailPortion === '1 Porsiyon (Standart)' ? 'selected' : ''}>1 Porsiyon (Standart)</option>
-              <option value="1.5 Porsiyon" ${currentDetailPortion === '1.5 Porsiyon' ? 'selected' : ''}>1.5 Porsiyon</option>
-              <option value="Sarımsaksız Yoğurtlu" ${currentDetailPortion === 'Sarımsaksız Yoğurtlu' ? 'selected' : ''}>Sarımsaksız Yoğurtlu</option>
+            <select class="phone-input-group" style="width:100%; margin:0; background:#fff; border-width:1.5px; border-color:var(--pt-border); padding:11px 12px; font-size:14.5px; font-weight:700; color:var(--pt-navy);" onchange="setDetailPortion(this.value)">
+              <option value="1 Porsiyon (Standart)" ${currentDetailPortion === '1 Porsiyon (Standart)' ? 'selected' : ''}>1 Porsiyon (Standart) — ${onePortionPrice} TL</option>
+              <option value="1.5 Porsiyon" ${currentDetailPortion === '1.5 Porsiyon' ? 'selected' : ''}>1.5 Porsiyon (+%50) — ${onePointFivePrice} TL</option>
             </select>
           </div>
 
-          ${item.categoryId === "cokertmeler" ? `
           <div style="background:#F4F7F2; border:1.5px solid rgba(59,82,51,0.35); border-left:4px solid var(--pt-olive); border-radius:12px; padding:12px 14px; margin-bottom:8px;">
             <div style="font-size:11.5px; font-weight:700; color:var(--pt-olive); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px;">
               YANINDA ÜCRETSİZ İKRAMLARIMIZ (${detailSidesList.length} ÇEŞİT)
@@ -4309,7 +4353,7 @@
             </div>
           </div>
 
-          <!-- 3. PROMOSYON İÇECEK EKLEME BÖLÜMÜ (Sadece İçecekler + İçecek İstemiyorum Zorunlu Seçim) -->
+          <!-- 4. PROMOSYON İÇECEK EKLEME BÖLÜMÜ (Sadece İçecekler + İçecek İstemiyorum Zorunlu Seçim) -->
           <div class="promo-drink-box" id="promo-drinks-box">
             <div class="promo-drink-header">
               <div class="promo-drink-title">
@@ -4361,21 +4405,15 @@
           ` : ''}
         </div>
 
-        <!-- Alt Sabit Sepete Ekle Çubuğu (Ekran Görüntüsü 6 Birebir) -->
+        <!-- Alt Sabit Sepete Ekle Çubuğu (Alt adet kutusu üst karta taşındığı için sadeleştirildi) -->
         <div class="detail-sticky-action">
-          <div class="detail-total-box">
-            <div class="lbl">Toplam</div>
+          <div class="detail-total-box" style="min-width:85px;">
+            <div class="lbl">Toplam (${currentDetailQty} Adet)</div>
             <div class="val" id="detail-live-total">${totalVal} TL</div>
           </div>
 
-          <div class="detail-qty-box">
-            <button type="button" class="qty-btn-round" onclick="changeDetailQty(-1)">−</button>
-            <strong style="font-size:16px;" id="detail-live-qty">${currentDetailQty}</strong>
-            <button type="button" class="qty-btn-round" onclick="changeDetailQty(1)">+</button>
-          </div>
-
           <button type="button" class="btn-sepete-ekle-main" onclick="confirmAddToCart('${item.id}')">
-            Sepete Ekle - ${totalVal} TL
+            Sepete Ekle • ${totalVal} TL
           </button>
         </div>
       `;
@@ -4391,8 +4429,10 @@
       const item = allItems.find(i => i.id === itemId);
       if (!item) return false;
 
+      const isCokertme = item.categoryId === "cokertmeler";
+
       // Çökertme menülerinde içecek veya "İçecek İstemiyorum" seçimi yapılmadan devam edilemez!
-      if (item.categoryId === "cokertmeler" && !currentDetailNoDrink && currentDetailDrinkIds.length === 0) {
+      if (isCokertme && !currentDetailNoDrink && currentDetailDrinkIds.length === 0) {
         alert("Lütfen devam edebilmek için içecek seçiminizi yapın veya 'İçecek İstemiyorum' seçeneğini işaretleyin.");
         const promoBox = document.getElementById("promo-drinks-box");
         if (promoBox) {
@@ -4404,19 +4444,20 @@
         return false;
       }
 
-      const selectedPromoDrinks = (item.categoryId === "cokertmeler" && !currentDetailNoDrink)
+      const selectedPromoDrinks = (isCokertme && !currentDetailNoDrink)
         ? currentDetailDrinkIds.map(dId => {
             const d = allItems.find(i => i.id === dId);
             return d ? { id: d.id, name: d.name.tr, price: Number(d.price) } : null;
           }).filter(Boolean)
         : [];
 
-      const drinkKey = currentDetailNoDrink
-        ? "NO_DRINK"
-        : selectedPromoDrinks.map(d => d.id).sort().join(",");
+      const drinkKey = isCokertme
+        ? (currentDetailNoDrink ? "NO_DRINK" : selectedPromoDrinks.map(d => d.id).sort().join(","))
+        : "";
+      const portionToSave = isCokertme ? currentDetailPortion : "";
 
       const existing = appCart.find(
-        c => c.itemId === itemId && c.portion === currentDetailPortion && (c.drinkKey || "") === drinkKey && !c.itemMold
+        c => c.itemId === itemId && (c.portion || "") === portionToSave && (c.drinkKey || "") === drinkKey && !c.itemMold
       );
       if (existing) {
         existing.qty += currentDetailQty;
@@ -4424,9 +4465,9 @@
         appCart.push({
           itemId,
           qty: currentDetailQty,
-          portion: currentDetailPortion,
+          portion: portionToSave,
           drinkKey,
-          noDrinkSelected: currentDetailNoDrink,
+          noDrinkSelected: isCokertme ? currentDetailNoDrink : false,
           promoDrinks: selectedPromoDrinks
         });
       }
@@ -4447,8 +4488,9 @@
     function getCartEntryUnitPrice(state, entry) {
       const item = state.items.find(i => i.id === entry.itemId);
       if (!item) return 0;
+      const portionBasePrice = getItemPortionBasePrice(item, entry.portion);
       const drinksExtra = (entry.promoDrinks || []).reduce((acc, d) => acc + (Number(d.price) || 0), 0);
-      return Number(item.price) + drinksExtra;
+      return portionBasePrice + drinksExtra;
     }
 
     // =========================================================================
@@ -4596,13 +4638,14 @@
 
       const itemsHtml = listToShow.map(cItem => {
         const isExpanded = cartQuickItemId === cItem.id;
+        const quickPortionPrice = isExpanded ? getItemPortionBasePrice(cItem, cartQuickPortion) : Math.round(Number(cItem.price));
         const quickDrinkSum = isExpanded
           ? cartQuickDrinkIds.reduce((acc, dId) => {
               const d = drinkItems.find(x => x.id === dId);
               return acc + (d ? Number(d.price) : 0);
             }, 0)
           : 0;
-        const quickTotal = Math.round(Number(cItem.price) + quickDrinkSum);
+        const quickTotal = Math.round(quickPortionPrice + quickDrinkSum);
 
         return `
           <div class="cart-quick-item ${isExpanded ? 'expanded' : ''}">
@@ -4631,13 +4674,12 @@
               <div class="cart-quick-config">
                 <!-- 1. Porsiyon Seçimi -->
                 <div style="font-size:12px; font-weight:700; color:var(--pt-navy); margin-bottom:6px; display:flex; justify-content:space-between;">
-                  <span>1. Porsiyon / Tercih Seçimi:</span>
-                  <span style="color:var(--pt-olive);">${cartQuickPortion}</span>
+                  <span>1. Porsiyon Seçimi:</span>
+                  <span style="color:var(--pt-olive);">${cartQuickPortion} (${quickPortionPrice} TL)</span>
                 </div>
-                <div class="quick-pill-row">
-                  <button type="button" class="quick-pill-btn ${cartQuickPortion === '1 Porsiyon (Standart)' ? 'active' : ''}" onclick="setCartQuickPortion('1 Porsiyon (Standart)')">1 Porsiyon</button>
-                  <button type="button" class="quick-pill-btn ${cartQuickPortion === '1.5 Porsiyon' ? 'active' : ''}" onclick="setCartQuickPortion('1.5 Porsiyon')">1.5 Porsiyon</button>
-                  <button type="button" class="quick-pill-btn ${cartQuickPortion === 'Sarımsaksız Yoğurtlu' ? 'active' : ''}" onclick="setCartQuickPortion('Sarımsaksız Yoğurtlu')">Sarımsaksız</button>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
+                  <button type="button" class="quick-pill-btn ${cartQuickPortion === '1 Porsiyon (Standart)' ? 'active' : ''}" onclick="setCartQuickPortion('1 Porsiyon (Standart)')">1 Porsiyon (${Math.round(cItem.price)} TL)</button>
+                  <button type="button" class="quick-pill-btn ${cartQuickPortion === '1.5 Porsiyon' ? 'active' : ''}" onclick="setCartQuickPortion('1.5 Porsiyon')">1.5 Porsiyon (${Math.round(cItem.price * 1.5)} TL)</button>
                 </div>
 
                 <!-- 2. Arkadaş / Kişi Kalıp Tercihi (Opsiyonel: Tek Hesaptan Kadın/Erkek Karışık Sipariş İçin) -->
@@ -5261,6 +5303,7 @@
 
       let subtotal = 0;
       let rewardTargetItem = null;
+      let rewardTargetPortion = "1 Porsiyon (Standart)";
 
       appCart.forEach(entry => {
         const item = state.items.find(i => i.id === entry.itemId);
@@ -5269,6 +5312,7 @@
         subtotal += unitPrice * entry.qty;
         if (item.categoryId === "cokertmeler" && !rewardTargetItem) {
           rewardTargetItem = item;
+          rewardTargetPortion = entry.portion || "1 Porsiyon (Standart)";
         }
       });
 
@@ -5287,7 +5331,7 @@
       // %50 Hediye kullanılan 1 adet Çökertme porsiyonuna ayrıca %10 uygulama indirimi UYGULANMAZ!
       // Böylece işletme o üründe mutfak maliyetini (%50) tam olarak tahsil eder ve 0 TL zarar yazar.
       if (canApplyLoyaltyReward && useLoyaltyHalfPriceReward && rewardTargetItem) {
-        const oneCokertmeBasePrice = Number(rewardTargetItem.price) || 0;
+        const oneCokertmeBasePrice = getItemPortionBasePrice(rewardTargetItem, rewardTargetPortion);
         loyaltyRewardDiscount = Number((oneCokertmeBasePrice * (rewardPct / 100)).toFixed(2));
         appDiscountBase = Math.max(0, subtotal - oneCokertmeBasePrice);
         rewardedItemName = rewardTargetItem.name.tr;
@@ -5456,7 +5500,7 @@
               <img class="cart-card-img" src="${item.image}" alt="${item.name.tr}" />
               <div class="cart-card-info">
                 <h4>${item.name.tr}</h4>
-                <p>Porsiyon Seçimi: ${entry.portion || '1 Porsiyon'}</p>
+                ${item.categoryId === "cokertmeler" ? `<p>Porsiyon Seçimi: ${entry.portion || '1 Porsiyon (Standart)'}</p>` : ''}
                 ${itemMoldHtml}
                 ${promoDrinkHtml}
                 ${cartSides.length > 0 ? `
@@ -5926,7 +5970,8 @@
             ? ` + İçecek: ${promoDrinks.map(d => d.name).join(", ")}`
             : (item.categoryId === "cokertmeler" ? " (İçecek İstemiyorum)" : "");
           const moldSuffix = entry.itemMold ? ` [Kalıp: ${entry.itemMold}]` : "";
-          summaryItems.push(`${entry.qty}x ${item.name.tr} (${entry.portion || '1 Porsiyon'})${moldSuffix}${drinkSuffix}`);
+          const portionSuffix = item.categoryId === "cokertmeler" ? ` (${entry.portion || '1 Porsiyon'})` : "";
+          summaryItems.push(`${entry.qty}x ${item.name.tr}${portionSuffix}${moldSuffix}${drinkSuffix}`);
         }
       });
 
