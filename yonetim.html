@@ -907,13 +907,13 @@
   <section class="pt-page-hero no-print">
     <div class="pt-page-hero-overlay"></div>
     <div class="pt-page-hero-content">
-      <div class="pt-hero-eyebrow">MERKEZ BULUT KONTROL PANELİ</div>
-      <h1 class="pt-page-hero-title">Yönetim &amp; Masa QR Merkezi</h1>
-      <p class="pt-page-hero-sub">
+      <div class="pt-hero-eyebrow" id="admin-hero-eyebrow">MERKEZ BULUT KONTROL PANELİ</div>
+      <h1 class="pt-page-hero-title" id="admin-hero-title">Yönetim &amp; Masa QR Merkezi</h1>
+      <p class="pt-page-hero-sub" id="admin-hero-sub">
         Buradan değiştirdiğiniz fiyatlar ve stok durumları, masalardaki QR kodları yeniden basmaya gerek kalmadan <strong>À la Carte QR Menüde</strong> ve <strong>%10 İndirimli Mobil Uygulamada</strong> anında güncellenir.
       </p>
-      <div style="display:flex; justify-content:center; gap:14px; flex-wrap:wrap;">
-        <a href="#site-gorselleri-section" class="pt-btn-fill">WEB SİTESİ GÖRSELLERİNİ YÖNET ↓</a>
+      <div id="superadmin-hero-actions" style="display:flex; justify-content:center; gap:14px; flex-wrap:wrap;">
+        <button type="button" onclick="switchAdminTab('corporate_api')" class="pt-btn-fill">WEB SİTESİ GÖRSELLERİNİ YÖNET ↓</button>
         <a href="menu.html" class="pt-btn-olive">CANLI QR MENÜYÜ GÖRÜNTÜLE →</a>
         <button onclick="resetAllData()" class="pt-btn-outline" style="display:inline-flex; align-items:center; gap:8px;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
@@ -951,7 +951,7 @@
       </div>
 
       <div id="admin-branch-filter-wrap" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-        <div>
+        <div id="admin-branch-select-box">
           <label style="font-size:10.5px; font-weight:700; letter-spacing:0.1em; color:var(--pt-gold-soft); display:block; margin-bottom:4px; text-transform:uppercase;">
             PANEL GÖRÜNÜMÜ / ŞUBE FİLTRESİ:
           </label>
@@ -959,33 +959,56 @@
             <option value="ALL">TÜM TÜRKİYE (Toplu Genel Merkez Analizi)</option>
           </select>
         </div>
-        <a href="#crm-remarketing-section" class="pt-btn-fill" style="padding:11px 16px; font-size:11.5px;">MÜŞTERİ CRM &amp; PAZARLAMA ↓</a>
+        <button type="button" onclick="adminLogout()" class="pt-btn-outline" style="border-color:var(--pt-gold-soft); color:var(--pt-gold-soft); padding:11px 16px; font-size:11.5px;">OTURUMU KAPAT / ŞUBE DEĞİŞTİR</button>
+      </div>
+    </div>
+
+    <!-- TARİH & DÖNEM FİLTRESİ BARI (GÜNLÜK / HAFTALIK / AYLIK / ÖZEL TARİH ARALIĞI) -->
+    <div id="admin-date-filter-bar" class="no-print" style="background:#fff; border:1.5px solid var(--pt-border); border-left:5px solid var(--pt-olive); padding:14px 20px; margin-bottom:22px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; box-shadow:0 6px 20px rgba(2,58,88,0.05);">
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <span style="font-size:11.5px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:var(--pt-navy); margin-right:4px;">📅 TARİH &amp; DÖNEM SEÇİMİ:</span>
+        <button type="button" id="date-btn-ALL" class="pt-btn-navy" style="padding:7px 12px; font-size:11px;" onclick="setAdminDatePreset('ALL')">Tüm Zamanlar</button>
+        <button type="button" id="date-btn-TODAY" class="pt-btn-outline" style="padding:7px 12px; font-size:11px; color:var(--pt-navy); border-color:var(--pt-border);" onclick="setAdminDatePreset('TODAY')">Bugün (Günlük)</button>
+        <button type="button" id="date-btn-YESTERDAY" class="pt-btn-outline" style="padding:7px 12px; font-size:11px; color:var(--pt-navy); border-color:var(--pt-border);" onclick="setAdminDatePreset('YESTERDAY')">Dün</button>
+        <button type="button" id="date-btn-LAST7" class="pt-btn-outline" style="padding:7px 12px; font-size:11px; color:var(--pt-navy); border-color:var(--pt-border);" onclick="setAdminDatePreset('LAST7')">Son 7 Gün (Haftalık)</button>
+        <button type="button" id="date-btn-MONTH" class="pt-btn-outline" style="padding:7px 12px; font-size:11px; color:var(--pt-navy); border-color:var(--pt-border);" onclick="setAdminDatePreset('MONTH')">Bu Ay (Aylık)</button>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <span style="font-size:11.5px; font-weight:700; color:var(--pt-text-muted);">Özel Tarih:</span>
+        <input type="date" id="admin-date-start" class="pt-form-input" style="width:auto; padding:6px 10px; font-size:12.5px;" onchange="onCustomDateRangeChange()" />
+        <span style="font-weight:700; color:var(--pt-navy);">—</span>
+        <input type="date" id="admin-date-end" class="pt-form-input" style="width:auto; padding:6px 10px; font-size:12.5px;" onchange="onCustomDateRangeChange()" />
+        <span class="pt-badge pt-badge-olive" id="active-date-range-label">DÖNEM: TÜM ZAMANLAR</span>
       </div>
     </div>
 
     <!-- KPI Kartları -->
-    <div class="admin-kpi-grid no-print">
+    <div class="admin-kpi-grid no-print" style="margin-bottom:24px;">
       <div class="kpi-card">
-        <div class="kpi-label" id="kpi-col1-label">AKTİF ŞUBE &amp; MENÜ ÜRÜNÜ</div>
-        <div class="kpi-val" id="kpi-items">14</div>
-        <div style="font-size:13.5px; color:var(--pt-olive); font-weight:600;" id="kpi-col1-sub">Anlık Bulut Senkronizasyon (₺ TL)</div>
+        <div class="kpi-label" id="kpi-col1-label">SEÇİLİ DÖNEM SİPARİŞ ADEDİ</div>
+        <div class="kpi-val" id="kpi-orders">0</div>
+        <div style="font-size:13px; color:var(--pt-olive); font-weight:600;" id="kpi-col1-sub">Paket Servis &amp; Gel-Al Toplamı</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label" id="kpi-col2-label">TOPLAM SİPARİŞ ADEDİ</div>
-        <div class="kpi-val" id="kpi-orders">1</div>
-        <div style="font-size:13.5px; color:var(--pt-olive); font-weight:600;" id="kpi-col2-sub">Aracı Komisyonu: 0 ₺</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label" id="kpi-col3-label">TOPLAM CİRO (ONLINE + CÜZDAN)</div>
+        <div class="kpi-label" id="kpi-col2-label">SEÇİLİ DÖNEM NET CİRO</div>
         <div class="kpi-val" id="kpi-revenue" style="color:var(--pt-terracotta);">0 ₺</div>
-        <div style="font-size:13.5px; color:var(--pt-navy); font-weight:600;" id="kpi-col3-sub">Ortalama Sepet: 0 ₺</div>
+        <div style="font-size:13px; color:var(--pt-navy); font-weight:600;" id="kpi-col2-sub">Tahsil Edilen Net Tutar</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label" id="kpi-col4-label">KAYITLI MÜŞTERİ (CRM HAVUZU)</div>
+        <div class="kpi-label" id="kpi-col3-label">ORTALAMA SEPET &amp; İNDİRİM</div>
+        <div class="kpi-val" id="kpi-items" style="color:var(--pt-olive);">0 ₺</div>
+        <div style="font-size:13px; color:var(--pt-navy); font-weight:600;" id="kpi-col3-sub">Toplam İndirim: 0 ₺</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label" id="kpi-col4-label">KAYITLI MÜŞTERİ SAYISI</div>
         <div class="kpi-val" id="kpi-crm-count" style="color:var(--pt-navy);">0</div>
-        <div style="font-size:13.5px; color:var(--pt-olive); font-weight:600;" id="kpi-col4-sub">Yeniden Pazarlamaya Hazır ✓</div>
+        <div style="font-size:13px; color:var(--pt-olive); font-weight:600;" id="kpi-col4-sub">Şube Müşteri Portföyü ✓</div>
       </div>
     </div>
+
+    <!-- ÜST SEKMELİ (TAB-BASED) PROFESYONEL YÖNETİM MENÜSÜ -->
+    <div id="admin-main-tabs-bar" class="no-print" style="display:flex; gap:8px; flex-wrap:wrap; background:var(--pt-cream); border:2px solid var(--pt-gold); padding:10px; margin-bottom:28px;"></div>
 
     <!-- 0.A. TÜRKİYE GENELİ & ŞUBE BAZLI CİRO, SİPARİŞ VE MAHALLE ANALİZ MERKEZİ -->
     <section class="admin-panel-box no-print" id="branch-analytics-section">
@@ -1010,21 +1033,38 @@
               <th>Şube Adı &amp; İl/İlçe</th>
               <th>Sorumlu Mahalle Sayısı</th>
               <th>Adisyo POS Kodu</th>
-              <th>Sipariş Adedi</th>
-              <th>Toplam Ciro (₺)</th>
+              <th>Seçili Dönem Sipariş</th>
+              <th>Seçili Dönem Ciro (₺)</th>
               <th>Ortalama Sepet</th>
               <th>Müşteri Sayısı</th>
-              <th>Durum / Panel</th>
+              <th id="analytics-col-action-hdr">Durum / Panel</th>
             </tr>
           </thead>
           <tbody id="admin-branch-analytics-tbody"></tbody>
         </table>
       </div>
 
+      <!-- Günlük / Aylık Sipariş & Ciro Trend Tablosu ve En Çok Satan Ürünler -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:18px; margin-bottom:20px;">
+        <div style="background:#fff; border:1px solid var(--pt-border); padding:18px;">
+          <div style="font-size:12px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--pt-navy); margin-bottom:10px;">
+            📅 GÜNLÜK &amp; AYLIK SİPARİŞ VE CİRO ÖZETİ:
+          </div>
+          <div id="admin-daily-monthly-breakdown"></div>
+        </div>
+
+        <div style="background:#fff; border:1px solid var(--pt-border); padding:18px;">
+          <div style="font-size:12px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--pt-navy); margin-bottom:10px;">
+            🍽️ EN ÇOK SATILAN ÜRÜNLER &amp; PORSİYON DAĞILIMI:
+          </div>
+          <div id="admin-top-products-breakdown"></div>
+        </div>
+      </div>
+
       <!-- Mahalle Bazlı Sipariş Yoğunluğu Özeti -->
       <div style="background:#fff; border:1px solid var(--pt-border); padding:18px;">
         <div style="font-size:12px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--pt-navy); margin-bottom:10px;">
-          MAHALLE BAZLI SİPARİŞ &amp; CİRO DAĞILIMI (EN ÇOK SİPARİŞ VEREN BÖLGELER):
+          📍 MAHALLE BAZLI SİPARİŞ &amp; CİRO DAĞILIMI (EN ÇOK SİPARİŞ VEREN BÖLGELER):
         </div>
         <div id="admin-neighborhood-breakdown" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:10px;"></div>
       </div>
@@ -1310,7 +1350,7 @@
     </section>
 
     <!-- 2.5. MOBİL UYGULAMA (ANDROID & iOS) KAMPANYA, İNDİRİM VE SADAKAT PROGRAMI YÖNETİMİ -->
-    <section class="admin-panel-box no-print">
+    <section class="admin-panel-box no-print" id="app-settings-section">
       <div class="pt-subtitle">ANDROID • iOS • MOBİL WEB UYGULAMA &amp; SADAKAT PANELİ</div>
       <h2 class="pt-title">Mobil Uygulama İndirim &amp; Korumalı Sadakat Programı Ayarları</h2>
       <p style="font-size:15px; color:var(--pt-text-muted); margin-bottom:20px;">
@@ -1737,24 +1777,37 @@
       </div>
     </section>
 
-    <!-- 3. MOBİL UYGULAMADAN GELEN SİPARİŞLER & FRANCHISE BAŞVURULARI -->
-    <div class="no-print" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:30px;">
-      <section class="admin-panel-box" style="margin-bottom:0;">
-        <div class="pt-subtitle">ADİSYO BULUT ERP + ÇÖKERTME CÜZDAN + BEKO POS + ANINDA KURYE API AKIŞI</div>
-        <h3 style="font-size:30px; color:var(--pt-navy); margin-bottom:18px;">
-          Gelen Uygulama Siparişleri &amp; Kurye/Mutfak Durumu
-        </h3>
-        <div id="admin-orders-list" style="display:grid; gap:14px;"></div>
-      </section>
+    <!-- 3. MOBİL UYGULAMADAN GELEN SİPARİŞLER & DETAYLI MÜŞTERİ / MUTFAK KARTLARI -->
+    <section class="admin-panel-box no-print" id="orders-main-section">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; margin-bottom:18px;">
+        <div>
+          <div class="pt-subtitle" id="orders-section-eyebrow">CANLI SİPARİŞ TAKİBİ • MÜŞTERİ &amp; TERCIH DETAYLARI • ADİSYO &amp; KURYE AKIŞI</div>
+          <h2 class="pt-title" id="orders-section-title">Gelen Siparişler, Müşteri Bilgileri &amp; Mutfak Tercih Detayları</h2>
+          <p style="font-size:15px; color:var(--pt-text-muted);">
+            Seçili tarih aralığındaki siparişlerin müşteri adı, telefonu, mahallesi/açık adresi, ürün porsiyonları, yoğurt/sarımsak/üst katman/içecek tercihleri ve tahsilat detayları aşağıda listelenir.
+          </p>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <input type="text" id="orders-search-input" class="pt-form-input" placeholder="Sipariş no, müşteri adı, tel veya mahalle ara..." oninput="renderOrders(CokertmeStore.getState())" style="min-width:250px; padding:9px 12px; font-size:13.5px;" />
+          <select id="orders-mode-filter" class="pt-form-select" style="width:auto; padding:9px 12px; font-size:13px;" onchange="renderOrders(CokertmeStore.getState())">
+            <option value="ALL">Tüm Teslimat Tipleri</option>
+            <option value="PAKET">Sadece Eve Paket Servis</option>
+            <option value="GELAL">Sadece Şubeden Gel-Al</option>
+          </select>
+        </div>
+      </div>
 
-      <section class="admin-panel-box" style="margin-bottom:0;">
-        <div class="pt-subtitle">YATIRIMCI &amp; BAYİLİK PORTALI</div>
-        <h3 style="font-size:30px; color:var(--pt-navy); margin-bottom:18px;">
-          Yurt İçi &amp; Yurt Dışı Franchise Başvuruları
-        </h3>
-        <div id="admin-franchise-list" style="display:grid; gap:14px;"></div>
-      </section>
-    </div>
+      <div id="admin-orders-list" style="display:grid; gap:16px;"></div>
+    </section>
+
+    <!-- 4. YURT İÇİ & YURT DIŞI FRANCHISE BAŞVURULARI (SADECE GENEL MERKEZ GÖRÜR) -->
+    <section class="admin-panel-box no-print" id="franchise-section">
+      <div class="pt-subtitle">YATIRIMCI &amp; BAYİLİK PORTALI (SADECE GENEL MERKEZ)</div>
+      <h2 class="pt-title" style="margin-bottom:18px;">
+        Yurt İçi &amp; Yurt Dışı Franchise Başvuruları
+      </h2>
+      <div id="admin-franchise-list" style="display:grid; gap:14px;"></div>
+    </section>
 
   </main>
 
@@ -1813,12 +1866,16 @@
     </div>
   </footer>
 
-  <script src="assets/data.js?v=12"></script>
+  <script src="assets/data.js?v=13"></script>
   <script>
     const ADMIN_SESSION_KEY = "cokertme_admin_auth_v1";
-    const ADMIN_ROLE_KEY = "cokertme_admin_role_v1"; // "SUPER_ADMIN" veya branchId (örn: "adana-gurselpasa")
+    const ADMIN_ROLE_KEY = "cokertme_admin_role_v1"; // "SUPER_ADMIN" veya branchId (örn: "adana-merkez", "adana-gurselpasa", "adana-saricam")
     let currentAdminBranchFilter = "ALL";
     let currentCrmSegment = "ALL";
+    let adminDatePreset = "ALL"; // "ALL", "TODAY", "YESTERDAY", "LAST7", "MONTH", "CUSTOM"
+    let adminDateStart = "";
+    let adminDateEnd = "";
+    let activeAdminTab = ""; // "orders", "analytics", "crm", "branches", "menu_campaigns", "corporate_api"
 
     function getLoggedAdminRole() {
       return sessionStorage.getItem(ADMIN_ROLE_KEY) || "SUPER_ADMIN";
@@ -1828,6 +1885,195 @@
       const role = getLoggedAdminRole();
       if (role !== "SUPER_ADMIN") return role;
       return currentAdminBranchFilter || "ALL";
+    }
+
+    function toIsoDateLocal(d) {
+      const yr = d.getFullYear();
+      const mo = String(d.getMonth() + 1).padStart(2, "0");
+      const da = String(d.getDate()).padStart(2, "0");
+      return `${yr}-${mo}-${da}`;
+    }
+
+    function getOrderIsoDate(o) {
+      if (o && o.orderDateIso && /^\d{4}-\d{2}-\d{2}$/.test(o.orderDateIso)) {
+        return o.orderDateIso;
+      }
+      if (o && o.createdAtMs) {
+        return toIsoDateLocal(new Date(Number(o.createdAtMs)));
+      }
+      const raw = String((o && o.createdAt) || "");
+      const m = raw.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+      if (m) return `${m[3]}-${m[2]}-${m[1]}`;
+      return toIsoDateLocal(new Date());
+    }
+
+    function matchesAdminDateFilter(o) {
+      if (!adminDatePreset || adminDatePreset === "ALL") return true;
+      const iso = getOrderIsoDate(o);
+      const now = new Date();
+      const todayIso = toIsoDateLocal(now);
+
+      if (adminDatePreset === "TODAY") {
+        return iso === todayIso;
+      }
+      if (adminDatePreset === "YESTERDAY") {
+        const y = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+        return iso === toIsoDateLocal(y);
+      }
+      if (adminDatePreset === "LAST7") {
+        const s = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
+        const startIso = toIsoDateLocal(s);
+        return iso >= startIso && iso <= todayIso;
+      }
+      if (adminDatePreset === "MONTH") {
+        const monthPrefix = todayIso.slice(0, 7);
+        return iso.startsWith(monthPrefix);
+      }
+      if (adminDatePreset === "CUSTOM") {
+        if (adminDateStart && iso < adminDateStart) return false;
+        if (adminDateEnd && iso > adminDateEnd) return false;
+        return true;
+      }
+      return true;
+    }
+
+    function updateDateFilterUi() {
+      const presets = ["ALL", "TODAY", "YESTERDAY", "LAST7", "MONTH"];
+      presets.forEach(p => {
+        const btn = document.getElementById("date-btn-" + p);
+        if (!btn) return;
+        if (adminDatePreset === p) {
+          btn.className = "pt-btn-navy";
+          btn.style.color = "#fff";
+        } else {
+          btn.className = "pt-btn-outline";
+          btn.style.color = "var(--pt-navy)";
+        }
+      });
+
+      const lbl = document.getElementById("active-date-range-label");
+      if (lbl) {
+        const map = {
+          ALL: "AKTİF DÖNEM: TÜM ZAMANLAR",
+          TODAY: `AKTİF DÖNEM: BUGÜN (${toIsoDateLocal(new Date())})`,
+          YESTERDAY: "AKTİF DÖNEM: DÜN",
+          LAST7: "AKTİF DÖNEM: SON 7 GÜN",
+          MONTH: "AKTİF DÖNEM: BU AY",
+          CUSTOM: `ÖZEL TARİH: ${adminDateStart || "..."} → ${adminDateEnd || "..."}`
+        };
+        lbl.textContent = map[adminDatePreset] || "AKTİF DÖNEM: TÜM ZAMANLAR";
+      }
+    }
+
+    function setAdminDatePreset(preset) {
+      adminDatePreset = preset || "ALL";
+      if (adminDatePreset !== "CUSTOM") {
+        const sEl = document.getElementById("admin-date-start");
+        const eEl = document.getElementById("admin-date-end");
+        if (sEl) sEl.value = "";
+        if (eEl) eEl.value = "";
+        adminDateStart = "";
+        adminDateEnd = "";
+      }
+      updateDateFilterUi();
+      renderAdminAll();
+    }
+
+    function onCustomDateRangeChange() {
+      const sEl = document.getElementById("admin-date-start");
+      const eEl = document.getElementById("admin-date-end");
+      adminDateStart = sEl ? sEl.value : "";
+      adminDateEnd = eEl ? eEl.value : "";
+      if (adminDateStart || adminDateEnd) {
+        adminDatePreset = "CUSTOM";
+      } else {
+        adminDatePreset = "ALL";
+      }
+      updateDateFilterUi();
+      renderAdminAll();
+    }
+
+    function renderAdminTabsBar() {
+      const bar = document.getElementById("admin-main-tabs-bar");
+      if (!bar) return;
+      const role = getLoggedAdminRole();
+      const isSuper = role === "SUPER_ADMIN";
+
+      const tabs = isSuper
+        ? [
+            { id: "analytics", label: "📊 Analiz & Ciro Raporu" },
+            { id: "orders", label: "🛵 Gelen Siparişler & Detaylar" },
+            { id: "crm", label: "👥 Müşteri CRM & Bilgiler" },
+            { id: "branches", label: "🏢 Şubeler & Mahalle Yetkileri" },
+            { id: "menu_campaigns", label: "🍽️ Menü, Fiyat & Cüzdan/Sadakat" },
+            { id: "corporate_api", label: "⚙️ Görseller, Masa QR, Bayilik & API" }
+          ]
+        : [
+            { id: "orders", label: "🛵 Şube Siparişleri & Detaylar" },
+            { id: "analytics", label: "📊 Günlük / Aylık Analiz & Ciro" },
+            { id: "crm", label: "👥 Şube Müşteri Bilgileri (CRM)" }
+          ];
+
+      const validIds = tabs.map(t => t.id);
+      if (!activeAdminTab || !validIds.includes(activeAdminTab)) {
+        activeAdminTab = isSuper ? "analytics" : "orders";
+      }
+
+      bar.innerHTML = tabs.map(t => {
+        const isActive = t.id === activeAdminTab;
+        return `<button type="button" onclick="switchAdminTab('${t.id}')" style="padding:11px 16px; font-family:var(--font-sans); font-size:12px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; border:1px solid ${isActive ? 'var(--pt-gold)' : 'var(--pt-border)'}; background:${isActive ? 'var(--pt-navy)' : 'var(--pt-cream)'}; color:${isActive ? 'var(--pt-gold-soft)' : 'var(--pt-navy)'}; transition:0.2s;">${t.label}</button>`;
+      }).join("");
+    }
+
+    function switchAdminTab(tabId) {
+      activeAdminTab = tabId;
+      renderAdminTabsBar();
+      applySectionVisibilityByRoleAndTab();
+    }
+
+    function applySectionVisibilityByRoleAndTab() {
+      const role = getLoggedAdminRole();
+      const isSuper = role === "SUPER_ADMIN";
+
+      const setVis = (id, show) => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = show ? "block" : "none";
+      };
+
+      // Hero üst aksiyon ve şube seçici kutusu: Sadece SUPER_ADMIN görür
+      const heroAct = document.getElementById("superadmin-hero-actions");
+      if (heroAct) heroAct.style.display = isSuper ? "flex" : "none";
+      const brSelectBox = document.getElementById("admin-branch-select-box");
+      if (brSelectBox) brSelectBox.style.display = isSuper ? "block" : "none";
+
+      if (!isSuper) {
+        // Şube Yöneticisi (barajyolu, gurselpasa, saricam vb.) -> Genel Merkez ayarlarını KESİNLİKLE göremez!
+        setVis("superadmin-branches-section", false);
+        setVis("printable-qr-section", false);
+        setVis("menu-management-section", false);
+        setVis("app-settings-section", false);
+        setVis("site-gorselleri-section", false);
+        setVis("integrations-hub-section", false);
+        setVis("franchise-section", false);
+        setVis("admin-location-requests-box", false);
+
+        // Sadece seçili sekmeyi göster (orders, analytics, crm)
+        setVis("orders-main-section", activeAdminTab === "orders");
+        setVis("branch-analytics-section", activeAdminTab === "analytics");
+        setVis("crm-customers-section", activeAdminTab === "crm");
+      } else {
+        // SUPER_ADMIN (admin) -> Seçili sekmeye göre temiz ve düzenli görünüm
+        setVis("branch-analytics-section", activeAdminTab === "analytics");
+        setVis("orders-main-section", activeAdminTab === "orders");
+        setVis("crm-customers-section", activeAdminTab === "crm");
+        setVis("superadmin-branches-section", activeAdminTab === "branches");
+        setVis("menu-management-section", activeAdminTab === "menu_campaigns");
+        setVis("app-settings-section", activeAdminTab === "menu_campaigns");
+        setVis("printable-qr-section", activeAdminTab === "corporate_api");
+        setVis("site-gorselleri-section", activeAdminTab === "corporate_api");
+        setVis("integrations-hub-section", activeAdminTab === "corporate_api");
+        setVis("franchise-section", activeAdminTab === "corporate_api");
+      }
     }
 
     function checkAdminSession() {
@@ -1859,6 +2105,7 @@
         sessionStorage.setItem(ADMIN_SESSION_KEY, "authenticated");
         sessionStorage.setItem(ADMIN_ROLE_KEY, "SUPER_ADMIN");
         currentAdminBranchFilter = "ALL";
+        activeAdminTab = "analytics";
         if (errBox) errBox.style.display = "none";
         checkAdminSession();
         renderAdminAll();
@@ -1877,6 +2124,7 @@
         sessionStorage.setItem(ADMIN_SESSION_KEY, "authenticated");
         sessionStorage.setItem(ADMIN_ROLE_KEY, matchedBranch.id);
         currentAdminBranchFilter = matchedBranch.id;
+        activeAdminTab = "orders";
         if (errBox) errBox.style.display = "none";
         checkAdminSession();
         renderAdminAll();
@@ -1891,6 +2139,7 @@
       sessionStorage.removeItem(ADMIN_SESSION_KEY);
       sessionStorage.removeItem(ADMIN_ROLE_KEY);
       currentAdminBranchFilter = "ALL";
+      activeAdminTab = "";
       checkAdminSession();
     }
 
@@ -1913,7 +2162,9 @@
       const rName = (recordBranchName || "").toLocaleLowerCase("tr-TR");
       const bName = (bObj.name || "").toLocaleLowerCase("tr-TR");
       if (rName && bName && (rName === bName || rName.includes(bName) || bName.includes(rName))) return true;
-      if (filterBranchId === "adana-merkez" && rName.includes("seyhan merkez")) return true;
+      if (filterBranchId === "adana-merkez" && (rName.includes("seyhan") || rName.includes("barajyolu") || rName.includes("merkez"))) return true;
+      if (filterBranchId === "adana-gurselpasa" && rName.includes("gürselpaşa")) return true;
+      if (filterBranchId === "adana-saricam" && rName.includes("sarıçam")) return true;
       return false;
     }
 
@@ -1937,6 +2188,7 @@
       if (baseInput && !baseInput.value) {
         baseInput.value = "https://www.cokertmedunyasi.com/menu";
       }
+      updateDateFilterUi();
       renderAdminAll();
     }
 
@@ -1947,8 +2199,9 @@
       const badgeEl = document.getElementById("admin-role-badge");
       const titleEl = document.getElementById("admin-role-title");
       const subEl = document.getElementById("admin-role-sub");
-      const superBranchesSec = document.getElementById("superadmin-branches-section");
-      const menuSec = document.getElementById("menu-management-section");
+      const heroEye = document.getElementById("admin-hero-eyebrow");
+      const heroTitle = document.getElementById("admin-hero-title");
+      const heroSub = document.getElementById("admin-hero-sub");
 
       if (selectEl) {
         if (role === "SUPER_ADMIN") {
@@ -1967,8 +2220,10 @@
       const activeBranchObj = branches.find(b => b.id === effFilter);
 
       if (role === "SUPER_ADMIN") {
-        if (superBranchesSec) superBranchesSec.style.display = "block";
-        if (menuSec) menuSec.style.display = "block";
+        if (heroEye) heroEye.textContent = "GENEL MERKEZ (SUPER ADMIN) • BULUT KONTROL MERKEZİ";
+        if (heroTitle) heroTitle.textContent = "Genel Merkez Yönetim, Şube & Menü Paneli";
+        if (heroSub) heroSub.textContent = "Tüm şubelerin siparişlerini, günlük/aylık cirolarını, sorumlu mahallelerini, menü fiyatlarını ve müşteri CRM havuzunu tek merkezden yönetin.";
+
         if (effFilter === "ALL") {
           if (badgeEl) badgeEl.textContent = "GENEL MERKEZ (SUPER ADMIN) YETKİSİ • TÜM TÜRKİYE";
           if (titleEl) titleEl.textContent = "Türkiye Geneli Tüm Şubeler & Merkez Kontrol Paneli";
@@ -1979,41 +2234,76 @@
           if (subEl) subEl.textContent = `Sorumlu Mahalleler: ${(activeBranchObj.neighborhoods || []).join(", ") || "Belirtilmedi"}`;
         }
       } else {
-        // Şube Yöneticisi Rolü: Sadece kendi şubesini görür, genel merkez şube ekleme bölümünü görmez
-        if (superBranchesSec) superBranchesSec.style.display = "none";
-        if (badgeEl) badgeEl.textContent = `ŞUBE YÖNETİCİSİ PANELİ • ${(activeBranchObj && activeBranchObj.adisyoBranchCode) || role.toUpperCase()}`;
-        if (titleEl) titleEl.textContent = activeBranchObj ? `${activeBranchObj.name} Yönetim & Sipariş Paneli` : "Şube Yönetim Paneli";
+        // Şube Yöneticisi Rolü (barajyolu, gurselpasa, saricam vb.): Sadece kendi şube verilerini görür
+        const bName = activeBranchObj ? activeBranchObj.name : "Şube";
+        const bCode = (activeBranchObj && activeBranchObj.adisyoBranchCode) || role.toUpperCase();
+        if (heroEye) heroEye.textContent = `ŞUBE YÖNETİM PANELİ • ${bCode}`;
+        if (heroTitle) heroTitle.textContent = `${bName} — Sipariş, Ciro & Müşteri Paneli`;
+        if (heroSub) heroSub.textContent = `Şubenize düşen günlük ve aylık siparişleri, sipariş içerik detaylarını ve şube müşterilerinizi anlık olarak takip edin.`;
+
+        if (badgeEl) badgeEl.textContent = `ŞUBE YÖNETİCİSİ PANELİ • ${bCode}`;
+        if (titleEl) titleEl.textContent = `${bName} — Canlı Operasyon & Raporlama Ekranı`;
         if (subEl) subEl.textContent = activeBranchObj
-          ? `Sadece şubenize (${(activeBranchObj.neighborhoods || []).slice(0, 6).join(", ")}...) düşen siparişleri, cironuzu ve müşterilerinizi görüyorsunuz.`
-          : "Şube sipariş ve müşteri ekranı.";
+          ? `Sorumlu Olduğunuz Mahalleler (${(activeBranchObj.neighborhoods || []).length} Bölge): ${(activeBranchObj.neighborhoods || []).join(", ")}`
+          : "Şube sipariş, günlük/aylık analiz ve müşteri bilgi ekranı.";
       }
+
+      renderAdminTabsBar();
+      applySectionVisibilityByRoleAndTab();
     }
 
     function renderAdminAll() {
       const state = CokertmeStore.getState();
       renderAdminRoleHeaderAndPermissions(state);
 
+      const role = getLoggedAdminRole();
       const effFilter = getEffectiveBranchFilter();
       const branches = Array.isArray(state.branches) ? state.branches : [];
-      const activeBranchesCount = branches.filter(b => b.isActive).length;
+      const activeBranchObj = branches.find(b => b.id === effFilter);
 
-      const filteredOrders = (state.orders || []).filter(o => matchesBranchFilter(o.branchId, o.branch, effFilter, state));
+      // Siparişleri hem şubeye hem de seçili tarih aralığına göre filtrele
+      const branchOrdersAllTime = (state.orders || []).filter(o => matchesBranchFilter(o.branchId, o.branch, effFilter, state));
+      const filteredOrders = branchOrdersAllTime.filter(o => matchesAdminDateFilter(o));
+
       const totalRevenue = filteredOrders.reduce((sum, o) => sum + (Number(o.total) || 0), 0);
       const avgBasket = filteredOrders.length > 0 ? Math.round(totalRevenue / filteredOrders.length) : 0;
 
-      const allMembers = Array.isArray(state.members) ? state.members : [];
-      const filteredMembers = allMembers.filter(m => matchesBranchFilter(m.lastBranchId, m.lastBranchName, effFilter, state));
+      // Bu ayın toplam siparişi ve cirosu (şıklık ve hızlı okuma için)
+      const thisMonthPrefix = toIsoDateLocal(new Date()).slice(0, 7);
+      const monthOrders = branchOrdersAllTime.filter(o => getOrderIsoDate(o).startsWith(thisMonthPrefix));
+      const monthRev = monthOrders.reduce((sum, o) => sum + (Number(o.total) || 0), 0);
 
-      const kpiItemsEl = document.getElementById("kpi-items");
-      if (kpiItemsEl) kpiItemsEl.textContent = `${activeBranchesCount} Şube / ${(state.items || []).length} Ürün`;
+      const allMembers = Array.isArray(state.members) ? state.members : [];
+      const filteredMembers = allMembers.filter(m =>
+        matchesBranchFilter(m.lastBranchId || m.branchId, m.lastBranchName || m.branchName, effFilter, state)
+      );
+
       const kpiOrdersEl = document.getElementById("kpi-orders");
-      if (kpiOrdersEl) kpiOrdersEl.textContent = filteredOrders.length;
+      if (kpiOrdersEl) kpiOrdersEl.textContent = `${filteredOrders.length} Sipariş`;
+      const kpiCol2Sub = document.getElementById("kpi-col2-sub");
+      if (kpiCol2Sub) kpiCol2Sub.textContent = `Bu Ay Toplam: ${monthOrders.length} Sipariş (${monthRev.toLocaleString("tr-TR")} ₺)`;
+
       const kpiRevEl = document.getElementById("kpi-revenue");
       if (kpiRevEl) kpiRevEl.textContent = `${totalRevenue.toLocaleString("tr-TR")} ₺`;
       const kpiCol3Sub = document.getElementById("kpi-col3-sub");
       if (kpiCol3Sub) kpiCol3Sub.textContent = `Ortalama Sepet: ${avgBasket.toLocaleString("tr-TR")} ₺`;
+
+      const kpiCol1Title = document.getElementById("kpi-col1-title");
+      const kpiItemsEl = document.getElementById("kpi-items");
+      const kpiCol1Sub = document.getElementById("kpi-col1-sub");
+      if (role === "SUPER_ADMIN" && effFilter === "ALL") {
+        if (kpiCol1Title) kpiCol1Title.textContent = "Aktif Şube & Ürün";
+        if (kpiItemsEl) kpiItemsEl.textContent = `${branches.filter(b => b.isActive).length} Şube / ${(state.items || []).length} Ürün`;
+        if (kpiCol1Sub) kpiCol1Sub.textContent = "Türkiye Geneli Bulut Senkronizasyon";
+      } else {
+        if (kpiCol1Title) kpiCol1Title.textContent = "Sorumlu Bölge Kapsamı";
+        const nCount = activeBranchObj && Array.isArray(activeBranchObj.neighborhoods) ? activeBranchObj.neighborhoods.length : 0;
+        if (kpiItemsEl) kpiItemsEl.textContent = `${nCount} Mahalle`;
+        if (kpiCol1Sub) kpiCol1Sub.textContent = activeBranchObj ? `${activeBranchObj.city || "Adana"} / ${activeBranchObj.district || "Merkez"}` : "Şube Bölgesi";
+      }
+
       const kpiCrmEl = document.getElementById("kpi-crm-count");
-      if (kpiCrmEl) kpiCrmEl.textContent = filteredMembers.length;
+      if (kpiCrmEl) kpiCrmEl.textContent = `${filteredMembers.length} Müşteri`;
 
       const kpiFranchiseEl = document.getElementById("kpi-franchise");
       if (kpiFranchiseEl) kpiFranchiseEl.textContent = (state.franchiseApplications || []).length;
@@ -2062,14 +2352,18 @@
       renderIntegrationSettings(state);
       renderOrders(state);
       renderFranchise(state);
+      applySectionVisibilityByRoleAndTab();
     }
 
     function renderBranchAnalyticsSection(state) {
       const tbody = document.getElementById("admin-branch-analytics-tbody");
       const neighBox = document.getElementById("admin-neighborhood-breakdown");
+      const dailyBox = document.getElementById("admin-daily-monthly-breakdown");
+      const prodBox = document.getElementById("admin-top-products-breakdown");
       const scopeBadge = document.getElementById("analytics-scope-badge");
       if (!tbody) return;
 
+      const role = getLoggedAdminRole();
       const effFilter = getEffectiveBranchFilter();
       const branches = Array.isArray(state.branches) ? state.branches : [];
       const visibleBranches = effFilter === "ALL" ? branches : branches.filter(b => b.id === effFilter);
@@ -2087,11 +2381,17 @@
       const members = Array.isArray(state.members) ? state.members : [];
 
       tbody.innerHTML = visibleBranches.map(b => {
-        const bOrders = orders.filter(o => matchesBranchFilter(o.branchId, o.branch, b.id, state));
+        const bOrders = orders.filter(o => matchesBranchFilter(o.branchId, o.branch, b.id, state) && matchesAdminDateFilter(o));
         const bRev = bOrders.reduce((s, o) => s + (Number(o.total) || 0), 0);
         const bAvg = bOrders.length > 0 ? Math.round(bRev / bOrders.length) : 0;
-        const bMembers = members.filter(m => matchesBranchFilter(m.lastBranchId, m.lastBranchName, b.id, state));
+        const bMembers = members.filter(m => matchesBranchFilter(m.lastBranchId || m.branchId, m.lastBranchName || m.branchName, b.id, state));
         const nList = Array.isArray(b.neighborhoods) ? b.neighborhoods : [];
+
+        const actionCell = role === "SUPER_ADMIN"
+          ? (b.isActive
+              ? `<button type="button" class="pt-btn-navy" style="padding:6px 10px; font-size:10.5px;" onclick="onAdminBranchViewChange('${b.id}')">ŞUBE FİLTRESİ</button>`
+              : `<span class="pt-badge pt-badge-gold">Çok Yakında</span>`)
+          : `<span class="pt-badge pt-badge-olive">AKTİF ŞUBE PANELİNİZ</span>`;
 
         return `
           <tr>
@@ -2108,28 +2408,110 @@
             <td><strong style="font-size:16px; color:var(--pt-terracotta);">${bRev.toLocaleString("tr-TR")} ₺</strong></td>
             <td><span style="font-weight:700; color:var(--pt-olive);">${bAvg.toLocaleString("tr-TR")} ₺</span></td>
             <td><strong>${bMembers.length}</strong> Kayıtlı Müşteri</td>
-            <td>
-              ${b.isActive
-                ? `<button type="button" class="pt-btn-navy" style="padding:6px 10px; font-size:10.5px;" onclick="onAdminBranchViewChange('${b.id}')">ŞUBE PANELİNİ AÇ</button>`
-                : `<span class="pt-badge pt-badge-gold">Çok Yakında</span>`
-              }
-            </td>
+            <td>${actionCell}</td>
           </tr>
         `;
       }).join("");
 
+      const scopedOrders = orders.filter(o => matchesBranchFilter(o.branchId, o.branch, effFilter, state) && matchesAdminDateFilter(o));
+
+      // 1. Günlük & Aylık Sipariş Adedi ve Ciro Özeti
+      if (dailyBox) {
+        const dayMap = {};
+        const monthMap = {};
+        scopedOrders.forEach(o => {
+          const dIso = getOrderIsoDate(o);
+          const mIso = dIso.slice(0, 7);
+          const tot = Number(o.total) || 0;
+          if (!dayMap[dIso]) dayMap[dIso] = { count: 0, rev: 0 };
+          dayMap[dIso].count += 1;
+          dayMap[dIso].rev += tot;
+
+          if (!monthMap[mIso]) monthMap[mIso] = { count: 0, rev: 0 };
+          monthMap[mIso].count += 1;
+          monthMap[mIso].rev += tot;
+        });
+
+        const dayEntries = Object.entries(dayMap).sort((a, b) => b[0].localeCompare(a[0]));
+        const monthEntries = Object.entries(monthMap).sort((a, b) => b[0].localeCompare(a[0]));
+
+        if (dayEntries.length === 0) {
+          dailyBox.innerHTML = `<div style="font-size:13px; color:var(--pt-text-muted);">Seçili tarih aralığında henüz sipariş kaydı bulunmuyor.</div>`;
+        } else {
+          const monthHtml = monthEntries.map(([mKey, st]) => {
+            const [yr, mo] = mKey.split("-");
+            const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+            const mLabel = `${monthNames[Math.max(0, Number(mo) - 1)] || mo} ${yr}`;
+            return `
+              <div style="display:flex; justify-content:space-between; align-items:center; background:var(--pt-navy); color:#fff; padding:8px 12px; border-left:4px solid var(--pt-gold); font-size:12.5px;">
+                <span>📅 <strong>AYLIK TOPLAM (${mLabel})</strong></span>
+                <span><strong style="color:var(--pt-gold-soft);">${st.count} Sipariş</strong> • <strong>${st.rev.toLocaleString("tr-TR")} ₺</strong></span>
+              </div>
+            `;
+          }).join("");
+
+          const dayHtml = dayEntries.map(([dKey, st]) => {
+            const parts = dKey.split("-");
+            const dFormatted = parts.length === 3 ? `${parts[2]}.${parts[1]}.${parts[0]}` : dKey;
+            const avg = Math.round(st.rev / st.count);
+            return `
+              <div style="display:flex; justify-content:space-between; align-items:center; background:var(--pt-cream); border:1px solid var(--pt-border); padding:8px 12px; font-size:12.5px;">
+                <span style="font-weight:700; color:var(--pt-navy);">📆 ${dFormatted}</span>
+                <div style="display:flex; gap:12px; align-items:center;">
+                  <span class="pt-badge pt-badge-olive">${st.count} Sipariş</span>
+                  <span style="font-size:11.5px; color:var(--pt-text-muted);">Ort: ${avg.toLocaleString("tr-TR")} ₺</span>
+                  <strong style="color:var(--pt-terracotta); min-width:85px; text-align:right;">${st.rev.toLocaleString("tr-TR")} ₺</strong>
+                </div>
+              </div>
+            `;
+          }).join("");
+
+          dailyBox.innerHTML = monthHtml + dayHtml;
+        }
+      }
+
+      // 2. Ürün Bazlı Satış Adedi Dağılımı
+      if (prodBox) {
+        const prodMap = {};
+        scopedOrders.forEach(o => {
+          const items = Array.isArray(o.items) ? o.items : [];
+          items.forEach(rawItem => {
+            const str = String(rawItem || "").trim();
+            if (!str) return;
+            const qtyMatch = str.match(/^(\d+)\s*x\s+(.+)$/i);
+            const qty = qtyMatch ? Number(qtyMatch[1]) : 1;
+            const fullTitle = qtyMatch ? qtyMatch[2] : str;
+            const cleanTitle = fullTitle.split("[")[0].trim();
+            if (!prodMap[cleanTitle]) prodMap[cleanTitle] = 0;
+            prodMap[cleanTitle] += qty;
+          });
+        });
+
+        const prodEntries = Object.entries(prodMap).sort((a, b) => b[1] - a[1]);
+        if (prodEntries.length === 0) {
+          prodBox.innerHTML = `<div style="font-size:13px; color:var(--pt-text-muted);">Seçili dönemde ürün satış verisi bulunmuyor.</div>`;
+        } else {
+          prodBox.innerHTML = prodEntries.map(([pName, qty], idx) => `
+            <div style="display:flex; justify-content:space-between; align-items:center; background:var(--pt-cream); border:1px solid var(--pt-border); border-left:3px solid ${idx === 0 ? 'var(--pt-terracotta)' : 'var(--pt-olive)'}; padding:8px 12px; font-size:12.5px;">
+              <span style="font-weight:700; color:var(--pt-navy);">${idx + 1}. ${pName}</span>
+              <span class="pt-badge ${idx === 0 ? 'pt-badge-terracotta' : 'pt-badge-navy'}">${qty} Adet Satıldı</span>
+            </div>
+          `).join("");
+        }
+      }
+
+      // 3. Mahalle Bazlı Sipariş & Ciro Dağılımı
       if (neighBox) {
-        const scopedOrders = orders.filter(o => matchesBranchFilter(o.branchId, o.branch, effFilter, state));
         const neighMap = {};
         scopedOrders.forEach(o => {
-          const nKey = o.neighborhood || o.city || "Merkez / Belirtilmemiş";
-          if (!neighMap[nKey]) neighMap[nKey] = { count: 0, rev: 0, branchName: o.branch || "" };
+          const nKey = o.neighborhood || o.city || "Yenibaraj Mah.";
+          if (!neighMap[nKey]) neighMap[nKey] = { count: 0, rev: 0, branchName: o.branch || "Adana Barajyolu Şubesi" };
           neighMap[nKey].count += 1;
           neighMap[nKey].rev += (Number(o.total) || 0);
         });
         const entries = Object.entries(neighMap).sort((a, b) => b[1].rev - a[1].rev);
         if (entries.length === 0) {
-          neighBox.innerHTML = `<div style="font-size:13px; color:var(--pt-text-muted);">Bu filtrede henüz mahalle bazlı sipariş kaydı bulunmuyor.</div>`;
+          neighBox.innerHTML = `<div style="font-size:13px; color:var(--pt-text-muted);">Seçili tarih aralığında mahalle bazlı sipariş kaydı bulunmuyor.</div>`;
         } else {
           neighBox.innerHTML = entries.map(([nName, stat]) => `
             <div style="background:var(--pt-cream); border:1px solid var(--pt-border); border-left:3px solid var(--pt-gold); padding:10px 12px;">
@@ -2339,24 +2721,28 @@
       return members.map(m => {
         const normPhone = String(m.phone || "").replace(/\D/g, "").slice(-10);
         const mOrders = orders.filter(o => String(o.phone || "").replace(/\D/g, "").slice(-10) === normPhone && normPhone.length >= 10);
-        const totalSpend = Number(m.totalSpend) || mOrders.reduce((s, o) => s + (Number(o.total) || 0), 0);
+        const totalSpend = Number(m.totalSpend) || Number(m.totalSpent) || mOrders.reduce((s, o) => s + (Number(o.total) || 0), 0);
         const orderCount = Number(m.orderCount) || mOrders.length;
-        const stamps = Number(m.loyaltyStamps) || 0;
+        const stamps = Number(m.loyaltyStamps) || Number(m.stamps) || 0;
         const walletBal = Number(m.walletBalance) || 0;
+        const resolvedBranchId = m.lastBranchId || m.branchId || "adana-merkez";
+        const resolvedBranchName = m.lastBranchName || m.branchName || "Adana Barajyolu Şubesi";
         return {
           ...m,
+          resolvedBranchId,
+          resolvedBranchName,
           computedOrderCount: orderCount,
           computedTotalSpend: totalSpend,
           computedStamps: stamps,
           computedWallet: walletBal
         };
       }).filter(m => {
-        if (!matchesBranchFilter(m.lastBranchId, m.lastBranchName, effFilter, state)) return false;
+        if (!matchesBranchFilter(m.resolvedBranchId, m.resolvedBranchName, effFilter, state)) return false;
         if (currentCrmSegment === "ALMOST_REWARD" && m.computedStamps < 4) return false;
         if (currentCrmSegment === "HAS_WALLET" && m.computedWallet <= 0) return false;
         if (currentCrmSegment === "VIP" && m.computedTotalSpend < 1000) return false;
         if (searchQ) {
-          const hay = `${m.fullName || ""} ${m.phone || ""} ${m.city || ""} ${m.neighborhood || ""} ${m.address || ""} ${m.lastBranchName || ""}`.toLocaleLowerCase("tr-TR");
+          const hay = `${m.fullName || ""} ${m.phone || ""} ${m.city || ""} ${m.neighborhood || ""} ${m.address || ""} ${m.resolvedBranchName || ""}`.toLocaleLowerCase("tr-TR");
           if (!hay.includes(searchQ)) return false;
         }
         return true;
@@ -2381,10 +2767,10 @@
           </td>
           <td><a href="tel:${m.phone || ''}" style="font-weight:700; color:var(--pt-navy); text-decoration:none;">${m.phone || "-"}</a></td>
           <td>
-            <span class="pt-badge pt-badge-olive">${m.city || "Adana"} / ${m.neighborhood || "Merkez"}</span>
+            <span class="pt-badge pt-badge-olive">${m.city || "Adana"} / ${m.neighborhood || "Yenibaraj Mah."}</span>
             <div style="font-size:12px; color:var(--pt-text-muted); margin-top:3px; max-width:250px;">${m.address || "-"}</div>
           </td>
-          <td><strong style="color:var(--pt-navy); font-size:13px;">${m.lastBranchName || "Adana Barajyolu Merkez Şube"}</strong></td>
+          <td><strong style="color:var(--pt-navy); font-size:13px;">${m.resolvedBranchName || "Adana Barajyolu Şubesi"}</strong></td>
           <td>
             <strong>${m.computedOrderCount} Sipariş</strong>
             <div style="font-size:13px; font-weight:700; color:var(--pt-terracotta);">${m.computedTotalSpend.toLocaleString("tr-TR")} ₺</div>
@@ -3582,12 +3968,28 @@
     function renderOrders(state) {
       const el = document.getElementById("admin-orders-list");
       if (!el) return;
+      const role = getLoggedAdminRole();
       const companies = (state.integrationSettings && state.integrationSettings.courier && state.integrationSettings.courier.companies) || [];
       const effFilter = getEffectiveBranchFilter();
-      const visibleOrders = (state.orders || []).filter(o => matchesBranchFilter(o.branchId, o.branch, effFilter, state));
+      const searchQ = ((document.getElementById("orders-search-input") && document.getElementById("orders-search-input").value) || "").toLocaleLowerCase("tr-TR").trim();
+      const modeFilter = (document.getElementById("orders-mode-filter") && document.getElementById("orders-mode-filter").value) || "ALL";
+
+      const visibleOrders = (state.orders || []).filter(o => {
+        if (!matchesBranchFilter(o.branchId, o.branch, effFilter, state)) return false;
+        if (!matchesAdminDateFilter(o)) return false;
+        if (modeFilter !== "ALL") {
+          const mStr = String(o.mode || "");
+          if (!mStr.includes(modeFilter)) return false;
+        }
+        if (searchQ) {
+          const hay = `${o.id || ""} ${o.customerName || ""} ${o.phone || ""} ${o.neighborhood || ""} ${o.address || ""} ${(o.items || []).join(" ")}`.toLocaleLowerCase("tr-TR");
+          if (!hay.includes(searchQ)) return false;
+        }
+        return true;
+      });
 
       if (visibleOrders.length === 0) {
-        el.innerHTML = `<div style="background:#fff; padding:22px; border:1px solid var(--pt-border); color:var(--pt-text-muted); font-size:14px;">Seçili şube için henüz sipariş kaydı bulunmuyor.</div>`;
+        el.innerHTML = `<div style="background:#fff; padding:22px; border:1px solid var(--pt-border); color:var(--pt-text-muted); font-size:14px;">Seçili şube ve tarih aralığı için sipariş kaydı bulunmuyor.</div>`;
         return;
       }
 
@@ -3597,47 +3999,71 @@
         ).join("");
         const adisyoBadge = o.adisyoBranchCode || "ADISYO-ADN-01";
         const locBadge = o.neighborhood ? `${o.city || 'Adana'} / ${o.neighborhood}` : (o.city || "Adana");
+        const orderIso = getOrderIsoDate(o);
+        const dParts = orderIso.split("-");
+        const dateFormatted = dParts.length === 3 ? `${dParts[2]}.${dParts[1]}.${dParts[0]}` : orderIso;
+
+        const itemsHtml = (Array.isArray(o.items) ? o.items : []).map(it => `
+          <div style="padding:7px 10px; background:#fff; border:1px solid var(--pt-border); border-left:3px solid var(--pt-gold); font-size:13.5px; font-weight:600; color:var(--pt-navy);">
+            🍽️ ${it}
+          </div>
+        `).join("");
 
         return `
         <div style="background:#fff; padding:18px; border:1px solid var(--pt-border); border-left:4px solid var(--pt-olive);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:8px; flex-wrap:wrap;">
-            <strong style="font-family:var(--font-serif); font-size:21px; color:var(--pt-navy);">#${o.id} — ${o.customerName}</strong>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:8px; flex-wrap:wrap;">
+            <div>
+              <strong style="font-family:var(--font-serif); font-size:22px; color:var(--pt-navy);">#${o.id} — ${o.customerName || "Müşteri"}</strong>
+              <span style="margin-left:8px; font-size:12px; font-weight:700; color:var(--pt-olive);">📅 ${dateFormatted} • ⏰ ${o.createdAt || "-"}</span>
+            </div>
             <div style="display:flex; gap:6px; flex-wrap:wrap;">
               <span class="pt-badge pt-badge-olive">📍 ${locBadge}</span>
               <span class="pt-badge pt-badge-gold">${adisyoBadge}</span>
-              <span class="pt-badge pt-badge-navy">${o.mode}</span>
+              <span class="pt-badge pt-badge-navy">${o.mode || "Sipariş"}</span>
             </div>
           </div>
-          <div style="font-size:13.5px; color:var(--pt-text-muted); margin-bottom:6px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-            <span style="display:inline-flex; align-items:center; gap:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--pt-terracotta)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> <strong>${o.branch}</strong></span>
-            <span>•</span>
-            <span style="display:inline-flex; align-items:center; gap:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--pt-navy)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> ${o.phone}</span>
-            <span>•</span>
-            <span style="display:inline-flex; align-items:center; gap:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--pt-olive)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Sipariş: ${o.createdAt}</span>
-          </div>
-          <div style="font-size:14.5px; font-weight:600; margin-bottom:10px; color:var(--pt-navy); display:flex; align-items:center; gap:6px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--pt-gold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
-            <span>${o.items.join(", ")}</span>
+
+          <!-- Müşteri & Teslimat Detay Kutusu -->
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px; background:var(--pt-cream); border:1px solid var(--pt-border); padding:10px 12px; margin-bottom:10px; font-size:12.5px;">
+            <div>
+              <div style="font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--pt-text-muted); font-weight:700;">Müşteri Ad Soyad &amp; Telefon</div>
+              <div style="font-weight:800; color:var(--pt-navy); font-size:14px; margin-top:2px;">👤 ${o.customerName || "-"} • <a href="tel:${o.phone || ''}" style="color:var(--pt-terracotta); text-decoration:none;">📞 ${o.phone || "-"}</a></div>
+            </div>
+            <div>
+              <div style="font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--pt-text-muted); font-weight:700;">Teslimat Adresi &amp; Mahalle</div>
+              <div style="font-weight:700; color:var(--pt-navy); margin-top:2px;">📍 ${locBadge} — ${o.address || o.mode || "-"}</div>
+            </div>
+            <div>
+              <div style="font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--pt-text-muted); font-weight:700;">Sorumlu Şube &amp; Tahsilat</div>
+              <div style="font-weight:700; color:var(--pt-olive); margin-top:2px;">🏢 ${o.branch || "Adana Barajyolu Şubesi"}</div>
+            </div>
           </div>
 
-          <div style="background:var(--pt-cream); border:1px solid var(--pt-border); padding:10px 12px; margin-bottom:10px; font-size:12.5px; display:grid; gap:5px;">
-            <div><strong style="color:var(--pt-olive);">Sorumlu Şube &amp; Mahalle Eşleşmesi:</strong> <strong>${o.branch}</strong> (${locBadge})</div>
-            <div><strong style="color:var(--pt-olive);">Üyelik &amp; CRM Durumu:</strong> ${o.membershipNote || 'Sipariş Bilgileriyle Otomatik Üyelik Açıldı'}</div>
-            ${o.loyaltyNote ? `<div><strong style="color:var(--pt-gold);">Sadakat Programı:</strong> <strong style="color:var(--pt-navy);">${o.loyaltyNote}</strong></div>` : ''}
-            <div><strong style="color:var(--pt-terracotta);">Şube Adisyo Bulut ERP (${adisyoBadge}):</strong> ${o.adisyoStatus || 'Adisyo POS & ERP İletildi • Mutfak Fişi Basıldı • Stok/Reçete, Muhasebe, Pazaryeri, Kurye & Finans İşlendi'}</div>
-            <div><strong style="color:var(--pt-navy);">Ödeme / Tahsilat (QNB / Cüzdan / Beko POS):</strong> ${o.paymentLabel || 'QNB Finansbank Online 3D (Beko POS Hesabına Aktarıldı)'}</div>
-            <div><strong style="color:var(--pt-terracotta);">Kurye API (0. Saniye):</strong> ${o.courierStatus || `Anında Kurye API'ye Atandı (${o.prepTimeMinutes || 15} dk sonra hazır)`}</div>
+          <!-- Sipariş İçeriği ve Mutfak Seçimleri -->
+          <div style="margin-bottom:10px;">
+            <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--pt-olive); font-weight:800; margin-bottom:5px;">SİPARİŞ İÇERİĞİ &amp; MUTFAK TERCİHLERİ (${(o.items || []).length} Kalem):</div>
+            <div style="display:grid; gap:5px;">
+              ${itemsHtml}
+            </div>
+          </div>
+
+          <!-- Adisyo & Ödeme Özeti -->
+          <div style="background:var(--pt-cream); border:1px solid var(--pt-border); padding:10px 12px; margin-bottom:10px; font-size:12px; display:grid; gap:4px;">
+            <div><strong style="color:var(--pt-terracotta);">Adisyo Bulut POS (${adisyoBadge}):</strong> ${o.adisyoStatus || 'Adisyo POS & Mutfak Fişi İletildi'}</div>
+            <div><strong style="color:var(--pt-navy);">Ödeme Yöntemi:</strong> ${o.paymentLabel || 'QNB Finansbank Online 3D / Cüzdan'}</div>
+            <div><strong style="color:var(--pt-olive);">Kurye &amp; Operasyon Durumu:</strong> ${o.courierStatus || `Hazırlanıyor (${o.prepTimeMinutes || 15} dk)`}</div>
+            ${role === "SUPER_ADMIN" ? `
             <div style="display:flex; align-items:center; gap:8px; margin-top:4px; flex-wrap:wrap;">
               <span style="font-weight:700; color:var(--pt-navy);">Başka Kurye Firmasına Yönlendir:</span>
               <select class="pt-form-select" style="width:auto; padding:5px 10px; font-size:12px;" onchange="redispatchOrderToCourier('${o.id}', this.value)">
                 ${courierOptions}
               </select>
-            </div>
+            </div>` : ""}
           </div>
 
-          <div style="display:flex; justify-content:space-between; font-size:13.5px; padding-top:8px; border-top:1px dashed var(--pt-border); flex-wrap:wrap; gap:6px;">
-            <span>Liste: ${o.subtotal} ₺ | <strong style="color:var(--pt-olive);">İndirim: -${o.discount} ₺</strong>${o.deliveryFee ? ` | <strong style="color:var(--pt-navy);">Kurye: +${o.deliveryFee} ₺</strong>` : ''}</span>
-            <strong style="color:var(--pt-terracotta); font-size:15px;">Tahsilat: ${o.total} ₺</strong>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:13.5px; padding-top:8px; border-top:1px dashed var(--pt-border); flex-wrap:wrap; gap:6px;">
+            <span>Ara Toplam: <strong>${o.subtotal || o.total} ₺</strong> | <strong style="color:var(--pt-olive);">İndirim: -${o.discount || 0} ₺</strong>${o.deliveryFee ? ` | <strong style="color:var(--pt-navy);">Kurye Paket Hizmeti: +${o.deliveryFee} ₺</strong>` : ''}</span>
+            <strong style="color:var(--pt-terracotta); font-size:16px;">Net Tahsilat: ${o.total} ₺</strong>
           </div>
         </div>
       `}).join("");

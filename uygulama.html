@@ -3365,7 +3365,7 @@
 
   </div>
 
-  <script src="assets/data.js?v=12"></script>
+  <script src="assets/data.js?v=13"></script>
   <script>
     // =========================================================================
     // UYGULAMA DURUMU (STATE)
@@ -7119,7 +7119,9 @@
           ? `${assignedBranch.name} Kuryesine (${activeCourier.name}) Atandı (${prepMinutes} dk sonra [${estimatedReadyAtStr}] hazır)`
           : `${assignedBranch.name} Gel-Al Noktası (${prepMinutes} dk sonra [${estimatedReadyAtStr}] hazır)`,
         status: `Ödeme Alındı • ${assignedBranch.name} Mutfakta Hazırlanıyor`,
-        createdAt: createdAtStr
+        createdAt: createdAtStr,
+        createdAtMs: now.getTime(),
+        orderDateIso: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`
       };
 
       // Müşterinin kendi cihazındaki sipariş geçmişine de kalıcı olarak kaydet (hiçbir sipariş kaybolmasın)

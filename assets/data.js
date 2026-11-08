@@ -890,7 +890,118 @@ function sanitizeAndMergeState(parsed) {
   });
 
   const backupOrders = loadOrdersBackup();
-  const mergedOrders = mergeOrdersList(backupOrders, parsed.orders);
+  const rawMergedOrders = mergeOrdersList(backupOrders, parsed.orders);
+
+  // Mevcut ve geçmiş siparişlerin şube, mahalle ve tarih alanlarını otomatik zenginleştir
+  const allNeighborhoodMap = [];
+  mergedBranches.forEach(b => {
+    if (!b || !b.isActive) return;
+    (Array.isArray(b.neighborhoods) ? b.neighborhoods : []).forEach(n => {
+      allNeighborhoodMap.push({
+        hood: String(n).trim(),
+        hoodLower: String(n).trim().toLocaleLowerCase("tr-TR"),
+        branch: b
+      });
+    });
+  });
+
+  const mergedOrders = rawMergedOrders.map(o => {
+    const copy = { ...o };
+    const addrHay = `${copy.neighborhood || ""} ${copy.address || ""} ${copy.mode || ""}`.toLocaleLowerCase("tr-TR");
+    let matchedHoodInfo = allNeighborhoodMap.find(x => x.hoodLower && addrHay.includes(x.hoodLower));
+
+    if (!copy.branchId || copy.branch === "Adana Seyhan Merkez Şube" || (copy.branch && copy.branch.includes("Merkez Şube"))) {
+      if (matchedHoodInfo) {
+        copy.branchId = matchedHoodInfo.branch.id;
+        copy.branch = matchedHoodInfo.branch.name;
+        copy.city = matchedHoodInfo.branch.city || "Adana";
+        copy.neighborhood = copy.neighborhood || matchedHoodInfo.hood;
+        copy.adisyoBranchCode = copy.adisyoBranchCode || matchedHoodInfo.branch.adisyoBranchCode;
+      } else {
+        const bObj = mergedBranches.find(b => b.id === copy.branchId) || mergedBranches[0];
+        copy.branchId = bObj ? bObj.id : "adana-merkez";
+        copy.branch = bObj ? bObj.name : "Adana Barajyolu Şubesi";
+        copy.city = copy.city || (bObj && bObj.city) || "Adana";
+        copy.neighborhood = copy.neighborhood || "Yenibaraj";
+        copy.adisyoBranchCode = copy.adisyoBranchCode || (bObj && bObj.adisyoBranchCode) || "ADANA-BARAJYOLU-01";
+      }
+    } else if (!copy.neighborhood && matchedHoodInfo) {
+      copy.neighborhood = matchedHoodInfo.hood;
+    }
+
+    if (!copy.createdAtMs) {
+      copy.createdAtMs = Number(copy.timestamp) || Date.now();
+    }
+    if (!copy.orderDateIso) {
+      try {
+        const d = new Date(Number(copy.createdAtMs) || Date.now());
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const dd = String(d.getDate()).padStart(2, "0");
+        copy.orderDateIso = `${yyyy}-${mm}-${dd}`;
+      } catch (e) {
+        copy.orderDateIso = new Date().toISOString().slice(0, 10);
+      }
+    }
+    return copy;
+  });
+
+  // Sipariş veren tüm müşterilerin CRM (members) listesinde de eksiksiz yer almasını sağla
+  let syncedMembers = mergeMembersList(DEFAULT_COKERTME_DATA.members, parsed.members);
+  const memberByPhone = new Map();
+  syncedMembers.forEach(m => {
+    const k = normalizePhone10(m.phone);
+    if (k) memberByPhone.set(k, m);
+  });
+
+  mergedOrders.forEach(o => {
+    const k = normalizePhone10(o.phone);
+    if (!k || k.length < 10) return;
+    const existing = memberByPhone.get(k);
+    if (!existing) {
+      const customerOrders = mergedOrders.filter(x => normalizePhone10(x.phone) === k);
+      const totalSpend = customerOrders.reduce((s, x) => s + (Number(x.total) || 0), 0);
+      const newMem = {
+        id: "MEM-" + k.slice(-6),
+        fullName: o.customerName || "Müşteri",
+        name: o.customerName || "Müşteri",
+        phone: o.phone,
+        phoneNormalized: k,
+        city: o.city || "Adana",
+        district: o.district || "Seyhan",
+        neighborhood: o.neighborhood || "Yenibaraj",
+        address: o.address || o.mode || "",
+        lastBranchId: o.branchId || "adana-merkez",
+        lastBranchName: o.branch || "Adana Barajyolu Şubesi",
+        orderCount: customerOrders.length,
+        totalSpend: Math.round(totalSpend * 100) / 100,
+        loyaltyStamps: Math.min(5, customerOrders.length),
+        stamps: Math.min(5, customerOrders.length),
+        walletBalance: 0,
+        lastOrderAt: o.createdAt || o.orderDateIso || "Bugün",
+        source: "Online Sipariş",
+        createdAt: o.createdAt || "Bugün",
+        updatedAt: Number(o.createdAtMs) || Date.now()
+      };
+      memberByPhone.set(k, newMem);
+      syncedMembers.push(newMem);
+    } else {
+      const customerOrders = mergedOrders.filter(x => normalizePhone10(x.phone) === k);
+      const totalSpend = customerOrders.reduce((s, x) => s + (Number(x.total) || 0), 0);
+      existing.fullName = existing.fullName || existing.name || o.customerName || "Müşteri";
+      existing.city = existing.city || o.city || "Adana";
+      existing.neighborhood = existing.neighborhood || o.neighborhood || "Yenibaraj";
+      existing.address = existing.address || o.address || "";
+      existing.lastBranchId = existing.lastBranchId || o.branchId || "adana-merkez";
+      existing.lastBranchName = (existing.lastBranchName && !existing.lastBranchName.includes("Merkez Şube"))
+        ? existing.lastBranchName
+        : (o.branch || "Adana Barajyolu Şubesi");
+      existing.orderCount = Math.max(Number(existing.orderCount) || 0, customerOrders.length);
+      existing.totalSpend = Math.max(Number(existing.totalSpend) || 0, Math.round(totalSpend * 100) / 100);
+      existing.loyaltyStamps = Math.max(Number(existing.loyaltyStamps) || 0, Number(existing.stamps) || 0);
+      existing.lastOrderAt = existing.lastOrderAt || o.createdAt || o.orderDateIso || "Bugün";
+    }
+  });
 
   const merged = {
     ...DEFAULT_COKERTME_DATA,
@@ -907,7 +1018,7 @@ function sanitizeAndMergeState(parsed) {
     locationRequests: Array.isArray(parsed.locationRequests) ? parsed.locationRequests : [],
     items: validItems,
     orders: mergedOrders,
-    members: mergeMembersList(DEFAULT_COKERTME_DATA.members, parsed.members),
+    members: syncedMembers,
     adminSettings: {
       ...DEFAULT_COKERTME_DATA.adminSettings,
       ...(parsed.adminSettings || {})
