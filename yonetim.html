@@ -810,7 +810,7 @@
 
       <div style="background:#fff; border:1px solid var(--pt-border); padding:12px 14px; margin-bottom:20px; font-size:12.5px; color:var(--pt-text-muted); display:flex; align-items:center; gap:10px; text-align:left;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--pt-terracotta)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <span><strong>Genel Merkez (Super Admin)</strong> veya <strong>Şube Yöneticisi (Barajyolu, Gürselpaşa, Sarıçam vb.)</strong> kullanıcı adınız ve şifrenizle giriş yapabilirsiniz.</span>
+        <span><strong>Genel Merkez (Super Admin)</strong> veya <strong>Şube Yöneticisi (Adana Barajyolu Şubesi vb.)</strong> kullanıcı adınız ve şifrenizle giriş yapabilirsiniz.</span>
       </div>
 
       <form id="admin-login-form" onsubmit="return handleAdminLogin(event)" style="text-align:left;">
@@ -1074,25 +1074,25 @@
     <section class="admin-panel-box no-print" id="superadmin-branches-section">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; margin-bottom:20px;">
         <div>
-          <div class="pt-subtitle">GENEL MERKEZ YETKİSİ • 81 İL &amp; 100+ ŞUBE BÖLGE YÖNETİMİ</div>
-          <h2 class="pt-title">Şubeler, Sorumlu Mahalleler, Şube Şifreleri &amp; Adisyo POS Yönetimi</h2>
+          <div class="pt-subtitle">GENEL MERKEZ YETKİSİ • 81 İL &amp; 100+ ŞUBE BÖLGE VE ADİSYO API YÖNETİMİ</div>
+          <h2 class="pt-title">Şubeler, Sorumlu Mahalleler, Şube Şifreleri &amp; Bağımsız Adisyo POS Yönetimi</h2>
           <p style="font-size:15px; color:var(--pt-text-muted);">
-            Aynı ildeki birden fazla şubenin (Örn: <strong>Adana Barajyolu, Adana Gürselpaşa, Adana Sarıçam</strong>) hangi mahallelerden sorumlu olduğunu, kendi Adisyo POS kodlarını ve şube yöneticisi giriş bilgilerini buradan belirleyin. Müşteri mahallesini seçtiği an sipariş otomatik olarak o şubenin ekranına ve Adisyo'suna düşer.
+            Aktif şubenizin (<strong>Adana Barajyolu Şubesi</strong>) ve ileride açılacak tüm yeni şubelerin hangi mahallelerden sorumlu olduğunu, şube yöneticisi giriş bilgilerini ve <strong>her şubenin kendine özel Adisyo Restoran / API anahtarlarını</strong> buradan yönetin.
           </p>
         </div>
-        <button type="button" class="pt-btn-fill" onclick="toggleNewBranchForm()">+ YENİ ŞUBE &amp; BÖLGE EKLE</button>
+        <button type="button" class="pt-btn-fill" onclick="toggleNewBranchForm()">+ YENİ ŞUBE &amp; ADİSYO TANIMLA</button>
       </div>
 
       <!-- Yeni Şube Ekleme Formu -->
       <div id="new-branch-form-box" style="display:none; background:#fff; border:2px solid var(--pt-gold); padding:22px; margin-bottom:22px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-          <h3 style="font-size:24px; color:var(--pt-navy);">Yeni Çökertme Dünyası Şubesi Ekle (81 İl)</h3>
+          <h3 style="font-size:24px; color:var(--pt-navy);">Yeni Çökertme Dünyası Şubesi &amp; Bağımsız Adisyo POS Ekle (81 İl)</h3>
           <button type="button" onclick="toggleNewBranchForm()" style="background:none; border:none; color:var(--pt-terracotta); font-weight:700; cursor:pointer;">✕ KAPAT</button>
         </div>
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:12px; margin-bottom:12px;">
           <div>
             <label class="pt-form-label">Şube Adı *</label>
-            <input type="text" id="nb-name" class="pt-form-input" placeholder="Örn: Adana Çukurova 4. Şube" />
+            <input type="text" id="nb-name" class="pt-form-input" placeholder="Örn: Adana Çukurova Şubesi" />
           </div>
           <div>
             <label class="pt-form-label">İl (Şehir) *</label>
@@ -1103,10 +1103,6 @@
             <input type="text" id="nb-district" class="pt-form-input" placeholder="Örn: Çukurova / Seyhan" />
           </div>
           <div>
-            <label class="pt-form-label">Adisyo Şube Kodu *</label>
-            <input type="text" id="nb-adisyo-code" class="pt-form-input" placeholder="Örn: ADISYO-ADN-04" />
-          </div>
-          <div>
             <label class="pt-form-label">Şube Yöneticisi Kullanıcı Adı *</label>
             <input type="text" id="nb-admin-user" class="pt-form-input" placeholder="Örn: cukurova" />
           </div>
@@ -1115,6 +1111,32 @@
             <input type="text" id="nb-admin-pass" class="pt-form-input" placeholder="Örn: Cukurova123." />
           </div>
         </div>
+
+        <!-- Yeni Şubeye Özel Adisyo API & Program Bilgileri -->
+        <div style="background:var(--pt-cream); border:1.5px solid var(--pt-gold); padding:14px; margin-bottom:12px;">
+          <div style="font-size:11.5px; font-weight:800; color:var(--pt-navy); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">
+            🔌 BU ŞUBENİN KENDİ ADİSYO PROGRAMI &amp; API BİLGİLERİ (HER ŞUBE BAĞIMSIZ ADİSYO HESABINA DÜŞER)
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px;">
+            <div>
+              <label class="pt-form-label" style="font-size:10px;">Adisyo Şube / Kasa Kodu *</label>
+              <input type="text" id="nb-adisyo-code" class="pt-form-input" placeholder="Örn: ADANA-CUKUROVA-02" />
+            </div>
+            <div>
+              <label class="pt-form-label" style="font-size:10px;">Adisyo Consumer / Restoran ID (x-api-consumer)</label>
+              <input type="text" id="nb-adisyo-consumer" class="pt-form-input" placeholder="Örn: COKERTME-ADN-02" />
+            </div>
+            <div>
+              <label class="pt-form-label" style="font-size:10px;">Şube Adisyo API Key (x-api-key)</label>
+              <input type="text" id="nb-adisyo-key" class="pt-form-input" placeholder="Adisyo Panel -> Entegrasyon API Key" />
+            </div>
+            <div>
+              <label class="pt-form-label" style="font-size:10px;">Şube Adisyo API Secret (x-api-secret)</label>
+              <input type="password" id="nb-adisyo-secret" class="pt-form-input" placeholder="Adisyo API Secret" />
+            </div>
+          </div>
+        </div>
+
         <div style="margin-bottom:12px;">
           <label class="pt-form-label">Sorumlu Olduğu Mahalleler (Virgülle Ayırarak Yazın) *</label>
           <input type="text" id="nb-neighborhoods" class="pt-form-input" placeholder="Örn: Mahfesığmaz, Toros, Yurt, Huzurevleri, Yüzüncüyıl" />
@@ -1136,7 +1158,7 @@
             </select>
           </div>
         </div>
-        <button type="button" class="pt-btn-olive" onclick="addNewBranchFromAdmin()">✓ ŞUBEYİ VE SORUMLU MAHALLELERİ KAYDET</button>
+        <button type="button" class="pt-btn-olive" onclick="addNewBranchFromAdmin()">✓ ŞUBEYİ, SORUMLU MAHALLELERİ VE ADİSYO API BİLGİLERİNİ KAYDET</button>
       </div>
 
       <!-- Mevcut Şubeler ve Sorumlu Mahalle Kartları -->
@@ -1866,7 +1888,7 @@
     </div>
   </footer>
 
-  <script src="assets/data.js?v=13"></script>
+  <script src="assets/data.js?v=14"></script>
   <script>
     const ADMIN_SESSION_KEY = "cokertme_admin_auth_v1";
     const ADMIN_ROLE_KEY = "cokertme_admin_role_v1"; // "SUPER_ADMIN" veya branchId (örn: "adana-merkez", "adana-gurselpasa", "adana-saricam")
@@ -2538,6 +2560,9 @@
       const city = (document.getElementById("nb-city").value || "Adana").trim();
       const district = (document.getElementById("nb-district").value || "").trim();
       const adisyoCode = (document.getElementById("nb-adisyo-code").value || "").trim() || ("ADISYO-" + Math.floor(100 + Math.random() * 900));
+      const adisyoConsumer = (document.getElementById("nb-adisyo-consumer") && document.getElementById("nb-adisyo-consumer").value || "").trim() || ("COKERTME-" + Math.floor(100 + Math.random() * 900));
+      const adisyoKey = (document.getElementById("nb-adisyo-key") && document.getElementById("nb-adisyo-key").value || "").trim();
+      const adisyoSecret = (document.getElementById("nb-adisyo-secret") && document.getElementById("nb-adisyo-secret").value || "").trim();
       const adminUser = (document.getElementById("nb-admin-user").value || "").trim();
       const adminPass = (document.getElementById("nb-admin-pass").value || "").trim() || "Cokertme123.";
       const neighRaw = (document.getElementById("nb-neighborhoods").value || "").trim();
@@ -2569,7 +2594,10 @@
         adminUsername: adminUser || slugId.slice(0, 12),
         adminPassword: adminPass,
         adisyoBranchCode: adisyoCode,
-        adisyoApiKey: "",
+        adisyoConsumerId: adisyoConsumer,
+        adisyoApiKey: adisyoKey,
+        adisyoApiSecret: adisyoSecret,
+        adisyoApiUrl: "https://ext.adisyo.com/api/v1/orders",
         prepMinutes: 15,
         deliveryFeeOverride: 100
       });
@@ -2577,7 +2605,7 @@
       CokertmeStore.saveState(state);
       document.getElementById("new-branch-form-box").style.display = "none";
       renderAdminAll();
-      alert(`✓ "${name}" (${city}) şubesi ve sorumlu mahalleleri başarıyla eklendi!`);
+      alert(`✓ "${name}" (${city}) şubesi, sorumlu mahalleleri ve bağımsız Adisyo POS ayarları başarıyla eklendi!`);
     }
 
     function renderBranchesManagerSection(state) {
@@ -2587,6 +2615,7 @@
 
       grid.innerHTML = branches.map(b => {
         const neighStr = (Array.isArray(b.neighborhoods) ? b.neighborhoods : []).join(", ");
+        const hasOwnApiKey = Boolean(b.adisyoApiKey && b.adisyoApiKey.trim());
         return `
           <div style="background:#fff; border:1px solid var(--pt-border); border-top:4px solid ${b.isActive ? 'var(--pt-olive)' : 'var(--pt-gold)'}; padding:18px; display:grid; gap:10px;">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
@@ -2609,21 +2638,46 @@
             </div>
 
             <div>
-              <label class="pt-form-label" style="font-size:10px; color:var(--pt-olive);">Sorumlu Olduğu Mahalleler (Virgülle Ayırın — Sipariş Eşleştirmesi İçin)</label>
-              <textarea id="br-neigh-${b.id}" class="pt-form-textarea" rows="2" style="padding:8px 10px; font-size:12.5px; font-weight:600;">${neighStr}</textarea>
+              <label class="pt-form-label" style="font-size:10px; color:var(--pt-olive);">Sorumlu Olduğu Mahalleler (${(b.neighborhoods || []).length} Mahalle — Virgülle Ayırın)</label>
+              <textarea id="br-neigh-${b.id}" class="pt-form-textarea" rows="3" style="padding:8px 10px; font-size:12px; font-weight:600;">${neighStr}</textarea>
             </div>
 
-            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; background:var(--pt-cream); padding:10px; border:1px solid var(--pt-border);">
-              <div>
-                <label class="pt-form-label" style="font-size:9.5px;">Adisyo Şube Kodu</label>
-                <input type="text" id="br-adisyo-${b.id}" class="pt-form-input" style="padding:6px 8px; font-size:12px; font-weight:700;" value="${b.adisyoBranchCode || ''}" />
+            <!-- Şubeye Özel Bağımsız Adisyo Programı & API Bilgileri -->
+            <div style="background:var(--pt-cream); padding:10px 12px; border:1px solid var(--pt-gold); display:grid; gap:8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                <span style="font-size:10.5px; font-weight:800; color:var(--pt-navy); text-transform:uppercase;">🔌 ŞUBEYE ÖZEL ADİSYO PROGRAMI &amp; API BİLGİLERİ</span>
+                <span class="pt-badge ${hasOwnApiKey ? 'pt-badge-olive' : 'pt-badge-gold'}" style="font-size:9.5px;">${hasOwnApiKey ? '✓ Özel API Key Aktif' : 'Standart / Test Modu'}</span>
               </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                <div>
+                  <label class="pt-form-label" style="font-size:9.5px;">Adisyo Şube / Kasa Kodu</label>
+                  <input type="text" id="br-adisyo-${b.id}" class="pt-form-input" style="padding:6px 8px; font-size:12px; font-weight:700;" value="${b.adisyoBranchCode || ''}" />
+                </div>
+                <div>
+                  <label class="pt-form-label" style="font-size:9.5px;">Adisyo Consumer ID (x-api-consumer)</label>
+                  <input type="text" id="br-adisyo-consumer-${b.id}" class="pt-form-input" style="padding:6px 8px; font-size:12px;" value="${b.adisyoConsumerId || ''}" placeholder="Örn: COKERTME-ADN-01" />
+                </div>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                <div>
+                  <label class="pt-form-label" style="font-size:9.5px;">Şube Adisyo API Key (x-api-key)</label>
+                  <input type="text" id="br-adisyo-key-${b.id}" class="pt-form-input" style="padding:6px 8px; font-size:12px;" value="${b.adisyoApiKey || ''}" placeholder="Bu şubenin Adisyo API Key'i" />
+                </div>
+                <div>
+                  <label class="pt-form-label" style="font-size:9.5px;">Şube Adisyo API Secret (x-api-secret)</label>
+                  <input type="password" id="br-adisyo-secret-${b.id}" class="pt-form-input" style="padding:6px 8px; font-size:12px;" value="${b.adisyoApiSecret || ''}" placeholder="Bu şubenin Adisyo API Secret'ı" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Şube Yöneticisi Giriş Bilgileri -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; background:#f8fafc; padding:10px; border:1px solid var(--pt-border);">
               <div>
-                <label class="pt-form-label" style="font-size:9.5px;">Şube Kullanıcı Adı</label>
+                <label class="pt-form-label" style="font-size:9.5px;">Şube Paneli Kullanıcı Adı</label>
                 <input type="text" id="br-user-${b.id}" class="pt-form-input" style="padding:6px 8px; font-size:12px;" value="${b.adminUsername || ''}" />
               </div>
               <div>
-                <label class="pt-form-label" style="font-size:9.5px;">Şube Giriş Şifresi</label>
+                <label class="pt-form-label" style="font-size:9.5px;">Şube Paneli Giriş Şifresi</label>
                 <input type="text" id="br-pass-${b.id}" class="pt-form-input" style="padding:6px 8px; font-size:12px;" value="${b.adminPassword || ''}" />
               </div>
             </div>
@@ -2642,8 +2696,9 @@
               </div>
             </div>
 
-            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; padding-top:6px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; padding-top:6px; flex-wrap:wrap;">
               <button type="button" class="pt-btn-olive" style="padding:8px 14px; font-size:11px; flex:1;" onclick="saveBranchConfig('${b.id}')">✓ BÖLGE &amp; ADİSYO AYARLARINI KAYDET</button>
+              <button type="button" class="pt-btn-navy" style="padding:8px 10px; font-size:10.5px;" onclick="testBranchAdisyoConnection('${b.id}')">⚡ ADİSYO TEST</button>
               <button type="button" onclick="deleteBranchFromAdmin('${b.id}')" style="background:#FDECEC; border:1px solid #E5A0A0; color:#A61B1B; padding:8px 10px; font-size:11px; font-weight:700; cursor:pointer;">SİL</button>
             </div>
           </div>
@@ -2660,6 +2715,9 @@
       const distEl = document.getElementById(`br-dist-${branchId}`);
       const neighEl = document.getElementById(`br-neigh-${branchId}`);
       const adisyoEl = document.getElementById(`br-adisyo-${branchId}`);
+      const adisyoConsEl = document.getElementById(`br-adisyo-consumer-${branchId}`);
+      const adisyoKeyEl = document.getElementById(`br-adisyo-key-${branchId}`);
+      const adisyoSecEl = document.getElementById(`br-adisyo-secret-${branchId}`);
       const userEl = document.getElementById(`br-user-${branchId}`);
       const passEl = document.getElementById(`br-pass-${branchId}`);
       const addrEl = document.getElementById(`br-addr-${branchId}`);
@@ -2671,6 +2729,9 @@
         b.neighborhoods = neighEl.value.split(",").map(s => s.trim()).filter(Boolean);
       }
       if (adisyoEl) b.adisyoBranchCode = adisyoEl.value.trim();
+      if (adisyoConsEl) b.adisyoConsumerId = adisyoConsEl.value.trim();
+      if (adisyoKeyEl) b.adisyoApiKey = adisyoKeyEl.value.trim();
+      if (adisyoSecEl) b.adisyoApiSecret = adisyoSecEl.value.trim();
       if (userEl) b.adminUsername = userEl.value.trim();
       if (passEl) b.adminPassword = passEl.value.trim();
       if (addrEl) b.address = addrEl.value.trim();
@@ -2681,7 +2742,22 @@
 
       CokertmeStore.saveState(state);
       renderAdminAll();
-      alert(`✓ "${b.name}" sorumlu mahalleleri, Adisyo POS kodu ve şube yönetici bilgileri güncellendi!`);
+      alert(`✓ "${b.name}" sorumlu mahalleleri, şubeye özel Adisyo API anahtarları ve yönetici bilgileri güncellendi!`);
+    }
+
+    function testBranchAdisyoConnection(branchId) {
+      const state = CokertmeStore.getState();
+      const b = (state.branches || []).find(x => x.id === branchId);
+      if (!b) return;
+      const hasKey = Boolean(b.adisyoApiKey && b.adisyoApiKey.trim());
+      alert(
+        `🔌 "${b.name}" — Bağımsız Adisyo POS & API Bağlantı Özeti:\n\n` +
+        `• Şube / Kasa Kodu: ${b.adisyoBranchCode || "ADANA-BARAJYOLU-01"}\n` +
+        `• Adisyo Restoran / Consumer ID: ${b.adisyoConsumerId || "COKERTME-ADANA-BARAJYOLU-01"}\n` +
+        `• Adisyo API Endpoint: ${b.adisyoApiUrl || "https://ext.adisyo.com/api/v1/orders"}\n` +
+        `• Şube Özel API Key Durumu: ${hasKey ? "✓ TANIMLI (Canlı Adisyo İletimi Aktif)" : "⚠️ Henüz girilmedi (Adisyo panelinden aldığınız x-api-key ve x-api-secret bilgilerini girdiğiniz an doğrudan bu şubenin kasasına düşer)"}\n` +
+        `• Sorumlu Mahalle Sayısı: ${(b.neighborhoods || []).length} Mahalle`
+      );
     }
 
     function deleteBranchFromAdmin(branchId) {

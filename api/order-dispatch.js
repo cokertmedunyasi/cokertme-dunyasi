@@ -21,13 +21,23 @@ module.exports = async function handler(req, res) {
 
   try {
     const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
-    const { order, integrationSettings } = body || {};
+    const { order, branchAdisyoConfig, integrationSettings } = body || {};
 
     if (!order) {
       return res.status(400).json({ error: "Order payload missing" });
     }
 
-    const adisyoCfg = (integrationSettings && integrationSettings.adisyo) || {};
+    const globalAdisyo = (integrationSettings && integrationSettings.adisyo) || {};
+    const branchAdisyo = branchAdisyoConfig || {};
+
+    // Her şubenin kendi bağımsız Adisyo programı ve API bilgileri önceliklidir:
+    const effectiveAdisyoUrl = branchAdisyo.adisyoApiUrl || globalAdisyo.apiUrl || "https://ext.adisyo.com/api/v1/orders";
+    const effectiveAdisyoKey = branchAdisyo.adisyoApiKey || order.adisyoApiKey || globalAdisyo.apiKey || "";
+    const effectiveAdisyoSecret = branchAdisyo.adisyoApiSecret || order.adisyoApiSecret || globalAdisyo.apiSecret || "";
+    const effectiveConsumerId = branchAdisyo.adisyoConsumerId || order.adisyoConsumerId || globalAdisyo.consumerId || "COKERTME-ADANA-BARAJYOLU-01";
+    const effectiveBranchCode = branchAdisyo.adisyoBranchCode || order.adisyoBranchCode || globalAdisyo.branchId || "ADANA-BARAJYOLU-01";
+
+    const adisyoCfg = globalAdisyo;
     const courierCfg = (integrationSettings && integrationSettings.courier) || {};
 
     const activeCourier = (courierCfg.companies || []).find(
@@ -42,12 +52,13 @@ module.exports = async function handler(req, res) {
     const customerGender = order.customerGender || "Belirtilmedi";
     const moldType = order.moldType || (customerGender === "Kadın" ? "Kalpli Çökertme Kalıbı (Kadın Sunumu)" : "Çember Çökertme Kalıbı (Erkek Sunumu)");
 
-    // 1. Adisyo Bulut POS & ERP API Paketi (Adisyon + Mutfak Fişi + Stok/Reçete + Muhasebe + Pazaryeri + Kurye + Finans + Beko ÖKC)
+    // 1. Adisyo Bulut POS & ERP API Paketi (Şubeye Özel Adisyo Programı: Adisyon + Mutfak Fişi + Stok/Reçete + Muhasebe + Kurye + Finans)
     const adisyoPayload = {
       externalOrderId: order.id,
       sourcePlatform: "COKERTME_DUNYASI_ONLINE_SIPARIS",
-      consumerId: adisyoCfg.consumerId || "COKERTME-ADANA-01",
-      branchId: adisyoCfg.branchId || "ADANA-SEYHAN-MERKEZ",
+      consumerId: effectiveConsumerId,
+      branchId: effectiveBranchCode,
+      branchName: order.branch || branchAdisyo.branchName || "Adana Barajyolu Şubesi",
       createdAt: order.createdAt,
       customer: {
         fullName: order.customerName,
@@ -128,16 +139,16 @@ module.exports = async function handler(req, res) {
 
     const tasks = [];
 
-    // Adisyo Bulut POS & ERP API Gerçek İstek (API Key tanımlıysa canlı gönderir)
-    if (adisyoCfg.enabled !== false && adisyoCfg.apiUrl && adisyoCfg.apiKey) {
+    // Adisyo Bulut POS & ERP API Gerçek İstek (İlgili şubenin kendi Adisyo API Key'i tanımlıysa doğrudan o şubenin Adisyo programına canlı gönderir)
+    if (adisyoCfg.enabled !== false && effectiveAdisyoUrl && effectiveAdisyoKey) {
       tasks.push(
-        fetch(adisyoCfg.apiUrl, {
+        fetch(effectiveAdisyoUrl, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "x-api-key": adisyoCfg.apiKey,
-            "x-api-secret": adisyoCfg.apiSecret || "",
-            "x-api-consumer": adisyoCfg.consumerId || "COKERTME-ADANA-01"
+            "x-api-key": effectiveAdisyoKey,
+            "x-api-secret": effectiveAdisyoSecret,
+            "x-api-consumer": effectiveConsumerId
           },
           body: JSON.stringify(adisyoPayload)
         })

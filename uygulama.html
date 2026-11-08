@@ -3365,7 +3365,7 @@
 
   </div>
 
-  <script src="assets/data.js?v=13"></script>
+  <script src="assets/data.js?v=14"></script>
   <script>
     // =========================================================================
     // UYGULAMA DURUMU (STATE)
@@ -3393,11 +3393,16 @@
     let selectedLocation = (function loadSavedLoc() {
       try {
         const raw = JSON.parse(localStorage.getItem(LOCATION_STORAGE_KEY) || "null");
-        if (raw && raw.city) return raw;
+        if (raw && raw.city) {
+          if (raw.branchId === "adana-gurselpasa" || raw.branchId === "adana-saricam") {
+            raw.branchId = "adana-merkez";
+          }
+          return raw;
+        }
       } catch (e) {}
       return {
         city: "Adana",
-        district: "Seyhan / Çukurova",
+        district: "Seyhan / Çukurova / Sarıçam",
         neighborhood: "Yenibaraj",
         branchId: "adana-merkez"
       };
@@ -6552,7 +6557,7 @@
                 ` : `
                   <label style="font-size:11px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">Mahalle / Bölge Seçimi (A-Z) *</label>
                   <select id="checkout-neighborhood" onchange="onCheckoutNeighborhoodChange(this.value)" style="width:100%; padding:10px; border:1.5px solid var(--pt-gold); border-radius:10px; font-size:13px; font-weight:700; color:var(--pt-navy); background:#fff;">
-                    ${checkoutHoodEntries.map(e => `<option value="${e.neighborhood}" ${String(draftHood || '').toLocaleLowerCase('tr-TR') === e.neighborhood.toLocaleLowerCase('tr-TR') ? 'selected' : ''}>${e.neighborhood} Mah. (${e.shortBranchName || formatShortBranchLabel(e.branchName)})</option>`).join("")}
+                    ${checkoutHoodEntries.map(e => `<option value="${e.neighborhood}" ${String(draftHood || '').toLocaleLowerCase('tr-TR') === e.neighborhood.toLocaleLowerCase('tr-TR') ? 'selected' : ''}>${e.neighborhood} Mah.${checkoutCityBranches.length > 1 ? ` (${e.shortBranchName || formatShortBranchLabel(e.branchName)})` : ''}</option>`).join("")}
                   </select>
                 `}
               </div>

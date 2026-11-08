@@ -414,7 +414,7 @@ const DEFAULT_COKERTME_DATA = {
       id: "adana-merkez",
       name: "Adana Barajyolu Şubesi",
       city: "Adana",
-      district: "Seyhan",
+      district: "Seyhan / Çukurova / Sarıçam",
       country: "Türkiye",
       status: "Açık - Hizmetinizde",
       address: "Yenibaraj Mahallesi, Bülent Angın Blv. No: 66/D, Seyhan/Adana",
@@ -423,56 +423,21 @@ const DEFAULT_COKERTME_DATA = {
       isActive: true,
       neighborhoods: [
         "Yenibaraj", "Barajyolu", "Reşatbey", "Cemalpaşa", "Kurtuluş",
-        "Ziyapaşa", "Gazipaşa", "Çınarlı", "Sümer", "Pınar", "Demirköprü", "Döşeme"
+        "Ziyapaşa", "Gazipaşa", "Çınarlı", "Sümer", "Pınar", "Demirköprü", "Döşeme",
+        "Gürselpaşa", "Karslılar", "Toros", "Yurt", "Mahfesığmaz",
+        "Güzelyalı", "Beyazevler", "Huzurevleri", "Yüzüncüyıl", "Belediyeevleri", "Şambayadı", "Kabaktepe",
+        "Türkmenbaşı", "Tellidere", "Mavi Bulvar", "Fatih", "Kıyıboyu", "Çukurova", "Süleyman Demirel", "Kenan Evren", "Turgut Özal",
+        "Balcalı", "Gültepe", "Osmangazi", "Orhangazi", "Yeşiltepe",
+        "Boynuyoğun", "Mehmet Akif Ersoy", "Şahintepe", "Yavuz Sultan Selim", "Esentepe", "İncirlik", "Suluca",
+        "Sarıçam", "Yeni Mahalle", "Kozan Yolu", "Vali Yolu", "Aliya İzzetbegoviç"
       ],
       adminUsername: "barajyolu",
       adminPassword: "Barajyolu123.",
       adisyoBranchCode: "ADANA-BARAJYOLU-01",
+      adisyoConsumerId: "COKERTME-ADANA-BARAJYOLU-01",
       adisyoApiKey: "",
-      prepMinutes: 15,
-      overflowBranchId: ""
-    },
-    {
-      id: "adana-gurselpasa",
-      name: "Adana Gürselpaşa Şubesi",
-      city: "Adana",
-      district: "Çukurova",
-      country: "Türkiye",
-      status: "Açık - Hizmetinizde",
-      address: "Gürselpaşa Mahallesi, Aliya İzzetbegoviç Blv., Çukurova/Adana",
-      phone: "0 (546) 918 07 02",
-      hours: "11:00 - 23:30",
-      isActive: true,
-      neighborhoods: [
-        "Gürselpaşa", "Karslılar", "Toros", "Yurt", "Mahfesığmaz",
-        "Güzelyalı", "Beyazevler", "Huzurevleri", "Yüzüncüyıl", "Belediyeevleri", "Şambayadı", "Kabaktepe"
-      ],
-      adminUsername: "gurselpasa",
-      adminPassword: "Gurselpasa123.",
-      adisyoBranchCode: "ADANA-GURSELPASA-02",
-      adisyoApiKey: "",
-      prepMinutes: 15,
-      overflowBranchId: ""
-    },
-    {
-      id: "adana-saricam",
-      name: "Adana Sarıçam Şubesi",
-      city: "Adana",
-      district: "Sarıçam",
-      country: "Türkiye",
-      status: "Açık - Hizmetinizde",
-      address: "Gültepe Mahallesi, Erguvan Cad., Sarıçam/Adana",
-      phone: "0 (546) 918 07 03",
-      hours: "11:00 - 23:30",
-      isActive: true,
-      neighborhoods: [
-        "Balcalı", "Gültepe", "Osmangazi", "Orhangazi", "Yeşiltepe",
-        "Boynuyoğun", "Mehmet Akif Ersoy", "Şahintepe", "Yavuz Sultan Selim", "Esentepe", "İncirlik", "Suluca"
-      ],
-      adminUsername: "saricam",
-      adminPassword: "Saricam123.",
-      adisyoBranchCode: "ADANA-SARICAM-03",
-      adisyoApiKey: "",
+      adisyoApiSecret: "",
+      adisyoApiUrl: "https://ext.adisyo.com/api/v1/orders",
       prepMinutes: 15,
       overflowBranchId: ""
     },
@@ -491,7 +456,10 @@ const DEFAULT_COKERTME_DATA = {
       adminUsername: "bodrum",
       adminPassword: "Bodrum123.",
       adisyoBranchCode: "MUGLA-BODRUM-04",
+      adisyoConsumerId: "COKERTME-MUGLA-BODRUM-04",
       adisyoApiKey: "",
+      adisyoApiSecret: "",
+      adisyoApiUrl: "https://ext.adisyo.com/api/v1/orders",
       prepMinutes: 15,
       overflowBranchId: ""
     },
@@ -510,7 +478,10 @@ const DEFAULT_COKERTME_DATA = {
       adminUsername: "kadikoy",
       adminPassword: "Kadikoy123.",
       adisyoBranchCode: "IST-KADIKOY-05",
+      adisyoConsumerId: "COKERTME-IST-KADIKOY-05",
       adisyoApiKey: "",
+      adisyoApiSecret: "",
+      adisyoApiUrl: "https://ext.adisyo.com/api/v1/orders",
       prepMinutes: 15,
       overflowBranchId: ""
     },
@@ -529,7 +500,10 @@ const DEFAULT_COKERTME_DATA = {
       adminUsername: "berlin",
       adminPassword: "Berlin123.",
       adisyoBranchCode: "DE-BERLIN-06",
+      adisyoConsumerId: "COKERTME-DE-BERLIN-06",
       adisyoApiKey: "",
+      adisyoApiSecret: "",
+      adisyoApiUrl: "https://ext.adisyo.com/api/v1/orders",
       prepMinutes: 15,
       overflowBranchId: ""
     }
@@ -847,47 +821,60 @@ function sanitizeAndMergeState(parsed) {
   });
 
   let mergedBranches = Array.isArray(parsed.branches) && parsed.branches.length > 0
-    ? parsed.branches.map(b => {
-        if (!b || !b.id) return b;
-        const defB = defaultBranchMap[b.id] || {};
-        const upgraded = {
-          ...defB,
-          ...b,
-          neighborhoods: Array.isArray(b.neighborhoods) && b.neighborhoods.length > 0
-            ? b.neighborhoods
-            : (defB.neighborhoods || []),
-          district: b.district || defB.district || "Merkez",
-          adminUsername: b.adminUsername || defB.adminUsername || b.id,
-          adminPassword: b.adminPassword || defB.adminPassword || "Cokertme123.",
-          adisyoBranchCode: b.adisyoBranchCode || defB.adisyoBranchCode || b.id.toUpperCase(),
-          adisyoApiKey: b.adisyoApiKey || defB.adisyoApiKey || "",
-          prepMinutes: Number(b.prepMinutes) || Number(defB.prepMinutes) || 15,
-          overflowBranchId: b.overflowBranchId || ""
-        };
-        if (b.id === "adana-merkez" || (b.address && b.address.includes("Turgut Özal"))) {
-          upgraded.name = "Adana Barajyolu Şubesi";
-          upgraded.address = "Yenibaraj Mahallesi, Bülent Angın Blv. No: 66/D, Seyhan/Adana";
-          upgraded.phone = b.phone || "0 (546) 918 07 01";
-        }
-        if (b.id === "adana-gurselpasa" && upgraded.name && upgraded.name.includes("(Çukurova)")) {
-          upgraded.name = "Adana Gürselpaşa Şubesi";
-        }
-        if (upgraded.name && (upgraded.name.includes("Merkez Şube") || upgraded.name.includes("Amiral Mağaza"))) {
-          upgraded.name = upgraded.name
-            .replace(/\s*\(Amiral Mağaza\)/gi, "")
-            .replace(/Merkez\s+Şube/gi, "Şubesi")
-            .trim();
-        }
-        return upgraded;
-      })
+    ? parsed.branches
+        .filter(b => b && b.id !== "adana-gurselpasa" && b.id !== "adana-saricam")
+        .map(b => {
+          if (!b || !b.id) return b;
+          const defB = defaultBranchMap[b.id] || {};
+          let combinedNeighborhoods = Array.isArray(b.neighborhoods) && b.neighborhoods.length > 0
+            ? [...b.neighborhoods]
+            : [...(defB.neighborhoods || [])];
+
+          if (b.id === "adana-merkez" && Array.isArray(defB.neighborhoods)) {
+            const seenH = new Set(combinedNeighborhoods.map(x => String(x || "").trim().toLocaleLowerCase("tr-TR")));
+            defB.neighborhoods.forEach(dh => {
+              const key = String(dh || "").trim().toLocaleLowerCase("tr-TR");
+              if (key && !seenH.has(key)) {
+                seenH.add(key);
+                combinedNeighborhoods.push(dh);
+              }
+            });
+          }
+
+          const upgraded = {
+            ...defB,
+            ...b,
+            neighborhoods: combinedNeighborhoods,
+            district: b.id === "adana-merkez" ? "Seyhan / Çukurova / Sarıçam" : (b.district || defB.district || "Merkez"),
+            adminUsername: b.adminUsername || defB.adminUsername || b.id,
+            adminPassword: b.adminPassword || defB.adminPassword || "Cokertme123.",
+            adisyoBranchCode: b.adisyoBranchCode || defB.adisyoBranchCode || b.id.toUpperCase(),
+            adisyoConsumerId: b.adisyoConsumerId || defB.adisyoConsumerId || `COKERTME-${b.id.toUpperCase()}`,
+            adisyoApiKey: b.adisyoApiKey || defB.adisyoApiKey || "",
+            adisyoApiSecret: b.adisyoApiSecret || defB.adisyoApiSecret || "",
+            adisyoApiUrl: b.adisyoApiUrl || defB.adisyoApiUrl || "https://ext.adisyo.com/api/v1/orders",
+            prepMinutes: Number(b.prepMinutes) || Number(defB.prepMinutes) || 15,
+            overflowBranchId: b.overflowBranchId || ""
+          };
+          if (b.id === "adana-merkez" || (b.address && b.address.includes("Turgut Özal"))) {
+            upgraded.name = "Adana Barajyolu Şubesi";
+            upgraded.address = "Yenibaraj Mahallesi, Bülent Angın Blv. No: 66/D, Seyhan/Adana";
+            upgraded.phone = b.phone || "0 (546) 918 07 01";
+          }
+          if (upgraded.name && (upgraded.name.includes("Merkez Şube") || upgraded.name.includes("Amiral Mağaza"))) {
+            upgraded.name = upgraded.name
+              .replace(/\s*\(Amiral Mağaza\)/gi, "")
+              .replace(/Merkez\s+Şube/gi, "Şubesi")
+              .trim();
+          }
+          return upgraded;
+        })
     : [...DEFAULT_COKERTME_DATA.branches];
 
-  // Ensure the 3 Adana branches (Barajyolu, Gürselpaşa, Sarıçam) exist so multi-branch neighborhood routing works out of the box
-  ["adana-merkez", "adana-gurselpasa", "adana-saricam"].forEach(reqId => {
-    if (!mergedBranches.some(b => b && b.id === reqId) && defaultBranchMap[reqId]) {
-      mergedBranches.splice(1, 0, JSON.parse(JSON.stringify(defaultBranchMap[reqId])));
-    }
-  });
+  // Adana Barajyolu Şubesi'nin her zaman mevcut olduğundan emin ol
+  if (!mergedBranches.some(b => b && b.id === "adana-merkez") && defaultBranchMap["adana-merkez"]) {
+    mergedBranches.unshift(JSON.parse(JSON.stringify(defaultBranchMap["adana-merkez"])));
+  }
 
   const backupOrders = loadOrdersBackup();
   const rawMergedOrders = mergeOrdersList(backupOrders, parsed.orders);
@@ -910,20 +897,26 @@ function sanitizeAndMergeState(parsed) {
     const addrHay = `${copy.neighborhood || ""} ${copy.address || ""} ${copy.mode || ""}`.toLocaleLowerCase("tr-TR");
     let matchedHoodInfo = allNeighborhoodMap.find(x => x.hoodLower && addrHay.includes(x.hoodLower));
 
-    if (!copy.branchId || copy.branch === "Adana Seyhan Merkez Şube" || (copy.branch && copy.branch.includes("Merkez Şube"))) {
+    if (
+      !copy.branchId ||
+      copy.branchId === "adana-gurselpasa" ||
+      copy.branchId === "adana-saricam" ||
+      copy.branch === "Adana Seyhan Merkez Şube" ||
+      (copy.branch && (copy.branch.includes("Merkez Şube") || copy.branch.includes("Gürselpaşa") || copy.branch.includes("Sarıçam")))
+    ) {
       if (matchedHoodInfo) {
         copy.branchId = matchedHoodInfo.branch.id;
         copy.branch = matchedHoodInfo.branch.name;
         copy.city = matchedHoodInfo.branch.city || "Adana";
         copy.neighborhood = copy.neighborhood || matchedHoodInfo.hood;
-        copy.adisyoBranchCode = copy.adisyoBranchCode || matchedHoodInfo.branch.adisyoBranchCode;
+        copy.adisyoBranchCode = matchedHoodInfo.branch.adisyoBranchCode || "ADANA-BARAJYOLU-01";
       } else {
-        const bObj = mergedBranches.find(b => b.id === copy.branchId) || mergedBranches[0];
+        const bObj = mergedBranches.find(b => b.id === "adana-merkez") || mergedBranches[0];
         copy.branchId = bObj ? bObj.id : "adana-merkez";
         copy.branch = bObj ? bObj.name : "Adana Barajyolu Şubesi";
         copy.city = copy.city || (bObj && bObj.city) || "Adana";
         copy.neighborhood = copy.neighborhood || "Yenibaraj";
-        copy.adisyoBranchCode = copy.adisyoBranchCode || (bObj && bObj.adisyoBranchCode) || "ADANA-BARAJYOLU-01";
+        copy.adisyoBranchCode = (bObj && bObj.adisyoBranchCode) || "ADANA-BARAJYOLU-01";
       }
     } else if (!copy.neighborhood && matchedHoodInfo) {
       copy.neighborhood = matchedHoodInfo.hood;
@@ -992,14 +985,30 @@ function sanitizeAndMergeState(parsed) {
       existing.city = existing.city || o.city || "Adana";
       existing.neighborhood = existing.neighborhood || o.neighborhood || "Yenibaraj";
       existing.address = existing.address || o.address || "";
-      existing.lastBranchId = existing.lastBranchId || o.branchId || "adana-merkez";
-      existing.lastBranchName = (existing.lastBranchName && !existing.lastBranchName.includes("Merkez Şube"))
+      existing.lastBranchId = (existing.lastBranchId && existing.lastBranchId !== "adana-gurselpasa" && existing.lastBranchId !== "adana-saricam")
+        ? existing.lastBranchId
+        : (o.branchId || "adana-merkez");
+      existing.lastBranchName = (existing.lastBranchName && !existing.lastBranchName.includes("Merkez Şube") && !existing.lastBranchName.includes("Gürselpaşa") && !existing.lastBranchName.includes("Sarıçam"))
         ? existing.lastBranchName
         : (o.branch || "Adana Barajyolu Şubesi");
       existing.orderCount = Math.max(Number(existing.orderCount) || 0, customerOrders.length);
       existing.totalSpend = Math.max(Number(existing.totalSpend) || 0, Math.round(totalSpend * 100) / 100);
       existing.loyaltyStamps = Math.max(Number(existing.loyaltyStamps) || 0, Number(existing.stamps) || 0);
       existing.lastOrderAt = existing.lastOrderAt || o.createdAt || o.orderDateIso || "Bugün";
+    }
+  });
+
+  syncedMembers.forEach(m => {
+    if (!m) return;
+    if (m.lastBranchId === "adana-gurselpasa" || m.lastBranchId === "adana-saricam" || m.branchId === "adana-gurselpasa" || m.branchId === "adana-saricam") {
+      m.lastBranchId = "adana-merkez";
+      m.branchId = "adana-merkez";
+    }
+    if (m.lastBranchName && (m.lastBranchName.includes("Gürselpaşa") || m.lastBranchName.includes("Sarıçam") || m.lastBranchName.includes("Merkez Şube"))) {
+      m.lastBranchName = "Adana Barajyolu Şubesi";
+    }
+    if (m.branchName && (m.branchName.includes("Gürselpaşa") || m.branchName.includes("Sarıçam") || m.branchName.includes("Merkez Şube"))) {
+      m.branchName = "Adana Barajyolu Şubesi";
     }
   });
 
@@ -1233,12 +1242,25 @@ const CokertmeStore = {
   async dispatchOrder(order) {
     const state = this.getState();
     const integrations = state.integrationSettings || DEFAULT_COKERTME_DATA.integrationSettings;
+    const branches = Array.isArray(state.branches) ? state.branches : [];
+    const matchedBranch = branches.find(b => b && (b.id === order.branchId || b.name === order.branch)) || branches[0] || null;
+    const branchAdisyoConfig = matchedBranch ? {
+      branchId: matchedBranch.id,
+      branchName: matchedBranch.name,
+      adisyoBranchCode: matchedBranch.adisyoBranchCode || "ADANA-BARAJYOLU-01",
+      adisyoConsumerId: matchedBranch.adisyoConsumerId || "",
+      adisyoApiKey: matchedBranch.adisyoApiKey || "",
+      adisyoApiSecret: matchedBranch.adisyoApiSecret || "",
+      adisyoApiUrl: matchedBranch.adisyoApiUrl || "https://ext.adisyo.com/api/v1/orders"
+    } : null;
+
     try {
       const res = await fetch(getCloudApiUrl("/api/order-dispatch"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           order,
+          branchAdisyoConfig,
           integrationSettings: integrations
         })
       });
@@ -1246,7 +1268,7 @@ const CokertmeStore = {
         return await res.json();
       }
     } catch (e) {}
-    return { ok: true, simulated: true };
+    return { ok: true, simulated: true, branchAdisyoConfig };
   },
 
   async syncFromServer() {
