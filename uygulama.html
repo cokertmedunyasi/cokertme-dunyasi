@@ -3294,6 +3294,13 @@
     </div>
 
     <!-- ======================================================================
+         TÜRKİYE GENELİ 81 İL & MAHALLE BAZLI AKILLI ŞUBE SEÇİM MODALI
+         ====================================================================== -->
+    <div id="location-selector-modal" onclick="if(event.target===this) closeLocationSelectorModal()" style="display:none; position:fixed; inset:0; z-index:2750; background:rgba(10, 30, 48, 0.78); backdrop-filter:blur(5px); align-items:center; justify-content:center; padding:14px;">
+      <div id="location-selector-modal-body" style="background:#fff; width:100%; max-width:480px; max-height:90vh; overflow-y:auto; border-radius:20px; border:2px solid var(--pt-gold); box-shadow:0 24px 60px rgba(0,0,0,0.45); animation:fadeIn 0.18s ease;"></div>
+    </div>
+
+    <!-- ======================================================================
          MODERN SİPARİŞ ONAY, CANLI TAKİP VE SADAKAT BİLDİRİM MODALI
          ====================================================================== -->
     <div id="order-success-modal" onclick="if(event.target===this) closeOrderSuccessModal()" style="display:none; position:fixed; inset:0; z-index:2800; background:rgba(10, 30, 48, 0.78); backdrop-filter:blur(5px); align-items:center; justify-content:center; padding:16px;">
@@ -3358,7 +3365,7 @@
 
   </div>
 
-  <script src="assets/data.js?v=9"></script>
+  <script src="assets/data.js?v=10"></script>
   <script>
     // =========================================================================
     // UYGULAMA DURUMU (STATE)
@@ -3369,6 +3376,302 @@
     let currentDetailItemId = null;
     let currentDetailQty = 1;
     let currentDetailPortion = "1 Porsiyon (Standart)";
+
+    // Türkiye Geneli 81 İl & Mahalle Bazlı Akıllı Şube Eşleştirme Durumu
+    const LOCATION_STORAGE_KEY = "cokertme_selected_location_v1";
+    const TURKEY_81_CITIES = [
+      "Adana", "İstanbul", "Ankara", "İzmir", "Muğla", "Antalya", "Bursa", "Mersin", "Gaziantep", "Konya",
+      "Kayseri", "Eskişehir", "Kocaeli", "Sakarya", "Samsun", "Trabzon", "Hatay", "Diyarbakır", "Şanlıurfa", "Denizli",
+      "Aydın", "Balıkesir", "Manisa", "Tekirdağ", "Çanakkale", "Edirne", "Kırklareli", "Yalova", "Bilecik", "Afyonkarahisar",
+      "Kütahya", "Uşak", "Isparta", "Burdur", "Aksaray", "Karaman", "Kırıkkale", "Kırşehir", "Nevşehir", "Niğde",
+      "Sivas", "Yozgat", "Çankırı", "Bolu", "Düzce", "Zonguldak", "Karabük", "Bartın", "Kastamonu", "Çorum",
+      "Amasya", "Tokat", "Sinop", "Ordu", "Giresun", "Rize", "Artvin", "Gümüşhane", "Bayburt", "Erzurum",
+      "Erzincan", "Kars", "Ardahan", "Iğdır", "Ağrı", "Malatya", "Elazığ", "Tunceli", "Bingöl", "Muş",
+      "Bitlis", "Van", "Hakkari", "Kahramanmaraş", "Osmaniye", "Kilis", "Adıyaman", "Mardin", "Batman", "Siirt", "Şırnak"
+    ];
+
+    let selectedLocation = (function loadSavedLoc() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(LOCATION_STORAGE_KEY) || "null");
+        if (raw && raw.city) return raw;
+      } catch (e) {}
+      return {
+        city: "Adana",
+        district: "Seyhan / Çukurova",
+        neighborhood: "Yenibaraj",
+        branchId: "adana-merkez"
+      };
+    })();
+
+    let modalLocationCity = selectedLocation.city || "Adana";
+    let modalLocationNeighborhood = selectedLocation.neighborhood || "Yenibaraj";
+
+    function saveSelectedLocation(locObj) {
+      selectedLocation = Object.assign({}, selectedLocation, locObj || {});
+      try {
+        localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(selectedLocation));
+      } catch (e) {}
+    }
+
+    function getCityNeighborhoodEntries(state, cityName) {
+      const st = state || CokertmeStore.getState();
+      const branches = Array.isArray(st.branches) ? st.branches : [];
+      const normTarget = String(cityName || "").trim().toLocaleLowerCase("tr-TR");
+      const cityBranches = branches.filter(b => b && b.isActive && String(b.city || "").trim().toLocaleLowerCase("tr-TR") === normTarget);
+      const entries = [];
+      const seen = new Set();
+
+      cityBranches.forEach(b => {
+        const hoods = Array.isArray(b.neighborhoods) ? b.neighborhoods : [];
+        hoods.forEach(h => {
+          const clean = String(h || "").trim();
+          const key = clean.toLocaleLowerCase("tr-TR");
+          if (clean && !seen.has(key)) {
+            seen.add(key);
+            entries.push({
+              neighborhood: clean,
+              district: b.district || "",
+              branchId: b.id,
+              branchName: b.name,
+              adisyoBranchCode: b.adisyoBranchCode || "ADISYO-MERKEZ",
+              prepMinutes: Number(b.prepMinutes) || 15
+            });
+          }
+        });
+      });
+      return { cityBranches, entries };
+    }
+
+    function resolveActiveBranchForCurrentSelection(state, customCity, customNeighborhood, customPickupBranchId, deliveryMode) {
+      const st = state || CokertmeStore.getState();
+      const branches = Array.isArray(st.branches) ? st.branches : [];
+      const city = customCity || selectedLocation.city || "Adana";
+      const neighborhood = customNeighborhood || selectedLocation.neighborhood || "Yenibaraj";
+      const isPickup = String(deliveryMode || "").includes("Gel-Al");
+
+      if (isPickup && customPickupBranchId) {
+        const pickBranch = branches.find(b => b && b.id === customPickupBranchId);
+        if (pickBranch) {
+          return {
+            matched: Boolean(pickBranch.isActive),
+            branch: pickBranch,
+            city: pickBranch.city || city,
+            district: pickBranch.district || "",
+            neighborhood: neighborhood || (Array.isArray(pickBranch.neighborhoods) && pickBranch.neighborhoods[0]) || ""
+          };
+        }
+      }
+
+      if (window.CokertmeStore && typeof CokertmeStore.resolveBranchByLocation === "function") {
+        const res = CokertmeStore.resolveBranchByLocation(city, selectedLocation.district || "", neighborhood, st);
+        if (res && res.branch) {
+          return {
+            matched: Boolean(res.matched),
+            branch: res.branch,
+            city: res.branch.city || city,
+            district: res.branch.district || selectedLocation.district || "",
+            neighborhood: neighborhood
+          };
+        }
+      }
+
+      const fallback = branches.find(b => b && b.isActive) || branches[0] || {
+        id: "adana-merkez",
+        name: "Adana Barajyolu Merkez Şube",
+        city: "Adana",
+        district: "Seyhan / Çukurova",
+        adisyoBranchCode: "ADISYO-ADN-01",
+        prepMinutes: 15
+      };
+      return {
+        matched: true,
+        branch: fallback,
+        city: fallback.city || "Adana",
+        district: fallback.district || "Seyhan",
+        neighborhood: neighborhood || "Yenibaraj"
+      };
+    }
+
+    function openLocationSelectorModal(prefillCity) {
+      const st = CokertmeStore.getState();
+      modalLocationCity = prefillCity || selectedLocation.city || "Adana";
+      const { entries } = getCityNeighborhoodEntries(st, modalLocationCity);
+      if (entries.length > 0) {
+        const exists = entries.some(e => e.neighborhood.toLocaleLowerCase("tr-TR") === String(selectedLocation.neighborhood || "").toLocaleLowerCase("tr-TR"));
+        modalLocationNeighborhood = exists ? selectedLocation.neighborhood : entries[0].neighborhood;
+      } else {
+        modalLocationNeighborhood = "";
+      }
+      renderLocationSelectorModalContent();
+      const modal = document.getElementById("location-selector-modal");
+      if (modal) modal.style.display = "flex";
+    }
+
+    function closeLocationSelectorModal() {
+      const modal = document.getElementById("location-selector-modal");
+      if (modal) modal.style.display = "none";
+    }
+
+    function onModalCityChange(newCity) {
+      modalLocationCity = newCity;
+      const st = CokertmeStore.getState();
+      const { entries } = getCityNeighborhoodEntries(st, modalLocationCity);
+      modalLocationNeighborhood = entries.length > 0 ? entries[0].neighborhood : "";
+      renderLocationSelectorModalContent();
+    }
+
+    function onModalNeighborhoodSelect(hoodName) {
+      modalLocationNeighborhood = hoodName;
+      applyModalLocationSelection();
+    }
+
+    function applyModalLocationSelection() {
+      const st = CokertmeStore.getState();
+      const { entries } = getCityNeighborhoodEntries(st, modalLocationCity);
+      const chosen = entries.find(e => e.neighborhood === modalLocationNeighborhood) || entries[0];
+      if (!chosen) return;
+
+      saveSelectedLocation({
+        city: modalLocationCity,
+        district: chosen.district || "",
+        neighborhood: chosen.neighborhood,
+        branchId: chosen.branchId
+      });
+
+      if (cartCheckoutDraft) {
+        cartCheckoutDraft.city = modalLocationCity;
+        cartCheckoutDraft.neighborhood = chosen.neighborhood;
+        cartCheckoutDraft.branchId = chosen.branchId;
+      }
+
+      closeLocationSelectorModal();
+      renderCurrentView();
+    }
+
+    function submitUnservedCityLeadRequest() {
+      const nameEl = document.getElementById("lead-req-name");
+      const phoneEl = document.getElementById("lead-req-phone");
+      const hoodEl = document.getElementById("lead-req-hood");
+      const nameVal = (nameEl ? nameEl.value : (appUser && appUser.fullName ? appUser.fullName : "")).trim();
+      const phoneVal = (phoneEl ? phoneEl.value : (appUser && appUser.phone ? appUser.phone : "")).trim();
+      const hoodVal = (hoodEl ? hoodEl.value : "").trim();
+
+      if (!phoneVal || phoneVal.replace(/\D/g, "").length < 10) {
+        alert("Lütfen şubemiz açıldığında +%25 açılış indirim kuponunuzu SMS ile gönderebilmemiz için geçerli bir telefon numarası girin.");
+        return;
+      }
+
+      const st = CokertmeStore.getState();
+      if (!Array.isArray(st.locationRequests)) st.locationRequests = [];
+      const now = new Date();
+      st.locationRequests.unshift({
+        id: "LOC-" + Date.now(),
+        city: modalLocationCity,
+        neighborhood: hoodVal || "Merkez",
+        customerName: nameVal || "Misafir Kullanıcı",
+        phone: phoneVal,
+        createdAt: now.toLocaleDateString("tr-TR") + " • " + now.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }),
+        timestamp: Date.now()
+      });
+      CokertmeStore.saveState(st);
+      closeLocationSelectorModal();
+      alert(`Teşekkürler ${nameVal || ""}! ${modalLocationCity} (${hoodVal || "Merkez"}) bölgesi için talebiniz Genel Merkezimize iletildi.\n\nŞubemiz açıldığı gün ilk siparişinize özel +%25 İndirim Kuponunuz ${phoneVal} numaranıza SMS olarak gönderilecektir.`);
+    }
+
+    function renderLocationSelectorModalContent() {
+      const body = document.getElementById("location-selector-modal-body");
+      if (!body) return;
+      const st = CokertmeStore.getState();
+      const branches = Array.isArray(st.branches) ? st.branches : [];
+      const activeCitiesSet = new Set(branches.filter(b => b && b.isActive && b.city).map(b => b.city));
+      const { cityBranches, entries } = getCityNeighborhoodEntries(st, modalLocationCity);
+
+      const cityOptionsHtml = TURKEY_81_CITIES.map(c => {
+        const isAct = activeCitiesSet.has(c);
+        return `<option value="${c}" ${modalLocationCity === c ? 'selected' : ''}>${c} ${isAct ? '✓ (Aktif Paket Servis & Gel-Al)' : '(Yakında Açılıyor)'}</option>`;
+      }).join("");
+
+      const matchedEntry = entries.find(e => e.neighborhood === modalLocationNeighborhood) || entries[0] || null;
+
+      body.innerHTML = `
+        <div style="background:linear-gradient(135deg, #14314F 0%, #023A58 100%); color:#fff; padding:16px 18px; display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid var(--pt-gold);">
+          <div>
+            <div style="font-size:10px; font-weight:800; letter-spacing:0.12em; color:var(--pt-gold-soft);">TÜRKİYE GENELİ AKILLI ŞUBE YÖNLENDİRME</div>
+            <div style="font-family:var(--font-serif); font-size:21px; font-weight:700; line-height:1.15;">İl &amp; Mahalle (Bölge) Seçimi</div>
+          </div>
+          <button type="button" onclick="closeLocationSelectorModal()" style="background:rgba(255,255,255,0.14); border:none; color:#fff; width:32px; height:32px; border-radius:50%; font-size:16px; cursor:pointer;">✕</button>
+        </div>
+
+        <div style="padding:16px 18px;">
+          <label style="font-size:12px; font-weight:800; color:var(--pt-navy); display:block; margin-bottom:5px; text-transform:uppercase; letter-spacing:0.06em;">1. Bulunduğunuz İli Seçin (81 İl)</label>
+          <select onchange="onModalCityChange(this.value)" style="width:100%; padding:11px 12px; border:1.5px solid var(--pt-gold); border-radius:10px; font-size:14.5px; font-weight:700; color:var(--pt-navy); background:var(--pt-cream); margin-bottom:14px;">
+            ${cityOptionsHtml}
+          </select>
+
+          ${entries.length > 0 ? `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <label style="font-size:12px; font-weight:800; color:var(--pt-navy); text-transform:uppercase; letter-spacing:0.06em;">2. Mahallenizi Seçin (Otomatik Şube Eşleşir)</label>
+              <span style="font-size:11px; font-weight:700; color:var(--pt-olive);">${cityBranches.length} Aktif Şube</span>
+            </div>
+
+            <!-- Şube Bazlı Mahalle Grupları -->
+            <div style="display:flex; flex-direction:column; gap:10px; max-height:310px; overflow-y:auto; padding-right:2px; margin-bottom:14px;">
+              ${cityBranches.map(b => {
+                const bHoods = Array.isArray(b.neighborhoods) ? b.neighborhoods : [];
+                return `
+                  <div style="background:#FAF7F2; border:1.5px solid var(--pt-border); border-left:4px solid var(--pt-olive); border-radius:12px; padding:10px 12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:6px; flex-wrap:wrap;">
+                      <strong style="font-size:13.5px; color:var(--pt-navy);">${b.name}</strong>
+                      <span style="background:rgba(59,82,51,0.14); color:var(--pt-olive); font-size:10.5px; font-weight:800; padding:2px 7px; border-radius:999px;">~${b.prepMinutes || 15} dk • ${b.adisyoBranchCode || 'ADISYO'}</span>
+                    </div>
+                    <div style="font-size:11px; color:var(--pt-text-muted); margin-bottom:8px;">Sorumlu Olduğu Mahalleler (Dokunarak Seçin):</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                      ${bHoods.map(h => {
+                        const isSel = modalLocationNeighborhood === h;
+                        const escH = String(h).replace(/'/g, "\\'");
+                        return `
+                          <button type="button" onclick="onModalNeighborhoodSelect('${escH}')" style="padding:6px 10px; border-radius:8px; border:1.5px solid ${isSel ? 'var(--pt-terracotta)' : 'var(--pt-border)'}; background:${isSel ? 'var(--pt-terracotta)' : '#fff'}; color:${isSel ? '#fff' : 'var(--pt-navy)'}; font-size:12px; font-weight:700; cursor:pointer;">
+                            ${isSel ? '✓ ' : ''}${h} Mah.
+                          </button>
+                        `;
+                      }).join("")}
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+
+            ${matchedEntry ? `
+              <div style="background:#F4F7F2; border:1.5px solid var(--pt-olive); border-radius:12px; padding:10px 12px; margin-bottom:12px; font-size:12.5px; color:var(--pt-navy);">
+                <div>✓ Seçilen Bölge: <strong>${modalLocationCity} / ${matchedEntry.neighborhood} Mah.</strong></div>
+                <div style="margin-top:2px;">Siparişinizin Düşeceği Şube: <strong style="color:var(--pt-olive);">${matchedEntry.branchName} (${matchedEntry.adisyoBranchCode})</strong></div>
+              </div>
+            ` : ''}
+
+            <button type="button" class="btn-approve-cart" style="margin-top:0; padding:12px;" onclick="applyModalLocationSelection()">
+              <span>✓ Bu Bölgeyi Seç ve Menüye Devam Et</span>
+            </button>
+          ` : `
+            <!-- Henüz Aktif Şube Olmayan İller İçin Remarketing & Talep Toplama Kartı -->
+            <div style="background:linear-gradient(135deg, #FFF8F3 0%, #FAF7F2 100%); border:1.5px solid var(--pt-terracotta); border-radius:14px; padding:14px;">
+              <div style="display:inline-block; background:var(--pt-terracotta); color:#fff; font-size:10px; font-weight:800; padding:3px 8px; border-radius:999px; margin-bottom:6px;">ÇOK YAKINDA ${modalLocationCity.toUpperCase()} ŞUBEMİZ AÇILIYOR!</div>
+              <h4 style="font-size:16px; font-weight:800; color:var(--pt-navy); margin-bottom:6px;">${modalLocationCity} İlimizde Şube Hazırlığımız Devam Ediyor</h4>
+              <p style="font-size:12.5px; color:var(--pt-text-muted); line-height:1.45; margin-bottom:10px;">
+                Bilgilerinizi bırakın; <strong>${modalLocationCity}</strong> şubemiz açıldığı gün ilk siparişinize özel <strong>+%25 İndirim Kuponunuzu</strong> SMS olarak gönderelim! (Talep yoğunluğuna göre öncelikli şube açılışı yapılmaktadır.)
+              </p>
+              <div style="display:grid; gap:8px; margin-bottom:10px;">
+                <input type="text" id="lead-req-name" placeholder="Adınız Soyadınız" value="${appUser && appUser.fullName ? appUser.fullName : ''}" style="padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:13.5px;" />
+                <input type="tel" id="lead-req-phone" placeholder="Cep Telefonunuz (05XX...)" value="${appUser && appUser.phone ? appUser.phone : ''}" style="padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:13.5px;" />
+                <input type="text" id="lead-req-hood" placeholder="İlçe / Mahalle Adı (Örn: Merkez)" style="padding:10px 12px; border:1px solid var(--pt-border); border-radius:8px; font-size:13.5px;" />
+              </div>
+              <button type="button" class="btn-approve-cart" style="margin-top:0; padding:11px; font-size:13.5px;" onclick="submitUnservedCityLeadRequest()">
+                <span>🔔 Şube Açıldığında +%25 İndirim İçin Haberdar Et</span>
+              </button>
+            </div>
+          `}
+        </div>
+      `;
+    }
 
     // Sepet
     let appCart = JSON.parse(localStorage.getItem("cokertme_app_cart_v2") || "[]");
@@ -4303,6 +4606,32 @@
 
           <!-- ORTA SÜTUN: KAMPANYA BANNER + KATEGORİ VE ÜRÜN KARTLARI -->
           <div class="storefront-center-col">
+            <!-- Türkiye Geneli İl / Mahalle & Sorumlu Şube Yönlendirme Çubuğu -->
+            ${(() => {
+              const locResolved = resolveActiveBranchForCurrentSelection(state, selectedLocation.city, selectedLocation.neighborhood, selectedLocation.branchId, "Eve Paket Servis");
+              const b = locResolved.branch || {};
+              return `
+                <div onclick="openLocationSelectorModal()" style="margin:10px 14px 4px; background:linear-gradient(135deg, #14314F 0%, #023A58 100%); border:1.5px solid var(--pt-gold); border-radius:14px; padding:10px 13px; color:#fff; display:flex; align-items:center; justify-content:space-between; gap:10px; cursor:pointer; box-shadow:0 4px 14px rgba(2,58,88,0.12);">
+                  <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+                    <div style="width:34px; height:34px; border-radius:10px; background:rgba(212,155,53,0.2); border:1px solid var(--pt-gold); color:var(--pt-gold-soft); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    </div>
+                    <div style="min-width:0;">
+                      <div style="font-size:10.5px; color:var(--pt-gold-soft); font-weight:800; letter-spacing:0.06em; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                        TESLİMAT BÖLGESİ: ${selectedLocation.city || 'Adana'} • ${selectedLocation.neighborhood || 'Yenibaraj'} Mah.
+                      </div>
+                      <div style="font-size:13px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                        Sorumlu Şube: ${b.name || 'Adana Barajyolu Merkez Şube'} (~${b.prepMinutes || 15} dk)
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" onclick="event.stopPropagation(); openLocationSelectorModal();" style="background:var(--pt-terracotta); color:#fff; border:none; border-radius:8px; padding:7px 10px; font-size:11.5px; font-weight:800; white-space:nowrap; flex-shrink:0; cursor:pointer;">
+                    İl / Mahalle ▾
+                  </button>
+                </div>
+              `;
+            })()}
+
             ${showBanner ? renderHomePromoAndLoyaltyBannerHtml(state, discountPct, bannerHeadline, bannerSub) : ''}
 
             <!-- Mobil Arama Çubuğu -->
@@ -4999,6 +5328,9 @@
 
     function captureCartCheckoutDraft() {
       const modeEl = document.getElementById("checkout-mode");
+      const cityEl = document.getElementById("checkout-city");
+      const hoodEl = document.getElementById("checkout-neighborhood");
+      const branchEl = document.getElementById("checkout-pickup-branch");
       const nameEl = document.getElementById("checkout-name");
       const phoneEl = document.getElementById("checkout-phone");
       const addrEl = document.getElementById("checkout-address");
@@ -5011,6 +5343,9 @@
       if (nameEl || phoneEl || addrEl) {
         cartCheckoutDraft = {
           mode: modeEl ? modeEl.value : "Eve Paket Servis",
+          city: cityEl ? cityEl.value : (selectedLocation.city || "Adana"),
+          neighborhood: hoodEl ? hoodEl.value : (selectedLocation.neighborhood || "Yenibaraj"),
+          branchId: branchEl ? branchEl.value : (selectedLocation.branchId || "adana-merkez"),
           name: nameEl ? nameEl.value : "",
           phone: phoneEl ? phoneEl.value : "",
           address: addrEl ? addrEl.value : "",
@@ -5021,6 +5356,64 @@
           cardCvv: cardCvvEl ? cardCvvEl.value : ""
         };
       }
+    }
+
+    function onCheckoutCityChange(newCity) {
+      captureCartCheckoutDraft();
+      const st = CokertmeStore.getState();
+      const { cityBranches, entries } = getCityNeighborhoodEntries(st, newCity);
+      const firstHood = entries.length > 0 ? entries[0].neighborhood : "";
+      const firstBranchId = cityBranches.length > 0 ? cityBranches[0].id : "";
+      if (firstHood) {
+        saveSelectedLocation({
+          city: newCity,
+          district: entries[0].district || "",
+          neighborhood: firstHood,
+          branchId: entries[0].branchId
+        });
+      }
+      if (!cartCheckoutDraft) cartCheckoutDraft = {};
+      cartCheckoutDraft.city = newCity;
+      cartCheckoutDraft.neighborhood = firstHood;
+      cartCheckoutDraft.branchId = firstBranchId;
+      renderCurrentView();
+    }
+
+    function onCheckoutNeighborhoodChange(newHood) {
+      captureCartCheckoutDraft();
+      const st = CokertmeStore.getState();
+      const cityVal = (cartCheckoutDraft && cartCheckoutDraft.city) || selectedLocation.city || "Adana";
+      const { entries } = getCityNeighborhoodEntries(st, cityVal);
+      const matched = entries.find(e => e.neighborhood === newHood) || entries[0];
+      if (matched) {
+        saveSelectedLocation({
+          city: cityVal,
+          district: matched.district || "",
+          neighborhood: matched.neighborhood,
+          branchId: matched.branchId
+        });
+        if (!cartCheckoutDraft) cartCheckoutDraft = {};
+        cartCheckoutDraft.neighborhood = matched.neighborhood;
+        cartCheckoutDraft.branchId = matched.branchId;
+      }
+      renderCurrentView();
+    }
+
+    function onCheckoutPickupBranchChange(newBranchId) {
+      captureCartCheckoutDraft();
+      const st = CokertmeStore.getState();
+      const br = (st.branches || []).find(b => b && b.id === newBranchId);
+      if (br) {
+        saveSelectedLocation({
+          city: br.city || "Adana",
+          district: br.district || "",
+          neighborhood: (Array.isArray(br.neighborhoods) && br.neighborhoods[0]) || selectedLocation.neighborhood || "",
+          branchId: br.id
+        });
+      }
+      if (!cartCheckoutDraft) cartCheckoutDraft = {};
+      cartCheckoutDraft.branchId = newBranchId;
+      renderCurrentView();
     }
 
     function toggleCartQuickItem(itemId) {
@@ -5977,6 +6370,9 @@
       }
 
       const draftMode = cartCheckoutDraft ? cartCheckoutDraft.mode : "Eve Paket Servis";
+      const draftCity = (cartCheckoutDraft && cartCheckoutDraft.city) ? cartCheckoutDraft.city : (selectedLocation.city || "Adana");
+      const draftHood = (cartCheckoutDraft && cartCheckoutDraft.neighborhood) ? cartCheckoutDraft.neighborhood : (selectedLocation.neighborhood || "Yenibaraj");
+      const draftBranchId = (cartCheckoutDraft && cartCheckoutDraft.branchId) ? cartCheckoutDraft.branchId : (selectedLocation.branchId || "adana-merkez");
       const draftName = cartCheckoutDraft ? cartCheckoutDraft.name : (appUser && appUser.fullName ? appUser.fullName : "");
       const draftPhone = cartCheckoutDraft ? cartCheckoutDraft.phone : (appUser && appUser.phone ? appUser.phone : "");
       const draftAddr = cartCheckoutDraft ? cartCheckoutDraft.address : (appUser && appUser.address ? appUser.address : "");
@@ -5985,6 +6381,12 @@
       const draftCardNum = cartCheckoutDraft ? cartCheckoutDraft.cardNumber : "";
       const draftCardExp = cartCheckoutDraft ? cartCheckoutDraft.cardExp : "";
       const draftCardCvv = cartCheckoutDraft ? cartCheckoutDraft.cardCvv : "";
+
+      const activeCitiesInCheckout = Array.from(new Set((state.branches || []).filter(b => b && b.isActive && b.city).map(b => b.city)));
+      if (activeCitiesInCheckout.length === 0) activeCitiesInCheckout.push("Adana");
+      const { cityBranches: checkoutCityBranches, entries: checkoutHoodEntries } = getCityNeighborhoodEntries(state, draftCity);
+      const resolvedCheckoutBranchInfo = resolveActiveBranchForCurrentSelection(state, draftCity, draftHood, draftBranchId, draftMode);
+      const targetBranchObj = resolvedCheckoutBranchInfo.branch || { id: "adana-merkez", name: "Adana Barajyolu Merkez Şube", adisyoBranchCode: "ADISYO-ADN-01", prepMinutes: 15 };
 
       const pricingInfo = calculateCartPricing(state, draftPhone, draftMode);
       const { subtotal, appDiscountAmount, loyaltyRewardDiscount, courierFee, finalTotal } = pricingInfo;
@@ -6090,10 +6492,45 @@
               <option value="Eve Paket Servis" ${draftMode === 'Eve Paket Servis' ? 'selected' : ''}>Eve / Adrese Paket Servis (Anında Kurye Atamalı)</option>
               <option value="Şubeden Gel-Al" ${draftMode === 'Şubeden Gel-Al' ? 'selected' : ''}>Şubeden Gel-Al (Beklemeden Teslim)</option>
             </select>
+
+            <!-- İl ve Mahalle / Şube Seçimi (Otomatik Sorumlu Şube & Adisyo Eşleştirmeli) -->
+            <div style="display:grid; grid-template-columns:1fr 1.4fr; gap:8px;">
+              <div>
+                <label style="font-size:11px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">İl Seçimi *</label>
+                <select id="checkout-city" onchange="onCheckoutCityChange(this.value)" style="width:100%; padding:10px; border:1px solid var(--pt-border); border-radius:10px; font-size:13.5px; font-weight:700; color:var(--pt-navy); background:#fff;">
+                  ${activeCitiesInCheckout.map(c => `<option value="${c}" ${draftCity === c ? 'selected' : ''}>${c}</option>`).join("")}
+                </select>
+              </div>
+              <div>
+                ${draftMode === 'Şubeden Gel-Al' ? `
+                  <label style="font-size:11px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">Gel-Al Şubesi Seçimi *</label>
+                  <select id="checkout-pickup-branch" onchange="onCheckoutPickupBranchChange(this.value)" style="width:100%; padding:10px; border:1.5px solid var(--pt-gold); border-radius:10px; font-size:13px; font-weight:700; color:var(--pt-navy); background:#fff;">
+                    ${checkoutCityBranches.map(b => `<option value="${b.id}" ${targetBranchObj.id === b.id ? 'selected' : ''}>${b.name}</option>`).join("")}
+                  </select>
+                ` : `
+                  <label style="font-size:11px; font-weight:700; color:var(--pt-navy); display:block; margin-bottom:3px;">Mahalle / Bölge Seçimi *</label>
+                  <select id="checkout-neighborhood" onchange="onCheckoutNeighborhoodChange(this.value)" style="width:100%; padding:10px; border:1.5px solid var(--pt-gold); border-radius:10px; font-size:13px; font-weight:700; color:var(--pt-navy); background:#fff;">
+                    ${checkoutHoodEntries.map(e => `<option value="${e.neighborhood}" ${draftHood === e.neighborhood ? 'selected' : ''}>${e.neighborhood} Mah. (${e.branchName.replace('Adana ', '')})</option>`).join("")}
+                  </select>
+                `}
+              </div>
+            </div>
+
+            <!-- Canlı Sorumlu Şube ve Adisyo POS Bilgilendirme Rozeti -->
+            <div style="background:#F4F7F2; border:1.5px solid var(--pt-olive); border-radius:10px; padding:9px 11px; font-size:12px; color:var(--pt-navy); display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;">
+              <div>
+                <div style="font-size:10.5px; font-weight:800; color:var(--pt-olive); text-transform:uppercase;">OTOMATİK ATANAN SORUMLU ŞUBE &amp; ADİSYO</div>
+                <div style="font-weight:700; font-size:13px;">${targetBranchObj.name} <span style="font-size:11px; color:var(--pt-text-muted);">(${targetBranchObj.adisyoBranchCode || 'ADISYO-POS'})</span></div>
+              </div>
+              <button type="button" onclick="openLocationSelectorModal('${draftCity}')" style="background:#fff; color:var(--pt-navy); border:1px solid var(--pt-border); border-radius:7px; padding:5px 9px; font-size:11px; font-weight:700; cursor:pointer;">
+                Tüm İller (81 İl) ›
+              </button>
+            </div>
+
             <input type="text" id="checkout-name" placeholder="Adınız Soyadınız *" value="${draftName}" style="padding:11px 12px; border:1px solid var(--pt-border); border-radius:10px; font-size:14px;" />
             <input type="tel" id="checkout-phone" placeholder="Telefon Numaranız (05XX...) *" value="${draftPhone}" onblur="onCheckoutPhoneBlur(this.value)" style="padding:11px 12px; border:1px solid var(--pt-border); border-radius:10px; font-size:14px;" />
 
-            <input type="text" id="checkout-address" placeholder="Teslimat Adresi (Mahalle, Sokak, Bina/Daire No) *" value="${draftAddr}" style="padding:11px 12px; border:1px solid var(--pt-border); border-radius:10px; font-size:14px;" />
+            <input type="text" id="checkout-address" placeholder="${draftMode === 'Şubeden Gel-Al' ? 'Sipariş Notunuz (İsteğe Bağlı)' : 'Açık Teslimat Adresi (Sokak, Bina, Kat ve Daire No) *'}" value="${draftAddr}" style="padding:11px 12px; border:1px solid var(--pt-border); border-radius:10px; font-size:14px;" />
           </div>
         </div>
 
@@ -6335,6 +6772,12 @@
       const phoneVal = (document.getElementById("checkout-phone").value || "").trim();
       const addrVal = (document.getElementById("checkout-address").value || "").trim();
       const modeVal = document.getElementById("checkout-mode").value;
+      const cityEl = document.getElementById("checkout-city");
+      const hoodEl = document.getElementById("checkout-neighborhood");
+      const pickBrEl = document.getElementById("checkout-pickup-branch");
+      const cityVal = cityEl ? cityEl.value : (selectedLocation.city || "Adana");
+      const hoodVal = hoodEl ? hoodEl.value : (selectedLocation.neighborhood || "Yenibaraj");
+      const pickupBranchIdVal = pickBrEl ? pickBrEl.value : (selectedLocation.branchId || "adana-merkez");
       const genderRadio = document.querySelector('input[name="checkout-gender"]:checked');
       const genderVal = genderRadio ? genderRadio.value : (appUser && appUser.gender ? appUser.gender : "");
 
@@ -6363,6 +6806,9 @@
         phoneVal,
         addrVal,
         modeVal,
+        cityVal,
+        hoodVal,
+        pickupBranchIdVal,
         genderVal,
         cardHolder: nameVal,
         cardLast4: "CÜZDAN",
@@ -6378,6 +6824,12 @@
       const phoneVal = (document.getElementById("checkout-phone").value || "").trim();
       const addrVal = (document.getElementById("checkout-address").value || "").trim();
       const modeVal = document.getElementById("checkout-mode").value;
+      const cityEl = document.getElementById("checkout-city");
+      const hoodEl = document.getElementById("checkout-neighborhood");
+      const pickBrEl = document.getElementById("checkout-pickup-branch");
+      const cityVal = cityEl ? cityEl.value : (selectedLocation.city || "Adana");
+      const hoodVal = hoodEl ? hoodEl.value : (selectedLocation.neighborhood || "Yenibaraj");
+      const pickupBranchIdVal = pickBrEl ? pickBrEl.value : (selectedLocation.branchId || "adana-merkez");
       const genderRadio = document.querySelector('input[name="checkout-gender"]:checked');
       const genderVal = genderRadio ? genderRadio.value : (appUser && appUser.gender ? appUser.gender : "");
 
@@ -6417,6 +6869,9 @@
         phoneVal,
         addrVal,
         modeVal,
+        cityVal,
+        hoodVal,
+        pickupBranchIdVal,
         genderVal,
         cardHolder,
         cardLast4: last4,
@@ -6440,12 +6895,21 @@
         closeQnb3dModal();
       }
 
-      const { nameVal, phoneVal, addrVal, modeVal, genderVal, cardLast4, payViaWallet, usedLoyaltyReward } = pendingCheckoutData;
+      const { nameVal, phoneVal, addrVal, modeVal, cityVal, hoodVal, pickupBranchIdVal, genderVal, cardLast4, payViaWallet, usedLoyaltyReward } = pendingCheckoutData;
       const moldType = genderVal === "Kadın"
         ? "Kalpli Çökertme Kalıbı (Kadın Sunumu)"
         : (genderVal === "Erkek" ? "Çember Çökertme Kalıbı (Erkek Sunumu)" : "Standart Çökertme Sunumu");
 
       const state = CokertmeStore.getState();
+      const branchResolution = resolveActiveBranchForCurrentSelection(state, cityVal, hoodVal, pickupBranchIdVal, modeVal);
+      const assignedBranch = branchResolution.branch || { id: "adana-merkez", name: "Adana Barajyolu Merkez Şube", city: "Adana", district: "Seyhan", adisyoBranchCode: "ADISYO-ADN-01", prepMinutes: 15 };
+      const orderCity = assignedBranch.city || cityVal || "Adana";
+      const orderDistrict = assignedBranch.district || "";
+      const orderNeighborhood = hoodVal || selectedLocation.neighborhood || "Yenibaraj";
+      const fullAddressWithHood = addrVal
+        ? `${orderCity} / ${orderNeighborhood} Mah. — ${addrVal}`
+        : `${orderCity} / ${orderNeighborhood} Mah.`;
+
       const intCfg = state.integrationSettings || {};
       const courierCfg = intCfg.courier || {};
       const pricingInfo = calculateCartPricing(state, phoneVal, modeVal);
@@ -6493,7 +6957,7 @@
       const activeCourier = (courierCfg.companies || []).find(c => c.id === courierCfg.activeCourierId) ||
                             (courierCfg.companies && courierCfg.companies[0]) ||
                             { id: "courier-1", name: "Anlaşmalı Kurye Firması (API)", prepMinutesOverride: 15 };
-      const prepMinutes = Number(activeCourier.prepMinutesOverride) || Number(courierCfg.defaultPrepMinutes) || 15;
+      const prepMinutes = Number(assignedBranch.prepMinutes) || Number(activeCourier.prepMinutesOverride) || Number(courierCfg.defaultPrepMinutes) || 15;
 
       const now = new Date();
       const createdAtDateStr = now.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
@@ -6512,6 +6976,9 @@
         gender: genderVal,
         moldType: moldType,
         address: addrVal,
+        city: orderCity,
+        neighborhood: orderNeighborhood,
+        branchId: assignedBranch.id,
         kvkkApproved: true,
         autoRegisteredFromOrder: !wasAlreadyMember
       };
@@ -6528,7 +6995,15 @@
         existingMember.name = nameVal;
         existingMember.gender = genderVal;
         existingMember.moldType = moldType;
-        existingMember.address = addrVal;
+        existingMember.address = fullAddressWithHood;
+        existingMember.city = orderCity;
+        existingMember.district = orderDistrict;
+        existingMember.neighborhood = orderNeighborhood;
+        existingMember.branchId = assignedBranch.id;
+        existingMember.branchName = assignedBranch.name;
+        existingMember.orderCount = (Number(existingMember.orderCount) || 0) + 1;
+        existingMember.totalSpent = Math.round(((Number(existingMember.totalSpent) || 0) + finalTotal) * 100) / 100;
+        existingMember.lastOrderAt = createdAtStr;
         existingMember.stamps = latestLoyalty.stampCount;
         existingMember.stampTimestamps = latestLoyalty.validStamps;
         existingMember.walletBalance = latestWallet.balance;
@@ -6545,7 +7020,15 @@
           phoneNormalized: normPhoneVal,
           gender: genderVal,
           moldType: moldType,
-          address: addrVal,
+          address: fullAddressWithHood,
+          city: orderCity,
+          district: orderDistrict,
+          neighborhood: orderNeighborhood,
+          branchId: assignedBranch.id,
+          branchName: assignedBranch.name,
+          orderCount: 1,
+          totalSpent: finalTotal,
+          lastOrderAt: createdAtStr,
           stamps: latestLoyalty.stampCount,
           stampTimestamps: latestLoyalty.validStamps,
           walletBalance: latestWallet.balance,
@@ -6560,8 +7043,8 @@
 
       const paymentMethodCode = payViaWallet ? "COKERTME_WALLET" : "QNB_ONLINE_3D";
       const paymentLabelText = payViaWallet
-        ? `Çökertme Dijital Cüzdan ile Ödendi (-${finalTotal.toFixed(2)} TL • Kalan Cüzdan: ${walletDeductionResult.remainingBalance.toFixed(2)} TL -> Adisyo Kasa)`
-        : `QNB Finansbank 3D Secure Ödendi (Kart: **** ${cardLast4} -> Adisyo & Beko POS Hesabına Aktarıldı)`;
+        ? `Çökertme Dijital Cüzdan ile Ödendi (-${finalTotal.toFixed(2)} TL • Kalan Cüzdan: ${walletDeductionResult.remainingBalance.toFixed(2)} TL -> ${assignedBranch.adisyoBranchCode || 'Adisyo'} Kasa)`
+        : `QNB Finansbank 3D Secure Ödendi (Kart: **** ${cardLast4} -> ${assignedBranch.adisyoBranchCode || 'Adisyo'} & Beko POS Hesabına Aktarıldı)`;
 
       const newOrder = {
         id: orderId,
@@ -6573,10 +7056,15 @@
         loyaltyNote: loyaltyOutcome.statusText || "",
         phone: phoneVal,
         phoneNormalized: normPhoneVal,
-        address: addrVal,
+        address: fullAddressWithHood,
+        city: orderCity,
+        district: orderDistrict,
+        neighborhood: orderNeighborhood,
         deliveryType: modeVal,
-        mode: modeVal + (addrVal ? ` (${addrVal})` : ""),
-        branch: "Adana Seyhan Merkez Şube",
+        mode: modeVal + ` (${orderCity} / ${orderNeighborhood} Mah.${addrVal ? ' - ' + addrVal : ''})`,
+        branchId: assignedBranch.id,
+        branch: assignedBranch.name,
+        adisyoBranchCode: assignedBranch.adisyoBranchCode || "ADISYO-ADN-01",
         items: summaryItems,
         subtotal: subtotal,
         discount: discount,
@@ -6589,11 +7077,11 @@
         estimatedReadyAt: estimatedReadyAtStr,
         courierCompanyId: activeCourier.id,
         courierCompanyName: activeCourier.name,
-        adisyoStatus: `Adisyo Bulut ERP'ye İletildi • Mutfak Fişi (${moldType}) Yazdırıldı • Stok/Reçete, Muhasebe, Pazaryeri, Kurye & Beko ÖKC Eşleşti`,
+        adisyoStatus: `${assignedBranch.name} (${assignedBranch.adisyoBranchCode || 'Adisyo POS'}) Mutfak Ekranına İletildi • Mutfak Fişi Yazdırıldı`,
         courierStatus: modeVal.includes("Paket")
-          ? `${activeCourier.name} API'sine Anında Atandı (${prepMinutes} dk sonra [${estimatedReadyAtStr}] hazır olacağı bildirildi)`
-          : `Şubeden Gel-Al (${prepMinutes} dk sonra [${estimatedReadyAtStr}] hazır)`,
-        status: "Ödeme Alındı • Adisyo Mutfakta Hazırlanıyor & Kurye Atandı",
+          ? `${assignedBranch.name} Kuryesine (${activeCourier.name}) Atandı (${prepMinutes} dk sonra [${estimatedReadyAtStr}] hazır)`
+          : `${assignedBranch.name} Gel-Al Noktası (${prepMinutes} dk sonra [${estimatedReadyAtStr}] hazır)`,
+        status: `Ödeme Alındı • ${assignedBranch.name} Mutfakta Hazırlanıyor`,
         createdAt: createdAtStr
       };
 
@@ -7660,40 +8148,67 @@
     // =========================================================================
     // 5. ŞUBELERİMİZ EKRANI
     // =========================================================================
+    function selectBranchAndGoMenu(branchId) {
+      const st = CokertmeStore.getState();
+      const b = (st.branches || []).find(x => x && x.id === branchId);
+      if (b && b.isActive) {
+        const firstHood = (Array.isArray(b.neighborhoods) && b.neighborhoods[0]) || "Merkez";
+        saveSelectedLocation({
+          city: b.city || "Adana",
+          district: b.district || "",
+          neighborhood: firstHood,
+          branchId: b.id
+        });
+      }
+      switchTab("menu");
+    }
+
     function renderBranchesHtml() {
       const state = CokertmeStore.getState();
       return `
         <div class="acc-banner-header" style="margin-top:16px;">
-          <h3>Şubelerimiz &amp; Gel-Al Noktaları</h3>
-          <p>Adana Merkez ve yeni açılacak şubelerimiz</p>
+          <h3>Şubelerimiz &amp; Sorumlu Mahalle Bölgeleri</h3>
+          <p>Türkiye geneli aktif şubelerimiz, Adisyo POS noktalarımız ve mahalle bazlı paket servis bölgelerimiz</p>
         </div>
-        ${state.branches.map(b => `
+        ${state.branches.map(b => {
+          const hoods = Array.isArray(b.neighborhoods) ? b.neighborhoods : [];
+          return `
           <div class="login-card-box">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px;">
-              <strong style="font-size:16.5px; color:var(--pt-navy);">${b.name}</strong>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px; flex-wrap:wrap;">
+              <div>
+                <div style="font-size:11px; font-weight:800; color:var(--pt-terracotta); text-transform:uppercase; letter-spacing:0.06em;">${b.city || 'Adana'} • ${b.district || ''}</div>
+                <strong style="font-size:16.5px; color:var(--pt-navy);">${b.name}</strong>
+              </div>
               <span style="background:${b.isActive ? 'rgba(59,82,51,0.14)' : '#f0f3f6'}; color:${b.isActive ? 'var(--pt-olive)' : 'var(--pt-text-muted)'}; font-size:11px; font-weight:700; padding:3px 9px; border-radius:6px; white-space:nowrap;">${b.status}</span>
             </div>
             <div style="font-size:13.5px; color:var(--pt-text-muted); margin-bottom:6px; display:flex; align-items:center; gap:6px;">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--pt-terracotta)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
               <span>${b.address}</span>
             </div>
+            ${hoods.length > 0 ? `
+            <div style="background:#FAF7F2; border:1px solid var(--pt-gold); border-radius:10px; padding:8px 10px; margin-bottom:8px; font-size:12px;">
+              <strong style="color:var(--pt-navy); display:block; margin-bottom:3px;">Sorumlu Olduğu Mahalleler (${hoods.length} Bölge):</strong>
+              <span style="color:var(--pt-olive); font-weight:700;">${hoods.join(" Mah., ")} Mah.</span>
+            </div>
+            ` : ''}
             <div style="font-size:13px; color:var(--pt-navy); font-weight:700; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--pt-olive)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              <a href="tel:+905469180701" style="color:var(--pt-navy); text-decoration:none;">0 (546) 918 07 01</a>
+              <a href="tel:+905469180701" style="color:var(--pt-navy); text-decoration:none;">${b.phone || '0 (546) 918 07 01'}</a>
             </div>
             <div style="font-size:13px; color:var(--pt-olive); font-weight:600; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              <span>Servis Saatleri: ${b.hours}</span>
+              <span>Servis Saatleri: ${b.hours} ${b.adisyoBranchCode ? `• POS: ${b.adisyoBranchCode}` : ''}</span>
             </div>
             <div style="display:flex; gap:10px;">
-              <button class="btn-primary-app" style="padding:10px; font-size:13.5px;" onclick="switchTab('menu')">Bu Şubeden Sipariş Ver</button>
+              <button class="btn-primary-app" style="padding:10px; font-size:13.5px;" onclick="selectBranchAndGoMenu('${b.id}')">${b.isActive ? 'Bu Şubeyi Seç & Sipariş Ver' : 'Menüye Göz At'}</button>
               <a href="tel:+905469180701" style="border:1px solid var(--pt-border); border-radius:12px; padding:10px 14px; font-size:13.5px; font-weight:700; display:inline-flex; align-items:center; gap:6px; color:var(--pt-navy); white-space:nowrap;">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                 <span>0 (546) 918 07 01</span>
               </a>
             </div>
           </div>
-        `).join("")}
+          `;
+        }).join("")}
       `;
     }
 

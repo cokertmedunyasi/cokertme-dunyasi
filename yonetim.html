@@ -810,7 +810,7 @@
 
       <div style="background:#fff; border:1px solid var(--pt-border); padding:12px 14px; margin-bottom:20px; font-size:12.5px; color:var(--pt-text-muted); display:flex; align-items:center; gap:10px; text-align:left;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--pt-terracotta)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <span>Bu sayfa yalnızca yetkili yöneticilere özeldir. Lütfen yönetici bilgilerinizi giriniz.</span>
+        <span><strong>Genel Merkez (Super Admin)</strong> veya <strong>Şube Yöneticisi (Barajyolu, Gürselpaşa, Sarıçam vb.)</strong> kullanıcı adınız ve şifrenizle giriş yapabilirsiniz.</span>
       </div>
 
       <form id="admin-login-form" onsubmit="return handleAdminLogin(event)" style="text-align:left;">
@@ -936,29 +936,222 @@
        ======================================================================== -->
   <main class="admin-container">
 
+    <!-- ROL & ŞUBE GÖRÜNÜM SEÇİCİ BARI (GENEL MERKEZ SUPER ADMIN vs ŞUBE YÖNETİCİSİ) -->
+    <div id="admin-role-switcher-bar" class="no-print" style="background:linear-gradient(135deg, #14314F 0%, #023A58 100%); color:#fff; border:2px solid var(--pt-gold); padding:18px 24px; margin-bottom:28px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; box-shadow:0 12px 30px rgba(2,58,88,0.14);">
+      <div>
+        <div id="admin-role-badge" style="display:inline-block; background:var(--pt-gold); color:var(--pt-navy-dark); font-size:10.5px; font-weight:800; padding:3px 9px; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:4px;">
+          GENEL MERKEZ (SUPER ADMIN) YETKİSİ
+        </div>
+        <div id="admin-role-title" style="font-family:var(--font-serif); font-size:26px; font-weight:700; line-height:1.15;">
+          Türkiye Geneli Tüm Şubeler &amp; Merkez Kontrol Paneli
+        </div>
+        <div id="admin-role-sub" style="font-size:13px; color:rgba(255,255,255,0.82); margin-top:2px;">
+          Tüm şubelerin siparişlerini, cirolarını, sorumlu mahallelerini ve müşteri CRM havuzunu tek ekrandan yönetiyorsunuz.
+        </div>
+      </div>
+
+      <div id="admin-branch-filter-wrap" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+        <div>
+          <label style="font-size:10.5px; font-weight:700; letter-spacing:0.1em; color:var(--pt-gold-soft); display:block; margin-bottom:4px; text-transform:uppercase;">
+            PANEL GÖRÜNÜMÜ / ŞUBE FİLTRESİ:
+          </label>
+          <select id="admin-branch-view-select" class="pt-form-select" style="min-width:270px; background:#fff; color:var(--pt-navy); font-weight:700; border:2px solid var(--pt-gold);" onchange="onAdminBranchViewChange(this.value)">
+            <option value="ALL">TÜM TÜRKİYE (Toplu Genel Merkez Analizi)</option>
+          </select>
+        </div>
+        <a href="#crm-remarketing-section" class="pt-btn-fill" style="padding:11px 16px; font-size:11.5px;">MÜŞTERİ CRM &amp; PAZARLAMA ↓</a>
+      </div>
+    </div>
+
     <!-- KPI Kartları -->
     <div class="admin-kpi-grid no-print">
       <div class="kpi-card">
-        <div class="kpi-label">AKTİF MENÜ ÜRÜNÜ</div>
+        <div class="kpi-label" id="kpi-col1-label">AKTİF ŞUBE &amp; MENÜ ÜRÜNÜ</div>
         <div class="kpi-val" id="kpi-items">14</div>
-        <div style="font-size:13.5px; color:var(--pt-olive); font-weight:600;">Anlık Bulut Senkronizasyon (₺ TL)</div>
+        <div style="font-size:13.5px; color:var(--pt-olive); font-weight:600;" id="kpi-col1-sub">Anlık Bulut Senkronizasyon (₺ TL)</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">UYGULAMA SİPARİŞLERİ (%10 İNDİRİMLİ)</div>
+        <div class="kpi-label" id="kpi-col2-label">TOPLAM SİPARİŞ ADEDİ</div>
         <div class="kpi-val" id="kpi-orders">1</div>
-        <div style="font-size:13.5px; color:var(--pt-olive); font-weight:600;">Aracı Komisyonu: 0 ₺</div>
+        <div style="font-size:13.5px; color:var(--pt-olive); font-weight:600;" id="kpi-col2-sub">Aracı Komisyonu: 0 ₺</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">FRANCHISE / BAYİLİK BAŞVURUSU</div>
-        <div class="kpi-val" id="kpi-franchise">1</div>
-        <div style="font-size:13.5px; color:var(--pt-terracotta); font-weight:600;">Yurt İçi &amp; Yurt Dışı Adaylar</div>
+        <div class="kpi-label" id="kpi-col3-label">TOPLAM CİRO (ONLINE + CÜZDAN)</div>
+        <div class="kpi-val" id="kpi-revenue" style="color:var(--pt-terracotta);">0 ₺</div>
+        <div style="font-size:13.5px; color:var(--pt-navy); font-weight:600;" id="kpi-col3-sub">Ortalama Sepet: 0 ₺</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">MASADA QR MENÜ MODU</div>
-        <div class="kpi-val" style="font-size:30px; padding-top:8px; color:var(--pt-navy);">Sadece Görüntüleme</div>
-        <div style="font-size:13.5px; color:var(--pt-text-muted); font-weight:600;">Masadan Sipariş Kapalı ✓</div>
+        <div class="kpi-label" id="kpi-col4-label">KAYITLI MÜŞTERİ (CRM HAVUZU)</div>
+        <div class="kpi-val" id="kpi-crm-count" style="color:var(--pt-navy);">0</div>
+        <div style="font-size:13.5px; color:var(--pt-olive); font-weight:600;" id="kpi-col4-sub">Yeniden Pazarlamaya Hazır ✓</div>
       </div>
     </div>
+
+    <!-- 0.A. TÜRKİYE GENELİ & ŞUBE BAZLI CİRO, SİPARİŞ VE MAHALLE ANALİZ MERKEZİ -->
+    <section class="admin-panel-box no-print" id="branch-analytics-section">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; margin-bottom:20px;">
+        <div>
+          <div class="pt-subtitle">TÜRKİYE GENELİ • İL, ŞUBE VE MAHALLE BAZLI CANLI PERFORMANS</div>
+          <h2 class="pt-title" id="analytics-section-title">Şube Bazlı Ciro, Sipariş ve Bölge Analiz Raporu</h2>
+          <p style="font-size:15px; color:var(--pt-text-muted);">
+            Hangi şubenin kaç sipariş aldığını, toplam cirosunu, ortalama sepet tutarını ve hangi mahallelerden en çok sipariş geldiğini anlık olarak analiz edin.
+          </p>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <span class="pt-badge pt-badge-gold" id="analytics-scope-badge">KAPSAM: TÜM ŞUBELER</span>
+        </div>
+      </div>
+
+      <!-- Şube Karşılaştırma Tablosu -->
+      <div style="overflow-x:auto; margin-bottom:22px;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Şube Adı &amp; İl/İlçe</th>
+              <th>Sorumlu Mahalle Sayısı</th>
+              <th>Adisyo POS Kodu</th>
+              <th>Sipariş Adedi</th>
+              <th>Toplam Ciro (₺)</th>
+              <th>Ortalama Sepet</th>
+              <th>Müşteri Sayısı</th>
+              <th>Durum / Panel</th>
+            </tr>
+          </thead>
+          <tbody id="admin-branch-analytics-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- Mahalle Bazlı Sipariş Yoğunluğu Özeti -->
+      <div style="background:#fff; border:1px solid var(--pt-border); padding:18px;">
+        <div style="font-size:12px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--pt-navy); margin-bottom:10px;">
+          MAHALLE BAZLI SİPARİŞ &amp; CİRO DAĞILIMI (EN ÇOK SİPARİŞ VEREN BÖLGELER):
+        </div>
+        <div id="admin-neighborhood-breakdown" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:10px;"></div>
+      </div>
+    </section>
+
+    <!-- 0.B. ŞUBE & SORUMLU MAHALLELER YÖNETİM PANELİ (SADECE GENEL ADMIN / SUPER ADMIN GÖRÜR) -->
+    <section class="admin-panel-box no-print" id="superadmin-branches-section">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; margin-bottom:20px;">
+        <div>
+          <div class="pt-subtitle">GENEL MERKEZ YETKİSİ • 81 İL &amp; 100+ ŞUBE BÖLGE YÖNETİMİ</div>
+          <h2 class="pt-title">Şubeler, Sorumlu Mahalleler, Şube Şifreleri &amp; Adisyo POS Yönetimi</h2>
+          <p style="font-size:15px; color:var(--pt-text-muted);">
+            Aynı ildeki birden fazla şubenin (Örn: <strong>Adana Barajyolu, Adana Gürselpaşa, Adana Sarıçam</strong>) hangi mahallelerden sorumlu olduğunu, kendi Adisyo POS kodlarını ve şube yöneticisi giriş bilgilerini buradan belirleyin. Müşteri mahallesini seçtiği an sipariş otomatik olarak o şubenin ekranına ve Adisyo'suna düşer.
+          </p>
+        </div>
+        <button type="button" class="pt-btn-fill" onclick="toggleNewBranchForm()">+ YENİ ŞUBE &amp; BÖLGE EKLE</button>
+      </div>
+
+      <!-- Yeni Şube Ekleme Formu -->
+      <div id="new-branch-form-box" style="display:none; background:#fff; border:2px solid var(--pt-gold); padding:22px; margin-bottom:22px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <h3 style="font-size:24px; color:var(--pt-navy);">Yeni Çökertme Dünyası Şubesi Ekle (81 İl)</h3>
+          <button type="button" onclick="toggleNewBranchForm()" style="background:none; border:none; color:var(--pt-terracotta); font-weight:700; cursor:pointer;">✕ KAPAT</button>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:12px; margin-bottom:12px;">
+          <div>
+            <label class="pt-form-label">Şube Adı *</label>
+            <input type="text" id="nb-name" class="pt-form-input" placeholder="Örn: Adana Çukurova 4. Şube" />
+          </div>
+          <div>
+            <label class="pt-form-label">İl (Şehir) *</label>
+            <input type="text" id="nb-city" class="pt-form-input" placeholder="Örn: Adana" value="Adana" />
+          </div>
+          <div>
+            <label class="pt-form-label">İlçe *</label>
+            <input type="text" id="nb-district" class="pt-form-input" placeholder="Örn: Çukurova / Seyhan" />
+          </div>
+          <div>
+            <label class="pt-form-label">Adisyo Şube Kodu *</label>
+            <input type="text" id="nb-adisyo-code" class="pt-form-input" placeholder="Örn: ADISYO-ADN-04" />
+          </div>
+          <div>
+            <label class="pt-form-label">Şube Yöneticisi Kullanıcı Adı *</label>
+            <input type="text" id="nb-admin-user" class="pt-form-input" placeholder="Örn: cukurova" />
+          </div>
+          <div>
+            <label class="pt-form-label">Şube Yöneticisi Şifresi *</label>
+            <input type="text" id="nb-admin-pass" class="pt-form-input" placeholder="Örn: Cukurova123." />
+          </div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label class="pt-form-label">Sorumlu Olduğu Mahalleler (Virgülle Ayırarak Yazın) *</label>
+          <input type="text" id="nb-neighborhoods" class="pt-form-input" placeholder="Örn: Mahfesığmaz, Toros, Yurt, Huzurevleri, Yüzüncüyıl" />
+        </div>
+        <div style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:12px; margin-bottom:14px;">
+          <div>
+            <label class="pt-form-label">Şube Açık Adresi</label>
+            <input type="text" id="nb-address" class="pt-form-input" placeholder="Mahalle, Bulvar/Cadde, No, İlçe/İl" />
+          </div>
+          <div>
+            <label class="pt-form-label">Telefon</label>
+            <input type="text" id="nb-phone" class="pt-form-input" value="0 (546) 918 07 01" />
+          </div>
+          <div>
+            <label class="pt-form-label">Durum</label>
+            <select id="nb-active" class="pt-form-select">
+              <option value="true" selected>Aktif (Sipariş Alıyor)</option>
+              <option value="false">Çok Yakında (Hazırlık)</option>
+            </select>
+          </div>
+        </div>
+        <button type="button" class="pt-btn-olive" onclick="addNewBranchFromAdmin()">✓ ŞUBEYİ VE SORUMLU MAHALLELERİ KAYDET</button>
+      </div>
+
+      <!-- Mevcut Şubeler ve Sorumlu Mahalle Kartları -->
+      <div id="admin-branches-manager-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(360px, 1fr)); gap:18px;"></div>
+    </section>
+
+    <!-- 0.C. MÜŞTERİ VERİ TABANI (CRM) & YENİDEN PAZARLAMA (REMARKETING) MERKEZİ -->
+    <section class="admin-panel-box no-print" id="crm-remarketing-section">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; margin-bottom:18px;">
+        <div>
+          <div class="pt-subtitle">MÜŞTERİ BİLGİLERİ • SADAKAT DAMGALARI • CÜZDAN BAKİYELERİ • YENİDEN PAZARLAMA</div>
+          <h2 class="pt-title">Müşteri Veri Tabanı (CRM) &amp; Yeniden Pazarlama Merkezi</h2>
+          <p style="font-size:15px; color:var(--pt-text-muted);">
+            Sipariş veren veya üye olan tüm müşterilerinizin <strong>Ad Soyad, Telefon, İl/Mahalle, Sorumlu Şube, Sipariş Sayısı, Toplam Harcama, Sadakat Damgası ve Cüzdan Bakiyesi</strong> bilgilerini filtreleyin ve reklam/SMS kampanyaları için <strong>Excel (CSV)</strong> olarak indirin.
+          </p>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button type="button" class="pt-btn-olive" onclick="exportCrmCustomersCsv()">⬇ MÜŞTERİ LİSTESİNİ EXCEL (CSV) İNDİR</button>
+        </div>
+      </div>
+
+      <!-- CRM Filtre & Arama Barı -->
+      <div style="background:#fff; border:1px solid var(--pt-border); padding:14px 16px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div style="display:flex; gap:8px; flex-wrap:wrap;" id="crm-segment-pills">
+          <button type="button" class="pt-btn-navy" id="crm-seg-ALL" style="padding:8px 12px; font-size:11px;" onclick="setCrmSegmentFilter('ALL')">Tüm Müşteriler</button>
+          <button type="button" class="pt-btn-outline" id="crm-seg-ALMOST_REWARD" style="padding:8px 12px; font-size:11px; color:var(--pt-navy); border-color:var(--pt-border);" onclick="setCrmSegmentFilter('ALMOST_REWARD')">★ 4 Damgalılar (Hediyeye 1 Sipariş Kalanlar)</button>
+          <button type="button" class="pt-btn-outline" id="crm-seg-HAS_WALLET" style="padding:8px 12px; font-size:11px; color:var(--pt-navy); border-color:var(--pt-border);" onclick="setCrmSegmentFilter('HAS_WALLET')">💳 Cüzdan Bakiyesi Olanlar</button>
+          <button type="button" class="pt-btn-outline" id="crm-seg-VIP" style="padding:8px 12px; font-size:11px; color:var(--pt-navy); border-color:var(--pt-border);" onclick="setCrmSegmentFilter('VIP')">👑 VIP Müşteriler (1.000 TL+ Harcama)</button>
+        </div>
+        <div style="min-width:240px; flex:1; max-width:340px;">
+          <input type="text" id="crm-search-input" class="pt-form-input" placeholder="İsim, telefon veya mahalle ara..." oninput="renderCrmCustomersTable(CokertmeStore.getState())" style="padding:9px 12px; font-size:13.5px;" />
+        </div>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Müşteri Adı Soyadı</th>
+              <th>Telefon</th>
+              <th>İl / Mahalle &amp; Açık Adres</th>
+              <th>Sorumlu Şube</th>
+              <th>Sipariş &amp; Harcama</th>
+              <th>Sadakat Damgası</th>
+              <th>Cüzdan Bakiyesi</th>
+              <th>Son İşlem / Kaynak</th>
+            </tr>
+          </thead>
+          <tbody id="admin-crm-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- Henüz Şube Olmayan İllerden Gelen Müşteri Talepleri (81 İl Talep Haritası) -->
+      <div id="admin-location-requests-box" style="margin-top:20px; background:#fff; border:1px solid var(--pt-gold); padding:16px;"></div>
+    </section>
 
     <!-- 1. MASA QR KOD ÜRETİCİ VE YAZDIRICI -->
     <section class="admin-panel-box" id="printable-qr-section">
@@ -1620,9 +1813,22 @@
     </div>
   </footer>
 
-  <script src="assets/data.js?v=9"></script>
+  <script src="assets/data.js?v=10"></script>
   <script>
     const ADMIN_SESSION_KEY = "cokertme_admin_auth_v1";
+    const ADMIN_ROLE_KEY = "cokertme_admin_role_v1"; // "SUPER_ADMIN" veya branchId (örn: "adana-gurselpasa")
+    let currentAdminBranchFilter = "ALL";
+    let currentCrmSegment = "ALL";
+
+    function getLoggedAdminRole() {
+      return sessionStorage.getItem(ADMIN_ROLE_KEY) || "SUPER_ADMIN";
+    }
+
+    function getEffectiveBranchFilter() {
+      const role = getLoggedAdminRole();
+      if (role !== "SUPER_ADMIN") return role;
+      return currentAdminBranchFilter || "ALL";
+    }
 
     function checkAdminSession() {
       const gate = document.getElementById("admin-auth-gate");
@@ -1647,19 +1853,68 @@
       const validPass = adminCfg.passwordHash || "YEo13221990.,";
 
       const errBox = document.getElementById("admin-login-error");
-      if (userInp === validUser && (passInp === validPass || passInp === "YEo13221990.,")) {
+
+      // 1. Genel Merkez (Super Admin) Girişi
+      if (userInp.toLowerCase() === validUser.toLowerCase() && (passInp === validPass || passInp === "YEo13221990.,")) {
         sessionStorage.setItem(ADMIN_SESSION_KEY, "authenticated");
+        sessionStorage.setItem(ADMIN_ROLE_KEY, "SUPER_ADMIN");
+        currentAdminBranchFilter = "ALL";
         if (errBox) errBox.style.display = "none";
         checkAdminSession();
-      } else {
-        if (errBox) errBox.style.display = "block";
+        renderAdminAll();
+        return false;
       }
+
+      // 2. Şube Yöneticisi Girişi (Örn: barajyolu / Barajyolu123., gurselpasa / Gurselpasa123., saricam / Saricam123.)
+      const branches = (state && Array.isArray(state.branches)) ? state.branches : [];
+      const matchedBranch = branches.find(b =>
+        b.adminUsername &&
+        b.adminUsername.toLowerCase() === userInp.toLowerCase() &&
+        b.adminPassword === passInp
+      );
+
+      if (matchedBranch) {
+        sessionStorage.setItem(ADMIN_SESSION_KEY, "authenticated");
+        sessionStorage.setItem(ADMIN_ROLE_KEY, matchedBranch.id);
+        currentAdminBranchFilter = matchedBranch.id;
+        if (errBox) errBox.style.display = "none";
+        checkAdminSession();
+        renderAdminAll();
+        return false;
+      }
+
+      if (errBox) errBox.style.display = "block";
       return false;
     }
 
     function adminLogout() {
       sessionStorage.removeItem(ADMIN_SESSION_KEY);
+      sessionStorage.removeItem(ADMIN_ROLE_KEY);
+      currentAdminBranchFilter = "ALL";
       checkAdminSession();
+    }
+
+    function onAdminBranchViewChange(val) {
+      const role = getLoggedAdminRole();
+      if (role !== "SUPER_ADMIN") {
+        currentAdminBranchFilter = role;
+      } else {
+        currentAdminBranchFilter = val || "ALL";
+      }
+      renderAdminAll();
+    }
+
+    function matchesBranchFilter(recordBranchId, recordBranchName, filterBranchId, state) {
+      if (!filterBranchId || filterBranchId === "ALL") return true;
+      if (recordBranchId && recordBranchId === filterBranchId) return true;
+      const branches = (state && Array.isArray(state.branches)) ? state.branches : [];
+      const bObj = branches.find(b => b.id === filterBranchId);
+      if (!bObj) return false;
+      const rName = (recordBranchName || "").toLocaleLowerCase("tr-TR");
+      const bName = (bObj.name || "").toLocaleLowerCase("tr-TR");
+      if (rName && bName && (rName === bName || rName.includes(bName) || bName.includes(rName))) return true;
+      if (filterBranchId === "adana-merkez" && rName.includes("seyhan merkez")) return true;
+      return false;
     }
 
     checkAdminSession();
@@ -1679,17 +1934,89 @@
 
     function initAdmin() {
       const baseInput = document.getElementById("qr-base-url");
-      if (!baseInput.value) {
+      if (baseInput && !baseInput.value) {
         baseInput.value = "https://www.cokertmedunyasi.com/menu";
       }
       renderAdminAll();
     }
 
+    function renderAdminRoleHeaderAndPermissions(state) {
+      const role = getLoggedAdminRole();
+      const branches = Array.isArray(state.branches) ? state.branches : [];
+      const selectEl = document.getElementById("admin-branch-view-select");
+      const badgeEl = document.getElementById("admin-role-badge");
+      const titleEl = document.getElementById("admin-role-title");
+      const subEl = document.getElementById("admin-role-sub");
+      const superBranchesSec = document.getElementById("superadmin-branches-section");
+      const menuSec = document.getElementById("menu-management-section");
+
+      if (selectEl) {
+        if (role === "SUPER_ADMIN") {
+          selectEl.disabled = false;
+          selectEl.innerHTML = `<option value="ALL" ${currentAdminBranchFilter === "ALL" ? "selected" : ""}>TÜM TÜRKİYE (${branches.length} Şube Toplu Analiz)</option>` +
+            branches.map(b => `<option value="${b.id}" ${currentAdminBranchFilter === b.id ? "selected" : ""}>📍 ${b.name} (${b.city || "Adana"})</option>`).join("");
+        } else {
+          const myBranch = branches.find(b => b.id === role);
+          currentAdminBranchFilter = role;
+          selectEl.disabled = true;
+          selectEl.innerHTML = `<option value="${role}" selected>📍 ${myBranch ? myBranch.name : role} (Şube Yöneticisi Ekranı)</option>`;
+        }
+      }
+
+      const effFilter = getEffectiveBranchFilter();
+      const activeBranchObj = branches.find(b => b.id === effFilter);
+
+      if (role === "SUPER_ADMIN") {
+        if (superBranchesSec) superBranchesSec.style.display = "block";
+        if (menuSec) menuSec.style.display = "block";
+        if (effFilter === "ALL") {
+          if (badgeEl) badgeEl.textContent = "GENEL MERKEZ (SUPER ADMIN) YETKİSİ • TÜM TÜRKİYE";
+          if (titleEl) titleEl.textContent = "Türkiye Geneli Tüm Şubeler & Merkez Kontrol Paneli";
+          if (subEl) subEl.textContent = "Tüm şubelerin siparişlerini, cirolarını, sorumlu mahallelerini ve müşteri CRM havuzunu tek ekrandan yönetiyorsunuz.";
+        } else if (activeBranchObj) {
+          if (badgeEl) badgeEl.textContent = `GENEL MERKEZ FİLTRESİ • ${activeBranchObj.adisyoBranchCode || activeBranchObj.id.toUpperCase()}`;
+          if (titleEl) titleEl.textContent = `${activeBranchObj.name} — Özel Şube Analiz & Sipariş Görünümü`;
+          if (subEl) subEl.textContent = `Sorumlu Mahalleler: ${(activeBranchObj.neighborhoods || []).join(", ") || "Belirtilmedi"}`;
+        }
+      } else {
+        // Şube Yöneticisi Rolü: Sadece kendi şubesini görür, genel merkez şube ekleme bölümünü görmez
+        if (superBranchesSec) superBranchesSec.style.display = "none";
+        if (badgeEl) badgeEl.textContent = `ŞUBE YÖNETİCİSİ PANELİ • ${(activeBranchObj && activeBranchObj.adisyoBranchCode) || role.toUpperCase()}`;
+        if (titleEl) titleEl.textContent = activeBranchObj ? `${activeBranchObj.name} Yönetim & Sipariş Paneli` : "Şube Yönetim Paneli";
+        if (subEl) subEl.textContent = activeBranchObj
+          ? `Sadece şubenize (${(activeBranchObj.neighborhoods || []).slice(0, 6).join(", ")}...) düşen siparişleri, cironuzu ve müşterilerinizi görüyorsunuz.`
+          : "Şube sipariş ve müşteri ekranı.";
+      }
+    }
+
     function renderAdminAll() {
       const state = CokertmeStore.getState();
-      document.getElementById("kpi-items").textContent = state.items.length;
-      document.getElementById("kpi-orders").textContent = state.orders.length;
-      document.getElementById("kpi-franchise").textContent = state.franchiseApplications.length;
+      renderAdminRoleHeaderAndPermissions(state);
+
+      const effFilter = getEffectiveBranchFilter();
+      const branches = Array.isArray(state.branches) ? state.branches : [];
+      const activeBranchesCount = branches.filter(b => b.isActive).length;
+
+      const filteredOrders = (state.orders || []).filter(o => matchesBranchFilter(o.branchId, o.branch, effFilter, state));
+      const totalRevenue = filteredOrders.reduce((sum, o) => sum + (Number(o.total) || 0), 0);
+      const avgBasket = filteredOrders.length > 0 ? Math.round(totalRevenue / filteredOrders.length) : 0;
+
+      const allMembers = Array.isArray(state.members) ? state.members : [];
+      const filteredMembers = allMembers.filter(m => matchesBranchFilter(m.lastBranchId, m.lastBranchName, effFilter, state));
+
+      const kpiItemsEl = document.getElementById("kpi-items");
+      if (kpiItemsEl) kpiItemsEl.textContent = `${activeBranchesCount} Şube / ${(state.items || []).length} Ürün`;
+      const kpiOrdersEl = document.getElementById("kpi-orders");
+      if (kpiOrdersEl) kpiOrdersEl.textContent = filteredOrders.length;
+      const kpiRevEl = document.getElementById("kpi-revenue");
+      if (kpiRevEl) kpiRevEl.textContent = `${totalRevenue.toLocaleString("tr-TR")} ₺`;
+      const kpiCol3Sub = document.getElementById("kpi-col3-sub");
+      if (kpiCol3Sub) kpiCol3Sub.textContent = `Ortalama Sepet: ${avgBasket.toLocaleString("tr-TR")} ₺`;
+      const kpiCrmEl = document.getElementById("kpi-crm-count");
+      if (kpiCrmEl) kpiCrmEl.textContent = filteredMembers.length;
+
+      const kpiFranchiseEl = document.getElementById("kpi-franchise");
+      if (kpiFranchiseEl) kpiFranchiseEl.textContent = (state.franchiseApplications || []).length;
 
       if (state.appSettings) {
         const lockCb = document.getElementById("app-maintenance-lock-cb");
@@ -1725,12 +2052,424 @@
         updateAdminWalletTierPreviews();
       }
 
+      renderBranchAnalyticsSection(state);
+      renderBranchesManagerSection(state);
+      renderCrmCustomersTable(state);
+      renderLocationRequestsBox(state);
       renderTableQRCards();
       renderMenuTable(state);
       renderSiteImagesManager(state);
       renderIntegrationSettings(state);
       renderOrders(state);
       renderFranchise(state);
+    }
+
+    function renderBranchAnalyticsSection(state) {
+      const tbody = document.getElementById("admin-branch-analytics-tbody");
+      const neighBox = document.getElementById("admin-neighborhood-breakdown");
+      const scopeBadge = document.getElementById("analytics-scope-badge");
+      if (!tbody) return;
+
+      const effFilter = getEffectiveBranchFilter();
+      const branches = Array.isArray(state.branches) ? state.branches : [];
+      const visibleBranches = effFilter === "ALL" ? branches : branches.filter(b => b.id === effFilter);
+
+      if (scopeBadge) {
+        if (effFilter === "ALL") {
+          scopeBadge.textContent = `KAPSAM: TÜM TÜRKİYE (${branches.length} ŞUBE)`;
+        } else {
+          const bObj = branches.find(b => b.id === effFilter);
+          scopeBadge.textContent = `KAPSAM: ${bObj ? bObj.name.toUpperCase() : effFilter}`;
+        }
+      }
+
+      const orders = Array.isArray(state.orders) ? state.orders : [];
+      const members = Array.isArray(state.members) ? state.members : [];
+
+      tbody.innerHTML = visibleBranches.map(b => {
+        const bOrders = orders.filter(o => matchesBranchFilter(o.branchId, o.branch, b.id, state));
+        const bRev = bOrders.reduce((s, o) => s + (Number(o.total) || 0), 0);
+        const bAvg = bOrders.length > 0 ? Math.round(bRev / bOrders.length) : 0;
+        const bMembers = members.filter(m => matchesBranchFilter(m.lastBranchId, m.lastBranchName, b.id, state));
+        const nList = Array.isArray(b.neighborhoods) ? b.neighborhoods : [];
+
+        return `
+          <tr>
+            <td>
+              <strong style="color:var(--pt-navy); font-size:15px;">${b.name}</strong>
+              <div style="font-size:12px; color:var(--pt-text-muted);">${b.city || "Adana"} / ${b.district || "-"}</div>
+            </td>
+            <td>
+              <span class="pt-badge pt-badge-olive">${nList.length} Mahalle</span>
+              <div style="font-size:11.5px; color:var(--pt-text-muted); margin-top:3px; max-width:240px;">${nList.slice(0, 4).join(", ")}${nList.length > 4 ? "..." : ""}</div>
+            </td>
+            <td><code style="font-size:12px; font-weight:700; color:var(--pt-navy); background:var(--pt-cream); padding:3px 7px; border:1px solid var(--pt-border);">${b.adisyoBranchCode || "ADISYO-01"}</code></td>
+            <td><strong style="font-size:16px; color:var(--pt-navy);">${bOrders.length}</strong> Sipariş</td>
+            <td><strong style="font-size:16px; color:var(--pt-terracotta);">${bRev.toLocaleString("tr-TR")} ₺</strong></td>
+            <td><span style="font-weight:700; color:var(--pt-olive);">${bAvg.toLocaleString("tr-TR")} ₺</span></td>
+            <td><strong>${bMembers.length}</strong> Kayıtlı Müşteri</td>
+            <td>
+              ${b.isActive
+                ? `<button type="button" class="pt-btn-navy" style="padding:6px 10px; font-size:10.5px;" onclick="onAdminBranchViewChange('${b.id}')">ŞUBE PANELİNİ AÇ</button>`
+                : `<span class="pt-badge pt-badge-gold">Çok Yakında</span>`
+              }
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      if (neighBox) {
+        const scopedOrders = orders.filter(o => matchesBranchFilter(o.branchId, o.branch, effFilter, state));
+        const neighMap = {};
+        scopedOrders.forEach(o => {
+          const nKey = o.neighborhood || o.city || "Merkez / Belirtilmemiş";
+          if (!neighMap[nKey]) neighMap[nKey] = { count: 0, rev: 0, branchName: o.branch || "" };
+          neighMap[nKey].count += 1;
+          neighMap[nKey].rev += (Number(o.total) || 0);
+        });
+        const entries = Object.entries(neighMap).sort((a, b) => b[1].rev - a[1].rev);
+        if (entries.length === 0) {
+          neighBox.innerHTML = `<div style="font-size:13px; color:var(--pt-text-muted);">Bu filtrede henüz mahalle bazlı sipariş kaydı bulunmuyor.</div>`;
+        } else {
+          neighBox.innerHTML = entries.map(([nName, stat]) => `
+            <div style="background:var(--pt-cream); border:1px solid var(--pt-border); border-left:3px solid var(--pt-gold); padding:10px 12px;">
+              <div style="font-weight:800; font-size:13.5px; color:var(--pt-navy);">📍 ${nName}</div>
+              <div style="font-size:11.5px; color:var(--pt-text-muted); margin:2px 0 4px;">${stat.branchName}</div>
+              <div style="display:flex; justify-content:space-between; font-size:12.5px; font-weight:700;">
+                <span style="color:var(--pt-olive);">${stat.count} Sipariş</span>
+                <span style="color:var(--pt-terracotta);">${stat.rev.toLocaleString("tr-TR")} ₺</span>
+              </div>
+            </div>
+          `).join("");
+        }
+      }
+    }
+
+    function toggleNewBranchForm() {
+      const box = document.getElementById("new-branch-form-box");
+      if (!box) return;
+      box.style.display = box.style.display === "none" ? "block" : "none";
+    }
+
+    function addNewBranchFromAdmin() {
+      const name = (document.getElementById("nb-name").value || "").trim();
+      const city = (document.getElementById("nb-city").value || "Adana").trim();
+      const district = (document.getElementById("nb-district").value || "").trim();
+      const adisyoCode = (document.getElementById("nb-adisyo-code").value || "").trim() || ("ADISYO-" + Math.floor(100 + Math.random() * 900));
+      const adminUser = (document.getElementById("nb-admin-user").value || "").trim();
+      const adminPass = (document.getElementById("nb-admin-pass").value || "").trim() || "Cokertme123.";
+      const neighRaw = (document.getElementById("nb-neighborhoods").value || "").trim();
+      const address = (document.getElementById("nb-address").value || "").trim();
+      const phone = (document.getElementById("nb-phone").value || "0 (546) 918 07 01").trim();
+      const isActive = document.getElementById("nb-active").value === "true";
+
+      if (!name || !city) {
+        alert("Lütfen Şube Adı ve İl (Şehir) alanlarını doldurun.");
+        return;
+      }
+
+      const neighborhoods = neighRaw.split(",").map(s => s.trim()).filter(Boolean);
+      const slugId = (city + "-" + name).toLocaleLowerCase("tr-TR").replace(/[^a-z0-9ğüşıöç]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "") + "-" + Math.floor(10 + Math.random() * 89);
+
+      const state = CokertmeStore.getState();
+      if (!Array.isArray(state.branches)) state.branches = [];
+      state.branches.push({
+        id: slugId,
+        name: name,
+        city: city,
+        district: district || "Merkez",
+        badge: isActive ? "AKTİF ŞUBE" : "ÇOK YAKINDA",
+        isActive: isActive,
+        address: address || `${district} / ${city}`,
+        phone: phone,
+        hours: isActive ? "Her Gün 11:00 – 23:30" : "Çok Yakında Hizmetinizde",
+        neighborhoods: neighborhoods,
+        adminUsername: adminUser || slugId.slice(0, 12),
+        adminPassword: adminPass,
+        adisyoBranchCode: adisyoCode,
+        adisyoApiKey: "",
+        prepMinutes: 15,
+        deliveryFeeOverride: 100
+      });
+
+      CokertmeStore.saveState(state);
+      document.getElementById("new-branch-form-box").style.display = "none";
+      renderAdminAll();
+      alert(`✓ "${name}" (${city}) şubesi ve sorumlu mahalleleri başarıyla eklendi!`);
+    }
+
+    function renderBranchesManagerSection(state) {
+      const grid = document.getElementById("admin-branches-manager-grid");
+      if (!grid) return;
+      const branches = Array.isArray(state.branches) ? state.branches : [];
+
+      grid.innerHTML = branches.map(b => {
+        const neighStr = (Array.isArray(b.neighborhoods) ? b.neighborhoods : []).join(", ");
+        return `
+          <div style="background:#fff; border:1px solid var(--pt-border); border-top:4px solid ${b.isActive ? 'var(--pt-olive)' : 'var(--pt-gold)'}; padding:18px; display:grid; gap:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+              <div>
+                <span class="pt-badge ${b.isActive ? 'pt-badge-olive' : 'pt-badge-gold'}">${b.city || 'Adana'} • ${b.isActive ? 'AKTİF ŞUBE' : 'ÇOK YAKINDA'}</span>
+                <h4 style="font-size:21px; color:var(--pt-navy); margin-top:4px;">${b.name}</h4>
+              </div>
+              <button type="button" onclick="onAdminBranchViewChange('${b.id}')" style="background:var(--pt-cream); border:1px solid var(--pt-gold); color:var(--pt-navy); font-size:10.5px; font-weight:800; padding:5px 9px; cursor:pointer;">ŞUBE EKRANINI GÖR</button>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <div>
+                <label class="pt-form-label" style="font-size:10px;">İl / Şehir</label>
+                <input type="text" id="br-city-${b.id}" class="pt-form-input" style="padding:7px 10px; font-size:13px;" value="${b.city || ''}" />
+              </div>
+              <div>
+                <label class="pt-form-label" style="font-size:10px;">İlçe</label>
+                <input type="text" id="br-dist-${b.id}" class="pt-form-input" style="padding:7px 10px; font-size:13px;" value="${b.district || ''}" />
+              </div>
+            </div>
+
+            <div>
+              <label class="pt-form-label" style="font-size:10px; color:var(--pt-olive);">Sorumlu Olduğu Mahalleler (Virgülle Ayırın — Sipariş Eşleştirmesi İçin)</label>
+              <textarea id="br-neigh-${b.id}" class="pt-form-textarea" rows="2" style="padding:8px 10px; font-size:12.5px; font-weight:600;">${neighStr}</textarea>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; background:var(--pt-cream); padding:10px; border:1px solid var(--pt-border);">
+              <div>
+                <label class="pt-form-label" style="font-size:9.5px;">Adisyo Şube Kodu</label>
+                <input type="text" id="br-adisyo-${b.id}" class="pt-form-input" style="padding:6px 8px; font-size:12px; font-weight:700;" value="${b.adisyoBranchCode || ''}" />
+              </div>
+              <div>
+                <label class="pt-form-label" style="font-size:9.5px;">Şube Kullanıcı Adı</label>
+                <input type="text" id="br-user-${b.id}" class="pt-form-input" style="padding:6px 8px; font-size:12px;" value="${b.adminUsername || ''}" />
+              </div>
+              <div>
+                <label class="pt-form-label" style="font-size:9.5px;">Şube Giriş Şifresi</label>
+                <input type="text" id="br-pass-${b.id}" class="pt-form-input" style="padding:6px 8px; font-size:12px;" value="${b.adminPassword || ''}" />
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:2fr 1fr; gap:8px;">
+              <div>
+                <label class="pt-form-label" style="font-size:10px;">Açık Adres</label>
+                <input type="text" id="br-addr-${b.id}" class="pt-form-input" style="padding:7px 10px; font-size:12.5px;" value="${b.address || ''}" />
+              </div>
+              <div>
+                <label class="pt-form-label" style="font-size:10px;">Sipariş Durumu</label>
+                <select id="br-active-${b.id}" class="pt-form-select" style="padding:7px 10px; font-size:12.5px;">
+                  <option value="true" ${b.isActive ? 'selected' : ''}>Aktif (Açık)</option>
+                  <option value="false" ${!b.isActive ? 'selected' : ''}>Çok Yakında (Kapalı)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; padding-top:6px;">
+              <button type="button" class="pt-btn-olive" style="padding:8px 14px; font-size:11px; flex:1;" onclick="saveBranchConfig('${b.id}')">✓ BÖLGE &amp; ADİSYO AYARLARINI KAYDET</button>
+              <button type="button" onclick="deleteBranchFromAdmin('${b.id}')" style="background:#FDECEC; border:1px solid #E5A0A0; color:#A61B1B; padding:8px 10px; font-size:11px; font-weight:700; cursor:pointer;">SİL</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function saveBranchConfig(branchId) {
+      const state = CokertmeStore.getState();
+      const b = (state.branches || []).find(x => x.id === branchId);
+      if (!b) return;
+
+      const cityEl = document.getElementById(`br-city-${branchId}`);
+      const distEl = document.getElementById(`br-dist-${branchId}`);
+      const neighEl = document.getElementById(`br-neigh-${branchId}`);
+      const adisyoEl = document.getElementById(`br-adisyo-${branchId}`);
+      const userEl = document.getElementById(`br-user-${branchId}`);
+      const passEl = document.getElementById(`br-pass-${branchId}`);
+      const addrEl = document.getElementById(`br-addr-${branchId}`);
+      const actEl = document.getElementById(`br-active-${branchId}`);
+
+      if (cityEl) b.city = cityEl.value.trim();
+      if (distEl) b.district = distEl.value.trim();
+      if (neighEl) {
+        b.neighborhoods = neighEl.value.split(",").map(s => s.trim()).filter(Boolean);
+      }
+      if (adisyoEl) b.adisyoBranchCode = adisyoEl.value.trim();
+      if (userEl) b.adminUsername = userEl.value.trim();
+      if (passEl) b.adminPassword = passEl.value.trim();
+      if (addrEl) b.address = addrEl.value.trim();
+      if (actEl) {
+        b.isActive = actEl.value === "true";
+        b.badge = b.isActive ? (b.id === "adana-merkez" ? "MERKEZ ŞUBE • AKTİF" : "AKTİF ŞUBE") : "ÇOK YAKINDA";
+      }
+
+      CokertmeStore.saveState(state);
+      renderAdminAll();
+      alert(`✓ "${b.name}" sorumlu mahalleleri, Adisyo POS kodu ve şube yönetici bilgileri güncellendi!`);
+    }
+
+    function deleteBranchFromAdmin(branchId) {
+      if (branchId === "adana-merkez") {
+        alert("Ana merkez şube silinemez, ancak mahalle ve bilgilerini düzenleyebilirsiniz.");
+        return;
+      }
+      if (!confirm("Bu şubeyi silmek istediğinize emin misiniz?")) return;
+      const state = CokertmeStore.getState();
+      state.branches = (state.branches || []).filter(b => b.id !== branchId);
+      CokertmeStore.saveState(state);
+      renderAdminAll();
+    }
+
+    function setCrmSegmentFilter(seg) {
+      currentCrmSegment = seg || "ALL";
+      ["ALL", "ALMOST_REWARD", "HAS_WALLET", "VIP"].forEach(k => {
+        const btn = document.getElementById("crm-seg-" + k);
+        if (!btn) return;
+        if (k === currentCrmSegment) {
+          btn.className = "pt-btn-navy";
+          btn.style.color = "#fff";
+        } else {
+          btn.className = "pt-btn-outline";
+          btn.style.color = "var(--pt-navy)";
+        }
+      });
+      renderCrmCustomersTable(CokertmeStore.getState());
+    }
+
+    function getFilteredCrmMembers(state) {
+      const effFilter = getEffectiveBranchFilter();
+      const searchQ = ((document.getElementById("crm-search-input") && document.getElementById("crm-search-input").value) || "").toLocaleLowerCase("tr-TR").trim();
+      const members = Array.isArray(state.members) ? state.members : [];
+      const orders = Array.isArray(state.orders) ? state.orders : [];
+
+      return members.map(m => {
+        const normPhone = String(m.phone || "").replace(/\D/g, "").slice(-10);
+        const mOrders = orders.filter(o => String(o.phone || "").replace(/\D/g, "").slice(-10) === normPhone && normPhone.length >= 10);
+        const totalSpend = Number(m.totalSpend) || mOrders.reduce((s, o) => s + (Number(o.total) || 0), 0);
+        const orderCount = Number(m.orderCount) || mOrders.length;
+        const stamps = Number(m.loyaltyStamps) || 0;
+        const walletBal = Number(m.walletBalance) || 0;
+        return {
+          ...m,
+          computedOrderCount: orderCount,
+          computedTotalSpend: totalSpend,
+          computedStamps: stamps,
+          computedWallet: walletBal
+        };
+      }).filter(m => {
+        if (!matchesBranchFilter(m.lastBranchId, m.lastBranchName, effFilter, state)) return false;
+        if (currentCrmSegment === "ALMOST_REWARD" && m.computedStamps < 4) return false;
+        if (currentCrmSegment === "HAS_WALLET" && m.computedWallet <= 0) return false;
+        if (currentCrmSegment === "VIP" && m.computedTotalSpend < 1000) return false;
+        if (searchQ) {
+          const hay = `${m.fullName || ""} ${m.phone || ""} ${m.city || ""} ${m.neighborhood || ""} ${m.address || ""} ${m.lastBranchName || ""}`.toLocaleLowerCase("tr-TR");
+          if (!hay.includes(searchQ)) return false;
+        }
+        return true;
+      });
+    }
+
+    function renderCrmCustomersTable(state) {
+      const tbody = document.getElementById("admin-crm-tbody");
+      if (!tbody) return;
+      const list = getFilteredCrmMembers(state);
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:24px; color:var(--pt-text-muted);">Bu filtreye uygun kayıtlı müşteri bulunamadı.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(m => `
+        <tr>
+          <td>
+            <strong style="color:var(--pt-navy); font-size:15px;">${m.fullName || "İsimsiz Müşteri"}</strong>
+            <div style="font-size:11.5px; color:var(--pt-text-muted);">ID: ${m.id || "-"}</div>
+          </td>
+          <td><a href="tel:${m.phone || ''}" style="font-weight:700; color:var(--pt-navy); text-decoration:none;">${m.phone || "-"}</a></td>
+          <td>
+            <span class="pt-badge pt-badge-olive">${m.city || "Adana"} / ${m.neighborhood || "Merkez"}</span>
+            <div style="font-size:12px; color:var(--pt-text-muted); margin-top:3px; max-width:250px;">${m.address || "-"}</div>
+          </td>
+          <td><strong style="color:var(--pt-navy); font-size:13px;">${m.lastBranchName || "Adana Barajyolu Merkez Şube"}</strong></td>
+          <td>
+            <strong>${m.computedOrderCount} Sipariş</strong>
+            <div style="font-size:13px; font-weight:700; color:var(--pt-terracotta);">${m.computedTotalSpend.toLocaleString("tr-TR")} ₺</div>
+          </td>
+          <td>
+            <span class="pt-badge ${m.computedStamps >= 4 ? 'pt-badge-terracotta' : 'pt-badge-gold'}">★ ${m.computedStamps} / 5 Damga</span>
+          </td>
+          <td>
+            <strong style="color:${m.computedWallet > 0 ? 'var(--pt-olive)' : 'var(--pt-text-muted)'};">${m.computedWallet.toLocaleString("tr-TR")} ₺</strong>
+          </td>
+          <td>
+            <div style="font-size:12px; font-weight:600; color:var(--pt-navy);">${m.lastOrderAt || m.createdAt || "-"}</div>
+            <div style="font-size:11px; color:var(--pt-text-muted);">${m.source || "Mobil Uygulama"}</div>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function exportCrmCustomersCsv() {
+      const state = CokertmeStore.getState();
+      const list = getFilteredCrmMembers(state);
+      if (list.length === 0) {
+        alert("Dışa aktarılacak müşteri kaydı bulunamadı.");
+        return;
+      }
+      const headers = ["Musteri_ID", "Ad_Soyad", "Telefon", "Il", "Mahalle", "Acik_Adres", "Sorumlu_Sube", "Siparis_Sayisi", "Toplam_Harcama_TL", "Sadakat_Damgasi", "Cuzdan_Bakiyesi_TL", "Son_Islem"];
+      const rows = list.map(m => [
+        m.id || "",
+        `"${String(m.fullName || "").replace(/"/g, '""')}"`,
+        `"${String(m.phone || "")}"`,
+        `"${String(m.city || "Adana")}"`,
+        `"${String(m.neighborhood || "")}"`,
+        `"${String(m.address || "").replace(/"/g, '""')}"`,
+        `"${String(m.lastBranchName || "")}"`,
+        m.computedOrderCount,
+        m.computedTotalSpend,
+        m.computedStamps,
+        m.computedWallet,
+        `"${String(m.lastOrderAt || m.createdAt || "")}"`
+      ].join(";"));
+
+      const csvContent = "\uFEFF" + headers.join(";") + "\n" + rows.join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `cokertme-dunyasi-musteri-crm-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function renderLocationRequestsBox(state) {
+      const box = document.getElementById("admin-location-requests-box");
+      if (!box) return;
+      const reqs = Array.isArray(state.locationRequests) ? state.locationRequests : [];
+      if (reqs.length === 0) {
+        box.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div>
+              <strong style="color:var(--pt-navy); font-size:14px;">🗺️ 81 İl Şube Talep Radarımız Aktif:</strong>
+              <span style="font-size:13px; color:var(--pt-text-muted); margin-left:6px;">Henüz şubemiz olmayan illerden müşterilerin bıraktığı "İlime Şube Açıldığında Haber Ver" talepleri burada listelenir.</span>
+            </div>
+            <span class="pt-badge pt-badge-gold">0 Bekleyen İl Talebi</span>
+          </div>
+        `;
+        return;
+      }
+
+      box.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+          <strong style="color:var(--pt-navy); font-size:15px;">🗺️ Şube Olmayan İllerden Gelen Müşteri Bildirim Talepleri (${reqs.length} Kayıt)</strong>
+          <span class="pt-badge pt-badge-terracotta">YENİ ŞUBE &amp; FRANCHISE HEDEF KİTLESİ</span>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px;">
+          ${reqs.slice(0, 12).map(r => `
+            <div style="background:var(--pt-cream); border:1px solid var(--pt-border); padding:10px 12px; font-size:12.5px;">
+              <strong style="color:var(--pt-navy);">📍 ${r.city} ${r.district ? '/ ' + r.district : ''}</strong>
+              <div>${r.fullName || 'Müşteri'} • <strong>${r.phone || ''}</strong></div>
+              <div style="font-size:11px; color:var(--pt-text-muted);">${r.createdAt || ''}</div>
+            </div>
+          `).join("")}
+        </div>
+      `;
     }
 
     const SITE_IMAGE_SLOTS = [
@@ -2842,25 +3581,35 @@
 
     function renderOrders(state) {
       const el = document.getElementById("admin-orders-list");
+      if (!el) return;
       const companies = (state.integrationSettings && state.integrationSettings.courier && state.integrationSettings.courier.companies) || [];
+      const effFilter = getEffectiveBranchFilter();
+      const visibleOrders = (state.orders || []).filter(o => matchesBranchFilter(o.branchId, o.branch, effFilter, state));
 
-      el.innerHTML = state.orders.map(o => {
+      if (visibleOrders.length === 0) {
+        el.innerHTML = `<div style="background:#fff; padding:22px; border:1px solid var(--pt-border); color:var(--pt-text-muted); font-size:14px;">Seçili şube için henüz sipariş kaydı bulunmuyor.</div>`;
+        return;
+      }
+
+      el.innerHTML = visibleOrders.map(o => {
         const courierOptions = companies.map(c =>
           `<option value="${c.id}" ${c.name === o.courierCompanyName ? 'selected' : ''}>${c.name} (${c.prepMinutesOverride || 15} dk)</option>`
         ).join("");
-        const moldDisplay = o.moldType || (o.customerGender === "Kadın" ? "Kalpli Çökertme Kalıbı (Kadın Sunumu)" : "Çember Çökertme Kalıbı (Erkek Sunumu)");
+        const adisyoBadge = o.adisyoBranchCode || "ADISYO-ADN-01";
+        const locBadge = o.neighborhood ? `${o.city || 'Adana'} / ${o.neighborhood}` : (o.city || "Adana");
 
         return `
         <div style="background:#fff; padding:18px; border:1px solid var(--pt-border); border-left:4px solid var(--pt-olive);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:8px; flex-wrap:wrap;">
             <strong style="font-family:var(--font-serif); font-size:21px; color:var(--pt-navy);">#${o.id} — ${o.customerName}</strong>
             <div style="display:flex; gap:6px; flex-wrap:wrap;">
-              <span class="pt-badge pt-badge-gold">${moldDisplay}</span>
+              <span class="pt-badge pt-badge-olive">📍 ${locBadge}</span>
+              <span class="pt-badge pt-badge-gold">${adisyoBadge}</span>
               <span class="pt-badge pt-badge-navy">${o.mode}</span>
             </div>
           </div>
           <div style="font-size:13.5px; color:var(--pt-text-muted); margin-bottom:6px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-            <span style="display:inline-flex; align-items:center; gap:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--pt-terracotta)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ${o.branch}</span>
+            <span style="display:inline-flex; align-items:center; gap:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--pt-terracotta)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> <strong>${o.branch}</strong></span>
             <span>•</span>
             <span style="display:inline-flex; align-items:center; gap:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--pt-navy)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> ${o.phone}</span>
             <span>•</span>
@@ -2872,10 +3621,10 @@
           </div>
 
           <div style="background:var(--pt-cream); border:1px solid var(--pt-border); padding:10px 12px; margin-bottom:10px; font-size:12.5px; display:grid; gap:5px;">
-            <div><strong style="color:var(--pt-olive);">Üyelik Durumu:</strong> ${o.membershipNote || 'Sipariş Bilgileriyle Otomatik Üyelik Açıldı'}</div>
+            <div><strong style="color:var(--pt-olive);">Sorumlu Şube &amp; Mahalle Eşleşmesi:</strong> <strong>${o.branch}</strong> (${locBadge})</div>
+            <div><strong style="color:var(--pt-olive);">Üyelik &amp; CRM Durumu:</strong> ${o.membershipNote || 'Sipariş Bilgileriyle Otomatik Üyelik Açıldı'}</div>
             ${o.loyaltyNote ? `<div><strong style="color:var(--pt-gold);">Sadakat Programı:</strong> <strong style="color:var(--pt-navy);">${o.loyaltyNote}</strong></div>` : ''}
-            <div><strong style="color:var(--pt-terracotta);">Mutfak Sunum Kalıbı (Cinsiyet):</strong> <strong>${moldDisplay}</strong></div>
-            <div><strong style="color:var(--pt-terracotta);">Adisyo Bulut ERP &amp; Mutfak (adisyo.com):</strong> ${o.adisyoStatus || 'Adisyo POS & ERP İletildi • Mutfak Fişi Basıldı • Stok/Reçete, Muhasebe, Pazaryeri, Kurye & Finans İşlendi'}</div>
+            <div><strong style="color:var(--pt-terracotta);">Şube Adisyo Bulut ERP (${adisyoBadge}):</strong> ${o.adisyoStatus || 'Adisyo POS & ERP İletildi • Mutfak Fişi Basıldı • Stok/Reçete, Muhasebe, Pazaryeri, Kurye & Finans İşlendi'}</div>
             <div><strong style="color:var(--pt-navy);">Ödeme / Tahsilat (QNB / Cüzdan / Beko POS):</strong> ${o.paymentLabel || 'QNB Finansbank Online 3D (Beko POS Hesabına Aktarıldı)'}</div>
             <div><strong style="color:var(--pt-terracotta);">Kurye API (0. Saniye):</strong> ${o.courierStatus || `Anında Kurye API'ye Atandı (${o.prepTimeMinutes || 15} dk sonra hazır)`}</div>
             <div style="display:flex; align-items:center; gap:8px; margin-top:4px; flex-wrap:wrap;">
@@ -2886,8 +3635,8 @@
             </div>
           </div>
 
-          <div style="display:flex; justify-content:space-between; font-size:13.5px; padding-top:8px; border-top:1px dashed var(--pt-border);">
-            <span>Liste: ${o.subtotal} ₺ | <strong style="color:var(--pt-olive);">İndirim: -${o.discount} ₺</strong></span>
+          <div style="display:flex; justify-content:space-between; font-size:13.5px; padding-top:8px; border-top:1px dashed var(--pt-border); flex-wrap:wrap; gap:6px;">
+            <span>Liste: ${o.subtotal} ₺ | <strong style="color:var(--pt-olive);">İndirim: -${o.discount} ₺</strong>${o.deliveryFee ? ` | <strong style="color:var(--pt-navy);">Kurye: +${o.deliveryFee} ₺</strong>` : ''}</span>
             <strong style="color:var(--pt-terracotta); font-size:15px;">Tahsilat: ${o.total} ₺</strong>
           </div>
         </div>

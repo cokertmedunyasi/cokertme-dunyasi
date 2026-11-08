@@ -412,46 +412,129 @@ const DEFAULT_COKERTME_DATA = {
   branches: [
     {
       id: "adana-merkez",
-      name: "Adana Seyhan Merkez Şube (Amiral Mağaza)",
+      name: "Adana Barajyolu Merkez Şube (Amiral Mağaza)",
       city: "Adana",
+      district: "Seyhan",
       country: "Türkiye",
       status: "Açık - Hizmetinizde",
       address: "Yenibaraj Mahallesi, Bülent Angın Blv. No: 66/D, Seyhan/Adana",
       phone: "0 (546) 918 07 01",
       hours: "11:00 - 23:30",
-      isActive: true
+      isActive: true,
+      neighborhoods: [
+        "Yenibaraj", "Barajyolu", "Reşatbey", "Cemalpaşa", "Kurtuluş",
+        "Ziyapaşa", "Gazipaşa", "Çınarlı", "Sümer", "Pınar", "Demirköprü", "Döşeme"
+      ],
+      adminUsername: "barajyolu",
+      adminPassword: "Barajyolu123.",
+      adisyoBranchCode: "ADANA-BARAJYOLU-01",
+      adisyoApiKey: "",
+      prepMinutes: 15,
+      overflowBranchId: ""
+    },
+    {
+      id: "adana-gurselpasa",
+      name: "Adana Gürselpaşa Şubesi (Çukurova)",
+      city: "Adana",
+      district: "Çukurova",
+      country: "Türkiye",
+      status: "Açık - Hizmetinizde",
+      address: "Gürselpaşa Mahallesi, Aliya İzzetbegoviç Blv., Çukurova/Adana",
+      phone: "0 (546) 918 07 02",
+      hours: "11:00 - 23:30",
+      isActive: true,
+      neighborhoods: [
+        "Gürselpaşa", "Karslılar", "Toros", "Yurt", "Mahfesığmaz",
+        "Güzelyalı", "Beyazevler", "Huzurevleri", "Yüzüncüyıl", "Belediyeevleri", "Şambayadı", "Kabaktepe"
+      ],
+      adminUsername: "gurselpasa",
+      adminPassword: "Gurselpasa123.",
+      adisyoBranchCode: "ADANA-GURSELPASA-02",
+      adisyoApiKey: "",
+      prepMinutes: 15,
+      overflowBranchId: ""
+    },
+    {
+      id: "adana-saricam",
+      name: "Adana Sarıçam Şubesi",
+      city: "Adana",
+      district: "Sarıçam",
+      country: "Türkiye",
+      status: "Açık - Hizmetinizde",
+      address: "Gültepe Mahallesi, Erguvan Cad., Sarıçam/Adana",
+      phone: "0 (546) 918 07 03",
+      hours: "11:00 - 23:30",
+      isActive: true,
+      neighborhoods: [
+        "Balcalı", "Gültepe", "Osmangazi", "Orhangazi", "Yeşiltepe",
+        "Boynuyoğun", "Mehmet Akif Ersoy", "Şahintepe", "Yavuz Sultan Selim", "Esentepe", "İncirlik", "Suluca"
+      ],
+      adminUsername: "saricam",
+      adminPassword: "Saricam123.",
+      adisyoBranchCode: "ADANA-SARICAM-03",
+      adisyoApiKey: "",
+      prepMinutes: 15,
+      overflowBranchId: ""
     },
     {
       id: "mugla-bodrum",
       name: "Muğla Bodrum Marina Konsept Şube",
       city: "Muğla",
+      district: "Bodrum",
       country: "Türkiye",
       status: "Hazırlık Aşamasında",
       address: "Neyzen Tevfik Cad. Bodrum / Muğla",
+      phone: "0 (546) 918 07 04",
       hours: "Yakında",
-      isActive: false
+      isActive: false,
+      neighborhoods: ["Çarşı", "Türkkuyusu", "Kumbahçe", "Yokuşbaşı", "Gümbet", "Bitez", "Ortakent", "Yalıkavak"],
+      adminUsername: "bodrum",
+      adminPassword: "Bodrum123.",
+      adisyoBranchCode: "MUGLA-BODRUM-04",
+      adisyoApiKey: "",
+      prepMinutes: 15,
+      overflowBranchId: ""
     },
     {
       id: "istanbul-kadikoy",
       name: "İstanbul Bağdat Caddesi Şubesi",
       city: "İstanbul",
+      district: "Kadıköy",
       country: "Türkiye",
       status: "Franchise Görüşmesinde",
-      address: "Kadıköy / İstanbul",
+      address: "Bağdat Caddesi, Suadiye / Kadıköy / İstanbul",
+      phone: "0 (546) 918 07 05",
       hours: "Yakında",
-      isActive: false
+      isActive: false,
+      neighborhoods: ["Suadiye", "Bostancı", "Caddebostan", "Erenköy", "Fenerbahçe", "Göztepe", "Feneryolu", "Kozyatağı", "Moda"],
+      adminUsername: "kadikoy",
+      adminPassword: "Kadikoy123.",
+      adisyoBranchCode: "IST-KADIKOY-05",
+      adisyoApiKey: "",
+      prepMinutes: 15,
+      overflowBranchId: ""
     },
     {
       id: "berlin-mitte",
       name: "Berlin Mitte - Europe Flagship",
       city: "Berlin",
+      district: "Mitte",
       country: "Almanya (Yurt Dışı)",
       status: "Global Bayilik Adayı",
       address: "Mitte / Berlin, Germany",
+      phone: "+49 30 000 00 00",
       hours: "2027 Hedefi",
-      isActive: false
+      isActive: false,
+      neighborhoods: ["Mitte", "Kreuzberg", "Charlottenburg"],
+      adminUsername: "berlin",
+      adminPassword: "Berlin123.",
+      adisyoBranchCode: "DE-BERLIN-06",
+      adisyoApiKey: "",
+      prepMinutes: 15,
+      overflowBranchId: ""
     }
   ],
+  locationRequests: [],
   orders: [],
   franchiseApplications: [
     {
@@ -758,19 +841,44 @@ function sanitizeAndMergeState(parsed) {
     });
   }
 
-  const mergedBranches = Array.isArray(parsed.branches) && parsed.branches.length > 0
+  const defaultBranchMap = {};
+  DEFAULT_COKERTME_DATA.branches.forEach(db => {
+    defaultBranchMap[db.id] = db;
+  });
+
+  let mergedBranches = Array.isArray(parsed.branches) && parsed.branches.length > 0
     ? parsed.branches.map(b => {
-        if (b && (b.id === "adana-merkez" || (b.address && b.address.includes("Turgut Özal")))) {
-          return {
-            ...b,
-            name: "Adana Seyhan Merkez Şube (Amiral Mağaza)",
-            address: "Yenibaraj Mahallesi, Bülent Angın Blv. No: 66/D, Seyhan/Adana",
-            phone: "0 (546) 918 07 01"
-          };
+        if (!b || !b.id) return b;
+        const defB = defaultBranchMap[b.id] || {};
+        const upgraded = {
+          ...defB,
+          ...b,
+          neighborhoods: Array.isArray(b.neighborhoods) && b.neighborhoods.length > 0
+            ? b.neighborhoods
+            : (defB.neighborhoods || []),
+          district: b.district || defB.district || "Merkez",
+          adminUsername: b.adminUsername || defB.adminUsername || b.id,
+          adminPassword: b.adminPassword || defB.adminPassword || "Cokertme123.",
+          adisyoBranchCode: b.adisyoBranchCode || defB.adisyoBranchCode || b.id.toUpperCase(),
+          adisyoApiKey: b.adisyoApiKey || defB.adisyoApiKey || "",
+          prepMinutes: Number(b.prepMinutes) || Number(defB.prepMinutes) || 15,
+          overflowBranchId: b.overflowBranchId || ""
+        };
+        if (b.id === "adana-merkez" || (b.address && b.address.includes("Turgut Özal"))) {
+          upgraded.name = b.name && b.name.includes("Barajyolu") ? b.name : "Adana Barajyolu Merkez Şube (Amiral Mağaza)";
+          upgraded.address = "Yenibaraj Mahallesi, Bülent Angın Blv. No: 66/D, Seyhan/Adana";
+          upgraded.phone = b.phone || "0 (546) 918 07 01";
         }
-        return b;
+        return upgraded;
       })
-    : DEFAULT_COKERTME_DATA.branches;
+    : [...DEFAULT_COKERTME_DATA.branches];
+
+  // Ensure the 3 Adana branches (Barajyolu, Gürselpaşa, Sarıçam) exist so multi-branch neighborhood routing works out of the box
+  ["adana-merkez", "adana-gurselpasa", "adana-saricam"].forEach(reqId => {
+    if (!mergedBranches.some(b => b && b.id === reqId) && defaultBranchMap[reqId]) {
+      mergedBranches.splice(1, 0, JSON.parse(JSON.stringify(defaultBranchMap[reqId])));
+    }
+  });
 
   const backupOrders = loadOrdersBackup();
   const mergedOrders = mergeOrdersList(backupOrders, parsed.orders);
@@ -787,6 +895,7 @@ function sanitizeAndMergeState(parsed) {
       whatsapp: "905469180701"
     },
     branches: mergedBranches,
+    locationRequests: Array.isArray(parsed.locationRequests) ? parsed.locationRequests : [],
     items: validItems,
     orders: mergedOrders,
     members: mergeMembersList(DEFAULT_COKERTME_DATA.members, parsed.members),
@@ -849,6 +958,51 @@ function sanitizeAndMergeState(parsed) {
 const CokertmeStore = {
   normalizePhone(phoneStr) {
     return normalizePhone10(phoneStr);
+  },
+
+  resolveBranchByLocation(cityStr, districtStr, neighborhoodStr, stateOverride) {
+    const st = stateOverride || this.getState();
+    const branches = Array.isArray(st.branches) ? st.branches : [];
+    const norm = (s) => String(s || "").trim().toLocaleLowerCase("tr-TR");
+    const targetCity = norm(cityStr);
+    const targetDist = norm(districtStr);
+    const targetNeigh = norm(neighborhoodStr);
+
+    const applyOverflowIfSet = (branchObj) => {
+      if (!branchObj) return null;
+      if (branchObj.overflowBranchId) {
+        const overflowTarget = branches.find(b => b && b.id === branchObj.overflowBranchId && b.isActive !== false);
+        if (overflowTarget) {
+          return { ...overflowTarget, redirectedFromBranch: branchObj.name };
+        }
+      }
+      return branchObj;
+    };
+
+    // 1. Önce aynı ilde ve mahallesi eşleşen aktif şubeyi bul
+    if (targetNeigh) {
+      const exactNeighBranch = branches.find(b => {
+        if (!b || b.isActive === false) return false;
+        if (targetCity && norm(b.city) !== targetCity) return false;
+        const nList = Array.isArray(b.neighborhoods) ? b.neighborhoods : [];
+        return nList.some(n => norm(n) === targetNeigh || targetNeigh.includes(norm(n)) || norm(n).includes(targetNeigh));
+      });
+      if (exactNeighBranch) return applyOverflowIfSet(exactNeighBranch);
+    }
+
+    // 2. İl + İlçe eşleşen aktif şube
+    if (targetDist) {
+      const distBranch = branches.find(b => b && b.isActive !== false && (!targetCity || norm(b.city) === targetCity) && norm(b.district) === targetDist);
+      if (distBranch) return applyOverflowIfSet(distBranch);
+    }
+
+    // 3. Aynı ildeki ilk aktif şube
+    if (targetCity) {
+      const cityBranch = branches.find(b => b && b.isActive !== false && norm(b.city) === targetCity);
+      if (cityBranch) return applyOverflowIfSet(cityBranch);
+    }
+
+    return null;
   },
 
   findMemberByPhone(phoneStr) {
