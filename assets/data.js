@@ -732,6 +732,53 @@ function mergeWalletTxList(txA, txB) {
   return list;
 }
 
+function mergeInStoreTokens(listA, listB) {
+  const map = new Map();
+  const process = (arr) => {
+    if (!Array.isArray(arr)) return;
+    arr.forEach(t => {
+      if (!t || !t.token) return;
+      const ex = map.get(t.token);
+      if (!ex) {
+        map.set(t.token, { ...t });
+      } else {
+        const isUsed = ex.status === "USED" || t.status === "USED";
+        map.set(t.token, {
+          ...ex,
+          ...t,
+          status: isUsed ? "USED" : (t.status || ex.status || "ACTIVE"),
+          usedByPhone: t.usedByPhone || ex.usedByPhone || "",
+          usedByName: t.usedByName || ex.usedByName || "",
+          usedAt: t.usedAt || ex.usedAt || ""
+        });
+      }
+    });
+  };
+  process(listA);
+  process(listB);
+  return Array.from(map.values())
+    .sort((a, b) => (Number(b.createdAtMs || 0) - Number(a.createdAtMs || 0)))
+    .slice(0, 120);
+}
+
+function mergeInStoreLoyaltyLogs(listA, listB) {
+  const map = new Map();
+  const process = (arr) => {
+    if (!Array.isArray(arr)) return;
+    arr.forEach(item => {
+      if (!item || !item.id) return;
+      if (!map.has(item.id)) {
+        map.set(item.id, { ...item });
+      }
+    });
+  };
+  process(listA);
+  process(listB);
+  return Array.from(map.values())
+    .sort((a, b) => (Number(b.createdAtMs || 0) - Number(a.createdAtMs || 0)))
+    .slice(0, 300);
+}
+
 function mergeMembersList(listA, listB) {
   const map = new Map();
   const processList = (arr) => {
@@ -754,10 +801,27 @@ function mergeMembersList(listA, listB) {
         const newTime = Number(m.updatedAt || m.createdAt || 0);
         const winner = newTime >= exTime ? m : existing;
         const loser = newTime >= exTime ? existing : m;
+        const lastRedeemMs = Math.max(
+          Number(existing.lastRewardRedeemedAt || 0),
+          Number(m.lastRewardRedeemedAt || 0)
+        );
         const combinedStamps = Array.from(new Set([
           ...(Array.isArray(existing.stampTimestamps) ? existing.stampTimestamps : []),
           ...(Array.isArray(m.stampTimestamps) ? m.stampTimestamps : [])
-        ])).map(Number).filter(Boolean).sort((a, b) => a - b);
+        ]))
+          .map(Number)
+          .filter(ts => ts > 0 && ts > lastRedeemMs)
+          .sort((a, b) => a - b);
+
+        const prevStampTime = Number(existing.stampsUpdatedAt || 0);
+        const newStampTime = Number(m.stampsUpdatedAt || 0);
+        let resolvedStamps;
+        if (prevStampTime > 0 || newStampTime > 0) {
+          const stampWinner = newStampTime >= prevStampTime ? m : existing;
+          resolvedStamps = Math.max(Number(stampWinner.stamps || 0), combinedStamps.length);
+        } else {
+          resolvedStamps = Math.max(Number(existing.stamps || 0), Number(m.stamps || 0), combinedStamps.length);
+        }
 
         const mergedTx = mergeWalletTxList(existing.walletTransactions, m.walletTransactions);
         const prevWalTime = Number(existing.walletUpdatedAt || existing.updatedAt || 0);
@@ -774,8 +838,11 @@ function mergeMembersList(listA, listB) {
           ...loser,
           ...winner,
           phoneNormalized: key,
-          stamps: Math.max(Number(existing.stamps || 0), Number(m.stamps || 0), combinedStamps.length),
+          stamps: resolvedStamps,
+          loyaltyStamps: resolvedStamps,
           stampTimestamps: combinedStamps,
+          stampsUpdatedAt: Math.max(prevStampTime, newStampTime),
+          lastRewardRedeemedAt: lastRedeemMs,
           points: Math.max(Number(existing.points || 0), Number(m.points || 0)),
           walletBalance: Number(finalBalance.toFixed(2)),
           walletBonusEarned: Number(totalBonus.toFixed(2)),
@@ -1346,7 +1413,9 @@ function sanitizeAndMergeState(parsed) {
     },
     customNeighborhoodCatalog: (parsed.customNeighborhoodCatalog && typeof parsed.customNeighborhoodCatalog === "object")
       ? parsed.customNeighborhoodCatalog
-      : {}
+      : {},
+    inStoreStampTokens: Array.isArray(parsed.inStoreStampTokens) ? parsed.inStoreStampTokens : [],
+    inStoreLoyaltyLogs: Array.isArray(parsed.inStoreLoyaltyLogs) ? parsed.inStoreLoyaltyLogs : []
   };
 
   if (merged.categories && !merged.categories.some(c => c.id === "ikramlar")) {
@@ -1362,6 +1431,390 @@ function sanitizeAndMergeState(parsed) {
 const CokertmeStore = {
   normalizePhone(phoneStr) {
     return normalizePhone10(phoneStr);
+  },
+
+  getMemberStampStatus(phoneStr, stateOverride) {
+    const st = stateOverride || this.getState();
+    const loyaltyCfg = (st.appSettings && st.appSettings.loyalty) || {
+      enabled: true,
+      requiredStamps: 5,
+      windowDays: 30,
+      cooldownHours: 24,
+      rewardDiscountPercent: 50
+    };
+    const requiredStamps = Math.max(2, Number(loyaltyCfg.requiredStamps) || 5);
+    const windowMs = (Math.max(1, Number(loyaltyCfg.windowDays) || 30)) * 24 * 60 * 60 * 1000;
+    const cooldownMs = (Math.max(1, Number(loyaltyCfg.cooldownHours) || 24)) * 60 * 60 * 1000;
+    const now = Date.now();
+
+    const key = normalizePhone10(phoneStr);
+    const members = Array.isArray(st.members) ? st.members : [];
+    const member = (key && key.length >= 10)
+      ? (members.find(m => m && normalizePhone10(m.phone) === key) || null)
+      : null;
+
+    if (!member) {
+      return {
+        member: null,
+        validStamps: 0,
+        requiredStamps,
+        canEarnToday: true,
+        hoursRemaining: 0,
+        canRedeemReward: false,
+        walletBalance: 0,
+        validTimestamps: []
+      };
+    }
+
+    const lastRedeemMs = Number(member.lastRewardRedeemedAt || 0);
+    let rawTs = Array.isArray(member.stampTimestamps)
+      ? member.stampTimestamps.map(Number).filter(ts => ts > 0 && ts >= (now - windowMs) && ts > lastRedeemMs).sort((a, b) => a - b)
+      : [];
+
+    // Eğer eski kayıttan stamps sayısı varsa ancak stampTimestamps boşsa sentetik zaman damgası üret
+    const legacyStampCount = Number(member.stamps !== undefined ? member.stamps : member.loyaltyStamps || 0);
+    if (rawTs.length === 0 && legacyStampCount > 0 && lastRedeemMs === 0) {
+      for (let i = legacyStampCount; i >= 1; i--) {
+        rawTs.push(now - i * (cooldownMs + 3600000));
+      }
+    }
+
+    const lastStampMs = rawTs.length > 0 ? rawTs[rawTs.length - 1] : 0;
+    const elapsedSinceLast = lastStampMs > 0 ? (now - lastStampMs) : Infinity;
+    const canEarnToday = elapsedSinceLast >= cooldownMs;
+    const hoursRemaining = canEarnToday ? 0 : Math.max(1, Math.ceil((cooldownMs - elapsedSinceLast) / (60 * 60 * 1000)));
+    const validStamps = Math.min(requiredStamps, rawTs.length);
+
+    return {
+      member,
+      validStamps,
+      requiredStamps,
+      canEarnToday,
+      hoursRemaining,
+      canRedeemReward: validStamps >= requiredStamps,
+      walletBalance: Number(member.walletBalance || 0),
+      validTimestamps: rawTs
+    };
+  },
+
+  createOneTimeStampToken(branchId, branchName, cashierNote) {
+    const state = this.getState();
+    const branches = Array.isArray(state.branches) ? state.branches : [];
+    const matchedBranch = branches.find(b => b && b.id === branchId) || branches[0] || {
+      id: "adana-merkez",
+      name: "Adana Barajyolu Şubesi",
+      city: "Adana"
+    };
+    const random6 = Math.floor(100000 + Math.random() * 900000);
+    const tokenCode = `CKR-QR-${random6}`;
+    const now = Date.now();
+    const expiresAt = now + 5 * 60 * 1000; // 5 dakika geçerli tek kullanımlık QR
+
+    let basePortal = "https://onlinesiparis.cokertmedunyasi.com/";
+    try {
+      const h = (window.location && window.location.hostname) || "";
+      if (h === "localhost" || h === "127.0.0.1" || window.location.protocol === "file:") {
+        basePortal = "uygulama.html";
+      }
+    } catch (e) {}
+
+    const claimUrl = `${basePortal}?claimStamp=${encodeURIComponent(tokenCode)}&branch=${encodeURIComponent(matchedBranch.id)}`;
+    const qrUrl = `https://quickchart.io/qr?text=${encodeURIComponent( `https://onlinesiparis.cokertmedunyasi.com/?claimStamp=${tokenCode}&branch=${matchedBranch.id}` )}&size=320&margin=2&dark=023A58&light=FAF7F2`;
+
+    const tokenObj = {
+      token: tokenCode,
+      branchId: matchedBranch.id,
+      branchName: matchedBranch.name,
+      city: matchedBranch.city || "Adana",
+      note: String(cashierNote || "Kasa Fiziki Çökertme Siparişi").trim(),
+      status: "ACTIVE",
+      createdAtMs: now,
+      createdAt: new Date(now).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }),
+      expiresAt: expiresAt,
+      claimUrl: claimUrl,
+      qrImageUrl: qrUrl
+    };
+
+    if (!Array.isArray(state.inStoreStampTokens)) state.inStoreStampTokens = [];
+    state.inStoreStampTokens.unshift(tokenObj);
+    state.inStoreStampTokens = state.inStoreStampTokens.slice(0, 100);
+    this.saveState(state);
+    return tokenObj;
+  },
+
+  claimOneTimeStampToken(tokenCode, customerPhone, customerName) {
+    const cleanToken = String(tokenCode || "").trim().toUpperCase();
+    const normPhone = normalizePhone10(customerPhone);
+    const cleanName = String(customerName || "Restoran Misafiri").trim() || "Restoran Misafiri";
+
+    if (!cleanToken) {
+      return { ok: false, message: "Geçersiz QR damga kodu." };
+    }
+    if (!normPhone || normPhone.length < 10) {
+      return { ok: false, message: "Lütfen 10 haneli cep telefonu numaranızı girin." };
+    }
+
+    const state = this.getState();
+    const tokens = Array.isArray(state.inStoreStampTokens) ? state.inStoreStampTokens : [];
+    const tokenObj = tokens.find(t => t && String(t.token || "").toUpperCase() === cleanToken);
+
+    if (!tokenObj) {
+      return { ok: false, message: "Bu QR kod bulunamadı veya süresi doldu. Lütfen kasadan yeni QR kod isteyin." };
+    }
+    if (tokenObj.status === "USED") {
+      return { ok: false, message: "Bu tek kullanımlık QR kod daha önce kullanılmış! Her QR kod yalnızca 1 kez geçerlidir." };
+    }
+    if (Number(tokenObj.expiresAt || 0) > 0 && Date.now() > Number(tokenObj.expiresAt)) {
+      tokenObj.status = "EXPIRED";
+      this.saveState(state);
+      return { ok: false, message: "Bu QR kodun 5 dakikalık süresi dolmuş. Lütfen kasadan yeni QR kod üretilmesini isteyin." };
+    }
+
+    const res = this.processCashierLoyaltyAction({
+      actionType: "ADD_STAMP",
+      phone: customerPhone,
+      customerName: cleanName,
+      branchId: tokenObj.branchId || "adana-merkez",
+      branchName: tokenObj.branchName || "Adana Barajyolu Şubesi",
+      note: `Tek Kullanımlık Kasa QR (${cleanToken})`
+    });
+
+    if (!res.ok) {
+      return res;
+    }
+
+    const freshState = this.getState();
+    const freshToken = (freshState.inStoreStampTokens || []).find(t => t && String(t.token || "").toUpperCase() === cleanToken);
+    if (freshToken) {
+      freshToken.status = "USED";
+      freshToken.usedByPhone = customerPhone;
+      freshToken.usedByName = cleanName;
+      freshToken.usedAt = new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+      this.saveState(freshState);
+    }
+
+    return {
+      ...res,
+      token: cleanToken,
+      branchName: tokenObj.branchName || "Adana Barajyolu Şubesi"
+    };
+  },
+
+  processCashierLoyaltyAction(params) {
+    const {
+      actionType,
+      phone,
+      customerName,
+      branchId,
+      branchName,
+      amountTRY,
+      note,
+      bypassCooldown
+    } = params || {};
+
+    const normPhone = normalizePhone10(phone);
+    if (!normPhone || normPhone.length < 10) {
+      return { ok: false, message: "Lütfen geçerli bir müşteri telefon numarası (05XX...) girin." };
+    }
+
+    const state = this.getState();
+    const branches = Array.isArray(state.branches) ? state.branches : [];
+    const matchedBranch = branches.find(b => b && b.id === branchId) || branches[0] || {
+      id: "adana-merkez",
+      name: "Adana Barajyolu Şubesi",
+      city: "Adana"
+    };
+    const effBranchId = matchedBranch.id;
+    const effBranchName = branchName || matchedBranch.name;
+    const effCity = matchedBranch.city || "Adana";
+
+    const statusInfo = this.getMemberStampStatus(phone, state);
+    const existingMember = statusInfo.member;
+    const now = Date.now();
+    const nowTimeStr = new Date(now).toLocaleDateString("tr-TR") + " " + new Date(now).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+    const displayName = String(customerName || (existingMember && (existingMember.fullName || existingMember.name)) || "Restoran Müşterisi").trim();
+
+    if (!Array.isArray(state.inStoreLoyaltyLogs)) {
+      state.inStoreLoyaltyLogs = [];
+    }
+
+    if (actionType === "ADD_STAMP") {
+      if (!statusInfo.canEarnToday && !bypassCooldown) {
+        return {
+          ok: false,
+          cooldownBlocked: true,
+          hoursRemaining: statusInfo.hoursRemaining,
+          message: `Bu müşteriye son 24 saat içinde zaten +1 damga işlenmiş! Günde en fazla 1 damga kazanılabilir (${statusInfo.hoursRemaining} saat sonra yeni damga alabilir).`
+        };
+      }
+
+      const nextTimestamps = [...statusInfo.validTimestamps, now];
+      const nextStamps = Math.min(statusInfo.requiredStamps, nextTimestamps.length);
+
+      const updatedMember = this.upsertMember({
+        ...(existingMember || {}),
+        name: displayName,
+        fullName: displayName,
+        phone: existingMember ? existingMember.phone : phone,
+        city: (existingMember && existingMember.city) || effCity,
+        lastBranchId: effBranchId,
+        lastBranchName: effBranchName,
+        stamps: nextStamps,
+        loyaltyStamps: nextStamps,
+        stampTimestamps: nextTimestamps,
+        stampsUpdatedAt: now,
+        lastStampDate: nowTimeStr,
+        source: (existingMember && existingMember.source) || "Fiziki Restoran QR / Kasa"
+      });
+
+      const freshState = this.getState();
+      if (!Array.isArray(freshState.inStoreLoyaltyLogs)) freshState.inStoreLoyaltyLogs = [];
+      const logEntry = {
+        id: "LOY-" + now + "-" + Math.floor(10 + Math.random() * 89),
+        actionType: "ADD_STAMP",
+        actionLabel: "★ +1 Fiziki Restoran Damgası",
+        customerName: displayName,
+        phone: updatedMember.phone,
+        branchId: effBranchId,
+        branchName: effBranchName,
+        city: effCity,
+        stampsAfter: `${nextStamps} / ${statusInfo.requiredStamps}`,
+        amountTRY: 0,
+        note: note || "Kasada Fiziki Sipariş Damgası",
+        createdAt: nowTimeStr,
+        createdAtMs: now
+      };
+      freshState.inStoreLoyaltyLogs.unshift(logEntry);
+      this.saveState(freshState);
+
+      return {
+        ok: true,
+        member: updatedMember,
+        stampsAfter: nextStamps,
+        requiredStamps: statusInfo.requiredStamps,
+        message: `✓ "${displayName}" hesabına +1 Fiziki Restoran Damgası eklendi! Güncel Damga: ${nextStamps} / ${statusInfo.requiredStamps}`
+      };
+    }
+
+    if (actionType === "REDEEM_REWARD") {
+      if (!existingMember || statusInfo.validStamps < statusInfo.requiredStamps) {
+        return {
+          ok: false,
+          message: `Müşterinin hediye kullanabilmesi için ${statusInfo.requiredStamps} damgası olmalıdır (Mevcut: ${statusInfo.validStamps} / ${statusInfo.requiredStamps}).`
+        };
+      }
+
+      const rewardPct = (state.appSettings && state.appSettings.loyalty && Number(state.appSettings.loyalty.rewardDiscountPercent)) || 50;
+      const updatedMember = this.upsertMember({
+        ...existingMember,
+        name: displayName,
+        fullName: displayName,
+        lastBranchId: effBranchId,
+        lastBranchName: effBranchName,
+        stamps: 0,
+        loyaltyStamps: 0,
+        stampTimestamps: [],
+        stampsUpdatedAt: now,
+        lastRewardRedeemedAt: now,
+        lastOrderAt: nowTimeStr
+      });
+
+      const freshState = this.getState();
+      if (!Array.isArray(freshState.inStoreLoyaltyLogs)) freshState.inStoreLoyaltyLogs = [];
+      const logEntry = {
+        id: "LOY-" + now + "-" + Math.floor(10 + Math.random() * 89),
+        actionType: "REDEEM_REWARD",
+        actionLabel: `🎁 %${rewardPct} Hediye Çökertme Kullanımı`,
+        customerName: displayName,
+        phone: updatedMember.phone,
+        branchId: effBranchId,
+        branchName: effBranchName,
+        city: effCity,
+        stampsAfter: `0 / ${statusInfo.requiredStamps} (Sıfırlandı)`,
+        amountTRY: Number(amountTRY) || 0,
+        note: note || `Kasada 5 Damga Karşılığı %${rewardPct} İndirimli Çökertme Kullanıldı`,
+        createdAt: nowTimeStr,
+        createdAtMs: now
+      };
+      freshState.inStoreLoyaltyLogs.unshift(logEntry);
+      this.saveState(freshState);
+
+      return {
+        ok: true,
+        member: updatedMember,
+        stampsAfter: 0,
+        message: `🎉 "${displayName}" müşterisinin 5 Damga karşılığı %${rewardPct} İndirimli Çökertme hediyesi kullandırıldı ve damga kartı 0/5 olarak yenilendi!`
+      };
+    }
+
+    if (actionType === "DEDUCT_WALLET") {
+      const deductAmt = Number(amountTRY) || 0;
+      if (deductAmt <= 0) {
+        return { ok: false, message: "Lütfen tahsil edilecek masa hesap tutarını (TL) girin." };
+      }
+      const currentBal = existingMember ? Number(existingMember.walletBalance || 0) : 0;
+      if (!existingMember || currentBal < deductAmt) {
+        return {
+          ok: false,
+          message: `Yetersiz Çökertme Cüzdan bakiyesi! Müşterinin mevcut bakiyesi: ${currentBal.toLocaleString("tr-TR")} ₺ (İstenen: ${deductAmt.toLocaleString("tr-TR")} ₺).`
+        };
+      }
+
+      const newBal = Math.max(0, Number((currentBal - deductAmt).toFixed(2)));
+      const txList = Array.isArray(existingMember.walletTransactions) ? [...existingMember.walletTransactions] : [];
+      txList.unshift({
+        id: "WTX-POS-" + now,
+        type: "SPEND",
+        title: `Restoran Kasa Ödemesi (${effBranchName})`,
+        amount: -deductAmt,
+        bonus: 0,
+        balanceAfter: newBal,
+        date: nowTimeStr,
+        createdAtMs: now
+      });
+
+      const updatedMember = this.upsertMember({
+        ...existingMember,
+        name: displayName,
+        fullName: displayName,
+        lastBranchId: effBranchId,
+        lastBranchName: effBranchName,
+        walletBalance: newBal,
+        walletTransactions: txList,
+        walletUpdatedAt: now,
+        totalSpend: Number(existingMember.totalSpend || 0) + deductAmt,
+        lastOrderAt: nowTimeStr
+      });
+
+      const freshState = this.getState();
+      if (!Array.isArray(freshState.inStoreLoyaltyLogs)) freshState.inStoreLoyaltyLogs = [];
+      const logEntry = {
+        id: "LOY-" + now + "-" + Math.floor(10 + Math.random() * 89),
+        actionType: "DEDUCT_WALLET",
+        actionLabel: "💳 Kasada Cüzdan ile Hesap Tahsilatı",
+        customerName: displayName,
+        phone: updatedMember.phone,
+        branchId: effBranchId,
+        branchName: effBranchName,
+        city: effCity,
+        stampsAfter: `${statusInfo.validStamps} / ${statusInfo.requiredStamps}`,
+        amountTRY: deductAmt,
+        note: note || `Kalan Cüzdan Bakiyesi: ${newBal.toLocaleString("tr-TR")} ₺`,
+        createdAt: nowTimeStr,
+        createdAtMs: now
+      };
+      freshState.inStoreLoyaltyLogs.unshift(logEntry);
+      this.saveState(freshState);
+
+      return {
+        ok: true,
+        member: updatedMember,
+        walletBalanceAfter: newBal,
+        message: `💳 "${displayName}" müşterisinin Çökertme Cüzdanından ${deductAmt.toLocaleString("tr-TR")} ₺ masa hesabı tahsil edildi! Kalan Bakiye: ${newBal.toLocaleString("tr-TR")} ₺`
+      };
+    }
+
+    return { ok: false, message: "Bilinmeyen kasa işlemi." };
   },
 
   getAllProvinces() {
@@ -1691,11 +2144,17 @@ const CokertmeStore = {
           const cleanedServer = sanitizeAndMergeState(serverData);
           const mergedMembers = mergeMembersList(localState.members, cleanedServer.members);
           const mergedOrders = mergeOrdersList(localState.orders, cleanedServer.orders);
+          const mergedTokens = mergeInStoreTokens(localState.inStoreStampTokens, cleanedServer.inStoreStampTokens);
+          const mergedLogs = mergeInStoreLoyaltyLogs(localState.inStoreLoyaltyLogs, cleanedServer.inStoreLoyaltyLogs);
 
           cleanedServer.members = mergedMembers;
           localState.members = mergedMembers;
           cleanedServer.orders = mergedOrders;
           localState.orders = mergedOrders;
+          cleanedServer.inStoreStampTokens = mergedTokens;
+          localState.inStoreStampTokens = mergedTokens;
+          cleanedServer.inStoreLoyaltyLogs = mergedLogs;
+          localState.inStoreLoyaltyLogs = mergedLogs;
           saveOrdersBackup(mergedOrders);
 
           const localTime = Number(localState && localState.updatedAt) || 0;

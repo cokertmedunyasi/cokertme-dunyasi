@@ -3177,6 +3177,7 @@
       </div>
 
       <ul class="drawer-nav-list" style="padding-left:14px;">
+        <li><a href="javascript:void(0)" onclick="toggleAppDrawer(false); openInStoreQrCardModal();" style="color:var(--pt-gold-soft); font-weight:700;">🪪 Restoran Kasası QR Kartım</a></li>
         <li><a href="javascript:void(0)" onclick="toggleAppDrawer(false); openAccountSubTab('cuzdanim');" style="color:var(--pt-gold-soft); font-weight:700;">Cüzdanım (+%5 Hediye TL)</a></li>
         <li><a href="javascript:void(0)" onclick="toggleAppDrawer(false); openAccountSubTab('profil');">Hesabım</a></li>
         <li><a href="javascript:void(0)" onclick="toggleAppDrawer(false); openAccountSubTab('siparislerim');">Siparişlerim</a></li>
@@ -3249,7 +3250,7 @@
         <div style="padding:16px 18px; display:flex; flex-direction:column; gap:12px; font-size:13px; color:#2b3e50; line-height:1.45;">
           <div style="display:flex; gap:10px; align-items:flex-start;">
             <div style="width:24px; height:24px; border-radius:50%; background:rgba(59,82,51,0.12); color:var(--pt-olive); font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;">1</div>
-            <div><strong style="color:var(--pt-navy);">5 Ayrı Günde 5 Damga:</strong> İçerisinde en az 1 adet Çökertme Kebabı bulunan her mobil siparişinizde <strong>1 Sadakat Damgası</strong> kazanırsınız.</div>
+            <div><strong style="color:var(--pt-navy);">Online Siparişte &amp; Restoranda Geçerli:</strong> Hem online siparişlerinizde hem de restoranımıza fiziki olarak gelip Çökertme Kebabı yediğinizde kasadaki <strong>Tek Kullanımlık QR Kodu</strong> okutarak (veya telefon numaranızı söyleyerek) <strong>+1 Sadakat Damgası</strong> kazanırsınız.</div>
           </div>
 
           <div style="display:flex; gap:10px; align-items:flex-start;">
@@ -3305,6 +3306,13 @@
          ====================================================================== -->
     <div id="order-success-modal" onclick="if(event.target===this) closeOrderSuccessModal()" style="display:none; position:fixed; inset:0; z-index:2800; background:rgba(10, 30, 48, 0.78); backdrop-filter:blur(5px); align-items:center; justify-content:center; padding:16px;">
       <div id="order-success-modal-body" style="background:#fff; width:100%; max-width:430px; max-height:92vh; overflow-y:auto; border-radius:22px; border:2px solid var(--pt-gold); box-shadow:0 24px 60px rgba(0,0,0,0.45); animation:fadeIn 0.2s ease;"></div>
+    </div>
+
+    <!-- ======================================================================
+         FİZİKİ ŞUBE / RESTORAN KASASI DİJİTAL SADAKAT & CÜZDAN QR KARTIM MODALI
+         ====================================================================== -->
+    <div id="instore-qr-card-modal" onclick="if(event.target===this) closeInStoreQrCardModal()" style="display:none; position:fixed; inset:0; z-index:2900; background:rgba(10, 30, 48, 0.82); backdrop-filter:blur(5px); align-items:center; justify-content:center; padding:14px;">
+      <div id="instore-qr-card-modal-body" style="background:#fff; width:100%; max-width:440px; max-height:92vh; overflow-y:auto; border-radius:22px; border:2px solid var(--pt-gold); box-shadow:0 24px 60px rgba(0,0,0,0.5); animation:fadeIn 0.2s ease;"></div>
     </div>
 
     <!-- ======================================================================
@@ -3365,7 +3373,7 @@
 
   </div>
 
-  <script src="assets/data.js?v=16"></script>
+  <script src="assets/data.js?v=17"></script>
   <script>
     // =========================================================================
     // UYGULAMA DURUMU (STATE)
@@ -6065,11 +6073,16 @@
               </button>
             </div>
 
-            <div class="promo-loyalty-links" style="justify-content:space-between; margin-top:6px;">
-              <button type="button" class="btn-loyalty-terms-link" onclick="openLoyaltyTermsModal()">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                Sadakat Şartları ›
-              </button>
+            <div class="promo-loyalty-links" style="justify-content:space-between; margin-top:6px; flex-wrap:wrap; gap:6px;">
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button type="button" class="btn-loyalty-terms-link" onclick="openLoyaltyTermsModal()">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                  Sadakat Şartları ›
+                </button>
+                <button type="button" class="btn-loyalty-terms-link" style="background:rgba(212,155,53,0.28); border-color:var(--pt-gold-soft); color:#fff; font-weight:800;" onclick="openInStoreQrCardModal()">
+                  🪪 Restoranda Kullan (QR Kartım) ›
+                </button>
+              </div>
               ${!isLogged ? `
                 <button type="button" class="btn-loyalty-terms-link" style="background:rgba(221, 89, 3, 0.32); border-color:var(--pt-gold-soft); color:#fff;" onclick="switchTab('account')">
                   Giriş Yap &amp; Durumunu Gör ›
@@ -6129,6 +6142,7 @@
       // Bulut üye kaydındaki (state.members) damgaları da birleştir (farklı cihaz / tarayıcı senkronizasyonu)
       let cloudTimestamps = [];
       let cloudStampsNum = 0;
+      let lastRewardRedeemedAt = 0;
       if (normPhone && state && Array.isArray(state.members)) {
         const cloudMember = state.members.find(m => m && normalizeLoyaltyPhone(m.phone) === normPhone);
         if (cloudMember) {
@@ -6136,6 +6150,7 @@
             cloudTimestamps = cloudMember.stampTimestamps.map(Number).filter(Boolean);
           }
           cloudStampsNum = Number(cloudMember.stamps || 0);
+          lastRewardRedeemedAt = Number(cloudMember.lastRewardRedeemedAt || 0);
         }
       }
 
@@ -6144,15 +6159,17 @@
       const cooldownMs = cfg.cooldownHours * 60 * 60 * 1000;
 
       const combinedSet = new Set([...(rawRecord.stampTimestamps || []).map(Number), ...cloudTimestamps]);
-      // Sadece son 30 gün (windowDays) içindeki damgaları geçerli say
+      // Sadece son 30 gün (windowDays) içindeki ve son ödül kullanımından sonraki damgaları geçerli say
       let validStamps = Array.from(combinedSet)
-        .filter(ts => ts > 0 && (nowMs - ts) <= windowMs)
+        .filter(ts => ts > 0 && (nowMs - ts) <= windowMs && (!lastRewardRedeemedAt || ts > lastRewardRedeemedAt))
         .sort((a, b) => a - b);
 
-      while (validStamps.length < cloudStampsNum && validStamps.length < cfg.requiredStamps) {
-        validStamps.push(nowMs - (validStamps.length + 1) * 86400000);
+      if (!lastRewardRedeemedAt) {
+        while (validStamps.length < cloudStampsNum && validStamps.length < cfg.requiredStamps) {
+          validStamps.push(nowMs - (validStamps.length + 1) * 86400000);
+        }
+        validStamps.sort((a, b) => a - b);
       }
-      validStamps.sort((a, b) => a - b);
 
       // Eğer süresi dolan damga varsa veya buluttan yeni damga geldiyse yerel cüzdanı güncelle
       if (normPhone && (!wallets[normPhone] || validStamps.length !== (rawRecord.stampTimestamps || []).length)) {
@@ -6364,10 +6381,15 @@
           </div>
 
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; font-size:11.5px; margin-top:2px;">
-            <button type="button" class="btn-loyalty-terms-link" onclick="openLoyaltyTermsModal()">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-              Sadakat Şartları ›
-            </button>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button type="button" class="btn-loyalty-terms-link" onclick="openLoyaltyTermsModal()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Sadakat Şartları ›
+              </button>
+              <button type="button" class="btn-loyalty-terms-link" style="background:rgba(212,155,53,0.28); border-color:var(--pt-gold-soft); color:#fff; font-weight:800;" onclick="openInStoreQrCardModal()">
+                🪪 Restoranda Kullan (QR Kartım) ›
+              </button>
+            </div>
             <span style="color:var(--pt-gold-soft); font-weight:700;">
               ${loyaltyStatus.hasRewardReady
                 ? '✓ %50 Hediye Hakkınız Hazır!'
@@ -8422,7 +8444,209 @@
       checkMaintenanceGate();
     }
 
+    // =========================================================================
+    // FİZİKİ ŞUBE / RESTORAN KASASI DİJİTAL SADAKAT & CÜZDAN QR KARTIM + TEK KULLANIMLIK QR DAMGA ONAY
+    // =========================================================================
+    let pendingClaimStampToken = "";
+    let lastClaimResultNotice = null; // { ok: boolean, message: string }
+
+    function openInStoreQrCardModal(prefillToken) {
+      if (prefillToken !== undefined && prefillToken !== null) {
+        pendingClaimStampToken = String(prefillToken || "").trim().toUpperCase();
+      }
+      renderInStoreQrCardModalContent();
+      const modal = document.getElementById("instore-qr-card-modal");
+      if (modal) modal.style.display = "flex";
+    }
+
+    function closeInStoreQrCardModal() {
+      const modal = document.getElementById("instore-qr-card-modal");
+      if (modal) modal.style.display = "none";
+      lastClaimResultNotice = null;
+    }
+
+    function renderInStoreQrCardModalContent() {
+      const body = document.getElementById("instore-qr-card-modal-body");
+      if (!body) return;
+
+      const state = CokertmeStore.getState();
+      const isLogged = Boolean(appUser && appUser.phone);
+      const userPhone = isLogged ? appUser.phone : "";
+      const userName = isLogged ? (appUser.fullName || "Çökertme Misafiri") : "";
+
+      const lStat = isLogged ? getUserLoyaltyStatus(userPhone, state) : {
+        stampCount: 0,
+        requiredStamps: 5,
+        hasRewardReady: false,
+        canEarnToday: true,
+        hoursUntilNextStamp: 0,
+        cfg: getLoyaltyConfig(state)
+      };
+      const wStat = isLogged ? getUserWalletStatus(userPhone, state) : { balance: 0 };
+
+      const starsHtml = Array.from({ length: lStat.requiredStamps }, (_, idx) => {
+        const filled = idx < lStat.stampCount;
+        return `<span style="display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:50%; background:${filled ? 'var(--pt-gold)' : 'rgba(255,255,255,0.12)'}; color:${filled ? 'var(--pt-navy-dark)' : '#fff'}; border:1.5px solid var(--pt-gold); font-weight:900; font-size:13px;">${filled ? '★' : (idx + 1)}</span>`;
+      }).join("");
+
+      const memberQrPayload = isLogged
+        ? `COKERTME-MEMBER:${normalizeLoyaltyPhone(userPhone)}|${userName}`
+        : `https://onlinesiparis.cokertmedunyasi.com/?openQrCard=1`;
+      const memberQrImg = `https://api.qrserver.com/v1/create-qr-code/?size=190x190&margin=8&data=${encodeURIComponent(memberQrPayload)}`;
+
+      const noticeHtml = lastClaimResultNotice ? `
+        <div style="margin-bottom:14px; padding:12px 14px; border-radius:12px; font-size:13px; font-weight:700; border:2px solid ${lastClaimResultNotice.ok ? 'var(--pt-olive)' : '#dc2626'}; background:${lastClaimResultNotice.ok ? '#EDF7ED' : '#FFF5F5'}; color:${lastClaimResultNotice.ok ? 'var(--pt-olive-dark)' : '#991b1b'};">
+          ${lastClaimResultNotice.ok ? '🎉 ' : '⚠️ '}${lastClaimResultNotice.message}
+        </div>
+      ` : "";
+
+      body.innerHTML = `
+        <div style="background:linear-gradient(135deg, #14314F 0%, #023A58 100%); color:#fff; padding:16px 18px; display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid var(--pt-gold);">
+          <div>
+            <div style="font-size:10px; font-weight:800; color:var(--pt-gold-soft); letter-spacing:0.1em; text-transform:uppercase;">FİZİKİ ŞUBE &amp; KASA TERMİNALİ</div>
+            <div style="font-family:var(--font-serif); font-size:21px; font-weight:700; line-height:1.15;">Restoran Kasası QR &amp; Sadakat Kartım</div>
+          </div>
+          <button type="button" onclick="closeInStoreQrCardModal()" style="background:rgba(255,255,255,0.14); border:none; color:#fff; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:16px;">✕</button>
+        </div>
+
+        <div style="padding:16px 18px;">
+          ${noticeHtml}
+
+          <!-- 1. BÖLÜM: KASADAKİ TEK KULLANIMLIK DAMGA KODUNU İŞLE -->
+          <div style="background:#FAF7F2; border:2px solid var(--pt-terracotta); border-radius:14px; padding:14px; margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="background:var(--pt-terracotta); color:#fff; font-size:10px; font-weight:800; padding:3px 8px; border-radius:5px; letter-spacing:0.05em;">RESTORANDA YEMEK SONRASI +1 DAMGA</span>
+              <span style="font-size:11px; font-weight:800; color:var(--pt-olive);">🔒 Tek Kullanımlık Kod</span>
+            </div>
+            <div style="font-size:13px; color:var(--pt-navy); font-weight:700; margin-bottom:10px; line-height:1.4;">
+              Kasada ödeme yaptığınızda kasiyerin ürettiği <strong>Tek Kullanımlık QR Kodu</strong> telefon kameranızla okutun veya <code>CKR-QR-...</code> kodunu aşağıya girin:
+            </div>
+
+            ${!isLogged ? `
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+                <input type="text" id="instore-claim-name" placeholder="Adınız Soyadınız *" style="width:100%; padding:10px; border:1.5px solid var(--pt-border); border-radius:9px; font-size:13px; font-weight:600; box-sizing:border-box;" />
+                <input type="tel" id="instore-claim-phone" placeholder="05XX XXX XX XX *" style="width:100%; padding:10px; border:1.5px solid var(--pt-border); border-radius:9px; font-size:13px; font-weight:700; box-sizing:border-box;" />
+              </div>
+            ` : ''}
+
+            <div style="display:flex; gap:8px;">
+              <input type="text" id="instore-claim-token-input" value="${pendingClaimStampToken}" placeholder="Kasa Kodu: CKR-QR-XXXXXX" style="flex:1; padding:10px 12px; border:1.5px solid var(--pt-gold); border-radius:9px; font-family:monospace; font-size:14px; font-weight:800; color:var(--pt-navy); text-transform:uppercase; background:#fff;" />
+              <button type="button" onclick="submitInStoreStampTokenClaim()" style="background:var(--pt-olive); color:#fff; border:none; border-radius:9px; padding:10px 14px; font-size:12.5px; font-weight:800; cursor:pointer; white-space:nowrap;">
+                ✓ Damgamı İşle
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. BÖLÜM: KİŞİSEL DİJİTAL SADAKAT & CÜZDAN KARTIM (KASİYERE GÖSTERMEK İÇİN) -->
+          <div style="background:linear-gradient(145deg, #14314F 0%, #023A58 100%); border:2px solid var(--pt-gold); border-radius:16px; padding:16px; color:#fff; text-align:center;">
+            <div style="font-size:10.5px; font-weight:800; letter-spacing:0.12em; color:var(--pt-gold-soft); text-transform:uppercase; margin-bottom:4px;">
+              KASİYERE GÖSTERİN (%50 HEDİYE KULLANIMI &amp; CÜZDAN ÖDEMESİ)
+            </div>
+
+            ${isLogged ? `
+              <div style="font-family:var(--font-serif); font-size:22px; font-weight:700; color:#fff; margin-bottom:2px;">${userName}</div>
+              <div style="font-size:14px; font-weight:800; color:var(--pt-gold-soft); margin-bottom:10px;">📞 +90 ${userPhone}</div>
+
+              <div style="background:#fff; display:inline-block; padding:8px; border-radius:14px; border:3px solid var(--pt-gold); margin-bottom:12px;">
+                <img src="${memberQrImg}" alt="Müşteri Sadakat QR Kartı" style="width:155px; height:155px; display:block;" />
+              </div>
+
+              <div style="display:flex; justify-content:center; gap:6px; margin-bottom:10px;">
+                ${starsHtml}
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; text-align:left; background:rgba(255,255,255,0.09); border:1px solid rgba(243,217,153,0.35); border-radius:10px; padding:10px 12px; font-size:12px;">
+                <div>
+                  <div style="color:var(--pt-gold-soft); font-size:10px; font-weight:800; text-transform:uppercase;">AKTİF DAMGA DURUMU</div>
+                  <strong style="font-size:15px; color:#fff;">${lStat.stampCount} / ${lStat.requiredStamps} Damga</strong>
+                  <div style="font-size:10.5px; color:${lStat.hasRewardReady ? '#86efac' : 'rgba(255,255,255,0.8)'}; font-weight:700;">
+                    ${lStat.hasRewardReady ? '🎁 %50 Hediye Çökertme Hazır!' : `${lStat.requiredStamps - lStat.stampCount} Damga Sonra %50 Hediye`}
+                  </div>
+                </div>
+                <div style="border-left:1px solid rgba(255,255,255,0.18); padding-left:10px;">
+                  <div style="color:var(--pt-gold-soft); font-size:10px; font-weight:800; text-transform:uppercase;">CÜZDAN BAKİYESİ</div>
+                  <strong style="font-size:15px; color:#86efac;">${wStat.balance.toLocaleString("tr-TR")} TL</strong>
+                  <div style="font-size:10.5px; color:rgba(255,255,255,0.8);">Kasada 1 Saniyede Ödeme</div>
+                </div>
+              </div>
+            ` : `
+              <p style="font-size:13px; color:rgba(255,255,255,0.88); margin:8px 0 14px; line-height:1.45;">
+                Kişisel Sadakat QR Kartınızı, biriken damgalarınızı ve Çökertme Cüzdan bakiyenizi kasada göstermek için telefon numaranızla giriş yapın.
+              </p>
+              <button type="button" onclick="closeInStoreQrCardModal(); switchTab('account');" style="background:var(--pt-gold); color:var(--pt-navy-dark); border:none; border-radius:10px; padding:11px 18px; font-size:13px; font-weight:800; cursor:pointer;">
+                Üye Girişi Yap / Kayıt Ol →
+              </button>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
+    function submitInStoreStampTokenClaim() {
+      const tokenInp = document.getElementById("instore-claim-token-input");
+      const rawToken = (tokenInp ? tokenInp.value : pendingClaimStampToken || "").trim().toUpperCase();
+      if (!rawToken) {
+        lastClaimResultNotice = { ok: false, message: "Lütfen kasadaki tek kullanımlık QR kodu (Örn: CKR-QR-XXXXXX) girin." };
+        renderInStoreQrCardModalContent();
+        return;
+      }
+
+      let phone = (appUser && appUser.phone) ? appUser.phone : "";
+      let fullName = (appUser && appUser.fullName) ? appUser.fullName : "";
+
+      if (!phone) {
+        const nameEl = document.getElementById("instore-claim-name");
+        const phoneEl = document.getElementById("instore-claim-phone");
+        fullName = (nameEl ? nameEl.value : "").trim();
+        phone = (phoneEl ? phoneEl.value : "").trim();
+
+        const normP = normalizeLoyaltyPhone(phone);
+        if (!fullName || normP.length < 10) {
+          lastClaimResultNotice = { ok: false, message: "Damganızın hesabınıza işlenmesi için lütfen Ad Soyad ve 10-11 haneli Telefon Numaranızı yazın." };
+          renderInStoreQrCardModalContent();
+          return;
+        }
+
+        // Kullanıcıyı otomatik oturum açmış hale getir
+        appUser = {
+          fullName,
+          phone: normP,
+          gender: "Belirtilmedi",
+          moldType: "Standart Çökertme Kalıbı",
+          address: ""
+        };
+        try {
+          localStorage.setItem("cokertme_app_user_v1", JSON.stringify(appUser));
+        } catch (e) {}
+        updateUserHeaderUI();
+      }
+
+      const res = CokertmeStore.claimOneTimeStampToken(rawToken, phone, fullName);
+      if (!res || !res.ok) {
+        lastClaimResultNotice = { ok: false, message: (res && res.error) || "Kasa damga kodu doğrulanamadı." };
+        renderInStoreQrCardModalContent();
+        return;
+      }
+
+      // Yerel sadakat cüzdanını da anında senkronla
+      const state = CokertmeStore.getState();
+      getUserLoyaltyStatus(phone, state);
+      pendingClaimStampToken = "";
+      lastClaimResultNotice = { ok: true, message: res.message };
+
+      // URL'deki ?claimStamp parametresini temizle ki sayfa yenilenince tekrar sormasın
+      try {
+        const cleanUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+      } catch (e) {}
+
+      renderInStoreQrCardModalContent();
+      renderCurrentView();
+    }
+
     // Başlangıç
+    let urlInitialClaimToken = "";
+    let urlInitialOpenQrCard = false;
     (function initUrlAuthParam() {
       try {
         const params = new URLSearchParams(window.location.search);
@@ -8430,6 +8654,13 @@
         if (authParam === "login" || authParam === "register") {
           authMode = authParam;
           activeTab = "account";
+        }
+        const claimParam = params.get("claimStamp");
+        if (claimParam) {
+          urlInitialClaimToken = claimParam.trim().toUpperCase();
+        }
+        if (params.get("openQrCard") === "1") {
+          urlInitialOpenQrCard = true;
         }
       } catch (e) {}
     })();
@@ -8440,6 +8671,14 @@
       checkMaintenanceGate();
       updateUserHeaderUI();
       renderCurrentView();
+      if (urlInitialClaimToken) {
+        openInStoreQrCardModal(urlInitialClaimToken);
+        if (appUser && appUser.phone) {
+          submitInStoreStampTokenClaim();
+        }
+      } else if (urlInitialOpenQrCard) {
+        openInStoreQrCardModal();
+      }
     });
   </script>
 </body>

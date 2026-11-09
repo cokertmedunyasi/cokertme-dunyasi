@@ -1175,6 +1175,144 @@
       <div id="admin-branches-manager-grid" style="display:grid; grid-template-columns:1fr; gap:24px;"></div>
     </section>
 
+    <!-- 0.B2. FİZİKİ ŞUBE / RESTORAN KASASI QR DAMGA, HEDİYE KULLANIM & CÜZDAN TERMİNALİ -->
+    <section class="admin-panel-box no-print" id="cashier-loyalty-section" style="border-top: 4px solid var(--pt-terracotta);">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; margin-bottom:20px;">
+        <div>
+          <div class="pt-subtitle">RESTORAN KASASI SADAKAT TERMİNALİ • %0 SUİSTİMAL • TEK KULLANIMLIK QR &amp; CÜZDAN POS</div>
+          <h2 class="pt-title">Fiziki Şube Kasa Damga, %50 Hediye &amp; Cüzdan Terminali</h2>
+          <p style="font-size:15px; color:var(--pt-text-muted); max-width:860px;">
+            Restoranımıza fiziki olarak gelip Çökertme Kebabı yiyen misafirlerimize kasada ödeme anında <strong>+1 Sadakat Damgası</strong> tanımlayın, <strong>5 Damgası dolanların %50 İndirimli Çökertme hediyesini</strong> kullandırın veya masa hesabını <strong>Çökertme Cüzdan</strong> bakiyesinden tahsil edin.
+          </p>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+          <span class="pt-badge pt-badge-olive" id="cashier-active-branch-badge" style="font-size:11.5px; padding:7px 14px;">AKTİF KASA: ADANA BARAJYOLU ŞUBESİ</span>
+          <span style="font-size:11.5px; color:var(--pt-text-muted); font-weight:700;">🔒 24 Saatte Maksimum 1 Damga • 5 dk Süreli Tek Kullanımlık QR</span>
+        </div>
+      </div>
+
+      <!-- İKİ YÖNTEMLİ KASA İŞLEM IZGARASI -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(360px, 1fr)); gap:22px; margin-bottom:24px;">
+
+        <!-- YÖNTEM 1: TEK KULLANIMLIK DİNAMİK KASA QR ÜRETİCİ (MÜŞTERİ KAMERASIYLA OKUTUR) -->
+        <div style="background:var(--pt-cream); border:2px solid var(--pt-gold); padding:22px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px;">
+              <span class="pt-badge pt-badge-terracotta">1. YÖNTEM (EN HIZLI • %0 SUİSTİMAL)</span>
+              <span class="pt-badge pt-badge-gold">5 DK GEÇERLİ • TEK KULLANIMLIK</span>
+            </div>
+            <h3 style="font-family:var(--font-serif); font-size:26px; color:var(--pt-navy); margin-bottom:6px;">Tek Kullanımlık Kasa Damga QR Üret</h3>
+            <p style="font-size:13.5px; color:var(--pt-text-muted); margin-bottom:16px; line-height:1.5;">
+              Misafir kasada hesabını ödediğinde aşağıdaki butona tıklayın. Ekranda beliren <strong>tek kullanımlık QR kodu</strong> müşteri telefon kamerasıyla okuttuğu anda <strong>+1 Damgası</strong> hesabına işlenir ve QR kod anında iptal olur (fotoğrafı çekilip tekrar okutulamaz).
+            </p>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
+              <div>
+                <label class="pt-form-label">Masa / Adisyo Fiş Notu (Opsiyonel)</label>
+                <input type="text" id="cashier-qr-table-note" class="pt-form-input" placeholder="Örn: Masa 6 veya Fiş #104" style="background:#fff;" />
+              </div>
+              <div>
+                <label class="pt-form-label">İşlem Yapan Şube Kasası</label>
+                <select id="cashier-branch-select" class="pt-form-select" style="background:#fff;" onchange="renderCashierLoyaltySection(CokertmeStore.getState())"></select>
+              </div>
+            </div>
+
+            <button type="button" class="pt-btn-terracotta" style="width:100%; padding:14px 18px; font-size:13px;" onclick="generateCashierOneTimeQr()">
+              ✨ YENİ TEK KULLANIMLIK (+1 DAMGA) KASA QR KODU ÜRET
+            </button>
+          </div>
+
+          <!-- Üretilen QR Gösterim Kutusu -->
+          <div id="cashier-generated-qr-box" style="margin-top:16px; background:#fff; border:1px dashed var(--pt-border); padding:18px; text-align:center;">
+            <div style="font-size:13px; color:var(--pt-text-muted);">
+              Henüz aktif QR üretilmedi. Hesap ödeyen müşteriniz için yukarıdaki butona basarak anlık QR kod oluşturun.
+            </div>
+          </div>
+        </div>
+
+        <!-- YÖNTEM 2: MÜŞTERİ TELEFON NUMARASI / DİJİTAL KART İLE SORGULA, DAMGA EKLE, HEDİYE KULLANDIR VEYA CÜZDANDAN TAHSİL ET -->
+        <div style="background:#fff; border:2px solid var(--pt-navy); padding:22px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px;">
+              <span class="pt-badge pt-badge-navy">2. YÖNTEM (DAMGA • %50 HEDİYE • CÜZDAN POS)</span>
+              <span class="pt-badge pt-badge-olive">ANLIK BULUT SENKRON</span>
+            </div>
+            <h3 style="font-family:var(--font-serif); font-size:26px; color:var(--pt-navy); margin-bottom:6px;">Müşteri Telefonu / QR Kartı ile Kasa İşlemi</h3>
+            <p style="font-size:13.5px; color:var(--pt-text-muted); margin-bottom:14px; line-height:1.5;">
+              Müşterinin telefon numarasını girerek (veya telefonundaki <strong>Restoran QR Kartını</strong> görerek) mevcut damgasını ve cüzdan bakiyesini sorgulayın; tek tıkla <strong>+1 Damga ekleyin</strong>, <strong>5. Damga %50 İndirim hediyesini</strong> kullandırın veya hesabı <strong>Cüzdan'dan tahsil edin</strong>.
+            </p>
+
+            <div style="display:grid; grid-template-columns:1.3fr 1fr auto; gap:8px; margin-bottom:14px; align-items:end;">
+              <div>
+                <label class="pt-form-label">Müşteri Telefon Numarası *</label>
+                <input type="tel" id="cashier-customer-phone" class="pt-form-input" placeholder="05XX XXX XX XX" oninput="lookupCashierCustomer()" />
+              </div>
+              <div>
+                <label class="pt-form-label">Ad Soyad (Yeni Kayıtsa)</label>
+                <input type="text" id="cashier-customer-name" class="pt-form-input" placeholder="Örn: Ahmet Yılmaz" />
+              </div>
+              <button type="button" class="pt-btn-navy" style="padding:12px 16px; height:43px;" onclick="lookupCashierCustomer()">🔍 SORGULA</button>
+            </div>
+
+            <!-- Müşteri Canlı Durum Kartı -->
+            <div id="cashier-customer-status-card" style="background:var(--pt-cream); border:1px solid var(--pt-border); padding:14px; margin-bottom:14px;">
+              <div style="font-size:13px; color:var(--pt-text-muted); text-align:center;">
+                Müşterinin damga hakkını, %50 hediye durumunu ve cüzdan bakiyesini görmek için telefon numarasını yazın.
+              </div>
+            </div>
+          </div>
+
+          <!-- Kasa Aksiyon Butonları -->
+          <div style="display:grid; gap:10px;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <button type="button" class="pt-btn-olive" style="padding:13px 12px; font-size:11.5px;" onclick="executeCashierAction('ADD_STAMP')">
+                ★ +1 FİZİKİ RESTORAN DAMGASI EKLE
+              </button>
+              <button type="button" class="pt-btn-terracotta" id="cashier-btn-redeem-reward" style="padding:13px 12px; font-size:11.5px;" onclick="executeCashierAction('REDEEM_REWARD')">
+                🎁 5 DAMGA %50 HEDİYE KULLANDIR
+              </button>
+            </div>
+
+            <!-- Cüzdan Tahsilat Kutusu -->
+            <div style="background:var(--pt-cream); border:1px solid var(--pt-border); padding:10px 12px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+              <span style="font-size:12px; font-weight:800; color:var(--pt-navy);">💳 Cüzdandan Masa Hesabı Tahsilat (₺):</span>
+              <input type="number" id="cashier-wallet-deduct-amount" class="pt-form-input" placeholder="Tutar (₺)" min="1" style="width:120px; padding:7px 10px; background:#fff;" />
+              <input type="text" id="cashier-action-note" class="pt-form-input" placeholder="Masa / Fiş Notu (Örn: Masa 4)" style="flex:1; min-width:130px; padding:7px 10px; background:#fff;" />
+              <button type="button" class="pt-btn-navy" style="padding:9px 14px; font-size:11px; white-space:nowrap;" onclick="executeCashierAction('DEDUCT_WALLET')">
+                💳 CÜZDANDAN TAHSİL ET
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KASA DAMGA, HEDİYE VE CÜZDAN İŞLEM GEÇMİŞİ (DENETİM KAYITLARI - AUDIT LOG) -->
+      <div style="background:#fff; border:1px solid var(--pt-border); padding:18px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+          <div>
+            <strong style="font-family:var(--font-serif); font-size:22px; color:var(--pt-navy);">📋 Fiziki Kasa Sadakat &amp; Cüzdan İşlem Kayıtları (Denetim Tablosu)</strong>
+            <div style="font-size:12.5px; color:var(--pt-text-muted);">Hangi şubede, hangi müşteriye ne zaman damga eklendiği, hediye kullandırıldığı veya cüzdan tahsilatı yapıldığı şeffaf olarak kayıt altındadır.</div>
+          </div>
+          <span class="pt-badge pt-badge-gold" id="cashier-logs-count-badge">0 İşlem Kaydı</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Tarih &amp; Saat</th>
+                <th>Şube / Kasa</th>
+                <th>Müşteri Ad Soyad &amp; Telefon</th>
+                <th>İşlem Türü</th>
+                <th>İşlem Detayı &amp; Masa Notu</th>
+                <th>Damga / Cüzdan Durumu</th>
+              </tr>
+            </thead>
+            <tbody id="cashier-loyalty-logs-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <!-- 0.C. MÜŞTERİ VERİ TABANI (CRM) & YENİDEN PAZARLAMA (REMARKETING) MERKEZİ -->
     <section class="admin-panel-box no-print" id="crm-remarketing-section">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; margin-bottom:18px;">
@@ -1904,7 +2042,7 @@
     </div>
   </footer>
 
-  <script src="assets/data.js?v=16"></script>
+  <script src="assets/data.js?v=17"></script>
   <script>
     const ADMIN_SESSION_KEY = "cokertme_admin_auth_v1";
     const ADMIN_ROLE_KEY = "cokertme_admin_role_v1"; // "SUPER_ADMIN" veya branchId (örn: "adana-merkez", "adana-gurselpasa", "adana-saricam")
@@ -2041,6 +2179,7 @@
         ? [
             { id: "analytics", label: "📊 Analiz & Ciro Raporu" },
             { id: "orders", label: "🛵 Gelen Siparişler & Detaylar" },
+            { id: "cashier_pos", label: "🏪 Kasa Damga & Cüzdan Terminali" },
             { id: "crm", label: "👥 Müşteri CRM & Bilgiler" },
             { id: "branches", label: "🏢 Şubeler & Mahalle Yetkileri" },
             { id: "menu_campaigns", label: "🍽️ Menü, Fiyat & Cüzdan/Sadakat" },
@@ -2048,6 +2187,7 @@
           ]
         : [
             { id: "orders", label: "🛵 Şube Siparişleri & Detaylar" },
+            { id: "cashier_pos", label: "🏪 Kasa Damga & Cüzdan Terminali" },
             { id: "analytics", label: "📊 Günlük / Aylık Analiz & Ciro" },
             { id: "crm", label: "👥 Şube Müşteri Bilgileri (CRM)" }
           ];
@@ -2085,7 +2225,7 @@
       if (brSelectBox) brSelectBox.style.display = isSuper ? "block" : "none";
 
       if (!isSuper) {
-        // Şube Yöneticisi (barajyolu, gurselpasa, saricam vb.) -> Genel Merkez ayarlarını KESİNLİKLE göremez!
+        // Şube Yöneticisi (barajyolu vb.) -> Genel Merkez ayarlarını KESİNLİKLE göremez!
         setVis("superadmin-branches-section", false);
         setVis("printable-qr-section", false);
         setVis("menu-management-section", false);
@@ -2095,15 +2235,19 @@
         setVis("franchise-section", false);
         setVis("admin-location-requests-box", false);
 
-        // Sadece seçili sekmeyi göster (orders, analytics, crm)
+        // Sadece seçili sekmeyi göster (orders, cashier_pos, analytics, crm)
         setVis("orders-main-section", activeAdminTab === "orders");
+        setVis("cashier-loyalty-section", activeAdminTab === "cashier_pos");
         setVis("branch-analytics-section", activeAdminTab === "analytics");
         setVis("crm-customers-section", activeAdminTab === "crm");
+        setVis("crm-remarketing-section", activeAdminTab === "crm");
       } else {
         // SUPER_ADMIN (admin) -> Seçili sekmeye göre temiz ve düzenli görünüm
         setVis("branch-analytics-section", activeAdminTab === "analytics");
         setVis("orders-main-section", activeAdminTab === "orders");
+        setVis("cashier-loyalty-section", activeAdminTab === "cashier_pos");
         setVis("crm-customers-section", activeAdminTab === "crm");
+        setVis("crm-remarketing-section", activeAdminTab === "crm");
         setVis("superadmin-branches-section", activeAdminTab === "branches");
         setVis("menu-management-section", activeAdminTab === "menu_campaigns");
         setVis("app-settings-section", activeAdminTab === "menu_campaigns");
@@ -2382,6 +2526,7 @@
 
       renderBranchAnalyticsSection(state);
       renderBranchesManagerSection(state);
+      renderCashierLoyaltySection(state);
       renderCrmCustomersTable(state);
       renderLocationRequestsBox(state);
       renderTableQRCards();
@@ -2391,6 +2536,294 @@
       renderOrders(state);
       renderFranchise(state);
       applySectionVisibilityByRoleAndTab();
+    }
+
+    // =========================================================================
+    // FİZİKİ ŞUBE / RESTORAN KASASI QR DAMGA, HEDİYE KULLANIM & CÜZDAN TERMİNALİ
+    // =========================================================================
+    let activeGeneratedCashierToken = null;
+    let cashierQrCountdownTimer = null;
+
+    function getActiveCashierBranchObj(stateOverride) {
+      const state = stateOverride || CokertmeStore.getState();
+      const branches = Array.isArray(state.branches) ? state.branches : [];
+      const role = getLoggedAdminRole();
+      const selEl = document.getElementById("cashier-branch-select");
+
+      if (role !== "SUPER_ADMIN") {
+        return branches.find(b => b.id === role) || branches[0] || { id: "adana-merkez", name: "Adana Barajyolu Şubesi", city: "Adana" };
+      }
+
+      const selVal = selEl ? selEl.value : "";
+      if (selVal) {
+        const found = branches.find(b => b.id === selVal);
+        if (found) return found;
+      }
+      const eff = getEffectiveBranchFilter();
+      if (eff && eff !== "ALL") {
+        const found = branches.find(b => b.id === eff);
+        if (found) return found;
+      }
+      return branches.find(b => b.isActive) || branches[0] || { id: "adana-merkez", name: "Adana Barajyolu Şubesi", city: "Adana" };
+    }
+
+    function generateCashierOneTimeQr() {
+      const state = CokertmeStore.getState();
+      const br = getActiveCashierBranchObj(state);
+      const noteEl = document.getElementById("cashier-qr-table-note");
+      const tableNote = noteEl ? noteEl.value.trim() : "";
+
+      const tokenObj = CokertmeStore.createOneTimeStampToken({
+        branchId: br.id,
+        branchName: br.name,
+        tableNote: tableNote || "Kasa Ödeme Noktası"
+      });
+
+      activeGeneratedCashierToken = tokenObj;
+      if (noteEl) noteEl.value = "";
+      renderCashierGeneratedQrBox();
+
+      if (cashierQrCountdownTimer) clearInterval(cashierQrCountdownTimer);
+      cashierQrCountdownTimer = setInterval(() => {
+        renderCashierGeneratedQrBox();
+      }, 1000);
+    }
+
+    function renderCashierGeneratedQrBox() {
+      const box = document.getElementById("cashier-generated-qr-box");
+      if (!box) return;
+
+      if (!activeGeneratedCashierToken) {
+        box.innerHTML = `
+          <div style="font-size:13px; color:var(--pt-text-muted);">
+            Henüz aktif QR üretilmedi. Hesap ödeyen müşteriniz için yukarıdaki butona basarak anlık QR kod oluşturun.
+          </div>
+        `;
+        return;
+      }
+
+      const state = CokertmeStore.getState();
+      const liveToken = (state.inStoreStampTokens || []).find(t => t.token === activeGeneratedCashierToken.token) || activeGeneratedCashierToken;
+      const now = Date.now();
+      const remainingSec = Math.max(0, Math.floor((Number(liveToken.expiresAt || 0) - now) / 1000));
+
+      if (liveToken.status === "USED") {
+        if (cashierQrCountdownTimer) clearInterval(cashierQrCountdownTimer);
+        box.innerHTML = `
+          <div style="background:#EDF7ED; border:2px solid var(--pt-olive); padding:16px;">
+            <div style="font-size:28px; margin-bottom:4px;">✅</div>
+            <strong style="font-family:var(--font-serif); font-size:22px; color:var(--pt-olive-dark); display:block;">Tek Kullanımlık QR Okutuldu &amp; Damga İşlendi!</strong>
+            <div style="font-size:13px; color:var(--pt-navy); margin-top:4px;">
+              Müşteri: <strong>${liveToken.usedByName || "-"} (${liveToken.usedByPhone || "-"})</strong> • Kod: <code>${liveToken.token}</code>
+            </div>
+            <div style="font-size:11.5px; color:var(--pt-text-muted); margin-top:4px;">Bu QR kod tek kullanımlık olduğu için otomatik olarak iptal edilmiştir.</div>
+          </div>
+        `;
+        return;
+      }
+
+      if (remainingSec <= 0) {
+        if (cashierQrCountdownTimer) clearInterval(cashierQrCountdownTimer);
+        box.innerHTML = `
+          <div style="background:#FFF5F5; border:1.5px solid #E5A0A0; padding:14px; color:#A61B1B; font-size:13px; font-weight:700;">
+            ⏰ Tek kullanımlık QR kodun 5 dakikalık süresi doldu (${liveToken.token}). Yeni müşteri için tekrar üretin.
+          </div>
+        `;
+        return;
+      }
+
+      const mins = String(Math.floor(remainingSec / 60)).padStart(2, "0");
+      const secs = String(remainingSec % 60).padStart(2, "0");
+      const claimUrl = `https://onlinesiparis.cokertmedunyasi.com/?claimStamp=${encodeURIComponent(liveToken.token)}`;
+      const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data=${encodeURIComponent(claimUrl)}`;
+
+      box.innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:center;">
+            <span class="pt-badge pt-badge-olive">AKTİF TEK KULLANIMLIK KASA QR</span>
+            <span class="pt-badge pt-badge-terracotta">⏱ KALAN SÜRE: ${mins}:${secs}</span>
+          </div>
+          <img src="${qrImgUrl}" alt="Kasa Damga QR" style="width:190px; height:190px; border:3px solid var(--pt-gold); padding:6px; background:#fff;" />
+          <div>
+            <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.1em; color:var(--pt-text-muted); font-weight:700;">MÜŞTERİ KAMERASIYLA OKUTABİLİR VEYA KODU GİREBİLİR:</div>
+            <div style="font-family:monospace; font-size:18px; font-weight:900; color:var(--pt-navy); background:var(--pt-cream); border:1px solid var(--pt-gold); padding:4px 12px; display:inline-block; margin-top:4px; letter-spacing:0.08em;">
+              ${liveToken.token}
+            </div>
+          </div>
+          <div style="font-size:12px; color:var(--pt-text-muted);">
+            📍 ${liveToken.branchName} • ${liveToken.tableNote || "Kasa Ödeme"}
+          </div>
+        </div>
+      `;
+    }
+
+    function lookupCashierCustomer() {
+      const phoneEl = document.getElementById("cashier-customer-phone");
+      const nameEl = document.getElementById("cashier-customer-name");
+      const cardEl = document.getElementById("cashier-customer-status-card");
+      const redeemBtn = document.getElementById("cashier-btn-redeem-reward");
+      if (!phoneEl || !cardEl) return;
+
+      const rawPhone = phoneEl.value || "";
+      const normPhone = CokertmeStore.normalizePhone(rawPhone);
+      if (normPhone.length < 10) {
+        cardEl.innerHTML = `
+          <div style="font-size:13px; color:var(--pt-text-muted); text-align:center;">
+            Müşterinin damga hakkını, %50 hediye durumunu ve cüzdan bakiyesini görmek için 10-11 haneli telefon numarasını yazın.
+          </div>
+        `;
+        if (redeemBtn) redeemBtn.style.opacity = "0.6";
+        return;
+      }
+
+      const status = CokertmeStore.getMemberStampStatus(rawPhone);
+      if (status.member && nameEl && !nameEl.value) {
+        nameEl.value = status.member.fullName || "";
+      }
+
+      const starsHtml = Array.from({ length: status.requiredStamps }, (_, idx) => {
+        const filled = idx < status.validStampsCount;
+        return `<span style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:${filled ? 'var(--pt-gold)' : '#fff'}; color:${filled ? 'var(--pt-navy)' : 'var(--pt-text-muted)'}; border:1.5px solid var(--pt-gold); font-weight:900; font-size:13px;">${filled ? '★' : (idx + 1)}</span>`;
+      }).join("");
+
+      const cooldownBadge = status.canEarnToday
+        ? `<span class="pt-badge pt-badge-olive">✓ BUGÜN +1 DAMGA EKLENEBİLİR</span>`
+        : `<span class="pt-badge" style="background:#FFF5F5; color:#A61B1B; border:1px solid #E5A0A0;">⏳ 24 SAAT KURALI (${status.cooldownRemainingHours} Saat Kaldı)</span>`;
+
+      const rewardBadge = status.hasReward
+        ? `<span class="pt-badge pt-badge-terracotta">🎁 5 DAMGA TAMAMLANDI! %${status.rewardDiscountPercent} ÇÖKERTME HEDİYESİ HAZIR</span>`
+        : `<span class="pt-badge pt-badge-navy">${status.validStampsCount} / ${status.requiredStamps} Damga (%50 Hediyeye ${status.requiredStamps - status.validStampsCount} Damga Kaldı)</span>`;
+
+      if (redeemBtn) {
+        redeemBtn.style.opacity = status.hasReward ? "1" : "0.55";
+      }
+
+      cardEl.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px; padding-bottom:8px; border-bottom:1px dashed var(--pt-border);">
+          <div>
+            <strong style="font-family:var(--font-serif); font-size:21px; color:var(--pt-navy);">
+              👤 ${status.member ? status.member.fullName : (nameEl && nameEl.value ? nameEl.value : "Yeni Müşteri (İlk İşlemde Kaydedilir)")}
+            </strong>
+            <div style="font-size:12px; color:var(--pt-text-muted);">📞 ${rawPhone} ${status.member ? `• Kayıtlı Şube: ${status.member.lastBranchName || "Adana Barajyolu Şubesi"}` : "• Henüz Kayıtlı Değil"}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--pt-text-muted); font-weight:700;">ÇÖKERTME CÜZDAN BAKİYESİ</div>
+            <strong style="font-size:18px; color:var(--pt-olive);">${status.walletBalance.toLocaleString("tr-TR")} ₺</strong>
+          </div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+          <div style="display:flex; gap:6px; align-items:center;">${starsHtml}</div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            ${rewardBadge}
+            ${cooldownBadge}
+          </div>
+        </div>
+      `;
+    }
+
+    function executeCashierAction(actionType) {
+      const phoneEl = document.getElementById("cashier-customer-phone");
+      const nameEl = document.getElementById("cashier-customer-name");
+      const amtEl = document.getElementById("cashier-wallet-deduct-amount");
+      const noteEl = document.getElementById("cashier-action-note");
+
+      const phone = phoneEl ? phoneEl.value.trim() : "";
+      const fullName = nameEl ? nameEl.value.trim() : "";
+      const amount = amtEl ? Number(amtEl.value || 0) : 0;
+      const note = noteEl ? noteEl.value.trim() : "";
+
+      const state = CokertmeStore.getState();
+      const br = getActiveCashierBranchObj(state);
+
+      const res = CokertmeStore.processCashierLoyaltyAction({
+        actionType,
+        phone,
+        fullName,
+        branchId: br.id,
+        branchName: br.name,
+        amount,
+        note
+      });
+
+      if (!res || !res.ok) {
+        alert("⚠️ " + ((res && res.error) || "İşlem gerçekleştirilemedi."));
+        return;
+      }
+
+      if (amtEl && actionType === "DEDUCT_WALLET") amtEl.value = "";
+      if (noteEl) noteEl.value = "";
+
+      lookupCashierCustomer();
+      renderAdminAll();
+      alert("✅ " + res.message);
+    }
+
+    function renderCashierLoyaltySection(state) {
+      const brSelect = document.getElementById("cashier-branch-select");
+      const badgeEl = document.getElementById("cashier-active-branch-badge");
+      const logsTbody = document.getElementById("cashier-loyalty-logs-tbody");
+      const countBadge = document.getElementById("cashier-logs-count-badge");
+      if (!logsTbody) return;
+
+      const role = getLoggedAdminRole();
+      const branches = Array.isArray(state.branches) ? state.branches : [];
+
+      if (brSelect) {
+        const currentBr = getActiveCashierBranchObj(state);
+        if (role === "SUPER_ADMIN") {
+          brSelect.disabled = false;
+          brSelect.innerHTML = branches.map(b => `<option value="${b.id}" ${b.id === currentBr.id ? "selected" : ""}>📍 ${b.name}</option>`).join("");
+        } else {
+          brSelect.disabled = true;
+          brSelect.innerHTML = `<option value="${currentBr.id}" selected>📍 ${currentBr.name}</option>`;
+        }
+        if (badgeEl) {
+          badgeEl.textContent = `AKTİF KASA: ${currentBr.name.toUpperCase()}`;
+        }
+      }
+
+      renderCashierGeneratedQrBox();
+      lookupCashierCustomer();
+
+      const effFilter = getEffectiveBranchFilter();
+      const allLogs = Array.isArray(state.inStoreLoyaltyLogs) ? state.inStoreLoyaltyLogs : [];
+      const scopedLogs = allLogs.filter(l => matchesBranchFilter(l.branchId, l.branchName, effFilter, state));
+
+      if (countBadge) {
+        countBadge.textContent = `${scopedLogs.length} Kasa İşlem Kaydı`;
+      }
+
+      if (scopedLogs.length === 0) {
+        logsTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:var(--pt-text-muted);">Henüz fiziki kasa damga, hediye veya cüzdan tahsilat kaydı bulunmuyor.</td></tr>`;
+        return;
+      }
+
+      logsTbody.innerHTML = scopedLogs.slice(0, 60).map(l => {
+        let badgeHtml = `<span class="pt-badge pt-badge-olive">★ +1 FİZİKİ DAMGA</span>`;
+        if (l.type === "IN_STORE_STAMP_QR") {
+          badgeHtml = `<span class="pt-badge pt-badge-olive">📱 TEK KULLANIMLIK QR DAMGA</span>`;
+        } else if (l.type === "IN_STORE_REWARD_REDEEM") {
+          badgeHtml = `<span class="pt-badge pt-badge-terracotta">🎁 5 DAMGA %50 HEDİYE KULLANIMI</span>`;
+        } else if (l.type === "IN_STORE_WALLET_PAYMENT") {
+          badgeHtml = `<span class="pt-badge pt-badge-navy">💳 KASA CÜZDAN TAHSİLATI (-${Number(l.amount || 0).toLocaleString("tr-TR")} ₺)</span>`;
+        }
+
+        return `
+          <tr>
+            <td style="font-size:12.5px; font-weight:700; color:var(--pt-navy);">${l.createdAt || "-"}</td>
+            <td><span class="pt-badge pt-badge-gold">${l.branchName || "Adana Barajyolu Şubesi"}</span></td>
+            <td>
+              <strong style="color:var(--pt-navy);">${l.customerName || "-"}</strong>
+              <div style="font-size:12px; color:var(--pt-text-muted);">📞 ${l.phone || "-"}</div>
+            </td>
+            <td>${badgeHtml}</td>
+            <td style="font-size:13px; color:var(--pt-navy);">${l.note || "-"} ${l.token ? `<code style="font-size:11px; background:var(--pt-cream); padding:2px 6px;">${l.token}</code>` : ""}</td>
+            <td style="font-size:12.5px; font-weight:700; color:var(--pt-olive);">
+              ${l.walletAfter !== undefined ? `Kalan Cüzdan: ${Number(l.walletAfter).toLocaleString("tr-TR")} ₺` : `Aktif Damga: ${l.stampsAfter ?? "-"} / 5`}
+            </td>
+          </tr>
+        `;
+      }).join("");
     }
 
     function renderBranchAnalyticsSection(state) {
