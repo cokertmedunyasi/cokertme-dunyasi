@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Merkez Yönetim & Masa QR Üretici — Çökertme Dünyası</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/svg+xml" href="/assets/app-icon.svg" />
+  <link rel="apple-touch-icon" href="/assets/app-icon.svg" />
   <meta name="description" content="Çökertme Dünyası Merkez Bulut Yönetim Paneli: Anlık QR menü fiyat güncelleme, masa QR kod baskı kartları, mobil uygulama siparişleri ve franchise başvuruları." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1870,16 +1873,16 @@
           <div id="admin-wallet-members-summary" style="font-size:12.5px; color:var(--pt-navy); max-height:115px; overflow-y:auto; background:#f8fafc; border:1px solid var(--pt-border); padding:8px 10px;"></div>
         </div>
 
-        <!-- Kutu 2: QNB Finansbank Sanal POS & Beko QNB POS Bağlantısı -->
+        <!-- Kutu 2: Doğrudan QNB Finansbank Sanal POS (PayFor 3D) & SMS Doğrulama -->
         <div style="background:#fff; padding:22px; border:1px solid var(--pt-border); border-top:4px solid var(--pt-gold);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-            <strong style="font-family:var(--font-serif); font-size:23px; color:var(--pt-navy);">2. QNB Finansbank &amp; Beko POS</strong>
-            <span class="pt-badge pt-badge-gold">3D SECURE AKTİF</span>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:8px; flex-wrap:wrap;">
+            <strong style="font-family:var(--font-serif); font-size:23px; color:var(--pt-navy);">2. Doğrudan QNB Finansbank Sanal POS (PayFor 3D)</strong>
+            <span class="pt-badge pt-badge-gold" id="int-qnb-live-status-badge">PAYFOR 3D SECURE</span>
           </div>
-          <div style="display:grid; gap:12px;">
+          <div style="display:grid; gap:10px;">
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
               <div>
-                <label class="pt-form-label">QNB Üye İşyeri No (Merchant ID)</label>
+                <label class="pt-form-label">QNB Üye İşyeri No (MerchantId) *</label>
                 <input type="text" id="int-qnb-merchant" class="pt-form-input" placeholder="Örn: 0853000000" />
               </div>
               <div>
@@ -1887,12 +1890,51 @@
                 <input type="text" id="int-qnb-terminal" class="pt-form-input" placeholder="Örn: VP001482" />
               </div>
             </div>
-            <div>
-              <label class="pt-form-label">QNB 3D Secure API Şifresi / Store Key</label>
-              <input type="password" id="int-qnb-pass" class="pt-form-input" placeholder="••••••••••••••••" />
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <div>
+                <label class="pt-form-label">PayFor Kullanıcı Kodu (UserCode)</label>
+                <input type="text" id="int-qnb-usercode" class="pt-form-input" placeholder="QNB API UserCode" />
+              </div>
+              <div>
+                <label class="pt-form-label">PayFor Kullanıcı Şifresi (UserPass)</label>
+                <input type="password" id="int-qnb-userpass" class="pt-form-input" placeholder="••••••••" />
+              </div>
             </div>
-            <div style="font-size:13px; color:var(--pt-text-muted); background:var(--pt-cream); padding:10px 12px; border:1px solid var(--pt-border); line-height:1.5;">
-              <strong style="color:var(--pt-navy);">✓ Beko Yazarkasa QNB &amp; Adisyo Hesap Uyumu:</strong> Uygulamadan çekilen QNB 3D Secure sipariş ve Cüzdan Bakiye yükleme ödemeleri doğrudan restorandaki Beko Yazarkasa POS'un bağlı olduğu QNB Finansbank ticari hesabınıza aktarılır; Adisyo'ya <em>"Ödendi"</em> olarak düşer.
+            <div>
+              <label class="pt-form-label">QNB 3D İşyeri Anahtarı (MerchantPass / StoreKey) *</label>
+              <input type="password" id="int-qnb-pass" class="pt-form-input" placeholder="SHA-1 3D StoreKey (MerchantPass)" />
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <div>
+                <label class="pt-form-label">3D Güvenlik Modeli</label>
+                <select id="int-qnb-securetype" class="pt-form-select">
+                  <option value="3DPay">3DPay (Kart Bilgisi Sayfada -> QNB 3D SMS)</option>
+                  <option value="3DHost">3DHost (QNB Ortak Ödeme Sayfası)</option>
+                </select>
+              </div>
+              <div>
+                <label class="pt-form-label">Çalışma Ortamı</label>
+                <select id="int-qnb-testmode" class="pt-form-select">
+                  <option value="true">Test / Simülasyon Ortamı</option>
+                  <option value="false">CANLI TAHSİLAT (vpos.qnbfinansbank.com)</option>
+                </select>
+              </div>
+            </div>
+            <div style="border-top:1px dashed var(--pt-border); padding-top:10px; margin-top:2px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <span style="font-size:11px; font-weight:800; color:var(--pt-navy); text-transform:uppercase; letter-spacing:0.06em;">SMS Doğrulama (Netgsm / İletiMerkezi OTP)</span>
+                <label style="font-size:11.5px; font-weight:700; color:var(--pt-olive); display:inline-flex; align-items:center; gap:5px; cursor:pointer;">
+                  <input type="checkbox" id="int-sms-enabled" /> Aktif
+                </label>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+                <input type="text" id="int-sms-header" class="pt-form-input" placeholder="Başlık: COKERTME" style="padding:7px 9px; font-size:12px;" />
+                <input type="text" id="int-sms-user" class="pt-form-input" placeholder="Netgsm Abone No" style="padding:7px 9px; font-size:12px;" />
+                <input type="password" id="int-sms-pass" class="pt-form-input" placeholder="SMS API Şifre" style="padding:7px 9px; font-size:12px;" />
+              </div>
+            </div>
+            <div style="font-size:12.5px; color:var(--pt-text-muted); background:var(--pt-cream); padding:10px 12px; border:1px solid var(--pt-border); line-height:1.45;">
+              <strong style="color:var(--pt-navy);">✓ Doğrudan QNB Finansbank PayFor (MbrId: 5):</strong> Üye İşyeri No ve 3D İşyeri Anahtarı girilip <em>Canlı Tahsilat</em> seçildiğinde, tüm kredi kartı işlemleri SHA-1 Base64 imzalı olarak doğrudan <code>vpos.qnbfinansbank.com</code> üzerinden çekilir.
             </div>
           </div>
         </div>
@@ -1973,6 +2015,29 @@
         </div>
       </div>
 
+      <!-- CANLI OPERASYON KONTROL ÇUBUĞU: SESLİ SİPARİŞ ZİLİ & ŞUBE AÇIK/MOLA VE SAAT AYARI -->
+      <div style="background:linear-gradient(135deg, #14314F 0%, #023A58 100%); border:1.5px solid var(--pt-gold); padding:14px 18px; margin-bottom:18px; color:#fff; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+          <button type="button" id="btn-order-bell-toggle" onclick="toggleOrderAudioBell()" style="background:var(--pt-olive); color:#fff; border:1px solid var(--pt-gold); padding:9px 14px; font-family:var(--font-sans); font-size:11.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">
+            🔔 SESLİ SİPARİŞ ZİLİ: AÇIK
+          </button>
+          <button type="button" onclick="playOrderBellChime(true)" style="background:rgba(255,255,255,0.12); color:var(--pt-gold-soft); border:1px solid rgba(243,217,153,0.4); padding:9px 12px; font-family:var(--font-sans); font-size:11px; font-weight:700; cursor:pointer;">
+            🔊 ZİLİ TEST ET
+          </button>
+          <span style="font-size:12px; color:rgba(255,255,255,0.82);" id="live-sync-indicator-lbl">● 15 sn'de bir canlı senkron aktif</span>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <span style="font-size:11.5px; font-weight:700; color:var(--pt-gold-soft); text-transform:uppercase; letter-spacing:0.06em;">Şube Servis Saati:</span>
+          <input type="time" id="quick-branch-open-time" value="11:00" onchange="saveQuickBranchHours()" style="padding:6px 8px; border:1px solid var(--pt-gold); background:#fff; color:var(--pt-navy); font-weight:700; font-size:12.5px;" />
+          <span>–</span>
+          <input type="time" id="quick-branch-close-time" value="23:30" onchange="saveQuickBranchHours()" style="padding:6px 8px; border:1px solid var(--pt-gold); background:#fff; color:var(--pt-navy); font-weight:700; font-size:12.5px;" />
+          <button type="button" id="btn-quick-branch-pause" onclick="toggleQuickBranchOrderPause()" style="background:var(--pt-olive); color:#fff; border:1px solid var(--pt-gold); padding:9px 14px; font-family:var(--font-sans); font-size:11.5px; font-weight:700; letter-spacing:0.08em; cursor:pointer;">
+            🟢 SİPARİŞ ALIMI: AÇIK
+          </button>
+        </div>
+      </div>
+
       <div id="admin-orders-list" style="display:grid; gap:16px;"></div>
     </section>
 
@@ -2042,7 +2107,7 @@
     </div>
   </footer>
 
-  <script src="assets/data.js?v=17"></script>
+  <script src="assets/data.js?v=18"></script>
   <script>
     const ADMIN_SESSION_KEY = "cokertme_admin_auth_v1";
     const ADMIN_ROLE_KEY = "cokertme_admin_role_v1"; // "SUPER_ADMIN" veya branchId (örn: "adana-merkez", "adana-gurselpasa", "adana-saricam")
@@ -2271,45 +2336,22 @@
       }
     }
 
-    function handleAdminLogin(ev) {
+    async function handleAdminLogin(ev) {
       if (ev) ev.preventDefault();
       const userInp = (document.getElementById("admin-login-user").value || "").trim();
       const passInp = document.getElementById("admin-login-pass").value || "";
-      const state = CokertmeStore.getState();
-      const adminCfg = (state && state.adminSettings) ? state.adminSettings : { username: "admin", passwordHash: "YEo13221990.," };
-      const validUser = adminCfg.username || "admin";
-      const validPass = adminCfg.passwordHash || "YEo13221990.,";
-
       const errBox = document.getElementById("admin-login-error");
 
-      // 1. Genel Merkez (Super Admin) Girişi
-      if (userInp.toLowerCase() === validUser.toLowerCase() && (passInp === validPass || passInp === "YEo13221990.,")) {
+      const res = await CokertmeStore.verifyAdminLogin(userInp, passInp);
+      if (res && res.ok) {
         sessionStorage.setItem(ADMIN_SESSION_KEY, "authenticated");
-        sessionStorage.setItem(ADMIN_ROLE_KEY, "SUPER_ADMIN");
-        currentAdminBranchFilter = "ALL";
-        activeAdminTab = "analytics";
+        sessionStorage.setItem(ADMIN_ROLE_KEY, res.role || "SUPER_ADMIN");
+        currentAdminBranchFilter = (res.role && res.role !== "SUPER_ADMIN") ? res.role : "ALL";
+        activeAdminTab = (res.role && res.role !== "SUPER_ADMIN") ? "orders" : "analytics";
         if (errBox) errBox.style.display = "none";
         checkAdminSession();
         renderAdminAll();
-        return false;
-      }
-
-      // 2. Şube Yöneticisi Girişi (Örn: barajyolu / Barajyolu123., gurselpasa / Gurselpasa123., saricam / Saricam123.)
-      const branches = (state && Array.isArray(state.branches)) ? state.branches : [];
-      const matchedBranch = branches.find(b =>
-        b.adminUsername &&
-        b.adminUsername.toLowerCase() === userInp.toLowerCase() &&
-        b.adminPassword === passInp
-      );
-
-      if (matchedBranch) {
-        sessionStorage.setItem(ADMIN_SESSION_KEY, "authenticated");
-        sessionStorage.setItem(ADMIN_ROLE_KEY, matchedBranch.id);
-        currentAdminBranchFilter = matchedBranch.id;
-        activeAdminTab = "orders";
-        if (errBox) errBox.style.display = "none";
-        checkAdminSession();
-        renderAdminAll();
+        startAdminLiveOrderWatcher();
         return false;
       }
 
@@ -2320,6 +2362,7 @@
     function adminLogout() {
       sessionStorage.removeItem(ADMIN_SESSION_KEY);
       sessionStorage.removeItem(ADMIN_ROLE_KEY);
+      sessionStorage.removeItem("cokertme_admin_token_v1");
       currentAdminBranchFilter = "ALL";
       activeAdminTab = "";
       checkAdminSession();
@@ -4870,7 +4913,32 @@
 
       document.getElementById("int-qnb-merchant").value = qnb.merchantId || "";
       document.getElementById("int-qnb-terminal").value = qnb.terminalId || "";
-      document.getElementById("int-qnb-pass").value = qnb.apiPass || "";
+      document.getElementById("int-qnb-pass").value = qnb.merchantPass || qnb.apiPass || "";
+      const qnbUserEl = document.getElementById("int-qnb-usercode");
+      const qnbUserPassEl = document.getElementById("int-qnb-userpass");
+      const qnbSecTypeEl = document.getElementById("int-qnb-securetype");
+      const qnbTestEl = document.getElementById("int-qnb-testmode");
+      const qnbBadgeEl = document.getElementById("int-qnb-live-status-badge");
+      if (qnbUserEl) qnbUserEl.value = qnb.userCode || qnb.apiUser || "";
+      if (qnbUserPassEl) qnbUserPassEl.value = qnb.userPass || "";
+      if (qnbSecTypeEl) qnbSecTypeEl.value = qnb.secureType || "3DPay";
+      if (qnbTestEl) qnbTestEl.value = qnb.testMode === false ? "false" : "true";
+      if (qnbBadgeEl) {
+        const isLiveReady = Boolean(qnb.merchantId && (qnb.merchantPass || qnb.apiPass) && qnb.testMode === false);
+        qnbBadgeEl.textContent = isLiveReady ? "🟢 CANLI QNB PAYFOR AKTİF" : "🟡 TEST / SİMÜLASYON MODU";
+        qnbBadgeEl.style.background = isLiveReady ? "var(--pt-olive)" : "var(--pt-gold)";
+        qnbBadgeEl.style.color = isLiveReady ? "#fff" : "#14314F";
+      }
+
+      const smsCfg = intCfg.smsOtp || {};
+      const smsEnEl = document.getElementById("int-sms-enabled");
+      const smsHdrEl = document.getElementById("int-sms-header");
+      const smsUsrEl = document.getElementById("int-sms-user");
+      const smsPwdEl = document.getElementById("int-sms-pass");
+      if (smsEnEl) smsEnEl.checked = Boolean(smsCfg.enabled);
+      if (smsHdrEl) smsHdrEl.value = smsCfg.senderHeader || "COKERTME";
+      if (smsUsrEl) smsUsrEl.value = smsCfg.apiUsername || "";
+      if (smsPwdEl) smsPwdEl.value = smsCfg.apiPassword || "";
 
       document.getElementById("int-courier-prep-min").value = courier.defaultPrepMinutes || 15;
 
@@ -5012,11 +5080,25 @@
         },
         qnbPos: {
           enabled: true,
+          provider: "QNB_FINANSBANK_PAYFOR",
+          mbrId: "5",
           merchantId: document.getElementById("int-qnb-merchant").value.trim(),
           terminalId: document.getElementById("int-qnb-terminal").value.trim(),
+          userCode: (document.getElementById("int-qnb-usercode") && document.getElementById("int-qnb-usercode").value.trim()) || "",
+          userPass: (document.getElementById("int-qnb-userpass") && document.getElementById("int-qnb-userpass").value.trim()) || "",
+          merchantPass: document.getElementById("int-qnb-pass").value.trim(),
           apiPass: document.getElementById("int-qnb-pass").value.trim(),
+          secureType: (document.getElementById("int-qnb-securetype") && document.getElementById("int-qnb-securetype").value) || "3DPay",
+          testMode: (document.getElementById("int-qnb-testmode") ? document.getElementById("int-qnb-testmode").value !== "false" : true),
           mode: "3D_SECURE",
           linkedToBekoQnb: true
+        },
+        smsOtp: {
+          enabled: Boolean(document.getElementById("int-sms-enabled") && document.getElementById("int-sms-enabled").checked),
+          provider: "NETGSM",
+          senderHeader: (document.getElementById("int-sms-header") && document.getElementById("int-sms-header").value.trim()) || "COKERTME",
+          apiUsername: (document.getElementById("int-sms-user") && document.getElementById("int-sms-user").value.trim()) || "",
+          apiPassword: (document.getElementById("int-sms-pass") && document.getElementById("int-sms-pass").value.trim()) || ""
         },
         courier: {
           autoDispatchImmediate: true,
@@ -5119,7 +5201,193 @@
       alert(`Sipariş #${order.id}, "${courier.name}" API'sine (${prepMin} dk sonra hazır bilgisiyle) yeniden iletildi!`);
     }
 
+    // =========================================================================
+    // SESLİ YENİ SİPARİŞ ZİLİ (WEB AUDIO API), 15SN CANLI TAKİP, ŞUBE MOLA & 80MM FİŞ
+    // =========================================================================
+    let orderBellEnabled = localStorage.getItem("cokertme_order_bell_v1") !== "false";
+    let knownOrderIdsSet = null;
+    let adminLiveWatcherTimer = null;
+
+    function updateOrderBellButtonUI() {
+      const btn = document.getElementById("btn-order-bell-toggle");
+      if (!btn) return;
+      btn.textContent = orderBellEnabled ? "🔔 SESLİ SİPARİŞ ZİLİ: AÇIK" : "🔕 SESLİ SİPARİŞ ZİLİ: KAPALI";
+      btn.style.background = orderBellEnabled ? "var(--pt-olive)" : "#64748b";
+    }
+
+    function toggleOrderAudioBell() {
+      orderBellEnabled = !orderBellEnabled;
+      try { localStorage.setItem("cokertme_order_bell_v1", orderBellEnabled ? "true" : "false"); } catch (e) {}
+      updateOrderBellButtonUI();
+      if (orderBellEnabled) playOrderBellChime(true);
+    }
+
+    function playOrderBellChime(forcePlay) {
+      if (!orderBellEnabled && !forcePlay) return;
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const notes = [
+          { freq: 880, start: 0, dur: 0.22 },
+          { freq: 1174.66, start: 0.2, dur: 0.35 },
+          { freq: 880, start: 0.62, dur: 0.22 },
+          { freq: 1174.66, start: 0.82, dur: 0.42 }
+        ];
+        notes.forEach(n => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(n.freq, ctx.currentTime + n.start);
+          gain.gain.setValueAtTime(0.001, ctx.currentTime + n.start);
+          gain.gain.exponentialRampToValueAtTime(0.28, ctx.currentTime + n.start + 0.03);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + n.start + n.dur);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + n.start);
+          osc.stop(ctx.currentTime + n.start + n.dur + 0.02);
+        });
+      } catch (e) {}
+    }
+
+    function getTargetOperatedBranch(state) {
+      const eff = getEffectiveBranchFilter();
+      const branches = Array.isArray(state.branches) ? state.branches : [];
+      if (eff && eff !== "ALL") {
+        const b = branches.find(x => x && x.id === eff);
+        if (b) return b;
+      }
+      return branches.find(x => x && x.id === "adana-merkez") || branches[0] || null;
+    }
+
+    function syncQuickBranchControlsUI(state) {
+      updateOrderBellButtonUI();
+      const b = getTargetOperatedBranch(state || CokertmeStore.getState());
+      if (!b) return;
+      const openInp = document.getElementById("quick-branch-open-time");
+      const closeInp = document.getElementById("quick-branch-close-time");
+      const pauseBtn = document.getElementById("btn-quick-branch-pause");
+      if (openInp) openInp.value = b.openTime || "11:00";
+      if (closeInp) closeInp.value = b.closeTime || "23:30";
+      if (pauseBtn) {
+        const accepting = b.isAcceptingOrders !== false;
+        pauseBtn.textContent = accepting
+          ? `🟢 ${b.name}: SİPARİŞ AÇIK`
+          : `⏸️ ${b.name}: YOĞUNLUK MOLASI (KAPALI)`;
+        pauseBtn.style.background = accepting ? "var(--pt-olive)" : "var(--pt-terracotta)";
+      }
+    }
+
+    function toggleQuickBranchOrderPause() {
+      const state = CokertmeStore.getState();
+      const b = getTargetOperatedBranch(state);
+      if (!b) return;
+      b.isAcceptingOrders = b.isAcceptingOrders === false ? true : false;
+      CokertmeStore.saveState(state);
+      syncQuickBranchControlsUI(state);
+      renderAdminAll();
+    }
+
+    function saveQuickBranchHours() {
+      const state = CokertmeStore.getState();
+      const b = getTargetOperatedBranch(state);
+      if (!b) return;
+      const openInp = document.getElementById("quick-branch-open-time");
+      const closeInp = document.getElementById("quick-branch-close-time");
+      if (openInp && openInp.value) b.openTime = openInp.value;
+      if (closeInp && closeInp.value) b.closeTime = closeInp.value;
+      CokertmeStore.saveState(state);
+      syncQuickBranchControlsUI(state);
+    }
+
+    function setAdminOrderStage(orderId, stageCode) {
+      const updated = CokertmeStore.updateOrderStage(orderId, stageCode);
+      if (updated) {
+        renderAdminAll();
+      }
+    }
+
+    function printOrderReceipt(orderId) {
+      const state = CokertmeStore.getState();
+      const o = (state.orders || []).find(x => x && x.id === orderId);
+      if (!o) return;
+      const itemsRows = (o.items || []).map(it => `<div style="padding:5px 0; border-bottom:1px dashed #999; font-weight:700; font-size:13px;">• ${it}</div>`).join("");
+      const win = window.open("", "_blank", "width=380,height=640");
+      if (!win) {
+        alert("Lütfen tarayıcıda açılır pencereye (popup) izin verin.");
+        return;
+      }
+      win.document.write(`<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><title>Fiş #${o.id}</title>
+        <style>
+          @page { size: 80mm auto; margin: 4mm; }
+          body { font-family: 'Courier New', monospace; width: 72mm; margin: 0 auto; color: #000; font-size: 12px; line-height: 1.35; }
+          .hdr { text-align: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+          .hdr h2 { margin: 0; font-size: 17px; letter-spacing: 1px; }
+          .box { border: 1.5px solid #000; padding: 6px; margin: 6px 0; font-weight: 700; }
+          .tot { border-top: 2px solid #000; margin-top: 8px; padding-top: 6px; font-size: 15px; font-weight: 900; display:flex; justify-content:space-between; }
+        </style>
+      </head><body>
+        <div class="hdr">
+          <h2>ÇÖKERTME DÜNYASI</h2>
+          <div>${o.branch || "Adana Barajyolu Şubesi"}</div>
+          <div><strong>SİPARİŞ #${o.id}</strong> • ${o.createdAt || ""}</div>
+        </div>
+        <div class="box">
+          <div>TESLİMAT: ${o.deliveryType || o.mode || "Paket Servis"}</div>
+          <div>MÜŞTERİ: ${o.customerName || "-"}</div>
+          <div>TEL: ${o.phone || "-"}</div>
+          <div>ADRES: ${o.address || o.neighborhood || "-"}</div>
+        </div>
+        ${o.moldType ? `<div class="box" style="text-align:center; font-size:13px;">★ SUNUM: ${o.moldType.toUpperCase()}</div>` : ""}
+        <div style="margin:8px 0;">
+          <div style="font-weight:900; text-decoration:underline; margin-bottom:4px;">MUTFAK SİPARİŞ KALEMLERİ:</div>
+          ${itemsRows}
+        </div>
+        <div style="font-size:11.5px;">
+          <div>Ara Toplam: ${o.subtotal || o.total} TL</div>
+          <div>İndirim: -${o.discount || 0} TL</div>
+          ${o.deliveryFee ? `<div>Kurye: +${o.deliveryFee} TL</div>` : ""}
+          <div>Ödeme: ${o.paymentMethod === "COKERTME_WALLET" ? "ÇÖKERTME CÜZDAN (ÖDENDİ)" : "QNB 3D ONLINE (ÖDENDİ)"}</div>
+        </div>
+        <div class="tot"><span>NET ÖDENEN:</span><span>${o.total} TL</span></div>
+        <div style="text-align:center; margin-top:10px; font-size:11px;">Afiyet Olsun • cokertmedunyasi.com</div>
+        <script>window.onload = function(){ window.print(); };<\/script>
+      </body></html>`);
+      win.document.close();
+    }
+
+    function startAdminLiveOrderWatcher() {
+      const st = CokertmeStore.getState();
+      knownOrderIdsSet = new Set((st.orders || []).map(o => o && o.id).filter(Boolean));
+      syncQuickBranchControlsUI(st);
+      if (adminLiveWatcherTimer) clearInterval(adminLiveWatcherTimer);
+      adminLiveWatcherTimer = setInterval(async () => {
+        if (sessionStorage.getItem(ADMIN_SESSION_KEY) !== "authenticated") return;
+        const fresh = await CokertmeStore.syncFromServer();
+        const eff = getEffectiveBranchFilter();
+        let hasNewIncoming = false;
+        (fresh.orders || []).forEach(o => {
+          if (!o || !o.id) return;
+          if (knownOrderIdsSet && !knownOrderIdsSet.has(o.id)) {
+            knownOrderIdsSet.add(o.id);
+            if (matchesBranchFilter(o.branchId, o.branch, eff, fresh)) {
+              hasNewIncoming = true;
+            }
+          }
+        });
+        const lbl = document.getElementById("live-sync-indicator-lbl");
+        if (lbl) {
+          lbl.textContent = "● Son senkron: " + new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+        }
+        if (hasNewIncoming) {
+          playOrderBellChime(false);
+          renderAdminAll();
+        }
+      }, 15000);
+    }
+
     function renderOrders(state) {
+      syncQuickBranchControlsUI(state);
       const el = document.getElementById("admin-orders-list");
       if (!el) return;
       const role = getLoggedAdminRole();
@@ -5215,6 +5483,28 @@
             </div>` : ""}
           </div>
 
+          <!-- Canlı Sipariş Aşaması Yönetimi & 80mm Mutfak/Kurye Fişi -->
+          ${(() => {
+            const curStage = o.orderStage || "PREPARING";
+            const btnSt = (code, activeBg) => curStage === code
+              ? `background:${activeBg}; color:#fff; border:1.5px solid ${activeBg}; font-weight:800;`
+              : `background:#fff; color:var(--pt-navy); border:1px solid var(--pt-border); font-weight:700;`;
+            return `
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; background:#F8FAFC; border:1px solid var(--pt-border); padding:9px 12px; margin-bottom:10px;">
+                <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                  <span style="font-size:11px; font-weight:800; color:var(--pt-navy); text-transform:uppercase;">Canlı Durum:</span>
+                  <button type="button" onclick="setAdminOrderStage('${o.id}','RECEIVED')" style="${btnSt('RECEIVED','var(--pt-navy)')} padding:6px 10px; font-size:11.5px; cursor:pointer;">1. Alındı</button>
+                  <button type="button" onclick="setAdminOrderStage('${o.id}','PREPARING')" style="${btnSt('PREPARING','var(--pt-terracotta)')} padding:6px 10px; font-size:11.5px; cursor:pointer;">2. 🔥 Mutfakta</button>
+                  <button type="button" onclick="setAdminOrderStage('${o.id}','ON_THE_WAY')" style="${btnSt('ON_THE_WAY','#b45309')} padding:6px 10px; font-size:11.5px; cursor:pointer;">3. 🛵 Kuryede / Hazır</button>
+                  <button type="button" onclick="setAdminOrderStage('${o.id}','DELIVERED')" style="${btnSt('DELIVERED','var(--pt-olive)')} padding:6px 10px; font-size:11.5px; cursor:pointer;">4. ✅ Teslim Edildi</button>
+                </div>
+                <button type="button" onclick="printOrderReceipt('${o.id}')" style="background:var(--pt-navy-dark); color:var(--pt-gold-soft); border:1px solid var(--pt-gold); padding:7px 12px; font-size:11.5px; font-weight:700; cursor:pointer;">
+                  🖨️ 80mm Mutfak &amp; Kurye Fişi Yazdır
+                </button>
+              </div>
+            `;
+          })()}
+
           <div style="display:flex; justify-content:space-between; align-items:center; font-size:13.5px; padding-top:8px; border-top:1px dashed var(--pt-border); flex-wrap:wrap; gap:6px;">
             <span>Ara Toplam: <strong>${o.subtotal || o.total} ₺</strong> | <strong style="color:var(--pt-olive);">İndirim: -${o.discount || 0} ₺</strong>${o.deliveryFee ? ` | <strong style="color:var(--pt-navy);">Kurye Paket Hizmeti: +${o.deliveryFee} ₺</strong>` : ''}</span>
             <strong style="color:var(--pt-terracotta); font-size:16px;">Net Tahsilat: ${o.total} ₺</strong>
@@ -5250,7 +5540,12 @@
       }
     }
 
-    CokertmeStore.syncFromServer().then(initAdmin);
+    CokertmeStore.syncFromServer().then(() => {
+      initAdmin();
+      if (sessionStorage.getItem(ADMIN_SESSION_KEY) === "authenticated") {
+        startAdminLiveOrderWatcher();
+      }
+    });
   </script>
 </body>
 </html>

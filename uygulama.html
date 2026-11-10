@@ -18,7 +18,16 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Çökertme Dünyası" />
   <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="/assets/app-icon.svg" />
+  <link rel="apple-touch-icon" href="/assets/app-icon.svg" />
   <title>Çökertme Dünyası Mobil Uygulama – Online Sipariş</title>
+  <meta name="description" content="Çökertme Dünyası Resmi Online Sipariş Uygulaması – %10 anında indirim, 4 ücretsiz paket ikramı, 5 damgada %50 hediye ve Çökertme Dijital Cüzdan." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Çökertme Dünyası Online Sipariş" />
+  <meta property="og:title" content="Çökertme Dünyası – %10 İndirimli Online Sipariş" />
+  <meta property="og:description" content="İmza Çökertme Kebaplarını %10 uygulama indirimi ve 4 ücretsiz ikramla sıcak sipariş verin." />
+  <meta property="og:url" content="https://onlinesiparis.cokertmedunyasi.com/" />
+  <meta property="og:image" content="https://cokertmedunyasi.com/assets/uploads/item-1792323465955.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -3373,7 +3382,7 @@
 
   </div>
 
-  <script src="assets/data.js?v=17"></script>
+  <script src="assets/data.js?v=18"></script>
   <script>
     // =========================================================================
     // UYGULAMA DURUMU (STATE)
@@ -3997,6 +4006,82 @@
     // =========================================================================
     // SİPARİŞLERİM SAYFASI (ALT BARDAKİ 4. SEKME — DOĞRUDAN AÇILIR)
     // =========================================================================
+    function reorderPastOrder(orderId) {
+      const state = CokertmeStore.getState();
+      const userPhone = appUser && appUser.phone ? appUser.phone : "";
+      const myOrders = userPhone ? getCustomerOwnOrders(state, userPhone) : loadMyLocalOrdersHistory();
+      const target = orderId ? myOrders.find(o => o && o.id === orderId) : myOrders[0];
+      if (!target) {
+        alert("Tekrarlanacak geçmiş sipariş bulunamadı.");
+        return;
+      }
+
+      const rebuiltCart = [];
+      if (Array.isArray(target.structuredCart) && target.structuredCart.length > 0) {
+        target.structuredCart.forEach(entry => {
+          const exists = state.items.find(i => i && i.id === entry.itemId && i.available !== false);
+          if (exists) {
+            rebuiltCart.push(JSON.parse(JSON.stringify(entry)));
+          }
+        });
+      } else if (Array.isArray(target.orderItemsDetailed) && target.orderItemsDetailed.length > 0) {
+        target.orderItemsDetailed.forEach(det => {
+          const exists = state.items.find(i => i && (i.id === det.itemId || (i.name && i.name.tr === det.productName)) && i.available !== false);
+          if (exists) {
+            rebuiltCart.push({
+              cartId: "cart-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
+              itemId: exists.id,
+              qty: Number(det.qty) || 1,
+              portion: det.portion || "1 Porsiyon (Standart)",
+              yogurtChoice: det.yogurtChoice || (exists.categoryId === "cokertmeler" ? "Süzme Yoğurtlu" : ""),
+              garlicChoice: det.garlicChoice || (exists.categoryId === "cokertmeler" ? "Sarımsaklı" : ""),
+              toppingChoice: det.toppingChoice || "",
+              promoDrinks: Array.isArray(det.promoDrinks) ? det.promoDrinks : [],
+              noDrinkSelected: !Array.isArray(det.promoDrinks) || det.promoDrinks.length === 0
+            });
+          }
+        });
+      } else if (Array.isArray(target.items)) {
+        target.items.forEach(line => {
+          const str = String(line || "");
+          if (str.startsWith("[")) return;
+          const m = str.match(/^(\d+)x\s+(.+?)(\s*\(|\s*\[|\s*\+|$)/);
+          const qty = m ? (Number(m[1]) || 1) : 1;
+          const rawName = m ? m[2].trim() : str.trim();
+          const matched = state.items.find(i => i && i.available !== false && i.name && i.name.tr && rawName.toLowerCase().includes(i.name.tr.toLowerCase()));
+          if (matched) {
+            rebuiltCart.push({
+              cartId: "cart-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
+              itemId: matched.id,
+              qty,
+              portion: "1 Porsiyon (Standart)",
+              yogurtChoice: matched.categoryId === "cokertmeler" ? "Süzme Yoğurtlu" : "",
+              garlicChoice: matched.categoryId === "cokertmeler" ? "Sarımsaklı" : "",
+              toppingChoice: "",
+              promoDrinks: [],
+              noDrinkSelected: true
+            });
+          }
+        });
+      }
+
+      if (rebuiltCart.length === 0) {
+        alert("Geçmiş siparişinizdeki ürünler şu an menüde aktif görünmüyor. Lütfen menüden seçim yapın.");
+        switchTab("menu");
+        return;
+      }
+
+      appCart = rebuiltCart;
+      saveCart();
+      updateCartBadges();
+      switchTab("cart");
+    }
+
+    async function refreshMyOrdersLiveStatus() {
+      await CokertmeStore.syncFromServer();
+      renderCurrentView();
+    }
+
     function renderOrdersPageHtml() {
       const state = CokertmeStore.getState();
       const userPhone = appUser && appUser.phone ? appUser.phone : "";
@@ -4009,6 +4094,9 @@
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
             <div class="campaigns-top-bar-title">Siparişlerim</div>
+            <button type="button" onclick="refreshMyOrdersLiveStatus()" style="position:absolute; right:14px; top:50%; transform:translateY(-50%); background:#FAF7F2; border:1px solid var(--pt-gold); color:var(--pt-navy); border-radius:999px; padding:5px 10px; font-size:11.5px; font-weight:800; cursor:pointer;">
+              🔄 Yenile
+            </button>
           </div>
 
           <div style="padding:14px 16px 0;">
@@ -4039,36 +4127,60 @@
               </div>
             ` : myOrders.map(o => {
               const isDelivery = (o.deliveryType || o.mode || "").includes("Paket");
+              const stage = o.orderStage || "PREPARING";
+              const stageMetaMap = {
+                RECEIVED: { badge: "✓ Sipariş Alındı", bg: "rgba(2,58,88,0.1)", color: "var(--pt-navy)", step: 1 },
+                PREPARING: { badge: "🔥 Mutfakta Hazırlanıyor", bg: "rgba(221,89,3,0.13)", color: "var(--pt-terracotta)", step: 2 },
+                ON_THE_WAY: { badge: isDelivery ? "🛵 Kurye Yola Çıktı" : "🛍️ Gel-Al Paketi Hazır", bg: "rgba(212,155,53,0.2)", color: "#92400e", step: 3 },
+                DELIVERED: { badge: "✅ Teslim Edildi · Afiyet Olsun", bg: "rgba(59,82,51,0.16)", color: "var(--pt-olive)", step: 4 }
+              };
+              const stMeta = stageMetaMap[stage] || stageMetaMap.PREPARING;
+              const sStep = stMeta.step;
+
+              const stepBoxStyle = (idx) => {
+                if (sStep > idx || sStep === 4) return "background:#EDF7ED; border:1.5px solid var(--pt-olive); color:var(--pt-olive); font-weight:800;";
+                if (sStep === idx) return "background:#FFF8F3; border:1.5px solid var(--pt-terracotta); color:var(--pt-terracotta); font-weight:800;";
+                return "background:#fff; border:1px dashed var(--pt-border); color:var(--pt-text-muted); font-weight:600;";
+              };
+
               return `
                 <div class="login-card-box" style="margin:0 0 14px;">
                   <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px; flex-wrap:wrap;">
                     <strong style="font-size:16.5px; color:var(--pt-navy);">Sipariş #${o.id}</strong>
-                    <span style="background:rgba(59,82,51,0.14); color:var(--pt-olive); font-size:11.5px; font-weight:800; padding:4px 10px; border-radius:999px;">● Hazırlanıyor &amp; Canlı Takip</span>
+                    <span style="background:${stMeta.bg}; color:${stMeta.color}; font-size:11.5px; font-weight:800; padding:4px 10px; border-radius:999px;">${stMeta.badge}</span>
                   </div>
                   <div style="font-size:12.5px; color:var(--pt-text-muted); margin-bottom:10px;">${o.mode || ''} • Sipariş Zamanı: ${o.createdAt || ''}</div>
                   <div style="font-size:14px; font-weight:700; margin-bottom:12px; color:var(--pt-text); background:#f8fafc; padding:10px 12px; border-radius:10px; border:1px solid var(--pt-border);">${(o.items || []).join(", ")}</div>
 
                   <div style="background:#FAF7F2; border:1px solid var(--pt-gold); border-radius:12px; padding:10px 12px; margin-bottom:10px;">
-                    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; text-align:center; margin-bottom:8px;">
-                      <div style="background:#fff; border:1.5px solid var(--pt-olive); border-radius:8px; padding:6px 4px;">
-                        <div style="font-size:11px; font-weight:800; color:var(--pt-olive);">✓ Sipariş Alındı</div>
+                    <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:5px; text-align:center; margin-bottom:8px;">
+                      <div style="${stepBoxStyle(1)} border-radius:8px; padding:6px 3px; font-size:10.5px;">
+                        ${sStep >= 1 ? '✓' : '1.'} Alındı
                       </div>
-                      <div style="background:#FFF8F3; border:1.5px solid var(--pt-terracotta); border-radius:8px; padding:6px 4px;">
-                        <div style="font-size:11px; font-weight:800; color:var(--pt-terracotta);">● Hazırlanıyor</div>
+                      <div style="${stepBoxStyle(2)} border-radius:8px; padding:6px 3px; font-size:10.5px;">
+                        ${sStep > 2 ? '✓' : (sStep === 2 ? '●' : '2.')} Mutfak
                       </div>
-                      <div style="background:#fff; border:1px dashed var(--pt-border); border-radius:8px; padding:6px 4px;">
-                        <div style="font-size:11px; font-weight:700; color:var(--pt-navy);">${isDelivery ? 'Kurye Teslimat' : 'Gel-Al Hazır'}</div>
+                      <div style="${stepBoxStyle(3)} border-radius:8px; padding:6px 3px; font-size:10.5px;">
+                        ${sStep > 3 ? '✓' : (sStep === 3 ? '●' : '3.')} ${isDelivery ? 'Kuryede' : 'Hazır'}
+                      </div>
+                      <div style="${stepBoxStyle(4)} border-radius:8px; padding:6px 3px; font-size:10.5px;">
+                        ${sStep === 4 ? '✓' : '4.'} Teslim
                       </div>
                     </div>
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; font-size:12px; color:var(--pt-navy);">
-                      <span>Tahmini Hazırlanma: <strong>~${o.prepTimeMinutes || 15} dk ${o.estimatedReadyAt ? `(${o.estimatedReadyAt})` : ''}</strong></span>
+                      <span>${sStep === 4 ? '<strong>Siparişiniz tamamlandı, afiyet olsun!</strong>' : `Tahmini Hazırlanma: <strong>~${o.prepTimeMinutes || 15} dk ${o.estimatedReadyAt ? `(${o.estimatedReadyAt})` : ''}</strong>`}</span>
                       ${o.loyaltyNote ? `<span style="color:var(--pt-olive); font-weight:700;">★ ${o.loyaltyNote}</span>` : ''}
                     </div>
                   </div>
 
-                  <div style="display:flex; justify-content:space-between; padding-top:8px; border-top:1px dashed var(--pt-border); font-size:14px;">
-                    <span style="color:var(--pt-olive); font-weight:600;">Toplam İndirim: -${o.discount || 0} TL</span>
-                    <strong style="color:var(--pt-terracotta);">Ödenen: ${o.total || 0} TL</strong>
+                  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; padding-top:8px; border-top:1px dashed var(--pt-border); font-size:14px;">
+                    <div>
+                      <span style="color:var(--pt-olive); font-weight:600; font-size:12.5px; display:block;">Toplam İndirim: -${o.discount || 0} TL</span>
+                      <strong style="color:var(--pt-terracotta); font-size:15px;">Ödenen: ${o.total || 0} TL</strong>
+                    </div>
+                    <button type="button" onclick="reorderPastOrder('${o.id}')" style="background:var(--pt-navy); color:#fff; border:1px solid var(--pt-gold); border-radius:10px; padding:8px 13px; font-size:12px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:5px;">
+                      ⚡ Tek Tıkla Tekrarla
+                    </button>
                   </div>
                 </div>
               `;
@@ -4667,6 +4779,35 @@
             ${(() => {
               const locResolved = resolveActiveBranchForCurrentSelection(state, selectedLocation.city, selectedLocation.neighborhood, selectedLocation.branchId, "Eve Paket Servis");
               const b = locResolved.branch || {};
+              const avail = CokertmeStore.checkBranchServiceAvailability(b);
+              const userPhone = appUser && appUser.phone ? appUser.phone : "";
+              const pastOrders = showBanner ? (userPhone ? getCustomerOwnOrders(state, userPhone) : loadMyLocalOrdersHistory()) : [];
+              const lastOrd = pastOrders && pastOrders.length > 0 ? pastOrders[0] : null;
+
+              const closedNoticeHtml = !avail.available ? `
+                <div style="margin:6px 14px 4px; background:#FFF8F3; border:1.5px solid var(--pt-terracotta); border-left:5px solid var(--pt-terracotta); border-radius:12px; padding:10px 13px; font-size:12.5px; color:var(--pt-navy); display:flex; align-items:center; gap:9px;">
+                  <span style="font-size:18px;">⏰</span>
+                  <div>
+                    <strong style="color:var(--pt-terracotta); display:block;">Şu An Online Sipariş Saatleri Dışındayız / Yoğunluk Molası</strong>
+                    <span>${avail.reason} Menümüzü inceleyebilir, sepetinizi şimdiden hazırlayabilirsiniz.</span>
+                  </div>
+                </div>
+              ` : "";
+
+              const quickReorderHtml = lastOrd ? `
+                <div style="margin:8px 14px 4px; background:#FAF7F2; border:1.5px solid var(--pt-gold); border-radius:14px; padding:10px 13px; display:flex; align-items:center; justify-content:space-between; gap:10px; box-shadow:0 3px 10px rgba(2,58,88,0.06);">
+                  <div style="min-width:0; flex:1;">
+                    <div style="font-size:10.5px; font-weight:800; color:var(--pt-olive); text-transform:uppercase; letter-spacing:0.06em;">⚡ SON SİPARİŞİNİZİ TEKRARLAYIN (#${lastOrd.id})</div>
+                    <div style="font-size:12.5px; font-weight:700; color:var(--pt-navy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                      ${(lastOrd.items || []).filter(x => !String(x).startsWith('[')).join(' • ') || 'Önceki Çökertme Siparişiniz'}
+                    </div>
+                  </div>
+                  <button type="button" onclick="reorderPastOrder('${lastOrd.id}')" style="background:var(--pt-olive); color:#fff; border:1px solid var(--pt-gold); border-radius:9px; padding:8px 12px; font-size:11.5px; font-weight:800; white-space:nowrap; cursor:pointer; flex-shrink:0;">
+                    Tek Tıkla Sepete Ekle →
+                  </button>
+                </div>
+              ` : "";
+
               return `
                 <div onclick="openLocationSelectorModal()" style="margin:10px 14px 4px; background:linear-gradient(135deg, #14314F 0%, #023A58 100%); border:1.5px solid var(--pt-gold); border-radius:14px; padding:10px 13px; color:#fff; display:flex; align-items:center; justify-content:space-between; gap:10px; cursor:pointer; box-shadow:0 4px 14px rgba(2,58,88,0.12);">
                   <div style="display:flex; align-items:center; gap:10px; min-width:0;">
@@ -4678,7 +4819,7 @@
                         TESLİMAT BÖLGESİ: ${selectedLocation.city || 'Adana'} • ${selectedLocation.neighborhood || 'Yenibaraj'} Mah.
                       </div>
                       <div style="font-size:13px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                        Sorumlu Şube: ${formatCleanBranchName(b.name || 'Adana Barajyolu Şubesi')} (~${b.prepMinutes || 15} dk)
+                        ${formatCleanBranchName(b.name || 'Adana Barajyolu Şubesi')} (~${b.prepMinutes || 15} dk) • <span style="color:${avail.available ? '#86efac' : '#fca5a5'};">${avail.available ? `● Açık (${avail.openTime}–${avail.closeTime})` : '⏸ Servis Dışı'}</span>
                       </div>
                     </div>
                   </div>
@@ -4686,6 +4827,8 @@
                     İl / Mahalle ▾
                   </button>
                 </div>
+                ${closedNoticeHtml}
+                ${quickReorderHtml}
               `;
             })()}
 
@@ -6835,6 +6978,35 @@
       openAccountSubTab("cuzdanim");
     }
 
+    function submitSignedQnbPayForForm(gatewayUrl, formFields, cardDetails) {
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = gatewayUrl;
+      form.style.display = "none";
+
+      const allParams = { ...(formFields || {}) };
+      if (cardDetails && allParams.SecureType !== "3DHost") {
+        // QNB PayFor 3DPay kart alanları: Pan, Expiry (MMYY), Cvv2, CardHolderName
+        const rawExp = String(cardDetails.cardExp || "").replace(/\D/g, "");
+        const mmyy = rawExp.length === 4 ? rawExp : rawExp.slice(0, 4);
+        allParams.CardHolderName = cardDetails.cardHolder || "";
+        allParams.Pan = cardDetails.cardNumberRaw || "";
+        allParams.Expiry = mmyy;
+        allParams.Cvv2 = cardDetails.cardCvv || "";
+      }
+
+      Object.keys(allParams).forEach(k => {
+        const inp = document.createElement("input");
+        inp.type = "hidden";
+        inp.name = k;
+        inp.value = allParams[k] !== undefined && allParams[k] !== null ? String(allParams[k]) : "";
+        form.appendChild(inp);
+      });
+
+      document.body.appendChild(form);
+      form.submit();
+    }
+
     function completeAppOrderWithWallet() {
       const nameVal = (document.getElementById("checkout-name").value || "").trim();
       const phoneVal = (document.getElementById("checkout-phone").value || "").trim();
@@ -6860,6 +7032,14 @@
       }
 
       const state = CokertmeStore.getState();
+      const branchRes = resolveActiveBranchForCurrentSelection(state, cityVal, hoodVal, pickupBranchIdVal, modeVal);
+      const avail = CokertmeStore.checkBranchServiceAvailability(branchRes.branch);
+      const isTestBypass = localStorage.getItem(ADMIN_TEST_UNLOCK_KEY) === "true";
+      if (!avail.available && !isTestBypass) {
+        alert("⏰ Servis Saatleri / Yoğunluk Bilgilendirmesi:\n\n" + avail.reason);
+        return;
+      }
+
       const pricingInfo = calculateCartPricing(state, phoneVal, modeVal);
       const { finalTotal } = pricingInfo;
       const wStat = getUserWalletStatus(phoneVal, state);
@@ -6887,7 +7067,7 @@
       finalizePaidOrderAfter3D(true);
     }
 
-    function completeAppOrder() {
+    async function completeAppOrder() {
       const nameVal = (document.getElementById("checkout-name").value || "").trim();
       const phoneVal = (document.getElementById("checkout-phone").value || "").trim();
       const addrVal = (document.getElementById("checkout-address").value || "").trim();
@@ -6921,18 +7101,28 @@
         return;
       }
 
+      const state = CokertmeStore.getState();
+      const branchRes = resolveActiveBranchForCurrentSelection(state, cityVal, hoodVal, pickupBranchIdVal, modeVal);
+      const avail = CokertmeStore.checkBranchServiceAvailability(branchRes.branch);
+      const isTestBypass = localStorage.getItem(ADMIN_TEST_UNLOCK_KEY) === "true";
+      if (!avail.available && !isTestBypass) {
+        alert("⏰ Servis Saatleri / Yoğunluk Bilgilendirmesi:\n\n" + avail.reason);
+        return;
+      }
+
       // Ödeme yapılmadan kesinlikle sipariş verilemez!
       if (!cardHolder || cardNumberRaw.length < 15 || cardExp.length < 4 || cardCvv.length < 3) {
         alert("Ödeme yapılmadan sipariş oluşturulamaz!\n\nLütfen QNB Finansbank 3D Secure online ödeme için Kart Üzerindeki İsim, 16 Haneli Kart Numarası, Son Kullanma Tarihi (AA/YY) ve CVV güvenlik kodunu eksiksiz girin veya Çökertme Dijital Cüzdan bakiyenizle ödeyin.");
         return;
       }
 
-      const state = CokertmeStore.getState();
       const pricingInfo = calculateCartPricing(state, phoneVal, modeVal);
       const { finalTotal } = pricingInfo;
+      const preOrderId = "CKR-" + Math.floor(1000 + Math.random() * 9000);
 
       const last4 = cardNumberRaw.slice(-4);
       pendingCheckoutData = {
+        preGeneratedOrderId: preOrderId,
         nameVal,
         phoneVal,
         addrVal,
@@ -6946,6 +7136,25 @@
         payViaWallet: false,
         usedLoyaltyReward: Boolean(pricingInfo.loyaltyRewardDiscount > 0)
       };
+
+      // Doğrudan QNB Finansbank PayFor 3D Sanal POS kontrolü (Canlı MerchantId + MerchantPass tanımlıysa doğrudan bankaya yönlendirir)
+      const qnbInit = await CokertmeStore.initQnb3dSession({
+        orderId: preOrderId,
+        amount: finalTotal,
+        purpose: "ORDER"
+      });
+      if (qnbInit && qnbInit.ok && qnbInit.liveReady && qnbInit.gatewayUrl && qnbInit.formFields) {
+        try {
+          sessionStorage.setItem("cokertme_pending_qnb_order_v1", JSON.stringify(pendingCheckoutData));
+        } catch (e) {}
+        submitSignedQnbPayForForm(qnbInit.gatewayUrl, qnbInit.formFields, {
+          cardHolder,
+          cardNumberRaw,
+          cardExp,
+          cardCvv
+        });
+        return;
+      }
 
       document.getElementById("qnb-3d-amount-lbl").textContent = finalTotal.toFixed(2).replace(".", ",") + " TL";
       document.getElementById("qnb-3d-card-lbl").textContent = "**** **** **** " + last4;
@@ -6983,7 +7192,7 @@
       const pricingInfo = calculateCartPricing(state, phoneVal, modeVal);
       const { subtotal, totalDiscount, loyaltyRewardDiscount, courierFee, finalTotal, cartHasCokertme, rewardedItemName } = pricingInfo;
       const summaryItems = [];
-      const orderId = "CKR-" + Math.floor(1000 + Math.random() * 9000);
+      const orderId = pendingCheckoutData.preGeneratedOrderId || ("CKR-" + Math.floor(1000 + Math.random() * 9000));
 
       let walletDeductionResult = null;
       if (payViaWallet) {
@@ -7153,6 +7362,8 @@
         adisyoBranchCode: assignedBranch.adisyoBranchCode || "ADANA-BARAJYOLU-01",
         items: summaryItems,
         orderItemsDetailed: orderItemsDetailed,
+        structuredCart: JSON.parse(JSON.stringify(appCart)),
+        orderStage: "RECEIVED",
         subtotal: subtotal,
         discount: discount,
         deliveryFee: courierFee,
@@ -7453,7 +7664,7 @@
       }
     }
 
-    function startWalletTopup3D() {
+    async function startWalletTopup3D() {
       if (!appUser || !appUser.phone) {
         alert("Lütfen önce hesabınıza giriş yapın.");
         return;
@@ -7483,7 +7694,9 @@
 
       const calc = calculateWalletTopupBonus(paidVal, state);
       const last4 = cardNumberRaw.slice(-4);
+      const topupRefId = "WLT-" + Math.floor(100000 + Math.random() * 900000);
       pendingWalletTopupData = {
+        topupRefId,
         phone: appUser.phone,
         fullName: appUser.fullName || cardHolder,
         paidAmount: calc.paidAmount,
@@ -7492,6 +7705,24 @@
         totalCredit: calc.totalCredit,
         cardLast4: last4
       };
+
+      const qnbInit = await CokertmeStore.initQnb3dSession({
+        orderId: topupRefId,
+        amount: calc.paidAmount,
+        purpose: "WALLET_TOPUP"
+      });
+      if (qnbInit && qnbInit.ok && qnbInit.liveReady && qnbInit.gatewayUrl && qnbInit.formFields) {
+        try {
+          sessionStorage.setItem("cokertme_pending_qnb_wallet_v1", JSON.stringify(pendingWalletTopupData));
+        } catch (e) {}
+        submitSignedQnbPayForForm(qnbInit.gatewayUrl, qnbInit.formFields, {
+          cardHolder,
+          cardNumberRaw,
+          cardExp,
+          cardCvv
+        });
+        return;
+      }
 
       const amtLbl = document.getElementById("wallet-3d-amount-lbl");
       const bonusLbl = document.getElementById("wallet-3d-bonus-lbl");
@@ -7508,15 +7739,17 @@
       if (m) m.style.display = "none";
     }
 
-    function finalizeWalletTopupAfter3D() {
+    function finalizeWalletTopupAfter3D(skipSmsCheck) {
       if (!pendingWalletTopupData) return;
-      const smsEl = document.getElementById("wallet-3d-sms-code");
-      const smsCode = (smsEl ? smsEl.value : "").trim();
-      if (smsCode.length < 4) {
-        alert("Lütfen 3D Secure banka doğrulama şifresini girin.");
-        return;
+      if (!skipSmsCheck) {
+        const smsEl = document.getElementById("wallet-3d-sms-code");
+        const smsCode = (smsEl ? smsEl.value : "").trim();
+        if (smsCode.length < 4) {
+          alert("Lütfen 3D Secure banka doğrulama şifresini girin.");
+          return;
+        }
+        closeWallet3dModal();
       }
-      closeWallet3dModal();
 
       const state = CokertmeStore.getState();
       const { phone, fullName, paidAmount, cardLast4 } = pendingWalletTopupData;
@@ -8417,17 +8650,14 @@
       }
     }
 
-    function unlockAdminTestMode(ev) {
+    async function unlockAdminTestMode(ev) {
       if (ev) ev.preventDefault();
       const inp = document.getElementById("admin-test-pin-field");
       const err = document.getElementById("admin-test-pin-error");
       const val = (inp && inp.value ? inp.value : "").trim();
 
-      const state = CokertmeStore.getState();
-      const customPin = (state && state.appSettings && state.appSettings.testAccessPin) || "YEo13221990.,";
-      const adminPass = (state && state.adminSettings && state.adminSettings.passwordHash) || "YEo13221990.,";
-
-      if (val && (val === customPin || val === adminPass || val === "YEo13221990.,")) {
+      const valid = await CokertmeStore.verifyTestAccessPin(val);
+      if (valid) {
         localStorage.setItem(ADMIN_TEST_UNLOCK_KEY, "true");
         if (err) err.style.display = "none";
         if (inp) inp.value = "";
@@ -8647,6 +8877,7 @@
     // Başlangıç
     let urlInitialClaimToken = "";
     let urlInitialOpenQrCard = false;
+    let urlQnb3dResult = null;
     (function initUrlAuthParam() {
       try {
         const params = new URLSearchParams(window.location.search);
@@ -8662,16 +8893,50 @@
         if (params.get("openQrCard") === "1") {
           urlInitialOpenQrCard = true;
         }
+        const qnb3dStatus = params.get("qnb3d");
+        if (qnb3dStatus === "success" || qnb3dStatus === "fail") {
+          urlQnb3dResult = {
+            status: qnb3dStatus,
+            purpose: params.get("purpose") || "ORDER",
+            orderId: params.get("orderId") || "",
+            authCode: params.get("authCode") || "",
+            reason: params.get("reason") || ""
+          };
+        }
       } catch (e) {}
     })();
     checkMaintenanceGate();
     updateCartBadges();
     updateUserHeaderUI();
-    CokertmeStore.syncFromServer().then(() => {
+    CokertmeStore.syncFromServer().then(async () => {
       checkMaintenanceGate();
       updateUserHeaderUI();
       renderCurrentView();
-      if (urlInitialClaimToken) {
+      if (urlQnb3dResult) {
+        try {
+          window.history.replaceState({}, document.title, window.location.pathname);
+        } catch (e) {}
+        if (urlQnb3dResult.status === "success") {
+          if (urlQnb3dResult.purpose === "WALLET_TOPUP") {
+            const rawW = sessionStorage.getItem("cokertme_pending_qnb_wallet_v1");
+            sessionStorage.removeItem("cokertme_pending_qnb_wallet_v1");
+            if (rawW) {
+              pendingWalletTopupData = JSON.parse(rawW);
+              finalizeWalletTopupAfter3D(true);
+            }
+          } else {
+            const rawO = sessionStorage.getItem("cokertme_pending_qnb_order_v1");
+            sessionStorage.removeItem("cokertme_pending_qnb_order_v1");
+            if (rawO) {
+              pendingCheckoutData = JSON.parse(rawO);
+              await finalizePaidOrderAfter3D(true);
+            }
+          }
+        } else {
+          alert("⚠️ QNB Finansbank 3D Secure Ödeme Tamamlanamadı:\n\n" + (urlQnb3dResult.reason || "Banka doğrulaması iptal edildi veya reddedildi."));
+          switchTab("cart");
+        }
+      } else if (urlInitialClaimToken) {
         openInStoreQrCardModal(urlInitialClaimToken);
         if (appUser && appUser.phone) {
           submitInStoreStampTokenClaim();

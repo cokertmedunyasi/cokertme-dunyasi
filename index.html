@@ -9,6 +9,47 @@
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Çökertme Dünyası – Muğla'nın Efsanesi, Adana'dan Dünyaya</title>
+  <meta name="description" content="Muğla'nın efsane Çökertme Kebabı, çıtır kibrit patatesi, süzme yoğurdu ve ücretsiz masa ikramlarıyla Adana Barajyolu Şubesi'nde ve %10 indirimli online siparişte." />
+  <meta name="theme-color" content="#14314F" />
+  <link rel="icon" type="image/svg+xml" href="/assets/app-icon.svg" />
+  <link rel="apple-touch-icon" href="/assets/app-icon.svg" />
+  <link rel="canonical" href="https://cokertmedunyasi.com/" />
+  <meta property="og:type" content="restaurant" />
+  <meta property="og:site_name" content="Çökertme Dünyası" />
+  <meta property="og:title" content="Çökertme Dünyası – Muğla'nın Efsanesi, Adana'dan Dünyaya" />
+  <meta property="og:description" content="Ustalık eseri Çökertme Kebabı, 6 çeşit ücretsiz ikram ve %10 online sipariş ayrıcalığı." />
+  <meta property="og:url" content="https://cokertmedunyasi.com/" />
+  <meta property="og:image" content="https://cokertmedunyasi.com/assets/uploads/item-1792323465955.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "Çökertme Dünyası – Adana Barajyolu Şubesi",
+    "image": "https://cokertmedunyasi.com/assets/uploads/item-1792323465955.jpg",
+    "url": "https://cokertmedunyasi.com/",
+    "telephone": "+905469180701",
+    "servesCuisine": ["Türk Mutfağı", "Ege Mutfağı", "Çökertme Kebabı"],
+    "priceRange": "₺₺",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Yenibaraj Mahallesi, Bülent Angın Blv. No: 66/D",
+      "addressLocality": "Seyhan",
+      "addressRegion": "Adana",
+      "addressCountry": "TR"
+    },
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+        "opens": "11:00",
+        "closes": "23:30"
+      }
+    ],
+    "hasMenu": "https://cokertmedunyasi.com/menu",
+    "acceptsReservations": "False"
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -76,11 +117,11 @@
     }
 
     .pt-header.scrolled {
-      background: rgba(2, 58, 88, 0.96);
+      background: rgba(59, 82, 51, 0.97);
       backdrop-filter: blur(10px);
       padding: 14px 48px;
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
-      border-bottom: 1px solid rgba(212, 155, 53, 0.3);
+      border-bottom: 1.5px solid rgba(212, 155, 53, 0.45);
     }
 
     /* Sol Hamburger Toggle */
@@ -1114,6 +1155,51 @@
         padding: 28px 20px;
       }
     }
+
+    /* Mobil Sabit Hızlı Aksiyon Barı (PatioTime Demo 4 Uyumlu) */
+    .pt-mobile-sticky-cta {
+      display: none;
+    }
+    @media (max-width: 768px) {
+      body {
+        padding-bottom: 64px;
+      }
+      .pt-mobile-sticky-cta {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 950;
+        display: grid;
+        grid-template-columns: 1fr 1.35fr;
+        background: #14314F;
+        border-top: 2px solid var(--pt-gold);
+        box-shadow: 0 -8px 28px rgba(2, 30, 48, 0.35);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      .pt-mobile-sticky-cta a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 14px 10px;
+        font-family: var(--font-sans);
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .pt-mobile-sticky-cta .cta-qr {
+        color: var(--pt-gold-soft);
+        background: #14314F;
+        border-right: 1px solid rgba(212, 155, 53, 0.3);
+      }
+      .pt-mobile-sticky-cta .cta-order {
+        color: #FFFFFF;
+        background: var(--pt-accent);
+      }
+    }
   </style>
 </head>
 <body>
@@ -1187,11 +1273,11 @@
     </a>
 
     <div class="pt-header-right">
-      <a href="https://onlinesiparis.cokertmedunyasi.com/" onclick="return window.openOnlineOrderPortal ? window.openOnlineOrderPortal(event) : true;" class="pt-btn pt-btn-solid-accent hide-mobile" style="padding:12px 20px;">
-        %10 ONLİNE SİPARİŞ
+      <a href="https://onlinesiparis.cokertmedunyasi.com/" onclick="return window.openOnlineOrderPortal ? window.openOnlineOrderPortal(event) : true;" class="pt-btn pt-btn-solid-accent pt-btn-mobile-compact" style="padding:12px 20px;">
+        %10 <span class="desktop-only-text">ONLİNE </span>SİPARİŞ
       </a>
-      <button class="pt-btn pt-btn-outline-light pt-btn-mobile-compact" style="padding:12px 22px;" onclick="openFranchiseModal()">
-        BAYİLİK<span class="desktop-only-text"> &amp; QR MENÜ</span>
+      <button class="pt-btn pt-btn-outline-light hide-mobile" style="padding:12px 22px;" onclick="openFranchiseModal()">
+        BAYİLİK &amp; QR MENÜ
       </button>
     </div>
   </header>
@@ -1539,7 +1625,19 @@
     <div class="pt-modal-box" id="home-dish-modal-content" style="max-width:560px; padding:0; overflow:hidden; border-top:4px solid var(--pt-olive);"></div>
   </div>
 
-  <script src="assets/data.js?v=7"></script>
+  <!-- MOBİL SABİT HIZLI AKSİYON BARI (QR MENÜ & %10 ONLİNE SİPARİŞ) -->
+  <nav class="pt-mobile-sticky-cta" aria-label="Hızlı Erişim">
+    <a href="menu.html" class="cta-qr">
+      <span>🍽️</span>
+      <span>QR MENÜ</span>
+    </a>
+    <a href="https://onlinesiparis.cokertmedunyasi.com/" onclick="return window.openOnlineOrderPortal ? window.openOnlineOrderPortal(event) : true;" class="cta-order">
+      <span>🛵</span>
+      <span>%10 ONLİNE SİPARİŞ</span>
+    </a>
+  </nav>
+
+  <script src="assets/data.js?v=18"></script>
   <script>
     // 1. Sticky Header Scroll Efekti
     window.addEventListener("scroll", () => {

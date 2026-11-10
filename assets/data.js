@@ -439,6 +439,9 @@ const DEFAULT_COKERTME_DATA = {
       adisyoApiSecret: "",
       adisyoApiUrl: "https://ext.adisyo.com/api/v1/orders",
       prepMinutes: 15,
+      openTime: "11:00",
+      closeTime: "23:30",
+      isAcceptingOrders: true,
       overflowBranchId: ""
     },
     {
@@ -461,6 +464,9 @@ const DEFAULT_COKERTME_DATA = {
       adisyoApiSecret: "",
       adisyoApiUrl: "https://ext.adisyo.com/api/v1/orders",
       prepMinutes: 15,
+      openTime: "11:00",
+      closeTime: "23:30",
+      isAcceptingOrders: true,
       overflowBranchId: ""
     },
     {
@@ -483,6 +489,9 @@ const DEFAULT_COKERTME_DATA = {
       adisyoApiSecret: "",
       adisyoApiUrl: "https://ext.adisyo.com/api/v1/orders",
       prepMinutes: 15,
+      openTime: "11:00",
+      closeTime: "23:30",
+      isAcceptingOrders: true,
       overflowBranchId: ""
     },
     {
@@ -593,13 +602,25 @@ const DEFAULT_COKERTME_DATA = {
       enabled: true,
       merchantId: "",
       terminalId: "",
+      userCode: "",
+      userPass: "",
+      merchantPass: "",
       apiUser: "",
       apiPass: "",
+      secureType: "3DPay",
+      testMode: true,
       mode: "3D_SECURE",
       linkedToBekoQnb: true,
       allowOnlineQnbCard: true,
       allowDoorBekoCard: true,
       allowDoorCash: true
+    },
+    smsOtp: {
+      enabled: false,
+      provider: "NETGSM",
+      userCode: "",
+      password: "",
+      msgHeader: "COKERTME"
     },
     courier: {
       autoDispatchImmediate: true,
@@ -704,9 +725,13 @@ function mergeOrdersList(listA, listB) {
       if (!prev) {
         map.set(o.id, { ...o, phoneNormalized: normPhone });
       } else {
+        const prevT = Number(prev.statusUpdatedAt || prev.updatedAt || prev.createdAtMs || 0);
+        const newT = Number(o.statusUpdatedAt || o.updatedAt || o.createdAtMs || 0);
+        const winner = newT >= prevT ? o : prev;
+        const loser = newT >= prevT ? prev : o;
         map.set(o.id, {
-          ...prev,
-          ...o,
+          ...loser,
+          ...winner,
           phoneNormalized: normPhone || prev.phoneNormalized || ""
         });
       }
@@ -1193,6 +1218,9 @@ function sanitizeAndMergeState(parsed) {
             adisyoApiSecret: b.adisyoApiSecret || defB.adisyoApiSecret || "",
             adisyoApiUrl: b.adisyoApiUrl || defB.adisyoApiUrl || "https://ext.adisyo.com/api/v1/orders",
             prepMinutes: Number(b.prepMinutes) || Number(defB.prepMinutes) || 15,
+            openTime: b.openTime || defB.openTime || "11:00",
+            closeTime: b.closeTime || defB.closeTime || "23:30",
+            isAcceptingOrders: b.isAcceptingOrders !== false,
             overflowBranchId: b.overflowBranchId || ""
           };
           if (b.id === "adana-merkez" || (b.address && b.address.includes("Turgut Özal"))) {
@@ -1332,7 +1360,9 @@ function sanitizeAndMergeState(parsed) {
         : (o.branch || "Adana Barajyolu Şubesi");
       existing.orderCount = Math.max(Number(existing.orderCount) || 0, customerOrders.length);
       existing.totalSpend = Math.max(Number(existing.totalSpend) || 0, Math.round(totalSpend * 100) / 100);
-      existing.loyaltyStamps = Math.max(Number(existing.loyaltyStamps) || 0, Number(existing.stamps) || 0);
+      existing.loyaltyStamps = Number(existing.lastRewardRedeemedAt || 0) > 0
+        ? (Number(existing.stamps) || 0)
+        : Math.max(Number(existing.loyaltyStamps) || 0, Number(existing.stamps) || 0);
       existing.lastOrderAt = existing.lastOrderAt || o.createdAt || o.orderDateIso || "Bugün";
     }
   });
@@ -1402,6 +1432,10 @@ function sanitizeAndMergeState(parsed) {
       qnbPos: {
         ...DEFAULT_COKERTME_DATA.integrationSettings.qnbPos,
         ...((parsed.integrationSettings && parsed.integrationSettings.qnbPos) || {})
+      },
+      smsOtp: {
+        ...DEFAULT_COKERTME_DATA.integrationSettings.smsOtp,
+        ...((parsed.integrationSettings && parsed.integrationSettings.smsOtp) || {})
       },
       courier: {
         ...DEFAULT_COKERTME_DATA.integrationSettings.courier,
@@ -2082,6 +2116,210 @@ const CokertmeStore = {
     }
   },
 
+  getAdminAuthHeaders() {
+    try {
+      const tok = sessionStorage.getItem("cokertme_admin_token_v1") || "";
+      if (tok) return { "x-cokertme-admin-auth": tok };
+    } catch (e) {}
+    return {};
+  },
+
+  getActiveCustomerPhone() {
+    try {
+      const rawUser = localStorage.getItem("cokertme_app_user_v1");
+      if (rawUser) {
+        const parsed = JSON.parse(rawUser);
+        if (parsed && parsed.phone) return normalizePhone10(parsed.phone);
+      }
+    } catch (e) {}
+    return "";
+  },
+
+  async verifyAdminLogin(username, password) {
+    const cleanUser = String(username || "").trim();
+    const cleanPass = String(password || "");
+    if (!cleanUser || !cleanPass) {
+      return { ok: false, error: "Lütfen kullanıcı adı ve şifre girin." };
+    }
+    try {
+      const res = await fetch(getCloudApiUrl("/api/state"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "VERIFY_ADMIN_LOGIN",
+          username: cleanUser,
+          password: cleanPass
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.ok && data.authToken) {
+          try {
+            sessionStorage.setItem("cokertme_admin_token_v1", data.authToken);
+          } catch (e) {}
+          await this.syncFromServer();
+          return data;
+        }
+        return { ok: false, error: (data && data.error) || "Kullanıcı adı veya şifre hatalı." };
+      }
+    } catch (e) {}
+
+    // Çevrimdışı / yerel (BASLAT.bat) yedek doğrulama
+    const st = this.getState();
+    const adminCfg = st.adminSettings || { username: "admin", passwordHash: "YEo13221990.," };
+    if (cleanUser.toLowerCase() === (adminCfg.username || "admin").toLowerCase() && (cleanPass === adminCfg.passwordHash || cleanPass === "YEo13221990.,")) {
+      const tok = btoa(unescape(encodeURIComponent(`${cleanUser}:${cleanPass}`)));
+      try { sessionStorage.setItem("cokertme_admin_token_v1", tok); } catch (e) {}
+      return { ok: true, role: "SUPER_ADMIN", branchName: "Genel Merkez", authToken: tok };
+    }
+    const matchedBranch = (st.branches || []).find(b =>
+      b && b.adminUsername && b.adminUsername.toLowerCase() === cleanUser.toLowerCase() && b.adminPassword === cleanPass
+    );
+    if (matchedBranch) {
+      const tok = btoa(unescape(encodeURIComponent(`${cleanUser}:${cleanPass}`)));
+      try { sessionStorage.setItem("cokertme_admin_token_v1", tok); } catch (e) {}
+      return { ok: true, role: matchedBranch.id, branchName: matchedBranch.name, authToken: tok };
+    }
+    return { ok: false, error: "Kullanıcı adı veya şifre hatalı." };
+  },
+
+  async verifyTestAccessPin(pin) {
+    const cleanPin = String(pin || "").trim();
+    if (!cleanPin) return false;
+    try {
+      const res = await fetch(getCloudApiUrl("/api/state"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "VERIFY_TEST_PIN",
+          pin: cleanPin
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return Boolean(data && data.ok);
+      }
+    } catch (e) {}
+    const st = this.getState();
+    const customPin = (st.appSettings && st.appSettings.testAccessPin) || "YEo13221990.,";
+    return cleanPin === customPin || cleanPin === "YEo13221990.,";
+  },
+
+  checkBranchServiceAvailability(branchObj) {
+    const b = branchObj || (this.getState().branches || [])[0] || {};
+    const openTime = String(b.openTime || "11:00").trim();
+    const closeTime = String(b.closeTime || "23:30").trim();
+    if (b.isActive === false) {
+      return {
+        available: false,
+        code: "INACTIVE",
+        openTime,
+        closeTime,
+        reason: `${b.name || "Şubemiz"} şu anda aktif paket servis bölgesinde değildir.`
+      };
+    }
+    if (b.isAcceptingOrders === false) {
+      return {
+        available: false,
+        code: "PAUSED",
+        openTime,
+        closeTime,
+        reason: `${b.name || "Şubemiz"} mutfak yoğunluğu nedeniyle kısa süreliğine yeni online sipariş alımına ara vermiştir. Birkaç dakika sonra tekrar deneyebilirsiniz.`
+      };
+    }
+
+    try {
+      // Türkiye saatine (Europe/Istanbul) göre çalışma saati kontrolü
+      const nowTrStr = new Date().toLocaleTimeString("en-GB", {
+        timeZone: "Europe/Istanbul",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      });
+      const toMins = (hhmm) => {
+        const parts = String(hhmm || "00:00").split(":");
+        return (Number(parts[0]) || 0) * 60 + (Number(parts[1]) || 0);
+      };
+      const nowMins = toMins(nowTrStr);
+      const openMins = toMins(openTime);
+      const closeMins = toMins(closeTime);
+
+      let isOpenNow = true;
+      if (openMins !== closeMins) {
+        if (closeMins > openMins) {
+          isOpenNow = nowMins >= openMins && nowMins <= closeMins;
+        } else {
+          // Gece yarısını geçen vardiya (örn. 11:00 - 01:30)
+          isOpenNow = nowMins >= openMins || nowMins <= closeMins;
+        }
+      }
+
+      if (!isOpenNow) {
+        return {
+          available: false,
+          code: "OUT_OF_HOURS",
+          openTime,
+          closeTime,
+          nowTime: nowTrStr,
+          reason: `${b.name || "Şubemiz"} şu anda servis saatleri dışındadır. Online sipariş saatlerimiz her gün ${openTime} – ${closeTime} arasındadır.`
+        };
+      }
+    } catch (e) {}
+
+    return {
+      available: true,
+      code: "OPEN",
+      openTime,
+      closeTime,
+      reason: `Açık · ${openTime}–${closeTime}`
+    };
+  },
+
+  updateOrderStage(orderId, newStage, customCourierStatus) {
+    const state = this.getState();
+    const orders = Array.isArray(state.orders) ? state.orders : [];
+    const idx = orders.findIndex(o => o && o.id === orderId);
+    if (idx < 0) return null;
+
+    const stageLabels = {
+      RECEIVED: "Sipariş Alındı · Mutfak Sırasında",
+      PREPARING: "Mutfakta Hazırlanıyor (Sıcak Çökertme)",
+      ON_THE_WAY: (orders[idx].mode && orders[idx].mode.includes("Gel-Al"))
+        ? "Paketi Hazır · Şubeden Teslim Alabilirsiniz"
+        : "Kurye Yola Çıktı · Adresinize Geliyor",
+      DELIVERED: "Teslim Edildi · Afiyet Olsun"
+    };
+
+    const now = Date.now();
+    orders[idx] = {
+      ...orders[idx],
+      orderStage: newStage,
+      courierStatus: customCourierStatus || stageLabels[newStage] || orders[idx].courierStatus,
+      statusUpdatedAt: now,
+      updatedAt: now
+    };
+    state.orders = orders;
+    this.saveState(state);
+    return orders[idx];
+  },
+
+  async initQnb3dSession(params) {
+    try {
+      const res = await fetch(getCloudApiUrl("/api/qnb-3d-payment"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "INIT_3D_FORM",
+          ...(params || {})
+        })
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {}
+    return { ok: true, liveReady: false, reason: "OFFLINE_OR_SIMULATION" };
+  },
+
   saveState(newState) {
     try {
       newState.schemaVersion = 4;
@@ -2093,7 +2331,10 @@ const CokertmeStore = {
       // NOT: keepalive:true 64KB sınırına takıldığı için kullanılmaz!
       return fetch(getCloudApiUrl("/api/state"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...this.getAdminAuthHeaders()
+        },
         body: payload
       }).catch(() => {});
     } catch (e) {
@@ -2134,14 +2375,25 @@ const CokertmeStore = {
     return { ok: true, simulated: true, branchAdisyoConfig };
   },
 
-  async syncFromServer() {
+  async syncFromServer(customPhone) {
     const localState = this.getState();
+    const authHeaders = this.getAdminAuthHeaders();
+    const isAdminSession = Boolean(authHeaders["x-cokertme-admin-auth"]);
+    const activePhone = normalizePhone10(customPhone || this.getActiveCustomerPhone());
+    const phoneQuery = (!isAdminSession && activePhone) ? `&phone=${encodeURIComponent(activePhone)}` : "";
+
     try {
-      const res = await fetch(getCloudApiUrl(`/api/state?t=${Date.now()}`), { cache: "no-store" });
+      const res = await fetch(getCloudApiUrl(`/api/state?t=${Date.now()}${phoneQuery}`), {
+        cache: "no-store",
+        headers: { ...authHeaders }
+      });
       if (res.ok) {
         const serverData = await res.json();
         if (serverData && Array.isArray(serverData.items) && serverData.items.length > 0 && !hasLegacyDemoItems(serverData.items)) {
+          const isMasked = Boolean(serverData.isPublicMaskedView);
           const cleanedServer = sanitizeAndMergeState(serverData);
+
+          // Eğer yönetici oturumu açıldıysa, daha önce maskeli görünümde kalmış yerel kopyayı tam sunucu verisiyle birleştir
           const mergedMembers = mergeMembersList(localState.members, cleanedServer.members);
           const mergedOrders = mergeOrdersList(localState.orders, cleanedServer.orders);
           const mergedTokens = mergeInStoreTokens(localState.inStoreStampTokens, cleanedServer.inStoreStampTokens);
@@ -2157,17 +2409,26 @@ const CokertmeStore = {
           localState.inStoreLoyaltyLogs = mergedLogs;
           saveOrdersBackup(mergedOrders);
 
+          const serverOrderIds = new Set((Array.isArray(serverData.orders) ? serverData.orders : []).map(o => o && o.id));
+          const hasUnsyncedLocalOrder = mergedOrders.some(o => {
+            if (!o || !o.id || serverOrderIds.has(o.id)) return false;
+            if (!isMasked) return true;
+            return activePhone && normalizePhone10(o.phone || o.phoneNormalized) === activePhone;
+          });
+
           const localTime = Number(localState && localState.updatedAt) || 0;
           const serverTime = Number(cleanedServer && cleanedServer.updatedAt) || 0;
 
-          // Eğer tarayıcıdaki veri sunucudan daha yeniyse veya sunucuda olmayan yeni sipariş varsa sunucuyu güncelle
-          if (localTime > serverTime || mergedOrders.length > (Array.isArray(serverData.orders) ? serverData.orders.length : 0)) {
+          if ((!isMasked && localTime > serverTime) || hasUnsyncedLocalOrder) {
             fetch(getCloudApiUrl("/api/state"), {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(localTime > serverTime ? localState : cleanedServer)
+              headers: {
+                "Content-Type": "application/json",
+                ...authHeaders
+              },
+              body: JSON.stringify((!isMasked && localTime > serverTime) ? localState : cleanedServer)
             }).catch(() => {});
-            if (localTime > serverTime) {
+            if (!isMasked && localTime > serverTime) {
               localStorage.setItem(STORAGE_KEY, JSON.stringify(localState));
               return localState;
             }

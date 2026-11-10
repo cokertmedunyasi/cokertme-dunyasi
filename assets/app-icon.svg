@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#14314F"/>
+      <stop offset="55%" stop-color="#023A58"/>
+      <stop offset="100%" stop-color="#283822"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F3D999"/>
+      <stop offset="50%" stop-color="#D49B35"/>
+      <stop offset="100%" stop-color="#B37D1E"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#bgGrad)"/>
+  <rect x="22" y="22" width="468" height="468" rx="78" fill="none" stroke="url(#goldGrad)" stroke-width="6"/>
+  <text x="256" y="118" text-anchor="middle" fill="#F3D999" font-family="Georgia, serif" font-size="28" letter-spacing="10">★★★★★</text>
+  <text x="256" y="295" text-anchor="middle" fill="url(#goldGrad)" font-family="Georgia, 'Cormorant Garamond', serif" font-weight="700" font-size="184">ÇD</text>
+  <line x1="116" y1="342" x2="396" y2="342" stroke="#D49B35" stroke-width="3"/>
+  <text x="256" y="388" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-weight="700" font-size="30" letter-spacing="5">ÇÖKERTME</text>
+  <text x="256" y="426" text-anchor="middle" fill="#F3D999" font-family="Arial, sans-serif" font-weight="600" font-size="22" letter-spacing="7">DÜNYASI</text>
+</svg>

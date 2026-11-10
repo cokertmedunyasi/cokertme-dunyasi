@@ -1,11 +1,20 @@
 {
-  "name": "Çökertme Dünyası Mobil Sipariş",
+  "name": "Çökertme Dünyası — %10 İndirimli Online Sipariş",
   "short_name": "Çökertme Dünyası",
-  "description": "Çökertme Dünyası %10 İndirimli Online Sipariş Uygulaması (iOS & Android)",
+  "description": "Çökertme Dünyası %10 İndirimli Online Sipariş, 5 Damgada %50 Hediye Çökertme ve Dijital Cüzdan Uygulaması",
   "start_url": "/uygulama",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#14314F",
   "theme_color": "#14314F",
   "orientation": "portrait",
-  "lang": "tr-TR"
+  "lang": "tr-TR",
+  "icons": [
+    {
+      "src": "/assets/app-icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }
