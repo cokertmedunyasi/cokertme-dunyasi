@@ -1181,23 +1181,26 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 7px;
-        padding: 14px 10px;
+        gap: 9px;
+        padding: 15px 12px;
         font-family: var(--font-sans);
         font-size: 11.5px;
-        font-weight: 700;
-        letter-spacing: 0.12em;
+        font-weight: 600;
+        letter-spacing: 0.14em;
         text-transform: uppercase;
         white-space: nowrap;
       }
+      .pt-mobile-sticky-cta a svg {
+        flex-shrink: 0;
+      }
       .pt-mobile-sticky-cta .cta-qr {
         color: var(--pt-gold-soft);
-        background: #14314F;
-        border-right: 1px solid rgba(212, 155, 53, 0.3);
+        background: rgba(20, 49, 79, 0.98);
+        border-right: 1px solid rgba(212, 155, 53, 0.35);
       }
       .pt-mobile-sticky-cta .cta-order {
         color: #FFFFFF;
-        background: var(--pt-accent);
+        background: linear-gradient(135deg, #dd5903 0%, #c44d00 100%);
       }
     }
   </style>
@@ -1628,11 +1631,23 @@
   <!-- MOBİL SABİT HIZLI AKSİYON BARI (QR MENÜ & %10 ONLİNE SİPARİŞ) -->
   <nav class="pt-mobile-sticky-cta" aria-label="Hızlı Erişim">
     <a href="menu.html" class="cta-qr">
-      <span>🍽️</span>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--pt-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="7" height="7" rx="1.2"/>
+        <rect x="14" y="3" width="7" height="7" rx="1.2"/>
+        <rect x="3" y="14" width="7" height="7" rx="1.2"/>
+        <rect x="14" y="14" width="3" height="3"/>
+        <path d="M19 14h2v2"/>
+        <path d="M14 19h2v2"/>
+        <path d="M19 19h2v2"/>
+      </svg>
       <span>QR MENÜ</span>
     </a>
     <a href="https://onlinesiparis.cokertmedunyasi.com/" onclick="return window.openOnlineOrderPortal ? window.openOnlineOrderPortal(event) : true;" class="cta-order">
-      <span>🛵</span>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <path d="M16 10a4 4 0 0 1-8 0"/>
+      </svg>
       <span>%10 ONLİNE SİPARİŞ</span>
     </a>
   </nav>

@@ -1758,7 +1758,7 @@ const CokertmeStore = {
       const logEntry = {
         id: "LOY-" + now + "-" + Math.floor(10 + Math.random() * 89),
         actionType: "REDEEM_REWARD",
-        actionLabel: `🎁 %${rewardPct} Hediye Çökertme Kullanımı`,
+        actionLabel: `%${rewardPct} Hediye Çökertme Kullanımı`,
         customerName: displayName,
         phone: updatedMember.phone,
         branchId: effBranchId,
@@ -1777,7 +1777,7 @@ const CokertmeStore = {
         ok: true,
         member: updatedMember,
         stampsAfter: 0,
-        message: `🎉 "${displayName}" müşterisinin 5 Damga karşılığı %${rewardPct} İndirimli Çökertme hediyesi kullandırıldı ve damga kartı 0/5 olarak yenilendi!`
+        message: `"${displayName}" müşterisinin 5 Damga karşılığı %${rewardPct} İndirimli Çökertme hediyesi kullandırıldı ve damga kartı 0/5 olarak yenilendi!`
       };
     }
 
@@ -1825,7 +1825,7 @@ const CokertmeStore = {
       const logEntry = {
         id: "LOY-" + now + "-" + Math.floor(10 + Math.random() * 89),
         actionType: "DEDUCT_WALLET",
-        actionLabel: "💳 Kasada Cüzdan ile Hesap Tahsilatı",
+        actionLabel: "Kasada Cüzdan ile Hesap Tahsilatı",
         customerName: displayName,
         phone: updatedMember.phone,
         branchId: effBranchId,
@@ -1844,7 +1844,7 @@ const CokertmeStore = {
         ok: true,
         member: updatedMember,
         walletBalanceAfter: newBal,
-        message: `💳 "${displayName}" müşterisinin Çökertme Cüzdanından ${deductAmt.toLocaleString("tr-TR")} ₺ masa hesabı tahsil edildi! Kalan Bakiye: ${newBal.toLocaleString("tr-TR")} ₺`
+        message: `"${displayName}" müşterisinin Çökertme Cüzdanından ${deductAmt.toLocaleString("tr-TR")} ₺ masa hesabı tahsil edildi! Kalan Bakiye: ${newBal.toLocaleString("tr-TR")} ₺`
       };
     }
 

@@ -969,7 +969,7 @@
     <!-- TARİH & DÖNEM FİLTRESİ BARI (GÜNLÜK / HAFTALIK / AYLIK / ÖZEL TARİH ARALIĞI) -->
     <div id="admin-date-filter-bar" class="no-print" style="background:#fff; border:1.5px solid var(--pt-border); border-left:5px solid var(--pt-olive); padding:14px 20px; margin-bottom:22px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; box-shadow:0 6px 20px rgba(2,58,88,0.05);">
       <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-        <span style="font-size:11.5px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:var(--pt-navy); margin-right:4px;">📅 TARİH &amp; DÖNEM SEÇİMİ:</span>
+        <span style="font-size:11.5px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:var(--pt-navy); margin-right:4px; display:inline-flex; align-items:center; gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> TARİH &amp; DÖNEM SEÇİMİ:</span>
         <button type="button" id="date-btn-ALL" class="pt-btn-navy" style="padding:7px 12px; font-size:11px;" onclick="setAdminDatePreset('ALL')">Tüm Zamanlar</button>
         <button type="button" id="date-btn-TODAY" class="pt-btn-outline" style="padding:7px 12px; font-size:11px; color:var(--pt-navy); border-color:var(--pt-border);" onclick="setAdminDatePreset('TODAY')">Bugün (Günlük)</button>
         <button type="button" id="date-btn-YESTERDAY" class="pt-btn-outline" style="padding:7px 12px; font-size:11px; color:var(--pt-navy); border-color:var(--pt-border);" onclick="setAdminDatePreset('YESTERDAY')">Dün</button>
@@ -1050,15 +1050,17 @@
       <!-- Günlük / Aylık Sipariş & Ciro Trend Tablosu ve En Çok Satan Ürünler -->
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:18px; margin-bottom:20px;">
         <div style="background:#fff; border:1px solid var(--pt-border); padding:18px;">
-          <div style="font-size:12px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--pt-navy); margin-bottom:10px;">
-            📅 GÜNLÜK &amp; AYLIK SİPARİŞ VE CİRO ÖZETİ:
+          <div style="font-size:12px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--pt-navy); margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span>GÜNLÜK &amp; AYLIK SİPARİŞ VE CİRO ÖZETİ:</span>
           </div>
           <div id="admin-daily-monthly-breakdown"></div>
         </div>
 
         <div style="background:#fff; border:1px solid var(--pt-border); padding:18px;">
-          <div style="font-size:12px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--pt-navy); margin-bottom:10px;">
-            🍽️ EN ÇOK SATILAN ÜRÜNLER &amp; PORSİYON DAĞILIMI:
+          <div style="font-size:12px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--pt-navy); margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+            <span>EN ÇOK SATILAN ÜRÜNLER &amp; PORSİYON DAĞILIMI:</span>
           </div>
           <div id="admin-top-products-breakdown"></div>
         </div>
@@ -1066,8 +1068,9 @@
 
       <!-- Mahalle Bazlı Sipariş Yoğunluğu Özeti -->
       <div style="background:#fff; border:1px solid var(--pt-border); padding:18px;">
-        <div style="font-size:12px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--pt-navy); margin-bottom:10px;">
-          📍 MAHALLE BAZLI SİPARİŞ &amp; CİRO DAĞILIMI (EN ÇOK SİPARİŞ VEREN BÖLGELER):
+        <div style="font-size:12px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--pt-navy); margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>MAHALLE BAZLI SİPARİŞ &amp; CİRO DAĞILIMI (EN ÇOK SİPARİŞ VEREN BÖLGELER):</span>
         </div>
         <div id="admin-neighborhood-breakdown" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:10px;"></div>
       </div>
@@ -1127,8 +1130,9 @@
 
         <!-- Yeni Şubeye Özel Adisyo API & Program Bilgileri -->
         <div style="background:var(--pt-cream); border:1.5px solid var(--pt-gold); padding:14px; margin-bottom:14px;">
-          <div style="font-size:11.5px; font-weight:800; color:var(--pt-navy); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">
-            🔌 BU ŞUBENİN KENDİ ADİSYO PROGRAMI &amp; API BİLGİLERİ (HER ŞUBE BAĞIMSIZ ADİSYO HESABINA DÜŞER)
+          <div style="font-size:11.5px; font-weight:800; color:var(--pt-navy); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/></svg>
+            <span>BU ŞUBENİN KENDİ ADİSYO PROGRAMI &amp; API BİLGİLERİ (HER ŞUBE BAĞIMSIZ ADİSYO HESABINA DÜŞER)</span>
           </div>
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px;">
             <div>
@@ -1190,7 +1194,7 @@
         </div>
         <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
           <span class="pt-badge pt-badge-olive" id="cashier-active-branch-badge" style="font-size:11.5px; padding:7px 14px;">AKTİF KASA: ADANA BARAJYOLU ŞUBESİ</span>
-          <span style="font-size:11.5px; color:var(--pt-text-muted); font-weight:700;">🔒 24 Saatte Maksimum 1 Damga • 5 dk Süreli Tek Kullanımlık QR</span>
+          <span style="font-size:11.5px; color:var(--pt-text-muted); font-weight:700; display:inline-flex; align-items:center; gap:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> 24 Saatte Maksimum 1 Damga • 5 dk Süreli Tek Kullanımlık QR</span>
         </div>
       </div>
 
@@ -1220,8 +1224,9 @@
               </div>
             </div>
 
-            <button type="button" class="pt-btn-terracotta" style="width:100%; padding:14px 18px; font-size:13px;" onclick="generateCashierOneTimeQr()">
-              ✨ YENİ TEK KULLANIMLIK (+1 DAMGA) KASA QR KODU ÜRET
+            <button type="button" class="pt-btn-terracotta" style="width:100%; padding:14px 18px; font-size:13px; display:inline-flex; align-items:center; justify-content:center; gap:8px;" onclick="generateCashierOneTimeQr()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM17 17h4v4h-4zM14 20h1M20 14h1"/></svg>
+              <span>YENİ TEK KULLANIMLIK (+1 DAMGA) KASA QR KODU ÜRET</span>
             </button>
           </div>
 
@@ -1254,7 +1259,7 @@
                 <label class="pt-form-label">Ad Soyad (Yeni Kayıtsa)</label>
                 <input type="text" id="cashier-customer-name" class="pt-form-input" placeholder="Örn: Ahmet Yılmaz" />
               </div>
-              <button type="button" class="pt-btn-navy" style="padding:12px 16px; height:43px;" onclick="lookupCashierCustomer()">🔍 SORGULA</button>
+              <button type="button" class="pt-btn-navy" style="padding:12px 16px; height:43px; display:inline-flex; align-items:center; gap:6px;" onclick="lookupCashierCustomer()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> SORGULA</button>
             </div>
 
             <!-- Müşteri Canlı Durum Kartı -->
@@ -1271,18 +1276,20 @@
               <button type="button" class="pt-btn-olive" style="padding:13px 12px; font-size:11.5px;" onclick="executeCashierAction('ADD_STAMP')">
                 ★ +1 FİZİKİ RESTORAN DAMGASI EKLE
               </button>
-              <button type="button" class="pt-btn-terracotta" id="cashier-btn-redeem-reward" style="padding:13px 12px; font-size:11.5px;" onclick="executeCashierAction('REDEEM_REWARD')">
-                🎁 5 DAMGA %50 HEDİYE KULLANDIR
+              <button type="button" class="pt-btn-terracotta" id="cashier-btn-redeem-reward" style="padding:13px 12px; font-size:11.5px; display:inline-flex; align-items:center; justify-content:center; gap:6px;" onclick="executeCashierAction('REDEEM_REWARD')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5" rx="1"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+                <span>5 DAMGA %50 HEDİYE KULLANDIR</span>
               </button>
             </div>
 
             <!-- Cüzdan Tahsilat Kutusu -->
             <div style="background:var(--pt-cream); border:1px solid var(--pt-border); padding:10px 12px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-              <span style="font-size:12px; font-weight:800; color:var(--pt-navy);">💳 Cüzdandan Masa Hesabı Tahsilat (₺):</span>
+              <span style="font-size:12px; font-weight:800; color:var(--pt-navy); display:inline-flex; align-items:center; gap:5px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg> Cüzdandan Masa Hesabı Tahsilat (₺):</span>
               <input type="number" id="cashier-wallet-deduct-amount" class="pt-form-input" placeholder="Tutar (₺)" min="1" style="width:120px; padding:7px 10px; background:#fff;" />
               <input type="text" id="cashier-action-note" class="pt-form-input" placeholder="Masa / Fiş Notu (Örn: Masa 4)" style="flex:1; min-width:130px; padding:7px 10px; background:#fff;" />
-              <button type="button" class="pt-btn-navy" style="padding:9px 14px; font-size:11px; white-space:nowrap;" onclick="executeCashierAction('DEDUCT_WALLET')">
-                💳 CÜZDANDAN TAHSİL ET
+              <button type="button" class="pt-btn-navy" style="padding:9px 14px; font-size:11px; white-space:nowrap; display:inline-flex; align-items:center; gap:6px;" onclick="executeCashierAction('DEDUCT_WALLET')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                <span>CÜZDANDAN TAHSİL ET</span>
               </button>
             </div>
           </div>
@@ -1293,7 +1300,7 @@
       <div style="background:#fff; border:1px solid var(--pt-border); padding:18px;">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
           <div>
-            <strong style="font-family:var(--font-serif); font-size:22px; color:var(--pt-navy);">📋 Fiziki Kasa Sadakat &amp; Cüzdan İşlem Kayıtları (Denetim Tablosu)</strong>
+            <strong style="font-family:var(--font-serif); font-size:22px; color:var(--pt-navy); display:inline-flex; align-items:center; gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg> Fiziki Kasa Sadakat &amp; Cüzdan İşlem Kayıtları (Denetim Tablosu)</strong>
             <div style="font-size:12.5px; color:var(--pt-text-muted);">Hangi şubede, hangi müşteriye ne zaman damga eklendiği, hediye kullandırıldığı veya cüzdan tahsilatı yapıldığı şeffaf olarak kayıt altındadır.</div>
           </div>
           <span class="pt-badge pt-badge-gold" id="cashier-logs-count-badge">0 İşlem Kaydı</span>
@@ -1327,7 +1334,7 @@
           </p>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <button type="button" class="pt-btn-olive" onclick="exportCrmCustomersCsv()">⬇ MÜŞTERİ LİSTESİNİ EXCEL (CSV) İNDİR</button>
+          <button type="button" class="pt-btn-olive" style="display:inline-flex; align-items:center; gap:7px;" onclick="exportCrmCustomersCsv()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> MÜŞTERİ LİSTESİNİ EXCEL (CSV) İNDİR</button>
         </div>
       </div>
 
@@ -1336,8 +1343,8 @@
         <div style="display:flex; gap:8px; flex-wrap:wrap;" id="crm-segment-pills">
           <button type="button" class="pt-btn-navy" id="crm-seg-ALL" style="padding:8px 12px; font-size:11px;" onclick="setCrmSegmentFilter('ALL')">Tüm Müşteriler</button>
           <button type="button" class="pt-btn-outline" id="crm-seg-ALMOST_REWARD" style="padding:8px 12px; font-size:11px; color:var(--pt-navy); border-color:var(--pt-border);" onclick="setCrmSegmentFilter('ALMOST_REWARD')">★ 4 Damgalılar (Hediyeye 1 Sipariş Kalanlar)</button>
-          <button type="button" class="pt-btn-outline" id="crm-seg-HAS_WALLET" style="padding:8px 12px; font-size:11px; color:var(--pt-navy); border-color:var(--pt-border);" onclick="setCrmSegmentFilter('HAS_WALLET')">💳 Cüzdan Bakiyesi Olanlar</button>
-          <button type="button" class="pt-btn-outline" id="crm-seg-VIP" style="padding:8px 12px; font-size:11px; color:var(--pt-navy); border-color:var(--pt-border);" onclick="setCrmSegmentFilter('VIP')">👑 VIP Müşteriler (1.000 TL+ Harcama)</button>
+          <button type="button" class="pt-btn-outline" id="crm-seg-HAS_WALLET" style="padding:8px 12px; font-size:11px; color:var(--pt-navy); border-color:var(--pt-border); display:inline-flex; align-items:center; gap:5px;" onclick="setCrmSegmentFilter('HAS_WALLET')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg> Cüzdan Bakiyesi Olanlar</button>
+          <button type="button" class="pt-btn-outline" id="crm-seg-VIP" style="padding:8px 12px; font-size:11px; color:var(--pt-navy); border-color:var(--pt-border); display:inline-flex; align-items:center; gap:5px;" onclick="setCrmSegmentFilter('VIP')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg> VIP Müşteriler (1.000 TL+ Harcama)</button>
         </div>
         <div style="min-width:240px; flex:1; max-width:340px;">
           <input type="text" id="crm-search-input" class="pt-form-input" placeholder="İsim, telefon veya mahalle ara..." oninput="renderCrmCustomersTable(CokertmeStore.getState())" style="padding:9px 12px; font-size:13.5px;" />
@@ -1416,7 +1423,7 @@
           </p>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <button type="button" class="pt-btn-navy" onclick="copyGlobalAdisyoSkuCatalog()">📋 ADİSYO SKU TABLOSUNU KOPYALA</button>
+          <button type="button" class="pt-btn-navy" style="display:inline-flex; align-items:center; gap:6px;" onclick="copyGlobalAdisyoSkuCatalog()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg> ADİSYO SKU TABLOSUNU KOPYALA</button>
           <button type="button" class="pt-btn-navy" style="background:var(--pt-gold); border-color:var(--pt-gold); color:var(--pt-navy-dark);" onclick="addDefaultComplimentaryItems()">MASA İKRAMLARINI MENÜYE EKLE</button>
           <button type="button" class="pt-btn-navy" style="background:#b93829; border-color:#b93829;" onclick="deleteUnavailableItems()">TÜKENDİ (KAPALI) OLANLARI SİL</button>
           <button type="button" class="pt-btn-olive" onclick="openNewItemForm()">+ YENİ ÜRÜN EKLE</button>
@@ -1554,8 +1561,9 @@
       <div style="background:#FFF8F3; border:2px solid var(--pt-terracotta); padding:18px; margin-bottom:18px;">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
           <div>
-            <strong style="font-family:var(--font-serif); font-size:23px; color:var(--pt-navy); display:block;">
-              🔒 Online Sipariş Müşteri Erişim Kilidi (Test &amp; Bakım Modu)
+            <strong style="font-family:var(--font-serif); font-size:23px; color:var(--pt-navy); display:flex; align-items:center; gap:8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--pt-terracotta)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span>Online Sipariş Müşteri Erişim Kilidi (Test &amp; Bakım Modu)</span>
             </strong>
             <span style="font-size:13px; color:var(--pt-text-muted);">
               Kilit açıkken müşteriler <strong>onlinesiparis.cokertmedunyasi.com</strong> adresine girdiğinde <em>"Çok Yakında Hizmetinizde / Telefonla Sipariş Ver"</em> ekranını görür ve sahte/test sipariş veremez. Siz ise <strong>Yönetici Test Şifrenizle</strong> giriş yapıp tüm sistemi canlı test edebilirsiniz.
@@ -2018,11 +2026,13 @@
       <!-- CANLI OPERASYON KONTROL ÇUBUĞU: SESLİ SİPARİŞ ZİLİ & ŞUBE AÇIK/MOLA VE SAAT AYARI -->
       <div style="background:linear-gradient(135deg, #14314F 0%, #023A58 100%); border:1.5px solid var(--pt-gold); padding:14px 18px; margin-bottom:18px; color:#fff; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
         <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-          <button type="button" id="btn-order-bell-toggle" onclick="toggleOrderAudioBell()" style="background:var(--pt-olive); color:#fff; border:1px solid var(--pt-gold); padding:9px 14px; font-family:var(--font-sans); font-size:11.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;">
-            🔔 SESLİ SİPARİŞ ZİLİ: AÇIK
+          <button type="button" id="btn-order-bell-toggle" onclick="toggleOrderAudioBell()" style="background:var(--pt-olive); color:#fff; border:1px solid var(--pt-gold); padding:9px 14px; font-family:var(--font-sans); font-size:11.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; display:inline-flex; align-items:center; gap:7px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span>SESLİ SİPARİŞ ZİLİ: AÇIK</span>
           </button>
-          <button type="button" onclick="playOrderBellChime(true)" style="background:rgba(255,255,255,0.12); color:var(--pt-gold-soft); border:1px solid rgba(243,217,153,0.4); padding:9px 12px; font-family:var(--font-sans); font-size:11px; font-weight:700; cursor:pointer;">
-            🔊 ZİLİ TEST ET
+          <button type="button" onclick="playOrderBellChime(true)" style="background:rgba(255,255,255,0.12); color:var(--pt-gold-soft); border:1px solid rgba(243,217,153,0.4); padding:9px 12px; font-family:var(--font-sans); font-size:11px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            <span>ZİLİ TEST ET</span>
           </button>
           <span style="font-size:12px; color:rgba(255,255,255,0.82);" id="live-sync-indicator-lbl">● 15 sn'de bir canlı senkron aktif</span>
         </div>
@@ -2032,8 +2042,9 @@
           <input type="time" id="quick-branch-open-time" value="11:00" onchange="saveQuickBranchHours()" style="padding:6px 8px; border:1px solid var(--pt-gold); background:#fff; color:var(--pt-navy); font-weight:700; font-size:12.5px;" />
           <span>–</span>
           <input type="time" id="quick-branch-close-time" value="23:30" onchange="saveQuickBranchHours()" style="padding:6px 8px; border:1px solid var(--pt-gold); background:#fff; color:var(--pt-navy); font-weight:700; font-size:12.5px;" />
-          <button type="button" id="btn-quick-branch-pause" onclick="toggleQuickBranchOrderPause()" style="background:var(--pt-olive); color:#fff; border:1px solid var(--pt-gold); padding:9px 14px; font-family:var(--font-sans); font-size:11.5px; font-weight:700; letter-spacing:0.08em; cursor:pointer;">
-            🟢 SİPARİŞ ALIMI: AÇIK
+          <button type="button" id="btn-quick-branch-pause" onclick="toggleQuickBranchOrderPause()" style="background:var(--pt-olive); color:#fff; border:1px solid var(--pt-gold); padding:9px 14px; font-family:var(--font-sans); font-size:11.5px; font-weight:700; letter-spacing:0.08em; cursor:pointer; display:inline-flex; align-items:center; gap:7px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span>SİPARİŞ ALIMI: AÇIK</span>
           </button>
         </div>
       </div>
@@ -2109,6 +2120,42 @@
 
   <script src="assets/data.js?v=18"></script>
   <script>
+    function adminIcon(name, size) {
+      const s = size || 14;
+      const paths = {
+        chart: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+        truck: '<rect x="1" y="3" width="15" height="13" rx="1"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>',
+        qr: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM17 17h4v4h-4zM14 20h1M20 14h1"/>',
+        users: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+        building: '<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/>',
+        utensils: '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>',
+        settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
+        calendar: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+        clock: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+        pin: '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+        map: '<polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/>',
+        refresh: '<polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>',
+        lock: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+        plug: '<path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/>',
+        eye: '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
+        zap: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+        clipboard: '<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/>',
+        gift: '<polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5" rx="1"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>',
+        card: '<rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>',
+        user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+        phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+        checkCircle: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+        alertCircle: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+        bell: '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',
+        bellOff: '<path d="M13.73 21a2 2 0 0 1-3.46 0"/><path d="M18.63 13A17.89 17.89 0 0 1 18 8"/><path d="M6.26 6.26A5.86 5.86 0 0 0 6 8c0 7-3 9-3 9h14"/><path d="M18 8a6 6 0 0 0-9.33-5"/><line x1="1" y1="1" x2="23" y2="23"/>',
+        pause: '<circle cx="12" cy="12" r="10"/><line x1="10" y1="15" x2="10" y2="9"/><line x1="14" y1="15" x2="14" y2="9"/>',
+        flame: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+        printer: '<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>'
+      };
+      const inner = paths[name] || paths.qr;
+      return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;flex-shrink:0;">${inner}</svg>`;
+    }
+
     const ADMIN_SESSION_KEY = "cokertme_admin_auth_v1";
     const ADMIN_ROLE_KEY = "cokertme_admin_role_v1"; // "SUPER_ADMIN" veya branchId (örn: "adana-merkez", "adana-gurselpasa", "adana-saricam")
     let currentAdminBranchFilter = "ALL";
@@ -2242,19 +2289,19 @@
 
       const tabs = isSuper
         ? [
-            { id: "analytics", label: "📊 Analiz & Ciro Raporu" },
-            { id: "orders", label: "🛵 Gelen Siparişler & Detaylar" },
-            { id: "cashier_pos", label: "🏪 Kasa Damga & Cüzdan Terminali" },
-            { id: "crm", label: "👥 Müşteri CRM & Bilgiler" },
-            { id: "branches", label: "🏢 Şubeler & Mahalle Yetkileri" },
-            { id: "menu_campaigns", label: "🍽️ Menü, Fiyat & Cüzdan/Sadakat" },
-            { id: "corporate_api", label: "⚙️ Görseller, Masa QR, Bayilik & API" }
+            { id: "analytics", icon: "chart", label: "Analiz & Ciro Raporu" },
+            { id: "orders", icon: "truck", label: "Gelen Siparişler & Detaylar" },
+            { id: "cashier_pos", icon: "qr", label: "Kasa Damga & Cüzdan Terminali" },
+            { id: "crm", icon: "users", label: "Müşteri CRM & Bilgiler" },
+            { id: "branches", icon: "building", label: "Şubeler & Mahalle Yetkileri" },
+            { id: "menu_campaigns", icon: "utensils", label: "Menü, Fiyat & Cüzdan/Sadakat" },
+            { id: "corporate_api", icon: "settings", label: "Görseller, Masa QR, Bayilik & API" }
           ]
         : [
-            { id: "orders", label: "🛵 Şube Siparişleri & Detaylar" },
-            { id: "cashier_pos", label: "🏪 Kasa Damga & Cüzdan Terminali" },
-            { id: "analytics", label: "📊 Günlük / Aylık Analiz & Ciro" },
-            { id: "crm", label: "👥 Şube Müşteri Bilgileri (CRM)" }
+            { id: "orders", icon: "truck", label: "Şube Siparişleri & Detaylar" },
+            { id: "cashier_pos", icon: "qr", label: "Kasa Damga & Cüzdan Terminali" },
+            { id: "analytics", icon: "chart", label: "Günlük / Aylık Analiz & Ciro" },
+            { id: "crm", icon: "users", label: "Şube Müşteri Bilgileri (CRM)" }
           ];
 
       const validIds = tabs.map(t => t.id);
@@ -2264,7 +2311,7 @@
 
       bar.innerHTML = tabs.map(t => {
         const isActive = t.id === activeAdminTab;
-        return `<button type="button" onclick="switchAdminTab('${t.id}')" style="padding:11px 16px; font-family:var(--font-sans); font-size:12px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; border:1px solid ${isActive ? 'var(--pt-gold)' : 'var(--pt-border)'}; background:${isActive ? 'var(--pt-navy)' : 'var(--pt-cream)'}; color:${isActive ? 'var(--pt-gold-soft)' : 'var(--pt-navy)'}; transition:0.2s;">${t.label}</button>`;
+        return `<button type="button" onclick="switchAdminTab('${t.id}')" style="padding:11px 16px; font-family:var(--font-sans); font-size:12px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; border:1px solid ${isActive ? 'var(--pt-gold)' : 'var(--pt-border)'}; background:${isActive ? 'var(--pt-navy)' : 'var(--pt-cream)'}; color:${isActive ? 'var(--pt-gold-soft)' : 'var(--pt-navy)'}; transition:0.2s; display:inline-flex; align-items:center; gap:7px;">${adminIcon(t.icon, 14)} <span>${t.label}</span></button>`;
       }).join("");
     }
 
@@ -2432,12 +2479,12 @@
         if (role === "SUPER_ADMIN") {
           selectEl.disabled = false;
           selectEl.innerHTML = `<option value="ALL" ${currentAdminBranchFilter === "ALL" ? "selected" : ""}>TÜM TÜRKİYE (${branches.length} Şube Toplu Analiz)</option>` +
-            branches.map(b => `<option value="${b.id}" ${currentAdminBranchFilter === b.id ? "selected" : ""}>📍 ${b.name} (${b.city || "Adana"})</option>`).join("");
+            branches.map(b => `<option value="${b.id}" ${currentAdminBranchFilter === b.id ? "selected" : ""}>• ${b.name} (${b.city || "Adana"})</option>`).join("");
         } else {
           const myBranch = branches.find(b => b.id === role);
           currentAdminBranchFilter = role;
           selectEl.disabled = true;
-          selectEl.innerHTML = `<option value="${role}" selected>📍 ${myBranch ? myBranch.name : role} (Şube Yöneticisi Ekranı)</option>`;
+          selectEl.innerHTML = `<option value="${role}" selected>• ${myBranch ? myBranch.name : role} (Şube Yöneticisi Ekranı)</option>`;
         }
       }
 
@@ -2654,7 +2701,7 @@
         if (cashierQrCountdownTimer) clearInterval(cashierQrCountdownTimer);
         box.innerHTML = `
           <div style="background:#EDF7ED; border:2px solid var(--pt-olive); padding:16px;">
-            <div style="font-size:28px; margin-bottom:4px;">✅</div>
+            <div style="color:var(--pt-olive); margin-bottom:6px;">${adminIcon('checkCircle', 28)}</div>
             <strong style="font-family:var(--font-serif); font-size:22px; color:var(--pt-olive-dark); display:block;">Tek Kullanımlık QR Okutuldu &amp; Damga İşlendi!</strong>
             <div style="font-size:13px; color:var(--pt-navy); margin-top:4px;">
               Müşteri: <strong>${liveToken.usedByName || "-"} (${liveToken.usedByPhone || "-"})</strong> • Kod: <code>${liveToken.token}</code>
@@ -2668,8 +2715,8 @@
       if (remainingSec <= 0) {
         if (cashierQrCountdownTimer) clearInterval(cashierQrCountdownTimer);
         box.innerHTML = `
-          <div style="background:#FFF5F5; border:1.5px solid #E5A0A0; padding:14px; color:#A61B1B; font-size:13px; font-weight:700;">
-            ⏰ Tek kullanımlık QR kodun 5 dakikalık süresi doldu (${liveToken.token}). Yeni müşteri için tekrar üretin.
+          <div style="background:#FFF5F5; border:1.5px solid #E5A0A0; padding:14px; color:#A61B1B; font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px;">
+            ${adminIcon('clock', 16)} <span>Tek kullanımlık QR kodun 5 dakikalık süresi doldu (${liveToken.token}). Yeni müşteri için tekrar üretin.</span>
           </div>
         `;
         return;
@@ -2684,7 +2731,7 @@
         <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
           <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:center;">
             <span class="pt-badge pt-badge-olive">AKTİF TEK KULLANIMLIK KASA QR</span>
-            <span class="pt-badge pt-badge-terracotta">⏱ KALAN SÜRE: ${mins}:${secs}</span>
+            <span class="pt-badge pt-badge-terracotta">${adminIcon('clock', 12)} KALAN SÜRE: ${mins}:${secs}</span>
           </div>
           <img src="${qrImgUrl}" alt="Kasa Damga QR" style="width:190px; height:190px; border:3px solid var(--pt-gold); padding:6px; background:#fff;" />
           <div>
@@ -2693,8 +2740,8 @@
               ${liveToken.token}
             </div>
           </div>
-          <div style="font-size:12px; color:var(--pt-text-muted);">
-            📍 ${liveToken.branchName} • ${liveToken.tableNote || "Kasa Ödeme"}
+          <div style="font-size:12px; color:var(--pt-text-muted); display:inline-flex; align-items:center; gap:5px;">
+            ${adminIcon('pin', 13)} <span>${liveToken.branchName} • ${liveToken.tableNote || "Kasa Ödeme"}</span>
           </div>
         </div>
       `;
@@ -2731,10 +2778,10 @@
 
       const cooldownBadge = status.canEarnToday
         ? `<span class="pt-badge pt-badge-olive">✓ BUGÜN +1 DAMGA EKLENEBİLİR</span>`
-        : `<span class="pt-badge" style="background:#FFF5F5; color:#A61B1B; border:1px solid #E5A0A0;">⏳ 24 SAAT KURALI (${status.cooldownRemainingHours} Saat Kaldı)</span>`;
+        : `<span class="pt-badge" style="background:#FFF5F5; color:#A61B1B; border:1px solid #E5A0A0;">${adminIcon('clock', 11)} 24 SAAT KURALI (${status.cooldownRemainingHours} Saat Kaldı)</span>`;
 
       const rewardBadge = status.hasReward
-        ? `<span class="pt-badge pt-badge-terracotta">🎁 5 DAMGA TAMAMLANDI! %${status.rewardDiscountPercent} ÇÖKERTME HEDİYESİ HAZIR</span>`
+        ? `<span class="pt-badge pt-badge-terracotta">${adminIcon('gift', 12)} 5 DAMGA TAMAMLANDI! %${status.rewardDiscountPercent} ÇÖKERTME HEDİYESİ HAZIR</span>`
         : `<span class="pt-badge pt-badge-navy">${status.validStampsCount} / ${status.requiredStamps} Damga (%50 Hediyeye ${status.requiredStamps - status.validStampsCount} Damga Kaldı)</span>`;
 
       if (redeemBtn) {
@@ -2744,10 +2791,10 @@
       cardEl.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px; padding-bottom:8px; border-bottom:1px dashed var(--pt-border);">
           <div>
-            <strong style="font-family:var(--font-serif); font-size:21px; color:var(--pt-navy);">
-              👤 ${status.member ? status.member.fullName : (nameEl && nameEl.value ? nameEl.value : "Yeni Müşteri (İlk İşlemde Kaydedilir)")}
+            <strong style="font-family:var(--font-serif); font-size:21px; color:var(--pt-navy); display:inline-flex; align-items:center; gap:6px;">
+              ${adminIcon('user', 16)} <span>${status.member ? status.member.fullName : (nameEl && nameEl.value ? nameEl.value : "Yeni Müşteri (İlk İşlemde Kaydedilir)")}</span>
             </strong>
-            <div style="font-size:12px; color:var(--pt-text-muted);">📞 ${rawPhone} ${status.member ? `• Kayıtlı Şube: ${status.member.lastBranchName || "Adana Barajyolu Şubesi"}` : "• Henüz Kayıtlı Değil"}</div>
+            <div style="font-size:12px; color:var(--pt-text-muted); margin-top:2px;">${adminIcon('phone', 12)} ${rawPhone} ${status.member ? `• Kayıtlı Şube: ${status.member.lastBranchName || "Adana Barajyolu Şubesi"}` : "• Henüz Kayıtlı Değil"}</div>
           </div>
           <div style="text-align:right;">
             <div style="font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--pt-text-muted); font-weight:700;">ÇÖKERTME CÜZDAN BAKİYESİ</div>
@@ -2789,7 +2836,7 @@
       });
 
       if (!res || !res.ok) {
-        alert("⚠️ " + ((res && res.error) || "İşlem gerçekleştirilemedi."));
+        alert((res && (res.error || res.message)) || "İşlem gerçekleştirilemedi.");
         return;
       }
 
@@ -2798,7 +2845,7 @@
 
       lookupCashierCustomer();
       renderAdminAll();
-      alert("✅ " + res.message);
+      alert("✓ " + res.message);
     }
 
     function renderCashierLoyaltySection(state) {
@@ -2815,10 +2862,10 @@
         const currentBr = getActiveCashierBranchObj(state);
         if (role === "SUPER_ADMIN") {
           brSelect.disabled = false;
-          brSelect.innerHTML = branches.map(b => `<option value="${b.id}" ${b.id === currentBr.id ? "selected" : ""}>📍 ${b.name}</option>`).join("");
+          brSelect.innerHTML = branches.map(b => `<option value="${b.id}" ${b.id === currentBr.id ? "selected" : ""}>• ${b.name}</option>`).join("");
         } else {
           brSelect.disabled = true;
-          brSelect.innerHTML = `<option value="${currentBr.id}" selected>📍 ${currentBr.name}</option>`;
+          brSelect.innerHTML = `<option value="${currentBr.id}" selected>• ${currentBr.name}</option>`;
         }
         if (badgeEl) {
           badgeEl.textContent = `AKTİF KASA: ${currentBr.name.toUpperCase()}`;
@@ -2843,12 +2890,12 @@
 
       logsTbody.innerHTML = scopedLogs.slice(0, 60).map(l => {
         let badgeHtml = `<span class="pt-badge pt-badge-olive">★ +1 FİZİKİ DAMGA</span>`;
-        if (l.type === "IN_STORE_STAMP_QR") {
-          badgeHtml = `<span class="pt-badge pt-badge-olive">📱 TEK KULLANIMLIK QR DAMGA</span>`;
-        } else if (l.type === "IN_STORE_REWARD_REDEEM") {
-          badgeHtml = `<span class="pt-badge pt-badge-terracotta">🎁 5 DAMGA %50 HEDİYE KULLANIMI</span>`;
-        } else if (l.type === "IN_STORE_WALLET_PAYMENT") {
-          badgeHtml = `<span class="pt-badge pt-badge-navy">💳 KASA CÜZDAN TAHSİLATI (-${Number(l.amount || 0).toLocaleString("tr-TR")} ₺)</span>`;
+        if (l.type === "IN_STORE_STAMP_QR" || l.actionType === "CLAIM_QR_STAMP") {
+          badgeHtml = `<span class="pt-badge pt-badge-olive">${adminIcon('qr', 11)} TEK KULLANIMLIK QR DAMGA</span>`;
+        } else if (l.type === "IN_STORE_REWARD_REDEEM" || l.actionType === "REDEEM_REWARD") {
+          badgeHtml = `<span class="pt-badge pt-badge-terracotta">${adminIcon('gift', 11)} 5 DAMGA %50 HEDİYE KULLANIMI</span>`;
+        } else if (l.type === "IN_STORE_WALLET_PAYMENT" || l.actionType === "DEDUCT_WALLET") {
+          badgeHtml = `<span class="pt-badge pt-badge-navy">${adminIcon('card', 11)} KASA CÜZDAN TAHSİLATI (-${Number(l.amount || l.amountTRY || 0).toLocaleString("tr-TR")} ₺)</span>`;
         }
 
         return `
@@ -2857,7 +2904,7 @@
             <td><span class="pt-badge pt-badge-gold">${l.branchName || "Adana Barajyolu Şubesi"}</span></td>
             <td>
               <strong style="color:var(--pt-navy);">${l.customerName || "-"}</strong>
-              <div style="font-size:12px; color:var(--pt-text-muted);">📞 ${l.phone || "-"}</div>
+              <div style="font-size:12px; color:var(--pt-text-muted);">${adminIcon('phone', 11)} ${l.phone || "-"}</div>
             </td>
             <td>${badgeHtml}</td>
             <td style="font-size:13px; color:var(--pt-navy);">${l.note || "-"} ${l.token ? `<code style="font-size:11px; background:var(--pt-cream); padding:2px 6px;">${l.token}</code>` : ""}</td>
@@ -2958,7 +3005,7 @@
             const mLabel = `${monthNames[Math.max(0, Number(mo) - 1)] || mo} ${yr}`;
             return `
               <div style="display:flex; justify-content:space-between; align-items:center; background:var(--pt-navy); color:#fff; padding:8px 12px; border-left:4px solid var(--pt-gold); font-size:12.5px;">
-                <span>📅 <strong>AYLIK TOPLAM (${mLabel})</strong></span>
+                <span style="display:inline-flex; align-items:center; gap:6px;">${adminIcon('calendar', 13)} <strong>AYLIK TOPLAM (${mLabel})</strong></span>
                 <span><strong style="color:var(--pt-gold-soft);">${st.count} Sipariş</strong> • <strong>${st.rev.toLocaleString("tr-TR")} ₺</strong></span>
               </div>
             `;
@@ -2970,7 +3017,7 @@
             const avg = Math.round(st.rev / st.count);
             return `
               <div style="display:flex; justify-content:space-between; align-items:center; background:var(--pt-cream); border:1px solid var(--pt-border); padding:8px 12px; font-size:12.5px;">
-                <span style="font-weight:700; color:var(--pt-navy);">📆 ${dFormatted}</span>
+                <span style="font-weight:700; color:var(--pt-navy); display:inline-flex; align-items:center; gap:5px;">${adminIcon('calendar', 12)} ${dFormatted}</span>
                 <div style="display:flex; gap:12px; align-items:center;">
                   <span class="pt-badge pt-badge-olive">${st.count} Sipariş</span>
                   <span style="font-size:11.5px; color:var(--pt-text-muted);">Ort: ${avg.toLocaleString("tr-TR")} ₺</span>
@@ -3029,7 +3076,7 @@
         } else {
           neighBox.innerHTML = entries.map(([nName, stat]) => `
             <div style="background:var(--pt-cream); border:1px solid var(--pt-border); border-left:3px solid var(--pt-gold); padding:10px 12px;">
-              <div style="font-weight:800; font-size:13.5px; color:var(--pt-navy);">📍 ${nName}</div>
+              <div style="font-weight:800; font-size:13.5px; color:var(--pt-navy); display:flex; align-items:center; gap:5px;">${adminIcon('pin', 13)} <span>${nName}</span></div>
               <div style="font-size:11.5px; color:var(--pt-text-muted); margin:2px 0 4px;">${stat.branchName}</div>
               <div style="display:flex; justify-content:space-between; font-size:12.5px; font-weight:700;">
                 <span style="color:var(--pt-olive);">${stat.count} Sipariş</span>
@@ -3188,7 +3235,7 @@
             border = "2px solid #0284C7";
             color = "#0369A1";
             iconHtml = `<span style="display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; border-radius:3px; background:#0284C7; color:#fff; font-size:11px; font-weight:900; flex-shrink:0;">✓</span>`;
-            subBadgeHtml = `<span style="display:block; font-size:9.5px; font-weight:800; color:#0284C7; margin-top:2px;">🔄 ${otherOwner.branchName.replace(/^Adana\s+/i, "")} → Bu Şubeye Devir</span>`;
+            subBadgeHtml = `<span style="display:block; font-size:9.5px; font-weight:800; color:#0284C7; margin-top:2px;">${adminIcon('refresh', 10)} ${otherOwner.branchName.replace(/^Adana\s+/i, "")} → Bu Şubeye Devir</span>`;
           } else if (isSelected) {
             // Bu şubede seçili
             bg = "#EDF7ED";
@@ -3202,7 +3249,7 @@
             border = "1.5px solid #EA580C";
             color = "#9A3412";
             iconHtml = `<span style="display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; border:1.5px solid #EA580C; border-radius:3px; background:#FFEDD5; color:#EA580C; font-size:10px; font-weight:800; flex-shrink:0;">⇄</span>`;
-            subBadgeHtml = `<span style="display:block; font-size:9.5px; font-weight:700; color:#C2410C; margin-top:2px;">🔒 Şu an: ${otherOwner.branchName.replace(/^Adana\s+/i, "")} (Tıkla Devral)</span>`;
+            subBadgeHtml = `<span style="display:block; font-size:9.5px; font-weight:700; color:#C2410C; margin-top:2px;">${adminIcon('lock', 10)} Şu an: ${otherOwner.branchName.replace(/^Adana\s+/i, "")} (Tıkla Devral)</span>`;
           } else {
             // Boşta (teslimat dışı)
             subBadgeHtml = `<span style="display:block; font-size:9.5px; color:var(--pt-text-muted); margin-top:2px;">Boşta (Teslimat Dışı)</span>`;
@@ -3225,7 +3272,7 @@
           <div style="background:#fff; border:1px solid var(--pt-border); border-left:4px solid ${selectedInDist > 0 ? 'var(--pt-olive)' : 'var(--pt-gold)'}; padding:12px 14px; margin-bottom:10px;">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px; padding-bottom:8px; border-bottom:1px dashed var(--pt-border);">
               <div>
-                <strong style="font-size:14px; color:var(--pt-navy);">📍 ${distName} İlçesi / Bölgesi</strong>
+                <strong style="font-size:14px; color:var(--pt-navy); display:inline-flex; align-items:center; gap:5px;">${adminIcon('pin', 14)} ${distName} İlçesi / Bölgesi</strong>
                 <span class="pt-badge ${selectedInDist > 0 ? 'pt-badge-olive' : 'pt-badge-gold'}" style="margin-left:6px; font-size:10px;">
                   ${selectedInDist} / ${hoods.length} Mahalle Seçili
                 </span>
@@ -3251,8 +3298,8 @@
           <!-- Üst Başlık ve Canlı Sayaçlar -->
           <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
             <div style="min-width:240px; flex:1;">
-              <div style="font-size:11.5px; font-weight:800; color:var(--pt-olive); text-transform:uppercase; letter-spacing:0.08em;">
-                🗺️ SIFIR HATALI AKILLI MAHALLE SEÇİM &amp; OTOMATİK ŞUBE DEVİR MATRİSİ (${city.toUpperCase()})
+              <div style="font-size:11.5px; font-weight:800; color:var(--pt-olive); text-transform:uppercase; letter-spacing:0.08em; display:flex; align-items:center; gap:6px;">
+                ${adminIcon('map', 14)} <span>SIFIR HATALI AKILLI MAHALLE SEÇİM &amp; OTOMATİK ŞUBE DEVİR MATRİSİ (${city.toUpperCase()})</span>
               </div>
               <div style="font-size:12.5px; color:var(--pt-text-muted); margin-top:2px;">
                 Virgülle yazmanıza gerek yoktur. Şubenin paket servis götüreceği mahallelere tıklayarak seçin. Seçilmeyen mahalleler müşteriye görünmez.
@@ -3263,8 +3310,8 @@
                 ✓ Seçilen: ${totalSelectedCount} / ${totalCatalogCount} Mahalle
               </span>
               ${totalTransferCount > 0 ? `
-                <span class="pt-badge" style="background:#0284C7; color:#fff; font-size:11.5px; padding:6px 12px;">
-                  🔄 Otomatik Devralınacak: ${totalTransferCount} Mahalle
+                <span class="pt-badge" style="background:#0284C7; color:#fff; font-size:11.5px; padding:6px 12px; display:inline-flex; align-items:center; gap:5px;">
+                  ${adminIcon('refresh', 12)} Otomatik Devralınacak: ${totalTransferCount} Mahalle
                 </span>
               ` : ''}
             </div>
@@ -3295,7 +3342,7 @@
             <input type="text"
               id="matrix-search-${contextKey}"
               class="pt-form-input"
-              placeholder="🔍 ${city} içinde mahalle veya ilçe ara (Örn: Pozcu, Gürselpaşa, Çukurova)..."
+              placeholder="${city} içinde mahalle veya ilçe ara (Örn: Pozcu, Gürselpaşa, Çukurova)..."
               value="${branchMatrixSearchQuery[contextKey] || ''}"
               oninput="filterMatrixSearch('${contextKey}', this.value)"
               style="flex:1; min-width:240px; padding:9px 12px; font-size:13px; background:#fff;" />
@@ -3338,7 +3385,7 @@
           previewBox.innerHTML = arr.length > 0
             ? arr.slice(0, 20).map(x => `<span style="background:#EDF7ED; border:1px solid var(--pt-olive); color:var(--pt-olive-dark); padding:3px 9px; border-radius:4px; font-size:11.5px; font-weight:700;">✓ ${x} Mah.</span>`).join(" ") +
               (arr.length > 20 ? ` <span style="font-size:11.5px; font-weight:800; color:var(--pt-navy); padding:3px 6px;">+${arr.length - 20} mahalle daha</span>` : "")
-            : `<span style="color:#A61B1B; font-size:12.5px; font-weight:700;">⚠️ Henüz sorumlu mahalle seçilmedi.</span>`;
+            : `<span style="color:#A61B1B; font-size:12.5px; font-weight:700; display:inline-flex; align-items:center; gap:5px;">${adminIcon('alertCircle', 14)} Henüz sorumlu mahalle seçilmedi.</span>`;
         }
       }
     }
@@ -3461,9 +3508,9 @@
         wrap.style.display = branchMatrixExpanded[branchId] ? "block" : "none";
       }
       if (btn) {
-        btn.textContent = branchMatrixExpanded[branchId]
-          ? "▲ MAHALLE SEÇİM & DEVİR PANELİNİ KAPAT"
-          : "🗺️ MAHALLE SEÇİM & ŞUBE DEVİR PANELİNİ AÇ (KUTUCUKLARLA DÜZENLE)";
+        btn.innerHTML = branchMatrixExpanded[branchId]
+          ? "▲ MAHALLE SEÇİM &amp; DEVİR PANELİNİ KAPAT"
+          : `${adminIcon('map', 13)} <span>MAHALLE SEÇİM &amp; ŞUBE DEVİR PANELİNİ AÇ (KUTUCUKLARLA DÜZENLE)</span>`;
       }
       if (branchMatrixExpanded[branchId]) {
         renderSmartNeighborhoodMatrix(branchId);
@@ -3547,7 +3594,7 @@
       renderAdminAll();
 
       const transferMsg = transferResult.transferredList.length > 0
-        ? `\n\n🔄 OTOMATİK ŞUBE DEVRİ: ${transferResult.transferredList.length} mahalle (${transferResult.transferredList.slice(0, 6).map(x => x.neighborhood).join(", ")}${transferResult.transferredList.length > 6 ? "..." : ""}) eski şubeden otomatik düşülerek "${name}" şubesine devredildi (%0 çakışma).`
+        ? `\n\n• OTOMATİK ŞUBE DEVRİ: ${transferResult.transferredList.length} mahalle (${transferResult.transferredList.slice(0, 6).map(x => x.neighborhood).join(", ")}${transferResult.transferredList.length > 6 ? "..." : ""}) eski şubeden otomatik düşülerek "${name}" şubesine devredildi (%0 çakışma).`
         : "";
 
       alert(`✓ "${name}" (${city} - ${selectedNeighborhoods.length} sorumlu mahalle) ve bağımsız Adisyo POS ayarları başarıyla kaydedildi!${transferMsg}`);
@@ -3582,9 +3629,9 @@
                 <h4 style="font-size:25px; color:var(--pt-navy); margin:0;">${b.name}</h4>
               </div>
               <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                <button type="button" onclick="onAdminBranchViewChange('${b.id}')" style="background:var(--pt-cream); border:1.5px solid var(--pt-gold); color:var(--pt-navy); font-size:11px; font-weight:800; padding:8px 14px; cursor:pointer;">👁️ ŞUBE EKRANINI GÖR</button>
-                <button type="button" class="pt-btn-navy" style="padding:8px 14px; font-size:11px;" onclick="testBranchAdisyoConnection('${b.id}')">⚡ ADİSYO CANLI TEST</button>
-                <button type="button" style="background:var(--pt-cream); border:1.5px solid var(--pt-gold); color:var(--pt-navy); padding:8px 14px; font-size:11px; font-weight:800; cursor:pointer;" onclick="copyBranchAdisyoSetupGuide('${b.id}')">📋 KURULUM ŞABLONU</button>
+                <button type="button" onclick="onAdminBranchViewChange('${b.id}')" style="background:var(--pt-cream); border:1.5px solid var(--pt-gold); color:var(--pt-navy); font-size:11px; font-weight:800; padding:8px 14px; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">${adminIcon('eye', 13)} ŞUBE EKRANINI GÖR</button>
+                <button type="button" class="pt-btn-navy" style="padding:8px 14px; font-size:11px; display:inline-flex; align-items:center; gap:6px;" onclick="testBranchAdisyoConnection('${b.id}')">${adminIcon('zap', 13)} ADİSYO CANLI TEST</button>
+                <button type="button" style="background:var(--pt-cream); border:1.5px solid var(--pt-gold); color:var(--pt-navy); padding:8px 14px; font-size:11px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:6px;" onclick="copyBranchAdisyoSetupGuide('${b.id}')">${adminIcon('clipboard', 13)} KURULUM ŞABLONU</button>
                 <button type="button" onclick="deleteBranchFromAdmin('${b.id}')" style="background:#FDECEC; border:1px solid #E5A0A0; color:#A61B1B; padding:8px 14px; font-size:11px; font-weight:800; cursor:pointer;">SİL</button>
               </div>
             </div>
@@ -3619,7 +3666,7 @@
               <!-- Sol Kutu: Şubeye Özel Bağımsız Adisyo Programı & API Bilgileri -->
               <div style="background:var(--pt-cream); padding:14px 16px; border:1.5px solid var(--pt-gold); display:grid; gap:10px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
-                  <span style="font-size:11px; font-weight:800; color:var(--pt-navy); text-transform:uppercase; letter-spacing:0.06em;">🔌 ŞUBEYE ÖZEL ADİSYO PROGRAMI &amp; API BİLGİLERİ</span>
+                  <span style="font-size:11px; font-weight:800; color:var(--pt-navy); text-transform:uppercase; letter-spacing:0.06em; display:inline-flex; align-items:center; gap:5px;">${adminIcon('plug', 13)} ŞUBEYE ÖZEL ADİSYO PROGRAMI &amp; API BİLGİLERİ</span>
                   <span class="pt-badge ${hasOwnApiKey ? 'pt-badge-olive' : 'pt-badge-gold'}" style="font-size:9.5px;">${hasOwnApiKey ? '✓ Özel API Key Aktif' : 'Standart / Test Modu'}</span>
                 </div>
                 <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
@@ -3645,8 +3692,8 @@
               <!-- Sağ Kutu: Şube Yöneticisi Giriş Bilgileri -->
               <div style="background:#f8fafc; padding:14px 16px; border:1px solid var(--pt-border); display:flex; flex-direction:column; justify-content:space-between; gap:10px;">
                 <div>
-                  <div style="font-size:11px; font-weight:800; color:var(--pt-navy); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px;">
-                    🔐 ŞUBE YÖNETİCİSİ PANEL GİRİŞ BİLGİLERİ
+                  <div style="font-size:11px; font-weight:800; color:var(--pt-navy); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px; display:flex; align-items:center; gap:5px;">
+                    ${adminIcon('lock', 13)} <span>ŞUBE YÖNETİCİSİ PANEL GİRİŞ BİLGİLERİ</span>
                   </div>
                   <div style="font-size:12px; color:var(--pt-text-muted); margin-bottom:10px;">
                     Bu şubenin müdürü <code>yonetim.html</code> ekranına bu bilgilerle girdiğinde sadece kendi şubesinin siparişlerini, cirosunu ve müşterilerini görür.
@@ -3669,8 +3716,8 @@
             <div style="background:#F8FAFC; border:1.5px solid var(--pt-olive); padding:14px 16px; width:100%; box-sizing:border-box;">
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
                 <div>
-                  <span style="font-size:11.5px; font-weight:800; color:var(--pt-navy); text-transform:uppercase; letter-spacing:0.06em;">
-                    📍 SORUMLU OLDUĞU MAHALLELER (KUTUCUKLU SEÇİM &amp; OTOMATİK ŞUBE DEVİR PANELİ)
+                  <span style="font-size:11.5px; font-weight:800; color:var(--pt-navy); text-transform:uppercase; letter-spacing:0.06em; display:inline-flex; align-items:center; gap:5px;">
+                    ${adminIcon('pin', 14)} <span>SORUMLU OLDUĞU MAHALLELER (KUTUCUKLU SEÇİM &amp; OTOMATİK ŞUBE DEVİR PANELİ)</span>
                   </span>
                 </div>
                 <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
@@ -3680,8 +3727,8 @@
                   <button type="button"
                     id="br-matrix-toggle-btn-${b.id}"
                     onclick="toggleBranchMatrixExpand('${b.id}')"
-                    style="background:var(--pt-navy); color:#fff; border:1.5px solid var(--pt-gold); padding:8px 16px; font-size:11.5px; font-weight:800; cursor:pointer; letter-spacing:0.06em;">
-                    ${isExpanded ? "▲ MAHALLE SEÇİM & DEVİR PANELİNİ KAPAT" : "🗺️ MAHALLE SEÇİM & ŞUBE DEVİR PANELİNİ AÇ (KUTUCUKLARLA DÜZENLE)"}
+                    style="background:var(--pt-navy); color:#fff; border:1.5px solid var(--pt-gold); padding:8px 16px; font-size:11.5px; font-weight:800; cursor:pointer; letter-spacing:0.06em; display:inline-flex; align-items:center; gap:6px;">
+                    ${isExpanded ? "▲ MAHALLE SEÇİM &amp; DEVİR PANELİNİ KAPAT" : `${adminIcon('map', 13)} <span>MAHALLE SEÇİM &amp; ŞUBE DEVİR PANELİNİ AÇ (KUTUCUKLARLA DÜZENLE)</span>`}
                   </button>
                 </div>
               </div>
@@ -3690,7 +3737,7 @@
                 ${hoods.length > 0
                   ? hoods.slice(0, 20).map(x => `<span style="background:#EDF7ED; border:1px solid var(--pt-olive); color:var(--pt-olive-dark); padding:3px 9px; border-radius:4px; font-size:11.5px; font-weight:700;">✓ ${x} Mah.</span>`).join(" ") +
                     (hoods.length > 20 ? ` <span style="font-size:11.5px; font-weight:800; color:var(--pt-navy); padding:3px 6px;">+${hoods.length - 20} mahalle daha</span>` : "")
-                  : `<span style="color:#A61B1B; font-size:12.5px; font-weight:700;">⚠️ Henüz sorumlu mahalle seçilmedi.</span>`}
+                  : `<span style="color:#A61B1B; font-size:12.5px; font-weight:700; display:inline-flex; align-items:center; gap:5px;">${adminIcon('alertCircle', 14)} Henüz sorumlu mahalle seçilmedi.</span>`}
               </div>
 
               <div id="br-matrix-collapse-${b.id}" style="display:${isExpanded ? 'block' : 'none'}; margin-top:12px; width:100%; box-sizing:border-box;">
@@ -3762,7 +3809,7 @@
       renderAdminAll();
 
       const transferMsg = transferResult.transferredList.length > 0
-        ? `\n\n🔄 OTOMATİK ŞUBE DEVRİ: ${transferResult.transferredList.length} mahalle (${transferResult.transferredList.slice(0, 6).map(x => x.neighborhood).join(", ")}${transferResult.transferredList.length > 6 ? "..." : ""}) diğer şubeden otomatik düşülerek "${b.name}" şubesine devredildi (%0 çakışma).`
+        ? `\n\n• OTOMATİK ŞUBE DEVRİ: ${transferResult.transferredList.length} mahalle (${transferResult.transferredList.slice(0, 6).map(x => x.neighborhood).join(", ")}${transferResult.transferredList.length > 6 ? "..." : ""}) diğer şubeden otomatik düşülerek "${b.name}" şubesine devredildi (%0 çakışma).`
         : "";
 
       alert(`✓ "${b.name}" (${transferResult.finalNeighborhoods.length} sorumlu mahalle), şubeye özel Adisyo API anahtarları ve yönetici bilgileri güncellendi!${transferMsg}`);
@@ -3806,11 +3853,11 @@
       const dispatchRes = await CokertmeStore.dispatchOrder(testOrder);
 
       alert(
-        `⚡ "${b.name}" — Bağımsız Adisyo POS & API Canlı Test Sonucu:\n\n` +
+        `"${b.name}" — Bağımsız Adisyo POS & API Canlı Test Sonucu:\n\n` +
         `• Şube / Kasa Kodu: ${b.adisyoBranchCode || "ADANA-BARAJYOLU-01"}\n` +
         `• Adisyo Restoran / Consumer ID (x-api-consumer): ${b.adisyoConsumerId || "COKERTME-ADANA-BARAJYOLU-01"}\n` +
         `• Adisyo API Endpoint: ${b.adisyoApiUrl || "https://ext.adisyo.com/api/v1/orders"}\n` +
-        `• Şube Özel API Key Durumu: ${hasKey ? "✓ TANIMLI (Canlı Adisyo Hesabına Bağlı)" : "⚠️ Henüz girilmedi (Şube açıldığında Adisyo panelinden alınan x-api-key ve x-api-secret girildiği an doğrudan bu şubenin kasasına düşer)"}\n` +
+        `• Şube Özel API Key Durumu: ${hasKey ? "✓ TANIMLI (Canlı Adisyo Hesabına Bağlı)" : "Henüz girilmedi (Şube açıldığında Adisyo panelinden alınan x-api-key ve x-api-secret girildiği an doğrudan bu şubenin kasasına düşer)"}\n` +
         `• Eşleşen Standart Ürün & Reçete Kodu (SKU): ${itemsCount} Ürün + CKR-KURYE-PAKET (100 TL)\n` +
         `• Sorumlu Mahalle Sayısı: ${(b.neighborhoods || []).length} Mahalle\n` +
         `• Sunucu Dispatch Durumu: ${dispatchRes && dispatchRes.ok ? "✓ BAŞARILI (0. Saniye İletim Motoru Aktif)" : "✓ HAZIR"}`
@@ -3842,7 +3889,7 @@
 
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(guideText).then(() => {
-          alert(`📋 "${b.name}" için Adisyo Kurulum & Ürün SKU Şablonu panoya kopyalandı!\n\nYeni şube açılışında bu şablonu doğrudan Adisyo kurulum ekibine gönderebilirsiniz.`);
+          alert(`✓ "${b.name}" için Adisyo Kurulum & Ürün SKU Şablonu panoya kopyalandı!\n\nYeni şube açılışında bu şablonu doğrudan Adisyo kurulum ekibine gönderebilirsiniz.`);
         }).catch(() => {
           alert(guideText);
         });
@@ -3999,7 +4046,7 @@
         box.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
             <div>
-              <strong style="color:var(--pt-navy); font-size:14px;">🗺️ 81 İl Şube Talep Radarımız Aktif:</strong>
+              <strong style="color:var(--pt-navy); font-size:14px; display:inline-flex; align-items:center; gap:6px;">${adminIcon('map', 15)} 81 İl Şube Talep Radarımız Aktif:</strong>
               <span style="font-size:13px; color:var(--pt-text-muted); margin-left:6px;">Henüz şubemiz olmayan illerden müşterilerin bıraktığı "İlime Şube Açıldığında Haber Ver" talepleri burada listelenir.</span>
             </div>
             <span class="pt-badge pt-badge-gold">0 Bekleyen İl Talebi</span>
@@ -4010,13 +4057,13 @@
 
       box.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
-          <strong style="color:var(--pt-navy); font-size:15px;">🗺️ Şube Olmayan İllerden Gelen Müşteri Bildirim Talepleri (${reqs.length} Kayıt)</strong>
+          <strong style="color:var(--pt-navy); font-size:15px; display:inline-flex; align-items:center; gap:6px;">${adminIcon('map', 15)} Şube Olmayan İllerden Gelen Müşteri Bildirim Talepleri (${reqs.length} Kayıt)</strong>
           <span class="pt-badge pt-badge-terracotta">YENİ ŞUBE &amp; FRANCHISE HEDEF KİTLESİ</span>
         </div>
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px;">
           ${reqs.slice(0, 12).map(r => `
             <div style="background:var(--pt-cream); border:1px solid var(--pt-border); padding:10px 12px; font-size:12.5px;">
-              <strong style="color:var(--pt-navy);">📍 ${r.city} ${r.district ? '/ ' + r.district : ''}</strong>
+              <strong style="color:var(--pt-navy); display:inline-flex; align-items:center; gap:4px;">${adminIcon('pin', 13)} ${r.city} ${r.district ? '/ ' + r.district : ''}</strong>
               <div>${r.fullName || 'Müşteri'} • <strong>${r.phone || ''}</strong></div>
               <div style="font-size:11px; color:var(--pt-text-muted);">${r.createdAt || ''}</div>
             </div>
@@ -4497,7 +4544,7 @@
       const text = "ADISYO_SKU_KODU\tURUN_ADI\tFIYAT\n" + rows.join("\n");
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text).then(() => {
-          alert(`📋 Toplam ${rows.length} kalemlik Standart Adisyo Ürün Kodu (SKU) tablosu panoya kopyalandı!\n\nYeni açılan her şubenin Adisyo programında ürün kodlarını bu listeyle eşleştirebilirsiniz.`);
+          alert(`✓ Toplam ${rows.length} kalemlik Standart Adisyo Ürün Kodu (SKU) tablosu panoya kopyalandı!\n\nYeni açılan her şubenin Adisyo programında ürün kodlarını bu listeyle eşleştirebilirsiniz.`);
         }).catch(() => alert(text));
       } else {
         alert(text);
@@ -4925,7 +4972,9 @@
       if (qnbTestEl) qnbTestEl.value = qnb.testMode === false ? "false" : "true";
       if (qnbBadgeEl) {
         const isLiveReady = Boolean(qnb.merchantId && (qnb.merchantPass || qnb.apiPass) && qnb.testMode === false);
-        qnbBadgeEl.textContent = isLiveReady ? "🟢 CANLI QNB PAYFOR AKTİF" : "🟡 TEST / SİMÜLASYON MODU";
+        qnbBadgeEl.innerHTML = isLiveReady
+          ? `${adminIcon('checkCircle', 12)} CANLI QNB PAYFOR AKTİF`
+          : `${adminIcon('clock', 12)} TEST / SİMÜLASYON MODU`;
         qnbBadgeEl.style.background = isLiveReady ? "var(--pt-olive)" : "var(--pt-gold)";
         qnbBadgeEl.style.color = isLiveReady ? "#fff" : "#14314F";
       }
@@ -5173,7 +5222,7 @@
       await CokertmeStore.dispatchOrder(sampleOrder);
       renderAdminAll();
       alert(
-        `⚡ Test Siparişi (#${sampleOrder.id}) 0. Saniyede Tetiklendi!\n\n` +
+        `✓ Test Siparişi (#${sampleOrder.id}) 0. Saniyede Tetiklendi!\n\n` +
         `• Cinsiyet & Sunum Kalıbı: Kadın -> Kalpli Çökertme Kalıbı\n` +
         `1. Adisyo Bulut ERP (adisyo.com): Adisyon açıldı, mutfak fişi basıldı, reçete/stok düşümü yapıldı, ön muhasebe/finans ve Beko ÖKC eşleştirildi.\n` +
         `2. Kurye API (${activeCourier.name}): Siparişin düştüğü ve ${prepMin} dakika sonra (${readyStr}) mutfakta hazır olacağı anında bildirildi.`
@@ -5211,7 +5260,9 @@
     function updateOrderBellButtonUI() {
       const btn = document.getElementById("btn-order-bell-toggle");
       if (!btn) return;
-      btn.textContent = orderBellEnabled ? "🔔 SESLİ SİPARİŞ ZİLİ: AÇIK" : "🔕 SESLİ SİPARİŞ ZİLİ: KAPALI";
+      btn.innerHTML = orderBellEnabled
+        ? `${adminIcon('bell', 14)} <span>SESLİ SİPARİŞ ZİLİ: AÇIK</span>`
+        : `${adminIcon('bellOff', 14)} <span>SESLİ SİPARİŞ ZİLİ: KAPALI</span>`;
       btn.style.background = orderBellEnabled ? "var(--pt-olive)" : "#64748b";
     }
 
@@ -5271,9 +5322,9 @@
       if (closeInp) closeInp.value = b.closeTime || "23:30";
       if (pauseBtn) {
         const accepting = b.isAcceptingOrders !== false;
-        pauseBtn.textContent = accepting
-          ? `🟢 ${b.name}: SİPARİŞ AÇIK`
-          : `⏸️ ${b.name}: YOĞUNLUK MOLASI (KAPALI)`;
+        pauseBtn.innerHTML = accepting
+          ? `${adminIcon('checkCircle', 14)} <span>${b.name}: SİPARİŞ AÇIK</span>`
+          : `${adminIcon('pause', 14)} <span>${b.name}: YOĞUNLUK MOLASI (KAPALI)</span>`;
         pauseBtn.style.background = accepting ? "var(--pt-olive)" : "var(--pt-terracotta)";
       }
     }
@@ -5426,8 +5477,8 @@
         const dateFormatted = dParts.length === 3 ? `${dParts[2]}.${dParts[1]}.${dParts[0]}` : orderIso;
 
         const itemsHtml = (Array.isArray(o.items) ? o.items : []).map(it => `
-          <div style="padding:7px 10px; background:#fff; border:1px solid var(--pt-border); border-left:3px solid var(--pt-gold); font-size:13.5px; font-weight:600; color:var(--pt-navy);">
-            🍽️ ${it}
+          <div style="padding:7px 10px; background:#fff; border:1px solid var(--pt-border); border-left:3px solid var(--pt-gold); font-size:13.5px; font-weight:600; color:var(--pt-navy); display:flex; align-items:center; gap:7px;">
+            ${adminIcon('utensils', 14)} <span>${it}</span>
           </div>
         `).join("");
 
@@ -5436,10 +5487,10 @@
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:8px; flex-wrap:wrap;">
             <div>
               <strong style="font-family:var(--font-serif); font-size:22px; color:var(--pt-navy);">#${o.id} — ${o.customerName || "Müşteri"}</strong>
-              <span style="margin-left:8px; font-size:12px; font-weight:700; color:var(--pt-olive);">📅 ${dateFormatted} • ⏰ ${o.createdAt || "-"}</span>
+              <span style="margin-left:8px; font-size:12px; font-weight:700; color:var(--pt-olive); display:inline-flex; align-items:center; gap:5px;">${adminIcon('calendar', 12)} ${dateFormatted} • ${adminIcon('clock', 12)} ${o.createdAt || "-"}</span>
             </div>
             <div style="display:flex; gap:6px; flex-wrap:wrap;">
-              <span class="pt-badge pt-badge-olive">📍 ${locBadge}</span>
+              <span class="pt-badge pt-badge-olive">${adminIcon('pin', 11)} ${locBadge}</span>
               <span class="pt-badge pt-badge-gold">${adisyoBadge}</span>
               <span class="pt-badge pt-badge-navy">${o.mode || "Sipariş"}</span>
             </div>
@@ -5449,15 +5500,15 @@
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px; background:var(--pt-cream); border:1px solid var(--pt-border); padding:10px 12px; margin-bottom:10px; font-size:12.5px;">
             <div>
               <div style="font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--pt-text-muted); font-weight:700;">Müşteri Ad Soyad &amp; Telefon</div>
-              <div style="font-weight:800; color:var(--pt-navy); font-size:14px; margin-top:2px;">👤 ${o.customerName || "-"} • <a href="tel:${o.phone || ''}" style="color:var(--pt-terracotta); text-decoration:none;">📞 ${o.phone || "-"}</a></div>
+              <div style="font-weight:800; color:var(--pt-navy); font-size:14px; margin-top:2px;">${adminIcon('user', 13)} ${o.customerName || "-"} • <a href="tel:${o.phone || ''}" style="color:var(--pt-terracotta); text-decoration:none;">${adminIcon('phone', 12)} ${o.phone || "-"}</a></div>
             </div>
             <div>
               <div style="font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--pt-text-muted); font-weight:700;">Teslimat Adresi &amp; Mahalle</div>
-              <div style="font-weight:700; color:var(--pt-navy); margin-top:2px;">📍 ${locBadge} — ${o.address || o.mode || "-"}</div>
+              <div style="font-weight:700; color:var(--pt-navy); margin-top:2px;">${adminIcon('pin', 13)} ${locBadge} — ${o.address || o.mode || "-"}</div>
             </div>
             <div>
               <div style="font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--pt-text-muted); font-weight:700;">Sorumlu Şube &amp; Tahsilat</div>
-              <div style="font-weight:700; color:var(--pt-olive); margin-top:2px;">🏢 ${o.branch || "Adana Barajyolu Şubesi"}</div>
+              <div style="font-weight:700; color:var(--pt-olive); margin-top:2px;">${adminIcon('building', 13)} ${o.branch || "Adana Barajyolu Şubesi"}</div>
             </div>
           </div>
 
@@ -5493,13 +5544,13 @@
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; background:#F8FAFC; border:1px solid var(--pt-border); padding:9px 12px; margin-bottom:10px;">
                 <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                   <span style="font-size:11px; font-weight:800; color:var(--pt-navy); text-transform:uppercase;">Canlı Durum:</span>
-                  <button type="button" onclick="setAdminOrderStage('${o.id}','RECEIVED')" style="${btnSt('RECEIVED','var(--pt-navy)')} padding:6px 10px; font-size:11.5px; cursor:pointer;">1. Alındı</button>
-                  <button type="button" onclick="setAdminOrderStage('${o.id}','PREPARING')" style="${btnSt('PREPARING','var(--pt-terracotta)')} padding:6px 10px; font-size:11.5px; cursor:pointer;">2. 🔥 Mutfakta</button>
-                  <button type="button" onclick="setAdminOrderStage('${o.id}','ON_THE_WAY')" style="${btnSt('ON_THE_WAY','#b45309')} padding:6px 10px; font-size:11.5px; cursor:pointer;">3. 🛵 Kuryede / Hazır</button>
-                  <button type="button" onclick="setAdminOrderStage('${o.id}','DELIVERED')" style="${btnSt('DELIVERED','var(--pt-olive)')} padding:6px 10px; font-size:11.5px; cursor:pointer;">4. ✅ Teslim Edildi</button>
+                  <button type="button" onclick="setAdminOrderStage('${o.id}','RECEIVED')" style="${btnSt('RECEIVED','var(--pt-navy)')} padding:6px 10px; font-size:11.5px; cursor:pointer; display:inline-flex; align-items:center; gap:5px;">1. Alındı</button>
+                  <button type="button" onclick="setAdminOrderStage('${o.id}','PREPARING')" style="${btnSt('PREPARING','var(--pt-terracotta)')} padding:6px 10px; font-size:11.5px; cursor:pointer; display:inline-flex; align-items:center; gap:5px;">2. ${adminIcon('flame', 12)} Mutfakta</button>
+                  <button type="button" onclick="setAdminOrderStage('${o.id}','ON_THE_WAY')" style="${btnSt('ON_THE_WAY','#b45309')} padding:6px 10px; font-size:11.5px; cursor:pointer; display:inline-flex; align-items:center; gap:5px;">3. ${adminIcon('truck', 12)} Kuryede / Hazır</button>
+                  <button type="button" onclick="setAdminOrderStage('${o.id}','DELIVERED')" style="${btnSt('DELIVERED','var(--pt-olive)')} padding:6px 10px; font-size:11.5px; cursor:pointer; display:inline-flex; align-items:center; gap:5px;">4. ${adminIcon('checkCircle', 12)} Teslim Edildi</button>
                 </div>
-                <button type="button" onclick="printOrderReceipt('${o.id}')" style="background:var(--pt-navy-dark); color:var(--pt-gold-soft); border:1px solid var(--pt-gold); padding:7px 12px; font-size:11.5px; font-weight:700; cursor:pointer;">
-                  🖨️ 80mm Mutfak &amp; Kurye Fişi Yazdır
+                <button type="button" onclick="printOrderReceipt('${o.id}')" style="background:var(--pt-navy-dark); color:var(--pt-gold-soft); border:1px solid var(--pt-gold); padding:7px 12px; font-size:11.5px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+                  ${adminIcon('printer', 13)} <span>80mm Mutfak &amp; Kurye Fişi Yazdır</span>
                 </button>
               </div>
             `;
