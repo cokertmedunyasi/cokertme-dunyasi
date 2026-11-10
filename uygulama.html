@@ -4009,7 +4009,7 @@
     function reorderPastOrder(orderId) {
       const state = CokertmeStore.getState();
       const userPhone = appUser && appUser.phone ? appUser.phone : "";
-      const myOrders = userPhone ? getCustomerOwnOrders(state, userPhone) : loadMyLocalOrdersHistory();
+      const myOrders = userPhone ? getCustomerOwnOrders(state, userPhone) : loadMyLocalOrders();
       const target = orderId ? myOrders.find(o => o && o.id === orderId) : myOrders[0];
       if (!target) {
         alert("Tekrarlanacak geçmiş sipariş bulunamadı.");
@@ -4085,7 +4085,7 @@
     function renderOrdersPageHtml() {
       const state = CokertmeStore.getState();
       const userPhone = appUser && appUser.phone ? appUser.phone : "";
-      const myOrders = userPhone ? getCustomerOwnOrders(state, userPhone) : loadMyLocalOrdersHistory();
+      const myOrders = userPhone ? getCustomerOwnOrders(state, userPhone) : loadMyLocalOrders();
 
       return `
         <div class="campaigns-page-wrap">
@@ -4781,7 +4781,7 @@
               const b = locResolved.branch || {};
               const avail = CokertmeStore.checkBranchServiceAvailability(b);
               const userPhone = appUser && appUser.phone ? appUser.phone : "";
-              const pastOrders = showBanner ? (userPhone ? getCustomerOwnOrders(state, userPhone) : loadMyLocalOrdersHistory()) : [];
+              const pastOrders = showBanner ? (userPhone ? getCustomerOwnOrders(state, userPhone) : loadMyLocalOrders()) : [];
               const lastOrd = pastOrders && pastOrders.length > 0 ? pastOrders[0] : null;
 
               const closedNoticeHtml = !avail.available ? `
@@ -7603,6 +7603,7 @@
         return [];
       }
     }
+    const loadMyLocalOrdersHistory = loadMyLocalOrders;
 
     function saveOrderToMyLocalHistory(orderObj) {
       if (!orderObj || !orderObj.id || orderObj.id === "CKR-1042") return;
@@ -8662,6 +8663,7 @@
         if (err) err.style.display = "none";
         if (inp) inp.value = "";
         checkMaintenanceGate();
+        renderCurrentView();
       } else {
         if (err) err.style.display = "block";
       }
@@ -8908,6 +8910,7 @@
     checkMaintenanceGate();
     updateCartBadges();
     updateUserHeaderUI();
+    renderCurrentView();
     CokertmeStore.syncFromServer().then(async () => {
       checkMaintenanceGate();
       updateUserHeaderUI();
